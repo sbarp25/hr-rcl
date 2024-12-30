@@ -1,11 +1,18 @@
 import { MdArticle } from "react-icons/md";
+import { Pagination } from "@nextui-org/react";
+import { useState } from "react";
 
-const page = () => {
+const Page = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const noticesPerPage = 3;
+  const startIndex = (currentPage - 1) * noticesPerPage;
+  const endIndex = startIndex + noticesPerPage;
+
   const Notice = [
     {
       id: 1,
       title: "Annual Leave Policy Update",
-      date: "2024-12-11",
+      date: "2001-01-01",
       author: "HR Department",
       content:
         "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
@@ -21,7 +28,7 @@ const page = () => {
     {
       id: 2,
       title: "Annual Leave Policy Update",
-      date: "2024-12-11",
+      date: "2002-02-02",
       author: "HR Department",
       content:
         "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
@@ -37,7 +44,119 @@ const page = () => {
     {
       id: 3,
       title: "Annual Leave Policy Update",
-      date: "2024-12-11",
+      date: "2003-03-03",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 4,
+      title: "Annual Leave Policy Update",
+      date: "2004-04-04",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 5,
+      title: "Annual Leave Policy Update",
+      date: "2005-05-05",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 6,
+      title: "Annual Leave Policy Update",
+      date: "2006-06-06",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 7,
+      title: "Annual Leave Policy Update",
+      date: "2007-07-07",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 8,
+      title: "Annual Leave Policy Update",
+      date: "2008-08-08",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 9,
+      title: "Annual Leave Policy Update",
+      date: "2009-09-09",
+      author: "HR Department",
+      content:
+        "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
+      attachments: [
+        {
+          name: "Annual_Leave_Policy.pdf",
+          url: "https://example.com/files/Annual_Leave_Policy.pdf",
+        },
+      ],
+      priority: "Medium",
+      tags: ["Policy Update", "Leave", "HR"],
+    },
+    {
+      id: 10,
+      title: "Annual Leave Policy Update",
+      date: "2010-10-10",
       author: "HR Department",
       content:
         "The company has updated its annual leave policy effective January 1, 2025. Employees are encouraged to review the updated policy on the HR portal. For any questions, please contact the HR team.",
@@ -52,10 +171,16 @@ const page = () => {
     },
   ];
 
+  const paginatedNotices = Notice.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="container">
       {/* Notice Heading section */}
-      <div className="flex bg-bgprimary font-bold text-white rounded-lg p-4 w-fit tracking-[5px] gap-2">
+      <div className="page-title">
         <MdArticle />
         <p className="-mt-1">Notices</p>
       </div>
@@ -63,7 +188,7 @@ const page = () => {
         <div
           className="notices-container p-4"
           style={{ maxHeight: "600px", overflowY: "auto" }}>
-          {Notice.map((notice) => (
+          {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
               className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
@@ -73,7 +198,6 @@ const page = () => {
                 </p>
               </div>
               <div className="flex-grow">
-                <p>By: {notice.author}</p>
                 <h2 className="text-xl font-bold mb-2">{notice.title}</h2>
                 <p className="text-gray-800 mb-2">{notice.content}</p>
                 {notice.attachments.length > 0 && (
@@ -122,9 +246,16 @@ const page = () => {
             </div>
           ))}
         </div>
+        <div className="pagination mt-4">
+          <Pagination
+            initialPage={1}
+            total={Math.ceil(Notice.length / noticesPerPage)}
+            onChange={handlePageChange}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;

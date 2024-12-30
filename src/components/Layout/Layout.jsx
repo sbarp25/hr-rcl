@@ -1,5 +1,6 @@
 import Sidebar from "../Sidebar";
 
+// import Notices from "./src/pages/Notices/page.jsx";
 export const Layout = ({ className, children }) => {
   return (
     <div className={`flex h-screen ${className}`}>

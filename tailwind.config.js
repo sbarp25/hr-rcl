@@ -11,6 +11,7 @@ export default {
     extend: {
       colors: {
         bgprimary: "#184C5F",
+        primary: "#184C5F",
       },
     },
     fontFamily: {
