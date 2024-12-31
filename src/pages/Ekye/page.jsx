@@ -44,7 +44,7 @@ const Ekye = () => {
                 }`}>
                 2
               </div>
-              <div className="mt-2 text-xs">Documents Details</div>
+              <div className="mt-2 text-xs">Address Details</div>
             </div>
             <div
               onClick={() => handleStepClick(3)}
@@ -57,7 +57,7 @@ const Ekye = () => {
                 }`}>
                 3
               </div>
-              <div className="mt-2 text-xs">Address Details</div>
+              <div className="mt-2 text-xs">Documents Details</div>
             </div>
 
             <div
@@ -75,8 +75,8 @@ const Ekye = () => {
             </div>
           </div>
           {step === 1 && <PersonalInformation />}
-          {step === 2 && <DocumentDetails />}
-          {step === 3 && <AddressDetails />}
+          {step === 2 && <AddressDetails />}
+          {step === 3 && <DocumentDetails />}
           {step === 4 && <EducationDetails />}
         </form>
       </div>

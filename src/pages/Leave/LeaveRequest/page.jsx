@@ -6,12 +6,27 @@ import {
 } from "@nextui-org/react";
 import { Form, Input, Button } from "@nextui-org/react";
 import { DateInput } from "@nextui-org/date-input";
+import { useState } from "react";
+
 const LeaveRequest = () => {
+  const [dropdown, setDropdown] = useState("");
+  const [teamLeader, setTeamLeader] = useState("");
+  const [leaveType, setLeaveType] = useState("");
+
+  const handleDropdownChange = (key) => {
+    setDropdown(key);
+    setTeamLeader(key);
+  };
+
+  const handleLeaveTypeChange = (e) => {
+    setLeaveType(e.target.value);
+  };
+
   return (
-    <div>
+    <div className="">
       <div className="page-title">Leave Request</div>
-      <div className="bg-white rounded-3xl">
-        <div className="">
+      <div className="h-96 bg-white rounded-3xl container pb-4">
+        <div className="pt-2">
           <label className="">Subject</label>
           <Input label="Title" />
         </div>
@@ -25,16 +40,21 @@ const LeaveRequest = () => {
               <label>Team Leader</label>
               <Dropdown>
                 <DropdownTrigger>
-                  <Input isReadOnly label="" className="" />
+                  <Input
+                    isReadOnly
+                    label={teamLeader}
+                    className=""
+                    aria-label
+                  />
                 </DropdownTrigger>
 
                 <DropdownMenu
                   disallowEmptySelection
                   aria-label="Single selection example"
-                  selectedKeys=""
+                  selectedKeys={dropdown}
                   selectionMode="single"
                   variant="flat"
-                  onSelectionChange="">
+                  onSelectionChange={handleDropdownChange}>
                   <DropdownItem key="mother">mother</DropdownItem>
                   <DropdownItem key="Father">Father</DropdownItem>
                 </DropdownMenu>
@@ -42,7 +62,7 @@ const LeaveRequest = () => {
             </div>
             <div className="w-full">
               <label>Leave Type</label>
-              <Input />
+              <Input value={leaveType} onChange={handleLeaveTypeChange} />
             </div>
           </div>
 

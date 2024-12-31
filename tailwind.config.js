@@ -11,7 +11,9 @@ export default {
     extend: {
       colors: {
         bgprimary: "#184C5F",
-        primary: "#184C5F",
+        bgprimaryhover: "#277c9c",
+        active: "#f3817e",
+        secondary: "#f3817e",
       },
     },
     fontFamily: {

@@ -16,9 +16,11 @@ import Roles from "./pages/MasterData/Roles/page.jsx";
 import HandBook from "./pages/Handbook/page.jsx";
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
+import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
+      <ToastContainer />
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -26,6 +28,7 @@ function App() {
           <Route path="/Attendance/Request" element={<AttendanceRequest />} />
 
           <Route path="/Employees" element={<Employees />} />
+          <Route path="/EKYE" element={<Ekye />} />
 
           <Route path="master-data/Department" element={<Department />} />
           <Route path="master-data/Position" element={<Position />} />

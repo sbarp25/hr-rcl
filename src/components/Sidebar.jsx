@@ -10,7 +10,8 @@ import { IoIosPeople } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Avatar } from "@nextui-org/avatar";
 import { useState } from "react";
-
+import { useLocation } from "react-router-dom";
+import { BsArrowReturnRight } from "react-icons/bs";
 const Sidebar = () => {
   const user = {
     username: "Odinson",
@@ -19,6 +20,8 @@ const Sidebar = () => {
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
+
+  const location = useLocation();
 
   const navbarElements = [
     { icon: MdDashboard, label: "Dashboard", to: "/" },
@@ -55,6 +58,11 @@ const Sidebar = () => {
         { label: "Leave Request", to: "/Leave/Request" },
       ],
     },
+    {
+      icon: IoIosPeople,
+      label: "EKYE",
+      to: "/EKYE",
+    },
   ];
 
   const toggleSidebar = () => {
@@ -88,14 +96,20 @@ const Sidebar = () => {
         <div className="flex-grow">
           {navbarElements.map((service, index) => (
             <div key={index} className="relative">
-              <div
-                className="flex items-center gap-4 p-3 hover:bg-gray-700 transition-colors rounded-lg cursor-pointer"
+              <Link
+                to={service.to}
+                className={`flex items-center gap-4 p-3 transition-colors rounded-lg cursor-pointer ${
+                  location.pathname === service.to
+                    ? "bg-active text-white border-l-4 border-l-red-800"
+                    : "hover:bg-gray-700"
+                }`}
                 onClick={() => service.children && toggleDropdown(index)}>
+                {location.pathname === service.to && <BsArrowReturnRight />}
                 <service.icon className="text-2xl" />
                 {isSidebarExpanded && (
                   <span className="text-base">{service.label}</span>
                 )}
-              </div>
+              </Link>
               {/* Dropdown items */}
               {service.children && expandedDropdown === index && (
                 <div className="pl-8 mt-2 space-y-2">
@@ -103,7 +117,14 @@ const Sidebar = () => {
                     <Link
                       key={childIndex}
                       to={child.to}
-                      className="block p-2 hover:bg-gray-600 rounded-lg transition-colors">
+                      className={`flex p-2 rounded-lg transition-colors gap-4 ${
+                        location.pathname === child.to
+                          ? "bg-active text-white border-l-4 border-l-red-800"
+                          : "hover:bg-gray-600"
+                      }`}>
+                      {location.pathname === child.to && (
+                        <BsArrowReturnRight className="mt-1 " />
+                      )}
                       {child.label}
                     </Link>
                   ))}
