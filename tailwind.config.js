@@ -12,8 +12,7 @@ export default {
       colors: {
         bgprimary: "#184C5F",
         bgprimaryhover: "#277c9c",
-        active: "#f3817e",
-        secondary: "#f3817e",
+        active: "#ef4660",
       },
     },
     fontFamily: {

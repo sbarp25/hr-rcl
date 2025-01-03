@@ -184,10 +184,8 @@ const Page = () => {
         <MdArticle />
         <p className="-mt-1">Notices</p>
       </div>
-      <div className="bg-white h-auto rounded-md mt-8">
-        <div
-          className="notices-container p-4"
-          style={{ maxHeight: "600px", overflowY: "auto" }}>
+      <div className="bg-white h-auto rounded-md mt-8 ">
+        <div className="notices-container p-4 max-h-[39rem] overflow-y-auto">
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
@@ -246,7 +244,7 @@ const Page = () => {
             </div>
           ))}
         </div>
-        <div className="pagination mt-4">
+        <div className="mt-4">
           <Pagination
             initialPage={1}
             total={Math.ceil(Notice.length / noticesPerPage)}

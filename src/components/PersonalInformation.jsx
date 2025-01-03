@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form, Input, Button } from "@nextui-org/react";
 import { DateInput } from "@nextui-org/date-input";
 import { CalendarDate } from "@internationalized/date";
@@ -8,102 +8,115 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { IoMdArrowDropdown } from "react-icons/io";
-const PersonalInformation = () => {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
 
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
-  );
+const PersonalInformation = ({ formData, setFormData }) => {
+  const [localFormData, setLocalFormData] = useState(formData || {});
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState("text");
+  const [selectedRelationship, setSelectedRelationship] = useState("mother");
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLocalFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormData(localFormData); // Update parent state
+    console.log("Form Data:", JSON.stringify(localFormData, null, 2)); // Debugging
+  };
+
   return (
     <div className="container">
-      <h2>Personal Information</h2>
-      <Form>
-        {/**Personal Information */}
-        <label>Email:</label>
-        <Input name="Email" required />
-        <div className="flex w-full gap-8">
-          <div className="w-1/2">
-            <label>Date Of Birth</label>
+      <h2 className="h2-text">Personal Information</h2>
+      <Form onSubmit={handleSubmit}>
+        <div className="w-full">
+          <label className="label-text">Email:</label>
+          <Input
+            name="email"
+            label="Email"
+            required
+            onChange={handleInputChange}
+            aria-label
+          />
+        </div>
+        <div className="flex w-full gap-x-8">
+          <div className="w-1/2 h-4">
+            <label className="label-text">Date Of Birth</label>
             <DateInput
-              className=""
+              name="dob"
+              aria-label
               placeholderValue={new CalendarDate(1995, 11, 6)}
+              onChange={(date) =>
+                setLocalFormData((prev) => ({
+                  ...prev,
+                  dob: date.toString(),
+                }))
+              }
             />
           </div>
-          <div className="w-1/2 flex">
-            <label>Blood Group</label>
+          <div className="w-1/2">
+            <label className="label-text">Blood Group</label>
             <Dropdown>
               <DropdownTrigger>
-                <Input isReadOnly label={selectedValue} className="" />
+                <Input isReadOnly label={selectedBloodGroup} />
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Single selection example"
-                selectedKeys={selectedKeys}
+                aria-label="Blood Group"
+                selectedKeys={new Set([selectedBloodGroup])}
                 selectionMode="single"
-                variant="flat"
-                onSelectionChange={setSelectedKeys}>
-                {/**Insert the type of blood group */}
-                <DropdownItem key="text">Text</DropdownItem>
-                <DropdownItem key="number">Number</DropdownItem>
-                <DropdownItem key="date">Date</DropdownItem>
-                <DropdownItem key="single_date">Single Date</DropdownItem>
-                <DropdownItem key="iteration">Iteration</DropdownItem>
+                onSelectionChange={(keys) =>
+                  setSelectedBloodGroup(Array.from(keys)[0])
+                }>
+                <DropdownItem key="A+">A+</DropdownItem>
+                <DropdownItem key="B+">B+</DropdownItem>
+                <DropdownItem key="O+">O+</DropdownItem>
               </DropdownMenu>
-              <IoMdArrowDropdown />
             </Dropdown>
           </div>
         </div>
-        {/**Guardians Details */}
-        <h2>Guardians Details</h2>
-        <div className="flex w-full gap-10">
+        <h2 className="h2-text">Guardians Details</h2>
+        <div className="flex w-full gap-x-10">
           <div className="w-full">
-            <label>Guardians Name</label>
-            <Input name="text" required />
+            <label className="label-text">Guardians Name</label>
+            <Input
+              name="guardianName"
+              label="Guardian's Name"
+              required
+              onChange={handleInputChange}
+            />
           </div>
           <div className="w-full">
-            <label>Guardians Number</label>
-            <Input name="number" required />
+            <label className="label-text">Guardians Number</label>
+            <Input
+              name="guardianNumber"
+              label="Guardian's Number"
+              required
+              onChange={handleInputChange}
+            />
           </div>
         </div>
-        <div className="flex w-full gap-10">
-          <label>Relationship</label>
+        <div className=" w-full gap-x-10">
+          <label className="label-text">Relationship</label>
           <Dropdown>
             <DropdownTrigger>
-              <Input isReadOnly label={selectedValue} className="" />
+              <Input isReadOnly label={selectedRelationship} />
             </DropdownTrigger>
-
             <DropdownMenu
               disallowEmptySelection
-              aria-label="Single selection example"
-              selectedKeys={selectedKeys}
+              aria-label="Relationship"
+              selectedKeys={new Set([selectedRelationship])}
               selectionMode="single"
-              variant="flat"
-              onSelectionChange={setSelectedKeys}>
-              <DropdownItem key="mother">mother</DropdownItem>
-              <DropdownItem key="Father">Father</DropdownItem>
+              onSelectionChange={(keys) =>
+                setSelectedRelationship(Array.from(keys)[0])
+              }>
+              <DropdownItem key="mother">Mother</DropdownItem>
+              <DropdownItem key="father">Father</DropdownItem>
             </DropdownMenu>
-            <IoMdArrowDropdown />
           </Dropdown>
-        </div>
-        {/**Emergency Details  */}
-        <h2 className="">Emergency Details:</h2>
-        <div className="w-full ">
-          <div className="flex gap-10 mb-4">
-            <div className="w-full">
-              <label>Guardians Name</label>
-              <Input name="text" required />
-            </div>
-            <div className="w-full">
-              <label>Guardians NUmber</label>
-              <Input name="text" required />
-            </div>
-          </div>
-          <div className="">
-            <label>Relationship</label>
-            <Input name="text" required />
-          </div>
         </div>
         <Button type="submit" variant="primary">
           Save

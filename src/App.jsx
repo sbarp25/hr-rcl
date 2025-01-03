@@ -17,7 +17,21 @@ import HandBook from "./pages/Handbook/page.jsx";
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
 import { ToastContainer } from "react-toastify";
+import { useEffect } from "react";
 function App() {
+  useEffect(() => {
+    // Capture the authToken from the URL
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get("accessToken");
+
+    if (accessToken) {
+      // Store the accessToken in localStorage
+      localStorage.setItem("accessToken", accessToken);
+
+      // Optionally, remove the authToken from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
   return (
     <>
       <ToastContainer />

@@ -29,7 +29,7 @@ const Page = () => {
           </div>
           <div className="flex flex-col mt-2 bg-white h-auto rounded ">
             <div className="flex flex-col justify-center items-center">
-              <h1 className="button mt-2">Weekly Attendance Report</h1>
+              <h1 className="page-title mt-2">Weekly Attendance Report</h1>
               <Attendancereport />
             </div>
 

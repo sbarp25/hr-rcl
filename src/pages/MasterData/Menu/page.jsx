@@ -1,7 +1,16 @@
-import React from "react";
+import { useState } from "react";
+import Loader from "../../../components/Loader";
 
 const Menu = () => {
-  return <div>Menu</div>;
+  const [isLoading, setIsLoading] = useState("");
+  return (
+    <>
+      {isLoading && (
+        <Loader message="Please wait while we get the process done." />
+      )}
+      <div>Menu</div>
+    </>
+  );
 };
 
 export default Menu;

@@ -1,6 +1,21 @@
 import { Form, Input, Button } from "@nextui-org/react";
+import { useState } from "react";
 
-const EducationDetails = () => {
+const EducationDetails = ({ formData, setFormData }) => {
+  const [localFormData, setLocalFormData] = useState(formData || {});
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLocalFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormData(localFormData); // Update parent state
+    console.log("Form Data:", JSON.stringify(localFormData, null, 2)); // Debugging
+  };
   return (
     <form>
       <h2>Educational Details</h2>
