@@ -1,7 +1,7 @@
 import { Layout } from "./components/Layout/Layout";
 
 import Dashboard from "./pages/Dashboard/page.jsx";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Notices from "./pages/Notices/page.jsx";
 import Login from "./pages/Login/page.jsx";
 import Ekye from "./pages/Ekye/page.jsx";
@@ -11,53 +11,64 @@ import AttendanceRequest from "./pages/Attendance/Request/page.jsx";
 import Employees from "./pages/Employees/page.jsx";
 import Department from "./pages/MasterData/Deparement/page.jsx";
 import Position from "./pages/MasterData/Position/page.jsx";
-import Menu from "./pages/MasterData/Menu/page.jsx";
 import Roles from "./pages/MasterData/Roles/page.jsx";
 import HandBook from "./pages/Handbook/page.jsx";
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
 import { ToastContainer } from "react-toastify";
 import { useEffect } from "react";
+import AddEmployees from "./pages/Employees/AddEmployees/page.jsx";
+import Rstpwd from "./pages/resetpassword/page.jsx";
+import ValidateLink from "./pages/resetpassword/validatelink/page.jsx";
+import AuthLayout from "./components/AuthLayout/AuthLayout.jsx";
 function App() {
   useEffect(() => {
-    // Capture the authToken from the URL
     const params = new URLSearchParams(window.location.search);
-    const accessToken = params.get("accessToken");
+    let resetpasswordData = params.get("data");
 
-    if (accessToken) {
-      // Store the accessToken in localStorage
-      localStorage.setItem("accessToken", accessToken);
+    if (resetpasswordData) {
+      resetpasswordData = decodeURIComponent(resetpasswordData);
+      resetpasswordData = resetpasswordData.replaceAll(" ", "+");
+      console.log(resetpasswordData);
+      localStorage.setItem("resetpasswordData", resetpasswordData);
 
-      // Optionally, remove the authToken from the URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+  const location = useLocation();
+  const authRoutes = ["/login", "/rstpwd", "/resetpwd"];
+  const isAuthRoute = authRoutes.includes(location.pathname);
   return (
     <>
       <ToastContainer />
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/Attendance" element={<Attendance />} />
-          <Route path="/Attendance/Request" element={<AttendanceRequest />} />
-
-          <Route path="/Employees" element={<Employees />} />
-          <Route path="/EKYE" element={<Ekye />} />
-
-          <Route path="master-data/Department" element={<Department />} />
-          <Route path="master-data/Position" element={<Position />} />
-          <Route path="master-data/Menu" element={<Menu />} />
-          <Route path="master-data/Roles" element={<Roles />} />
-
-          <Route path="/HandBook" element={<HandBook />} />
-          <Route path="/Notice" element={<Notices />} />
-
-          <Route path="/Leave/status" element={<LeaveStatus />} />
-          <Route path="/Leave/Request" element={<LeaveRequest />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </Layout>
+      {isAuthRoute ? (
+        <AuthLayout>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/rstpwd" element={<ValidateLink />} />
+            <Route path="/resetpwd" element={<Rstpwd />} />
+          </Routes>
+        </AuthLayout>
+      ) : (
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/Attendance" element={<Attendance />} />
+            <Route path="/Attendance/Request" element={<AttendanceRequest />} />
+            <Route path="/Employees" element={<Employees />} />
+            <Route path="/AddEmployees" element={<AddEmployees />} />
+            <Route path="/EKYE" element={<Ekye />} />
+            <Route path="/master-data/Department" element={<Department />} />
+            <Route path="/master-data/Position" element={<Position />} />
+            <Route path="/master-data/Roles" element={<Roles />} />
+            <Route path="/HandBook" element={<HandBook />} />
+            <Route path="/Notice" element={<Notices />} />
+            <Route path="/Leave/status" element={<LeaveStatus />} />
+            <Route path="/Leave/Request" element={<LeaveRequest />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </Layout>
+      )}
     </>
   );
 }

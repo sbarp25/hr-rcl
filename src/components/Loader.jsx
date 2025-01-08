@@ -12,7 +12,7 @@ const Loader = ({ message = "Loading..." }) => {
         />
         {/* Optional loading message */}
         {message && (
-          <p className="mt-5 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-900 ">
+          <p className="mt-5 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-200 to-active ">
             {message}
           </p>
         )}

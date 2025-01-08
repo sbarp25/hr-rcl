@@ -25,16 +25,16 @@ const LeaveRequest = () => {
   return (
     <div className="">
       <div className="page-title">Leave Request</div>
-      <div className="h-96 bg-white rounded-3xl container pb-4">
-        <div className="pt-2">
+      <Form className="h-fit bg-white rounded-3xl container p-4 w-full">
+        <div className="pt-2 w-full">
           <label className="">Subject</label>
           <Input label="Title" />
         </div>
-        <div>
+        <div className=" w-full">
           <label>Desctiption</label>
           <Input label="Content" />
         </div>
-        <div className="flex flex-col justify-center items-center gap-10">
+        <div className="flex flex-col justify-center items-center gap-x-10 w-full">
           <div className="flex w-full gap-10">
             <div className="w-full">
               <label>Team Leader</label>
@@ -55,8 +55,8 @@ const LeaveRequest = () => {
                   selectionMode="single"
                   variant="flat"
                   onSelectionChange={handleDropdownChange}>
-                  <DropdownItem key="mother">mother</DropdownItem>
-                  <DropdownItem key="Father">Father</DropdownItem>
+                  <DropdownItem key="mother">HR</DropdownItem>
+                  <DropdownItem key="Father">District</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -78,9 +78,9 @@ const LeaveRequest = () => {
           </div>
         </div>
         <div className="flex mt-6">
-          <Button>Submit</Button>
+          <Button className="button bg-bgprimary text-white">Submit</Button>
         </div>
-      </div>
+      </Form>
     </div>
   );
 };

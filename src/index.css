@@ -11,8 +11,11 @@
     @apply w-full mx-auto px-4 sm:px-6 md:px-4 lg:px-5 xl:px-6 font-Poppins;
   }
   .page-title {
-    @apply flex bg-active font-medium text-xl text-white rounded-lg p-2 w-fit mb-6;
+    @apply flex font-bold text-3xl text-titletext rounded-lg;
   }
+  /* .page-title {
+    @apply flex font-bold bg-active text-2xl text-white rounded-lg w-fit p-2;
+  } */
   .button {
     @apply bg-bgprimary font-semibold text-white rounded-lg p-4 w-fit tracking-[5px] gap-2 h-14;
   }

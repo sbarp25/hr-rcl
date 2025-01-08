@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import Loader from "../../../components/Loader";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
+import { Button, Input } from "@nextui-org/react";
 
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -16,14 +17,13 @@ const Position = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingPositionId, setEditingPositionId] = useState(null);
 
-  {
-    /**Start of Get API for Getting the Positions */
-  }
+  /**Start of Get API for Getting the Positions */
+
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post("/positions/get/all", {});
+        const response = await axiosInstance.post("/api/positions/get/all", {});
         if (response.data.responseCode === "200") {
           setPositionData(response.data.datalist);
         } else {
@@ -39,13 +39,10 @@ const Position = () => {
 
     fetchPositions();
   }, []);
-  {
-    /**End of Get API for Getting the Positions */
-  }
+  /**End of Get API for Getting the Positions */
 
-  {
-    /** start of API calls to Add Position */
-  }
+  /** start of API calls to Add Position */
+
   const handleAddPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -58,7 +55,7 @@ const Position = () => {
 
     try {
       const response = await axiosInstance.post(
-        "/positions/register",
+        "/api/positions/register",
         newPosition,
         {
           headers: {
@@ -81,13 +78,10 @@ const Position = () => {
     }
   };
 
-  {
-    /** end of API calls to Add Position */
-  }
+  /** end of API calls to Add Position */
 
-  {
-    /**Start Of handleActions*/
-  }
+  /**Start Of handleActions*/
+
   const handleAction = async (action, position) => {
     switch (action) {
       // Start Of Edit Operation
@@ -105,14 +99,7 @@ const Position = () => {
         try {
           console.log(`Deleting position ID: ${position.id}`);
           const response = await axiosInstance.delete(
-            `/positions/delete/${position.id}`
-            // {
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //     accessToken: accessToken,
-            //     refreshToken: refreshToken,
-            //   },
-            // }
+            `/api/positions/delete/${position.id}`
           );
           if (response.data.responseCode === "204") {
             toast.success("Position deleted successfully!");
@@ -130,12 +117,9 @@ const Position = () => {
     }
   };
 
-  {
-    /**End of Handleaction */
-  }
-  {
-    /**Start of Edit */
-  }
+  /**End of Handleaction */
+
+  /**Start of Edit */
   const handleEditPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -149,7 +133,7 @@ const Position = () => {
 
     try {
       const response = await axiosInstance.put(
-        `/positions/update/${editingPositionId}`,
+        `/api/positions/update/${editingPositionId}`,
         updatedPosition,
         {
           headers: {
@@ -182,9 +166,7 @@ const Position = () => {
       setIsLoading(false);
     }
   };
-  {
-    /**Edit of Edit */
-  }
+  /**end of Edit */
   return (
     <>
       {isLoading && (
@@ -195,19 +177,11 @@ const Position = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="page-title">Position</h1>
-          {showAddForm ? (
-            <button
-              className="button hover:button-hover"
-              onClick={() => setShowAddForm(!showAddForm)}>
-              Show Position
-            </button>
-          ) : (
-            <button
-              className="button hover:button-hover"
-              onClick={() => setShowAddForm(!showAddForm)}>
-              Add Position
-            </button>
-          )}
+          <Button
+            className="button  bg-bgprimary hover:bg-bgprimaryhover text-white"
+            onPress={() => setShowAddForm(!showAddForm)}>
+            {showAddForm ? "Show Department" : "Add Department"}
+          </Button>
         </div>
         {/**  Edit Postion form */}
         {showEditForm && (
@@ -220,7 +194,7 @@ const Position = () => {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Input Fields */}
               <div className="flex flex-col flex-1 gap-4">
-                <input
+                <Input
                   type="text"
                   placeholder="Position Name"
                   value={positionName}
@@ -238,17 +212,17 @@ const Position = () => {
 
               {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
+                <Button
                   type="submit"
                   className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4">
                   Save Changes
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onClick={() => setShowEditForm(false)}>
+                  onPress={() => setShowEditForm(false)}>
                   Cancel
-                </button>
+                </Button>
               </div>
             </div>
           </form>
@@ -264,7 +238,7 @@ const Position = () => {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Input Fields */}
               <div className="flex flex-col flex-1 gap-4">
-                <input
+                <Input
                   type="text"
                   placeholder="Position Name"
                   value={positionName}
@@ -282,11 +256,11 @@ const Position = () => {
 
               {/* Submit Button */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
+                <Button
                   type="submit"
                   className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
                   Add Position
-                </button>
+                </Button>
               </div>
             </div>
           </form>
@@ -319,7 +293,6 @@ const Position = () => {
                         } hover:bg-gray-100`}>
                         <td className="border border-gray-300 px-4 py-2">
                           {position.name || "N/A"}
-                          {position.id}
                         </td>
                         <td className="border max-w-96 border-gray-300 px-4 py-2 sm:overflow-y-hidden">
                           <div className="max-h-32 max-w-96 overflow-y-auto">

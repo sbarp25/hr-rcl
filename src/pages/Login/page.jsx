@@ -7,6 +7,10 @@ import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import bcrypt from "bcryptjs";
+import { Button, Form, Input } from "@nextui-org/react";
+import axiosInstance from "../../lib/axios-Instance";
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
@@ -21,6 +25,7 @@ const Login = () => {
 
   const handleLogin = async (formState) => {
     setIsLoading(true);
+    const hashedPassword = await bcrypt.hash(formState.password, 10);
     const LoginData = {
       data: {
         email: formState.email,
@@ -30,7 +35,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.147:8091/auth/login",
+        "http://192.168.1.147:8090/auth/login",
         LoginData,
         {
           headers: {
@@ -40,10 +45,22 @@ const Login = () => {
       );
       const accessToken = response?.data?.data?.accessToken;
       const refreshToken = response?.data?.data?.refreshToken;
+      const FullName = response?.data?.data?.fullName;
+      const Email = response?.data?.data?.email;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("userId", accessToken);
+      localStorage.setItem("fullName", FullName);
+      localStorage.setItem("email", Email);
       toast.success("Logged in successfully!");
-      navigate("/");
+      if (
+        response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
+        response?.data?.data?.ekyeStatus === "COMPLETED"
+      ) {
+        navigate("/");
+      } else {
+        navigate("/EKYE");
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed. Try again.");
       console.error("Error logging in:", error);
@@ -67,14 +84,14 @@ const Login = () => {
             </div>
           </div>
           <div className="px-16 pt-64 bg-white rounded-r-2xl">
-            <form
+            <Form
               onSubmit={handleSubmit(handleLogin)}
               className="flex flex-col gap-y-8 justify-center items-center">
               <p className="text-xl font-semibold">Log in</p>
               <div className="w-full relative">
                 <label htmlFor="email">Email Address:</label>
                 <div className="relative flex items-center">
-                  <input
+                  <Input
                     id="email"
                     type="text"
                     className="w-full bg-gray-200 rounded-lg h-11 shadow-lg shadow-gray-300"
@@ -98,7 +115,7 @@ const Login = () => {
               <div className="w-full">
                 <label htmlFor="password">Password:</label>
                 <div className="relative flex items-center">
-                  <input
+                  <Input
                     id="password"
                     type={showPassword ? "password" : "text"}
                     className="w-full bg-gray-200 rounded-lg h-11 shadow-lg shadow-gray-300"
@@ -134,7 +151,7 @@ const Login = () => {
               <a href="/forgotpassword" className="text-sm text-blue-500">
                 Forgot Password?
               </a>
-            </form>
+            </Form>
           </div>
         </div>
       </div>

@@ -244,7 +244,7 @@ const Page = () => {
             </div>
           ))}
         </div>
-        <div className="mt-4">
+        <div className="mt-4 ml-96">
           <Pagination
             initialPage={1}
             total={Math.ceil(Notice.length / noticesPerPage)}

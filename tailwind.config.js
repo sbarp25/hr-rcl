@@ -10,8 +10,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        bgprimary: "#184C5F",
+        bgprimary: "#000000",
         bgprimaryhover: "#277c9c",
+        titletext: "#3F3D56",
         active: "#ef4660",
       },
     },

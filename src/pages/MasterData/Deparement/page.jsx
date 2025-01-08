@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
+import { Button, Input } from "@nextui-org/react";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -23,7 +24,7 @@ const Department = () => {
     const fetchDepartments = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post("/departments/get/all");
+        const response = await axiosInstance.post("/api/departments/get/all");
         if (response.data.responseCode === "200") {
           setDepartmentsData(response.data.datalist);
         } else {
@@ -53,7 +54,7 @@ const Department = () => {
 
     try {
       const response = await axiosInstance.post(
-        "/departments/register",
+        "/api/departments/register",
         newDepartment,
         {
           headers: {
@@ -93,7 +94,7 @@ const Department = () => {
 
     try {
       const response = await axiosInstance.put(
-        `/departments/update/${editingDepartmentId}`,
+        `/api/departments/update/${editingDepartmentId}`,
         updatedPosition,
         {
           headers: {
@@ -146,7 +147,7 @@ const Department = () => {
         console.log(`Deleting position ID: ${department.id}`);
         try {
           const response = await axiosInstance.delete(
-            `/departments/delete/${department.id}`,
+            `/api/departments/delete/${department.id}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -178,11 +179,11 @@ const Department = () => {
       <div className="p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="page-title">Departments</h1>
-          <button
-            className="button hover:button-hover"
-            onClick={() => setShowAddForm(!showAddForm)}>
+          <Button
+            className="button  bg-bgprimary hover:bg-bgprimaryhover text-white"
+            onPress={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? "Show Department" : "Add Department"}
-          </button>
+          </Button>
         </div>
         {showEditForm && (
           <form
@@ -193,7 +194,7 @@ const Department = () => {
             </h2>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex flex-col flex-1 gap-4">
-                <input
+                <Input
                   type="text"
                   placeholder="Department Name"
                   value={departmentName}
@@ -210,17 +211,17 @@ const Department = () => {
               </div>
               {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start gap-y-4">
-                <button
+                <Button
                   type="submit"
                   className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
                   Save Changes
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onClick={() => setShowEditForm(false)}>
+                  onPress={() => setShowEditForm(false)}>
                   Cancel
-                </button>
+                </Button>
               </div>
             </div>
           </form>
@@ -234,7 +235,7 @@ const Department = () => {
             </h2>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex flex-col flex-1 gap-4">
-                <input
+                <Input
                   type="text"
                   placeholder="Department Name"
                   value={departmentName}

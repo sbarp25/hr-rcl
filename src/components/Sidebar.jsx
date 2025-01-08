@@ -13,10 +13,8 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 const Sidebar = () => {
-  const user = {
-    username: "Odinson",
-    email: "fiocroh@ib.bw",
-  };
+  const username = localStorage.getItem("fullName");
+  const email = localStorage.getItem("email");
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
@@ -44,7 +42,6 @@ const Sidebar = () => {
       children: [
         { label: "Department", to: "/master-data/Department" },
         { label: "Position", to: "/master-data/Position" },
-        { label: "Menu", to: "/master-data/Menu" },
         { label: "Roles", to: "/master-data/Roles" },
       ],
     },
@@ -104,7 +101,7 @@ const Sidebar = () => {
                     : "hover:bg-gray-700"
                 }`}
                 onClick={() => service.children && toggleDropdown(index)}>
-                {location.pathname === service.to && <BsArrowReturnRight />}
+                {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
                 <service.icon className="text-2xl" />
                 {isSidebarExpanded && (
                   <span className="text-base">{service.label}</span>
@@ -143,8 +140,8 @@ const Sidebar = () => {
             />
             {isSidebarExpanded && (
               <div>
-                <p className="text-xl">{user.username}</p>
-                <p className="text-sm">{user.email}</p>
+                <p className="text-xl">{username}</p>
+                <p className="text-sm">{email}</p>
               </div>
             )}
             {isSidebarExpanded && (

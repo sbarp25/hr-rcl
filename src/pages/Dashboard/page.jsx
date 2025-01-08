@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Attendancereport from "../../components/Attendancereport.jsx";
 import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/react";
 
 const Page = () => {
   const [ischeckedin, setIscheckedin] = useState(true);
@@ -9,22 +10,23 @@ const Page = () => {
     setIscheckedin(!ischeckedin);
   };
 
-  const user = { name: "John Doe", email: "jdoe@gmail.com" };
+  const username = localStorage.getItem("fullName");
+  const email = localStorage.getItem("email");
 
   return (
     <>
-      <div>
+      <div className="h-[100vh] overflow-y-hidden ">
         <div className="flex justify-end mb-4">
-          <button
-            onClick={handleCheckin}
-            className="button mb-1  text-white px-4 py-2 ">
+          <Button
+            onPress={handleCheckin}
+            className="button bg-bgprimary hover:bg-bgprimaryhover mb-1  text-white px-4 py-2 ">
             {ischeckedin ? "Check Out" : "Check In"}
-          </button>
+          </Button>
         </div>
         <div>
           <div className="flex justify-center bg-white h-12 rounded-md">
             <p className="font-medium text-2xl leading-10">
-              Welcome, {user.name}
+              Welcome, {username}
             </p>
           </div>
           <div className="flex flex-col mt-2 bg-white h-auto rounded ">
