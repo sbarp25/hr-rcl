@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
-import { Form } from "@nextui-org/react";
+import { Button, Form, Input } from "@nextui-org/react";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@nextui-org/react";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
@@ -92,18 +100,26 @@ const AddEmployeeForm = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+  const filteredDepartments = departmentsData.filter(
+    (department) => !department.isDeleted
+  );
+  const filteredposition = positionData.filter(
+    (position) => !position.isDeleted
+  );
+
+  const filteredroles = roleData.filter((roles) => !roles.isDeleted);
   /**Id extraction */
   const departmentId = departmentsData.find(
     (department) => department.name === formData.department
   )?.id;
 
-  const roleId = roleData.find(
-    (role) => role.roleName === formData.roles
-  )?.roleId;
-
   const positionId = positionData.find(
     (position) => position.name === formData.position
   )?.id;
+
+  const roleId = roleData.find(
+    (role) => role.roleName === formData.roles
+  )?.roleId;
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
@@ -167,14 +183,15 @@ const AddEmployeeForm = () => {
             <div className="mb-4">
               <label
                 htmlFor="fullname"
-                className="block text-gray-700 font-medium mb-2">
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Full Name
               </label>
-              <input
+              <Input
                 type="text"
                 id="fullname"
                 name="fullname"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                className="rounded-xl shadow-md"
                 placeholder="Enter full name"
                 value={formData.fullname}
                 onChange={handleChange}
@@ -186,14 +203,15 @@ const AddEmployeeForm = () => {
             <div className="mb-4">
               <label
                 htmlFor="phone"
-                className="block text-gray-700 font-medium mb-2">
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Phone
               </label>
-              <input
+              <Input
                 type="text"
                 id="phone"
                 name="phone"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                className="rounded-xl shadow-md"
                 placeholder="Enter phone number"
                 value={formData.phone}
                 onChange={handleChange}
@@ -201,19 +219,19 @@ const AddEmployeeForm = () => {
               />
             </div>
           </div>
-
           {/* Email */}
           <div className="mb-4 w-full">
             <label
               htmlFor="email"
-              className="block text-gray-700 font-medium mb-2">
+              className="block text-gray-700 font-medium mb-2"
+            >
               Email
             </label>
-            <input
+            <Input
               type="email"
               id="email"
               name="email"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+              className="rounded-xl shadow-md"
               placeholder="Enter email address"
               value={formData.email}
               onChange={handleChange}
@@ -225,104 +243,159 @@ const AddEmployeeForm = () => {
             <div className="mb-4">
               <label
                 htmlFor="department"
-                className="block text-gray-700 font-medium mb-2">
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Department
               </label>
-              <select
-                id="department"
-                name="department"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                value={formData.department}
-                onChange={handleChange}
-                required>
-                <option value="" disabled selected>
-                  Select department
-                </option>
-                {isLoading ? (
-                  <option>Loading departments...</option>
-                ) : (
-                  departmentsData.length > 0 &&
-                  departmentsData
-                    .filter((department) => !department.isDeleted) // Filter out deleted departments
-                    .map((department) => (
-                      <option key={department.id} value={department.name}>
+              <Dropdown>
+                <DropdownTrigger className="justify-between rounded-xl shadow-md">
+                  <Button
+                    variant="bordered"
+                    className=" text-gray-500 rounded-lg w-full "
+                  >
+                    {formData.department || "Select Department"}
+                    <RiArrowDropDownLine
+                      className=" text-4xl 
+                    "
+                    />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Departments"
+                  onAction={(key) => {
+                    const selectedDepartment = filteredDepartments.find(
+                      (dept) => dept.name === key
+                    );
+                    handleChange({
+                      target: {
+                        name: "department",
+                        value: selectedDepartment?.name,
+                      },
+                    });
+                  }}
+                >
+                  {isLoading ? (
+                    <DropdownItem key="loading" disabled>
+                      Loading departments...
+                    </DropdownItem>
+                  ) : filteredDepartments.length > 0 ? (
+                    filteredDepartments.map((department) => (
+                      <DropdownItem key={department.name}>
                         {department.name}
-                      </option>
+                      </DropdownItem>
                     ))
-                )}
-              </select>
+                  ) : (
+                    <DropdownItem key="no-departments" disabled>
+                      No departments available
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
             </div>
-
             {/* Position */}
             <div className="mb-4">
               <label
                 htmlFor="position"
-                className="block text-gray-700 font-medium mb-2">
-                Position
+                className="block text-gray-700 font-medium mb-2"
+              >
+                position
               </label>
-              <select
-                id="position"
-                name="position"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                value={formData.position}
-                onChange={handleChange}
-                required>
-                <option value="" disabled selected>
-                  Select position
-                </option>
-                {isLoading ? (
-                  <option>Loading positions...</option>
-                ) : (
-                  positionData.length > 0 &&
-                  positionData.map((position) => (
-                    <option key={position.id} value={position.name}>
-                      {position.name}
-                    </option>
-                  ))
-                )}
-              </select>
+              <Dropdown>
+                <DropdownTrigger className="justify-between rounded-xl shadow-md">
+                  <Button
+                    variant="bordered"
+                    className=" text-gray-500 rounded-lg w-full "
+                  >
+                    {formData.position || "Select position"}
+                    <RiArrowDropDownLine
+                      className=" text-4xl 
+                    "
+                    />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="positions"
+                  onAction={(key) => {
+                    const selectedPosition = filteredposition.find(
+                      (post) => post.name === key
+                    );
+                    handleChange({
+                      target: {
+                        name: "position",
+                        value: selectedPosition?.name,
+                      },
+                    });
+                  }}
+                >
+                  {isLoading ? (
+                    <DropdownItem key="loading" disabled>
+                      Loading positions...
+                    </DropdownItem>
+                  ) : filteredposition.length > 0 ? (
+                    filteredposition.map((position) => (
+                      <DropdownItem key={position.name}>
+                        {position.name}
+                      </DropdownItem>
+                    ))
+                  ) : (
+                    <DropdownItem key="no-position" disabled>
+                      No position available
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </div>
-
           {/* Roles */}
-          <div className="mb-4 w-full">
+          <div className="mb-4 w-full ">
             <label
-              htmlFor="roles"
-              className="block text-gray-700 font-medium mb-2">
+              htmlFor="Roles"
+              className="block text-gray-700 font-medium mb-2"
+            >
               Roles
             </label>
-            {/* <input
-            type="text"
-            id="text"
-            name="roles"
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-            placeholder="Enter roles"
-            value={formData.roles}
-            onChange={handleChange}
-            required
-            /> */}
-            <select
-              id="roles"
-              name="roles"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-              value={formData.roles}
-              onChange={handleChange}
-              required>
-              <option value="" disabled selected>
-                Select role
-              </option>
-              {isLoading ? (
-                <option>Loading roles...</option>
-              ) : (
-                roleData &&
-                roleData.length > 0 &&
-                roleData.map((role) => (
-                  <option key={role.roleId} value={role.roleName}>
-                    {role.roleName}
-                  </option>
-                ))
-              )}
-            </select>
+            <Dropdown>
+              <DropdownTrigger className="justify-between">
+                <Button
+                  variant="bordered"
+                  className=" text-gray-500 rounded-lg w-full "
+                >
+                  {formData.roles || "Select Roles"}
+                  <RiArrowDropDownLine
+                    className=" text-4xl 
+                    "
+                  />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Roless"
+                onAction={(key) => {
+                  const selectedRoles = filteredroles.find(
+                    (dept) => dept.name === key
+                  );
+                  handleChange({
+                    target: {
+                      name: "Roles",
+                      value: selectedRoles?.name,
+                    },
+                  });
+                }}
+              >
+                {isLoading ? (
+                  <DropdownItem key="loading" disabled>
+                    Loading Roles...
+                  </DropdownItem>
+                ) : filteredroles.length > 0 ? (
+                  filteredroles.map((Roles) => (
+                    <DropdownItem key={Roles.name}>{Roles.name}</DropdownItem>
+                  ))
+                ) : (
+                  <DropdownItem key="no-roles" disabled>
+                    No roless available
+                  </DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
           </div>
 
           {/* Perform eKYe */}
@@ -340,12 +413,12 @@ const AddEmployeeForm = () => {
               Perform eKYE
             </label>
           </div>
-
           {/* Submit Button */}
           <div>
             <button
               type="submit"
-              className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg">
+              className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg"
+            >
               Submit
             </button>
           </div>

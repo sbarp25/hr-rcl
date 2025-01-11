@@ -35,7 +35,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.147:8090/auth/login",
+        "http://192.168.1.173:8090/auth/login",
         LoginData,
         {
           headers: {
@@ -86,7 +86,8 @@ const Login = () => {
           <div className="px-16 pt-64 bg-white rounded-r-2xl">
             <Form
               onSubmit={handleSubmit(handleLogin)}
-              className="flex flex-col gap-y-8 justify-center items-center">
+              className="flex flex-col gap-y-8 justify-center items-center"
+            >
               <p className="text-xl font-semibold">Log in</p>
               <div className="w-full relative">
                 <label htmlFor="email">Email Address:</label>
@@ -131,7 +132,8 @@ const Login = () => {
                     type="button"
                     onClick={togglePasswordVisibility}
                     aria-label="Toggle Password Visibility"
-                    className="absolute right-3 text-gray-500 text-xl">
+                    className="absolute right-3 text-gray-500 text-xl"
+                  >
                     {showPassword ? <FaEye /> : <FaRegEyeSlash />}
                   </button>
                 </div>
@@ -144,7 +146,8 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full bg-bgprimary text-white px-5 py-2 rounded-md h-11 shadow-lg shadow-gray-300">
+                className="w-full bg-bgprimary text-white px-5 py-2 rounded-md h-11 shadow-lg shadow-gray-300"
+              >
                 Log In
               </button>
 

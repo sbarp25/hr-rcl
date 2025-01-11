@@ -291,7 +291,8 @@ const Employees = () => {
                       key={employee.id}
                       className={`${
                         index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                      } hover:bg-gray-100`}>
+                      } hover:bg-gray-100`}
+                    >
                       <td className="border border-gray-300 px-4 py-2">
                         {startIndex + index + 1}
                       </td>

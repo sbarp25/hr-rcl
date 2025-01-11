@@ -5,6 +5,17 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
 import { Button, Input } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/input";
+import { IoMdAdd } from "react-icons/io";
+import { IoReturnDownBack } from "react-icons/io5";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+} from "@nextui-org/table";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -170,6 +181,12 @@ const Department = () => {
         console.log("Unknown action");
     }
   };
+  const columns = [
+    { key: "name", label: "Department Name" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "Actions" },
+  ];
+  const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
 
   return (
     <>
@@ -178,17 +195,30 @@ const Department = () => {
       )}
       <div className="p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <h1 className="page-title">Departments</h1>
+          <h2 className="page-title">Departments</h2>
           <Button
-            className="button  bg-bgprimary hover:bg-bgprimaryhover text-white"
-            onPress={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? "Show Department" : "Add Department"}
+            className="button bg-green-700 tracking-normal
+  hover:bg-green-900"
+            onPress={() => setShowAddForm(!showAddForm)}
+          >
+            {showAddForm ? (
+              <>
+                <IoReturnDownBack className="text-white h-24 w-24" />
+                <span className="text-white font-Poppins text-xl">Reutrn</span>
+              </>
+            ) : (
+              <>
+                <IoMdAdd className="text-white h-24 w-24" />
+                <span className="text-white font-Poppins text-xl">Add</span>
+              </>
+            )}
           </Button>
         </div>
         {showEditForm && (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleEditdepartment}>
+            onSubmit={handleEditdepartment}
+          >
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Edit Department
             </h2>
@@ -207,19 +237,22 @@ const Department = () => {
                   value={departmentDescription}
                   onChange={(e) => setDepartmentDescription(e.target.value)}
                   className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                  required></textarea>
+                  required
+                ></textarea>
               </div>
               {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start gap-y-4">
                 <Button
                   type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto"
+                >
                   Save Changes
                 </Button>
                 <Button
                   type="button"
                   className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onPress={() => setShowEditForm(false)}>
+                  onPress={() => setShowEditForm(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -228,8 +261,9 @@ const Department = () => {
         )}
         {showAddForm ? (
           <form
-            className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleAddDepartment}>
+            className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
+            onSubmit={handleAddDepartment}
+          >
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Add New Department
             </h2>
@@ -237,88 +271,71 @@ const Department = () => {
               <div className="flex flex-col flex-1 gap-4">
                 <Input
                   type="text"
-                  placeholder="Department Name"
+                  label="Department Name"
                   value={departmentName}
                   onChange={(e) => setDepartmentName(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 focus:outline-none w-full"
+                  className="rounded-xl shadow-md  focus:outline-none w-full"
                   required
                 />
-                <textarea
-                  placeholder="Description"
+                <Textarea
+                  label="Description"
                   value={departmentDescription}
                   onChange={(e) => setDepartmentDescription(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                  required></textarea>
+                  className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
+                  required
+                ></Textarea>
               </div>
-
-              <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
-                  type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
-                  Add Department
-                </button>
-              </div>
+            </div>
+            <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
+              <button
+                type="submit"
+                className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6"
+              >
+                Submit
+              </button>
             </div>
           </form>
         ) : (
           <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-            <table className="table-auto w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700 text-left">
-                  <th className="border border-gray-300 px-4 py-2">
-                    Department Name
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2">
-                    Description
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {departmentsData.length > 0 ? (
-                  departmentsData
-                    .filter((position) => !position.isDeleted)
-                    .map((department, index) => (
-                      <tr
-                        key={department.id}
-                        className={`${
-                          index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        } hover:bg-gray-100`}>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {department.name}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2 sm:overflow-y-hidden">
-                          <div className="max-h-32 overflow-y-auto">
-                            {department.description}
-                          </div>
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2 text-center">
-                          <div className="flex justify-center gap-4">
+            <Table aria-label="Example table with dynamic content">
+              <TableHeader columns={columns}>
+                {(column) => (
+                  <TableColumn key={column.key} className="">
+                    {column.label}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody items={departmentsData}>
+                {(department) => (
+                  <TableRow key={Department.id}>
+                    {(columnKey) => (
+                      <TableCell className="justify-between">
+                        {columnKey === "actions" ? (
+                          <div className="flex justify-center mr-8">
                             <HiPencilSquare
-                              className="text-green-500 cursor-pointer hover:text-green-700"
+                              className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                               title="Edit"
                               onClick={() => handleAction("edit", department)}
                             />
                             <MdDelete
-                              className="text-red-500 cursor-pointer hover:text-red-700"
+                              className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
                               title="Delete"
                               onClick={() => handleAction("delete", department)}
                             />
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center text-gray-500 py-4">
-                      No departments found.
-                    </td>
-                  </tr>
+                        ) : columnKey === "description" ? (
+                          <div className="max-w-[60vw]">
+                            {getKeyValue(department, columnKey)}
+                          </div>
+                        ) : (
+                          getKeyValue(department, columnKey)
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>
