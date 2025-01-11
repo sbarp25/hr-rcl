@@ -33,47 +33,57 @@ const Ekye = () => {
       bloodType: "",
       emergencyNumber: "",
       emergencyName: "",
-      emergencyRelation: "",
+      emergencyType: "",
       guardianName: "",
       guardianType: "",
       guardianNumber: "",
     },
     address: {
       permanent: {
-        province: "",
-        district: "",
+        provinceId: "",
+        districtId: "",
         municipality: "",
-        ward: "",
-        pincode: "",
-        area: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
       },
       temporary: {
-        province: "",
-        district: "",
+        provinceId: "",
+        districtId: "",
         municipality: "",
-        ward: "",
-        pincode: "",
-        area: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
       },
       sameAsPermanent: false,
     },
-    education: {
-      degree: "",
-      startYear: "",
-      endYear: "",
-      status: "",
-      files: [],
-    },
+
+    education: [
+      {
+        degree: "",
+        startYear: "",
+        endYear: "",
+        status: "",
+        files: [],
+      },
+    ],
     documents: {
-      pan: { number: "", issuedPlace: "", file: null },
-      citizenship: { number: "", issuedDate: "", issuedPlace: "", file: null },
+      documentType: "",
+      panNumber: "",
+      citizenshipNumber: "",
+      issueDate: "",
+      issuedPlace: "",
+      isIssuedPlaceDistrict: "",
+      panCardDocumentFile: "",
+      citizenshipFrontDocumentFile: "",
+      citizenshipBackDocumentFile: "",
     },
   });
   const [personalData, setPersonalData] = useState("");
 
   const onSubmit = async (e) => {
     // e.preventDefault();
-    // setIsLoading(true);
+    setIsLoading(true);
     const newData = {
       data: {
         email: formData.personalInfo.email,
@@ -82,7 +92,7 @@ const Ekye = () => {
         bloodGroup: formData.personalInfo.bloodType,
         emergencyNumber: formData.personalInfo.emergencyNumber,
         emergencyName: formData.personalInfo.emergencyName,
-        emergencyRelation: formData.personalInfo.emergencyRelation,
+        emergencyType: formData.personalInfo.emergencyRelation,
         guardianName: formData.personalInfo.guardianName,
         guardianType: formData.personalInfo.guardianRelation,
         guardianNumber: formData.personalInfo.guardianPhone,
@@ -123,120 +133,10 @@ const Ekye = () => {
     }
   };
 
-  //Code to have the Steps Implemented
-  // const onSubmit = async (e) => {
-  //   if (step === 0) {
-  //     setIsLoading(true);
-  //     const newPersonalData = {
-  //       data: {
-  //         email: formData.personalInfo.email,
-  //         dateOfBirthAd: formData.personalInfo.dob,
-  //         gender: formData.personalInfo.gender,
-  //         bloodGroup: formData.personalInfo.bloodType,
-  //         emergencyNumber: formData.personalInfo.emergency.name,
-  //         emergencyName: formData.personalInfo.emergency.name,
-  //         guardianName: formData.personalInfo.guardian.name,
-  //         guardianType: formData.personalInfo.guardian.relation,
-  //         guardianNumber: formData.personalInfo.guardian.phone,
-  //         // id: 0,
-  //         // usersId: 0,
-  //       },
-  //     };
-  //     try {
-  //       const response = await axiosInstance.post(
-  //         "/v1/personal-detail",
-  //         newPersonalData,
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       if (response.data.responseCode === "201") {
-  //         // Reset the form
-  //         setFormData({
-  //           email: "",
-  //           dob: "",
-  //           bloodType: "",
-  //           emergencyNumber: "",
-  //           emergencyName: "",
-  //           guardianName: "",
-  //           guardianType: "",
-  //           guardianNumber: "",
-  //         });
-  //         toast.success("Personal Details Added Successfully");
-  //       } else {
-  //         toast.error("Failed to add Personal details.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to add Personal details.", error);
-  //       toast.error("Failed to add Personal details.", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   }
-  //   if (step === 1) {
-  //     setIsLoading(true);
-  //     const newAddressData = {
-  //       data: {
-  //         uadId: "0",
-  //         usersId: "0",
-  //         permanentAddress: {
-  //           province: formData.address.permanent.province,
-  //           district: formData.address.permanent.district,
-  //           municipality: formData.address.permanent.municipality,
-  //           ward: formData.address.permanent.ward,
-  //           pincode: formData.address.permanent.pincode,
-  //           area: formData.address.permanent.area,
-  //         },
-  //         temporaryAddress: {
-  //           province: formData.address.temporary.province,
-  //           district: formData.address.temporary.district,
-  //           municipality: formData.address.temporary.municipality,
-  //           ward: formData.address.temporary.ward,
-  //           pincode: formData.address.temporary.pincode,
-  //           area: formData.address.temporary.area,
-  //         },
-  //       },
-  //     };
-  //     try {
-  //       const response = await axiosInstance.post(
-  //         "/v1/personal-detail",
-  //         newAddressData,
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       if (response.data.responseCode === "201") {
-  //         // Reset the form
-  //         setFormData({
-  //           email: "",
-  //           dob: "",
-  //           bloodType: "",
-  //           emergencyNumber: "",
-  //           emergencyName: "",
-  //           guardianName: "",
-  //           guardianType: "",
-  //           guardianNumber: "",
-  //         });
-  //         toast.success("Personal Details Added Successfully");
-  //       } else {
-  //         toast.error("Failed to add Personal details.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Failed to add Personal details.", error);
-  //       toast.error("Failed to add Personal details.", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   }
-  // };
   useEffect(() => {
+    setIsLoading(true);
     const authToken = localStorage.getItem("authToken");
     const fetchPersonalDetails = async () => {
-      setIsLoading(true);
       try {
         const response = await axiosInstance.get(
           "/api/v1/personal-detail/get/userDetails",
@@ -313,13 +213,13 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="container ">
+      <div className="container bg-gray-100 pb-6">
         <div className="page-title">
           <IoIosPeople className="text-4xl" />
           <p className="mt-1">Perform EKYE</p>
         </div>
         <div>
-          <div className="bg-white rounded-md p-2 max-h-[80vh] overflow-x-auto">
+          <div className="bg-gray-200 rounded-md p-2 max-h-[90vh] overflow-x-auto">
             <div className="mb-4 flex justify-between items-center">
               {[
                 "Personal Info",
@@ -350,189 +250,19 @@ const Ekye = () => {
               })}
             </div>
             {step === 0 && !isLoading && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold">Personal Information</h2>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      value={formData.personalInfo.email}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "email",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                    <select
-                      value={formData.personalInfo.gender}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "gender",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded">
-                      <option value="">Select Gender</option>
-                      {gender.map((g) => (
-                        <option key={g} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex w-full gap-x-4">
-                    <Input
-                      type="date"
-                      placeholder="Date of Birth"
-                      value={formData.personalInfo.dob}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "dob",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                    <select
-                      value={formData.personalInfo.bloodType}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "bloodType",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded">
-                      <option value="">Select Blood Group</option>
-                      {BloodGroup.map((group) => (
-                        <option key={group} value={group}>
-                          {group}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Guardian Details */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Guardian Details</h3>
-                  <div className="flex gap-x-4 w-full">
-                    <Input
-                      type="text"
-                      placeholder="Guardian Name"
-                      value={formData.personalInfo.guardianName}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "guardianName",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-
-                    <Input
-                      type="text"
-                      placeholder="Guardian Phone"
-                      value={formData.personalInfo.guardianPhone}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "guardianPhone",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
-
-                  <select
-                    value={formData.personalInfo.guardianRelation}
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "personalInfo",
-                        null,
-                        "guardianRelation",
-                        e.target.value
-                      )
-                    }
-                    className="w-full p-2 border rounded">
-                    <option value="">Select Relation</option>
-                    {relations.map((relation) => (
-                      <option key={relation} value={relation}>
-                        {relation}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Emergency Details */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Emergency Details</h3>
-                  <div className="flex gap-x-4 w-full">
-                    <Input
-                      type="text"
-                      placeholder="Emergency Name"
-                      value={formData.personalInfo.emergencyName}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "emergencyName",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Emergency Phone"
-                      value={formData.personalInfo.emergencyNumber}
-                      onChange={(e) =>
-                        handleNestedChange(
-                          "personalInfo",
-                          null,
-                          "emergencyNumber",
-                          e.target.value
-                        )
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
-                  <Input
-                    type="text"
-                    placeholder="Emergency Relation"
-                    value={formData.personalInfo.emergencyRelation}
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "personalInfo",
-                        null,
-                        "emergencyRelation",
-                        e.target.value
-                      )
-                    }
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-              </div>
+              <PersonalDetails
+                handleNext={handleNext}
+                formData={formData}
+                handleBack={handleBack}
+                handleNestedChange={handleNestedChange}
+                setFormData={setFormData}
+              />
             )}
             {step === 1 && (
               <AddressDetails
+                handleNext={handleNext}
+                handleBack={handleBack}
+                setFormData={setFormData}
                 formData={formData}
                 handleChange={handleChange}
                 handleNestedChange={handleNestedChange}
@@ -540,6 +270,9 @@ const Ekye = () => {
             )}
             {step === 2 && (
               <DocumentDetails
+                handleNext={handleNext}
+                handleBack={handleBack}
+                setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
               />
@@ -547,6 +280,9 @@ const Ekye = () => {
 
             {step === 3 && (
               <EducationDetails
+                handleNext={handleNext}
+                handleBack={handleBack}
+                setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
               />
@@ -563,7 +299,7 @@ const Ekye = () => {
             {step < 3 && (
               <Button
                 onPress={() => {
-                  onSubmit();
+                  // onSubmit();
                   handleNext();
                 }}
                 className="px-4 py-2 bg-bgprimary text-white rounded">

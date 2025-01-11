@@ -1,60 +1,135 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 
-const DocumentDetails = ({ formData, handleNestedChange }) => {
-  const districts = ["District A", "District B", "District C"]; // Replace with actual options
+const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleDocument = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const newData = {
-      data: {
-        userDocumentId: 0,
-        userName: "Odinson",
-        usersId: "0",
-        documentType: "string",
-        documentNumber: "string",
-        issueDate: "2025-01-05",
-        expiryDate: "2025-01-05",
-        documentUrl: "string",
-        citizenshipFrontDocumentFile: "string",
-        citizenshipBackDocumentFile: "string",
-        panCardDocumentFile: "string",
+  // Utility function to handle nested changes
+  const handleNestedChange = (parentKey, childKey, value) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [parentKey]: {
+        ...prevState[parentKey],
+        [childKey]: value,
       },
-    };
+    }));
+  };
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+
+    const formDataToSubmit = new FormData();
+
+    // Append form data
+    formDataToSubmit.append("panNumber", formData.documents.panNumber);
+    formDataToSubmit.append("panIssueDate", formData.documents.panIssueDate);
+    formDataToSubmit.append("panIssuePlace", formData.documents.panIssuePlace);
+    formDataToSubmit.append(
+      "citizenshipNumber",
+      formData.documents.citizenshipNumber
+    );
+    formDataToSubmit.append(
+      "citizenshipIssueDate",
+      formData.documents.issuedDate
+    );
+    formDataToSubmit.append(
+      "citizenshipIssuedPlaceDistrict",
+      formData.documents.isIssuedPlaceDistrict
+    );
+
+    // Append Files
+    if (formData.documents.citizenshipFrontDocumentFile instanceof File) {
+      formDataToSubmit.append(
+        "citizenshipFrontDocumentFile",
+        formData.documents.citizenshipFrontDocumentFile
+      );
+    }
+    if (formData.documents.citizenshipBackDocumentFile instanceof File) {
+      formDataToSubmit.append(
+        "citizenshipBackDocumentFile",
+        formData.documents.citizenshipBackDocumentFile
+      );
+    }
+    if (formData.documents.panCardDocumentFile instanceof File) {
+      formDataToSubmit.append(
+        "panCardDocumentFile",
+        formData.documents.panCardDocumentFile
+      );
+    }
+
     try {
       const response = await axiosInstance.post(
-        "/user-document/save",
-        newData,
+        "/user-documents/create",
+        formDataToSubmit,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
+
       if (response.data.responseCode === "201") {
-        // Reset the form
-        setFormData({
-          email: "",
-          dob: "",
-          bloodType: "",
-          guardian: { name: "", phone: "", relation: "" },
-          emergency: { name: "", phone: "", relation: "" },
-        });
-        toast.success("Employee added successfully!");
+        toast.success("Document details saved successfully!");
       } else {
-        toast.error("Failed to add employee.");
+        toast.error("Failed to save document details.");
       }
     } catch (error) {
-      console.error("Error adding employee:", error);
-      toast.error("Error adding employee.");
+      console.error("Error saving document details:", error);
+      toast.error("Error saving document details.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleNextSubmit = () => {
+    onSubmit();
+    handleNext();
+  };
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    const fetchDocumentDetails = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get(
+          "/user-documents/get/documentDetails",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        if (response.data.responseCode === "200") {
+          const data = response.data.data;
+
+          setFormData((prev) => ({
+            ...prev,
+            documents: {
+              panNumber: data.panNumber || "",
+              panIssuePlace: data.panIssuePlace || "",
+              citizenshipNumber: data.citizenshipNumber || "",
+              panIssueDate: data.panIssueDate || "",
+              issuedDate: data.citizenshipIssueDate || "",
+              isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
+              panCardDocumentFile: data.panCardDocumentUrl || null,
+              citizenshipFrontDocumentFile:
+                data.citizenshipFrontDocumentUrl || null,
+              citizenshipBackDocumentFile:
+                data.citizenshipBackDocumentUrl || null,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching document details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDocumentDetails();
+  }, [setFormData]);
 
   return (
     <div className="space-y-4">
@@ -69,50 +144,58 @@ const DocumentDetails = ({ formData, handleNestedChange }) => {
           </label>
           <Input
             type="text"
-            className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.documents.pan.number}
+            value={formData.documents.panNumber}
             onChange={(e) =>
-              handleNestedChange("documents", "pan", "number", e.target.value)
+              handleNestedChange("documents", "panNumber", e.target.value)
             }
             placeholder="Enter your PAN number"
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Issued Date
+          </label>
+          <Input
+            type="date"
+            value={formData.documents.panIssueDate}
+            onChange={(e) =>
+              handleNestedChange("documents", "panIssueDate", e.target.value)
+            }
+          />
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium text-gray-700 w-1/2">
+            <label className="block text-sm font-medium text-gray-700">
               Issued Place
             </label>
-            <select
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.documents.pan.issuedPlace}
+            <Input
+              type="text"
+              value={formData.documents.panIssuePlace}
               onChange={(e) =>
-                handleNestedChange(
-                  "documents",
-                  "pan",
-                  "issuedPlace",
-                  e.target.value
-                )
-              }>
-              <option value="">Select Issued Place</option>
-              {districts.map((district) => (
-                <option key={district} value={district}>
-                  {district}
-                </option>
-              ))}
-            </select>
+                handleNestedChange("documents", "panIssuePlace", e.target.value)
+              }
+              placeholder="Enter PAN issued place"
+            />
           </div>
           <div>
-            <label className=" text-sm font-medium text-gray-700 w-1/2">
+            <label className="block text-sm font-medium text-gray-700">
               Upload PAN Photo
             </label>
+            {formData.documents.panCardDocumentFile && (
+              <a
+                href={formData.documents.panCardDocumentFile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm text-blue-600 underline mb-2">
+                View Uploaded PAN Card
+              </a>
+            )}
             <Input
               type="file"
-              className="border border-gray-300 p-2 rounded-md w-full"
               onChange={(e) =>
                 handleNestedChange(
                   "documents",
-                  "pan",
-                  "file",
+                  "panCardDocumentFile",
                   e.target.files[0]
                 )
               }
@@ -120,6 +203,7 @@ const DocumentDetails = ({ formData, handleNestedChange }) => {
           </div>
         </div>
       </div>
+
       {/* Citizenship Details Section */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-gray-600">
@@ -132,13 +216,11 @@ const DocumentDetails = ({ formData, handleNestedChange }) => {
             </label>
             <Input
               type="text"
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.documents.citizenship.number}
+              value={formData.documents.citizenshipNumber}
               onChange={(e) =>
                 handleNestedChange(
                   "documents",
-                  "citizenship",
-                  "number",
+                  "citizenshipNumber",
                   e.target.value
                 )
               }
@@ -151,60 +233,91 @@ const DocumentDetails = ({ formData, handleNestedChange }) => {
             </label>
             <Input
               type="date"
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.documents.citizenship.issuedDate}
+              value={formData.documents.issuedDate}
               onChange={(e) =>
-                handleNestedChange(
-                  "documents",
-                  "citizenship",
-                  "issuedDate",
-                  e.target.value
-                )
+                handleNestedChange("documents", "issuedDate", e.target.value)
               }
             />
           </div>
         </div>
-        <div className=" grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Issued Place
             </label>
-            <select
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.documents.citizenship.issuedPlace}
+            <Input
+              type="text"
+              value={formData.documents.isIssuedPlaceDistrict}
               onChange={(e) =>
                 handleNestedChange(
                   "documents",
-                  "citizenship",
-                  "issuedPlace",
+                  "isIssuedPlaceDistrict",
                   e.target.value
                 )
-              }>
-              <option value="">Select Issued Place</option>
-              {districts.map((district) => (
-                <option key={district} value={district}>
-                  {district}
-                </option>
-              ))}
-            </select>
+              }
+              placeholder="Enter Citizenship Issued Place"
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Upload Citizenship Photo
+              Upload Front Photo of Citizenship
             </label>
+            {formData.documents.citizenshipFrontDocumentFile && (
+              <a
+                href={formData.documents.citizenshipFrontDocumentFile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm text-blue-600 underline mb-2">
+                View Uploaded Front Side
+              </a>
+            )}
             <Input
               type="file"
-              className="border border-gray-300 p-2 rounded-md w-full"
               onChange={(e) =>
                 handleNestedChange(
                   "documents",
-                  "citizenship",
-                  "file",
+                  "citizenshipFrontDocumentFile",
                   e.target.files[0]
                 )
               }
             />
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Upload Back Photo of Citizenship
+          </label>
+          {formData.documents.citizenshipBackDocumentFile && (
+            <a
+              href={formData.documents.citizenshipBackDocumentFile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-sm text-blue-600 underline mb-2">
+              View Uploaded Back Side
+            </a>
+          )}
+          <Input
+            type="file"
+            onChange={(e) =>
+              handleNestedChange(
+                "documents",
+                "citizenshipBackDocumentFile",
+                e.target.files[0]
+              )
+            }
+          />
+        </div>
+        <div className="form-navigation flex justify-between mt-6">
+          <Button
+            onPress={handleBack}
+            className="px-4 py-2 bg-gray-300 rounded">
+            Back
+          </Button>
+          <Button
+            onPress={handleNextSubmit}
+            className="px-4 py-2 bg-green-500 text-white rounded">
+            Submit
+          </Button>
         </div>
       </div>
     </div>

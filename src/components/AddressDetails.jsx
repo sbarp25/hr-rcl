@@ -1,130 +1,222 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 
-const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
-  const provinces = [
-    "Province 1",
-    "Province 2",
-    "Bagmati",
-    "Gandaki",
-    "Lumbini",
-    "Karnali",
-    "Sudurpashchim",
-  ];
-  const districts = ["District A", "District B", "District C"];
-  const municipalities = ["Municipality X", "Municipality Y", "Municipality Z"];
+const AddressDetails = ({
+  formData,
+  handleChange,
+  handleNestedChange,
+  handleNext,
+  handleBack,
+  setFormData,
+}) => {
   const handleSameAsPermanent = (e) => {
     const isChecked = e.target.checked;
     if (isChecked) {
       handleChange("address", "temporary", formData.address.permanent);
     } else {
       handleChange("address", "temporary", {
-        province: "",
-        district: "",
+        provinceId: "",
+        districtId: "",
         municipality: "",
-        ward: "",
-        pincode: "",
-        area: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
       });
     }
     handleChange("address", "sameAsPermanent", isChecked);
   };
   const [isLoading, setIsLoading] = useState(false);
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
 
-  // const onSubmit = async (e) => {
-  //   e.prevetDefault();
-  //   setIsLoading(true);
-  //   const newData = {
-  //     data: {
-  //       permanentAddress: {
-  //         province: formData.address.permanent.province,
-  //         district: formData.address.permanent.district,
-  //         municipality: formData.address.permanent.municipality,
-  //         wardNumber: formData.address.permanent.ward,
-  //         pinCode: formData.address.permanent.pincode,
-  //         tole: formData.address.permanent.area,
-  //       },
-  //       temporaryAddress: {
-  //         province: formData.address.temporary.province,
-  //         district: formData.address.temporary.district,
-  //         municipality: formData.address.temporary.municipality,
-  //         ward: formData.address.temporary.ward,
-  //         pincode: formData.address.temporary.pincode,
-  //         area: formData.address.temporary.area,
-  //       },
-  //     },
-  //   };
-  //   try {
-  //     const response = await axiosInstance.post(
-  //       "api/user-addresses/register",
-  //       newData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     if (response.data.responseCode === "201") {
-  //       toast.success("Data added successfully!");
-  //     } else {
-  //       toast.error("Failed to add employee!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding employee:", error);
-  //     toast.error("Error adding employee.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  // const handleAddress = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  //   const newData = {
-  //     data: {
-  //       uadId: "0",
-  //       usersId: "0",
-  //       permanentAddress: {
-  //         province: formData.address.permanent.province,
-  //         district: formData.address.permanent.district,
-  //         municipality: formData.address.permanent.municipality,
-  //         ward: formData.address.permanent.ward,
-  //         pincode: formData.address.permanent.pincode,
-  //         area: formData.address.permanent.area,
-  //       },
-  //       temporaryAddress: {
-  //         province: formData.address.temporary.province,
-  //         district: formData.address.temporary.district,
-  //         municipality: formData.address.temporary.municipality,
-  //         ward: formData.address.temporary.ward,
-  //         pincode: formData.address.temporary.pincode,
-  //         area: formData.address.temporary.area,
-  //       },
-  //     },
-  //   };
-  //   try {
-  //     const response = await axiosInstance.post(
-  //       "/user-addresses/register",
-  //       newData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     if (response.data.responseCode === "201") {
-  //       toast.success("Employee added successfully!");
-  //     } else {
-  //       toast.error("Failed to add employee.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding employee:", error);
-  //     toast.error("Error adding employee.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const onSubmit = async (e) => {
+    // e.prevetDefault();
+    setIsLoading(true);
+    const newData = {
+      data: [
+        {
+          provinceId: formData.address.permanent.provinceId,
+          districtId: formData.address.permanent.districtId,
+          municipality: formData.address.permanent.municipality,
+          wardNumber: formData.address.permanent.wardNumber,
+          pinCode: formData.address.permanent.pinCode,
+          tole: formData.address.permanent.tole,
+          addressType: "PERMANENT",
+        },
+        {
+          provinceId: formData.address.temporary.provinceId,
+          districtId: formData.address.temporary.districtId,
+          municipality: formData.address.temporary.municipality,
+          wardNumber: formData.address.temporary.wardNumber,
+          pinCode: formData.address.temporary.pinCode,
+          tole: formData.address.temporary.tole,
+          addressType: "TEMPORARY",
+          isSameAsPermanent: formData.address.sameAsPermanent,
+        },
+      ],
+    };
+
+    try {
+      const response = await axiosInstance.post(
+        "/api/userAddresses/save",
+        newData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.responseCode === "201") {
+        toast.success("Data added successfully!");
+      } else {
+        toast.error("Failed to add employee!");
+      }
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      toast.error("Error adding employee.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlenextsubmit = () => {
+    onSubmit();
+    handleNext();
+  };
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    const fetchAddressDetails = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get("/api/userAddresses/address", {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (response.data.responseCode === "200") {
+          const dataList = response.data.datalist || [];
+
+          // Safely extract permanent and temporary addresses
+          const permanentAddress = dataList.find(
+            (item) => item.addressType === "PERMANENT"
+          ) || {
+            provinceId: "",
+            districtId: "",
+            municipality: "",
+            wardNumber: "",
+            pinCode: "",
+            tole: "",
+          };
+
+          const temporaryAddress = dataList.find(
+            (item) => item.addressType === "TEMPORARY"
+          ) || {
+            provinceId: "",
+            districtId: "",
+            municipality: "",
+            wardNumber: "",
+            pinCode: "",
+            tole: "",
+          };
+
+          // Update formData with safe defaults
+          setFormData((prev) => ({
+            ...prev,
+            address: {
+              permanent: {
+                provinceId: permanentAddress.provinceId || "",
+                districtId: permanentAddress.districtId || "",
+                municipality: permanentAddress.municipality || "",
+                wardNumber: permanentAddress.wardNumber || "",
+                pinCode: permanentAddress.pinCode || "",
+                tole: permanentAddress.tole || "",
+              },
+              temporary: {
+                provinceId: temporaryAddress.provinceId || "",
+                districtId: temporaryAddress.districtId || "",
+                municipality: temporaryAddress.municipality || "",
+                wardNumber: temporaryAddress.wardNumber || "",
+                pinCode: temporaryAddress.pinCode || "",
+                tole: temporaryAddress.tole || "",
+              },
+              sameAsPermanent: false, // Explicitly set "same as permanent"
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching address details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAddressDetails();
+  }, []);
+
+  //UseEffect to get Province Data
+  useEffect(() => {
+    const fetchProvince = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get("/api/province");
+        if (response.data.responseCode === "200") {
+          setProvinces(response.data.datalist);
+        } else {
+          toast.error("Failed to fetch Province Data.");
+        }
+      } catch (error) {
+        console.error("Failed to fetch Province Data.", error);
+        toast.error("Failed to fetch Province Data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProvince();
+  }, []);
+
+  //UseEffect to get District Data
+  useEffect(() => {
+    const fetchDistrict = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get("/api/district");
+        if (response.data.responseCode === "200") {
+          setDistricts(response.data.datalist);
+        } else {
+          toast.error("Failed to fetch District Data.");
+        }
+      } catch (error) {
+        console.error("Failed to fetch District Data.", error);
+        toast.error("Failed to fetch District Data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDistrict();
+  }, []);
+  useEffect(() => {
+    if (selectedProvince === "") {
+      setFilteredDistricts(districts); // Reset to all districts if no province is selected
+    } else {
+      const filtered = districts.filter(
+        (d) => d.provinceId === selectedProvince
+      );
+      setFilteredDistricts(filtered);
+    }
+  }, [selectedProvince, districts]);
+
+  // Update the handleNestedChange function to update the selected province
+  const handleNesteChange = (section, subSection, field, value) => {
+    if (field === "province") {
+      setSelectedProvince(value);
+    } else if (field === "district") {
+      // ... rest of your existing logic for district change...
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -135,46 +227,49 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
         <h3 className="text-xl font-semibold text-gray-600">
           Permanent Address
         </h3>
+
         <div className="grid grid-cols-2 gap-4">
           <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.permanent.permanent}
+            className="border border-gray-300 p-2 rounded-md w-full max-h-16 overflow-y-auto"
+            value={formData.address.permanent.provinceId}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "permanent",
-                "province",
+                "provinceId",
                 e.target.value
               )
             }>
             <option value="">Select Province</option>
             {provinces.map((province) => (
-              <option key={province} value={province}>
-                {province}
+              <option key={province.id} value={province.id}>
+                {province.name}
               </option>
             ))}
           </select>
           <select
             className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.permanent.district}
+            value={formData.address.permanent.districtId}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "permanent",
-                "district",
+                "districtId",
                 e.target.value
               )
             }>
             <option value="">Select District</option>
             {districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
+              <option key={district.id} value={district.id}>
+                {district.name}
               </option>
             ))}
           </select>
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.permanent.municipality}
+
+          <Input
+            type="text"
+            placeholder="Municipality"
+            value={formData.address.permanent.municipality}
             onChange={(e) =>
               handleNestedChange(
                 "address",
@@ -182,31 +277,30 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
                 "municipality",
                 e.target.value
               )
-            }>
-            <option value="">Select Municipality</option>
-            {municipalities.map((municipality) => (
-              <option key={municipality} value={municipality}>
-                {municipality}
-              </option>
-            ))}
-          </select>
-          <Input
-            type="text"
-            placeholder="Ward No."
-            // value={formData.address.permanent.ward}
-            onChange={(e) =>
-              handleNestedChange("address", "permanent", "ward", e.target.value)
             }
           />
           <Input
             type="text"
-            placeholder="Pincode"
-            // value={formData.address.permanent.pincode}
+            placeholder="Ward No."
+            value={formData.address.permanent.wardNumber}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "permanent",
-                "pincode",
+                "wardNumber",
+                e.target.value
+              )
+            }
+          />
+          <Input
+            type="text"
+            placeholder="pinCode"
+            value={formData.address.permanent.pinCode}
+            onChange={(e) =>
+              handleNestedChange(
+                "address",
+                "permanent",
+                "pinCode",
                 e.target.value
               )
             }
@@ -214,9 +308,9 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
           <Input
             type="text"
             placeholder="Tole/Area"
-            // value={formData.address.permanent.area}
+            value={formData.address.permanent.tole}
             onChange={(e) =>
-              handleNestedChange("address", "permanent", "area", e.target.value)
+              handleNestedChange("address", "permanent", "tole", e.target.value)
             }
           />
         </div>
@@ -230,7 +324,7 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
-            // checked={formData.address.sameAsPermanent}
+            checked={formData.address.sameAsPermanent}
             onChange={handleSameAsPermanent}
           />
           <span className="text-gray-600">Same as Permanent Address</span>
@@ -238,43 +332,44 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
         <div className="grid grid-cols-2 gap-4">
           <select
             className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.temporary.province}
+            value={formData.address.temporary.provinceId}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "temporary",
-                "province",
+                "provinceId",
                 e.target.value
               )
             }>
             <option value="">Select Province</option>
             {provinces.map((province) => (
-              <option key={province} value={province}>
-                {province}
+              <option key={province.id} value={province.id}>
+                {province.name}
               </option>
             ))}
           </select>
           <select
             className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.temporary.district}
+            value={formData.address.temporary.districtId}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "temporary",
-                "district",
+                "districtId",
                 e.target.value
               )
             }>
             <option value="">Select District</option>
             {districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
+              <option key={district.id} value={district.id}>
+                {district.name}
               </option>
             ))}
           </select>
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.address.temporary.municipality}
+          <Input
+            type="text"
+            placeholder="Municipality"
+            value={formData.address.temporary.municipality}
             onChange={(e) =>
               handleNestedChange(
                 "address",
@@ -282,31 +377,30 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
                 "municipality",
                 e.target.value
               )
-            }>
-            <option value="">Select Municipality</option>
-            {municipalities.map((municipality) => (
-              <option key={municipality} value={municipality}>
-                {municipality}
-              </option>
-            ))}
-          </select>
-          <Input
-            type="text"
-            placeholder="Ward No."
-            // value={formData.address.temporary.ward}
-            onChange={(e) =>
-              handleNestedChange("address", "temporary", "ward", e.target.value)
             }
           />
           <Input
             type="text"
-            placeholder="Pincode"
-            // value={formData.address.temporary.pincode}
+            placeholder="Ward No."
+            value={formData.address.temporary.wardNumber}
             onChange={(e) =>
               handleNestedChange(
                 "address",
                 "temporary",
-                "pincode",
+                "wardNumber",
+                e.target.value
+              )
+            }
+          />
+          <Input
+            type="text"
+            placeholder="pinCode"
+            value={formData.address.temporary.pinCode}
+            onChange={(e) =>
+              handleNestedChange(
+                "address",
+                "temporary",
+                "pinCode",
                 e.target.value
               )
             }
@@ -314,11 +408,23 @@ const AddressDetails = ({ formData, handleChange, handleNestedChange }) => {
           <Input
             type="text"
             placeholder="Tole/Area"
-            // value={formData.address.temporary.area}
+            value={formData.address.temporary.tole}
             onChange={(e) =>
-              handleNestedChange("address", "temporary", "area", e.target.value)
+              handleNestedChange("address", "temporary", "tole", e.target.value)
             }
           />
+        </div>
+        <div className="form-navigation flex justify-between mt-6">
+          <Button
+            onPress={handleBack}
+            className="px-4 py-2 bg-gray-300 rounded">
+            Back
+          </Button>
+          <button
+            onClick={handlenextsubmit}
+            className="px-4 py-2 bg-green-500 text-white rounded">
+            Submit
+          </button>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.147:8090/auth/login",
+        "http://192.168.1.173:8090/auth/login",
         LoginData,
         {
           headers: {
@@ -53,6 +53,7 @@ const Login = () => {
       localStorage.setItem("fullName", FullName);
       localStorage.setItem("email", Email);
       toast.success("Logged in successfully!");
+
       if (
         response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
         response?.data?.data?.ekyeStatus === "COMPLETED"

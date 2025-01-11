@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
-import { Form } from "@nextui-org/react";
+import { Checkbox, Form } from "@nextui-org/react";
 
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
