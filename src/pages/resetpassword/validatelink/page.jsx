@@ -17,7 +17,6 @@ const ValidateLink = () => {
     if (resetpasswordData) {
       resetpasswordData = decodeURIComponent(resetpasswordData);
       resetpasswordData = resetpasswordData.replaceAll(" ", "+");
-      console.log(resetpasswordData);
       localStorage.setItem("resetpasswordData", resetpasswordData);
 
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -41,7 +40,7 @@ const ValidateLink = () => {
           },
         };
         const response = await axios.post(
-          "http://192.168.1.147:8090/auth/rstpwd",
+          "http://192.168.1.173:8090/auth/rstpwd",
           requestBody
         );
 

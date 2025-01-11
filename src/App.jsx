@@ -29,14 +29,14 @@ function App() {
     if (resetpasswordData) {
       resetpasswordData = decodeURIComponent(resetpasswordData);
       resetpasswordData = resetpasswordData.replaceAll(" ", "+");
-      console.log(resetpasswordData);
+
       localStorage.setItem("resetpasswordData", resetpasswordData);
 
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
   const location = useLocation();
-  const authRoutes = ["/login", "/rstpwd", "/resetpwd"];
+  const authRoutes = ["/login", "/rstpwd", "/resetpwd", "/EKYE"];
   const isAuthRoute = authRoutes.includes(location.pathname);
   return (
     <>
@@ -47,6 +47,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/rstpwd" element={<ValidateLink />} />
             <Route path="/resetpwd" element={<Rstpwd />} />
+            <Route path="/EKYE" element={<Ekye />} />
           </Routes>
         </AuthLayout>
       ) : (
@@ -57,7 +58,6 @@ function App() {
             <Route path="/Attendance/Request" element={<AttendanceRequest />} />
             <Route path="/Employees" element={<Employees />} />
             <Route path="/AddEmployees" element={<AddEmployees />} />
-            <Route path="/EKYE" element={<Ekye />} />
             <Route path="/master-data/Department" element={<Department />} />
             <Route path="/master-data/Position" element={<Position />} />
             <Route path="/master-data/Roles" element={<Roles />} />

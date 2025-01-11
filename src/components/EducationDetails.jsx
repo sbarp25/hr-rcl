@@ -1,160 +1,286 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { Input } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 
-const EducationalDetails = ({ formData, handleNestedChange }) => {
-  const degrees = ["High School", "Bachelor's", "Master's", "PhD"];
+const EducationalDetails = ({
+  formData,
+  handleNestedChange,
+  handleNext,
+  setFormData,
+  handleBack,
+}) => {
+  const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
+  const [selectedDegree, setSelectedDegree] = useState("");
   const statusOptions = ["Completed", "Ongoing"];
   const [isLoading, setIsLoading] = useState(false);
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    handleNestedChange("education", null, "files", files);
+  const navigate = useNavigate();
+
+  const numberOfItems = selectedDegree
+    ? degrees.indexOf(selectedDegree) + 1
+    : 0;
+
+  // Ensure formData.education has enough entries to render inputs
+  while (formData.education.length < numberOfItems) {
+    formData.education.push({});
+  }
+
+  const handleFileChange = (index, files) => {
+    const updatedEducation = [...formData.education];
+    const updatedFiles = [...(updatedEducation[index]?.files || []), ...files];
+
+    updatedEducation[index] = {
+      ...updatedEducation[index],
+      files: updatedFiles,
+    };
+
+    setFormData({
+      ...formData,
+      education: updatedEducation,
+    });
   };
 
-  const handleEducation = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const newData = {
-      data: {
-        userName: "0",
-        degree: formData.education.degree,
-        // institution: formData.education.institution,
-        startYear: formData.education.startYear,
-        endYear: formData.education.endYear,
-        status: formData.education.status,
-        documentUrl: formData.education.files,
-        educationDocumentFile: formData.education.files,
-        currentlyStudying: formData.education.currentlyStudying,
-      },
+  const handleChange = (index, field, value) => {
+    const updatedEducation = [...formData.education];
+    updatedEducation[index] = {
+      ...updatedEducation[index],
+      [field]: value,
     };
+    setFormData({
+      ...formData,
+      education: updatedEducation,
+    });
+  };
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("userName", localStorage.getItem("fullName"));
+
+    // Append education details
+    formData.education.forEach((edu, index) => {
+      formDataToSend.append(`eduData[${index}].degree`, edu.degree);
+      formDataToSend.append(`eduData[${index}].institution`, edu.institution);
+      formDataToSend.append(`eduData[${index}].faculty`, edu.faculty);
+      formDataToSend.append(`eduData[${index}].startYear`, edu.startYear);
+      formDataToSend.append(`eduData[${index}].endYear`, edu.endYear);
+      formDataToSend.append(`eduData[${index}].status`, edu.status);
+
+      // Append files for each degree
+      if (edu.files?.length) {
+        edu.files.forEach((file, fileIndex) => {
+          formDataToSend.append(`educationFiles[${index}][${fileIndex}]`, file);
+        });
+      }
+    });
+
     try {
       const response = await axiosInstance.post(
-        "/user-education/save",
-        newData,
+        "/api/userEducation/save",
+        formDataToSend,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
       if (response.data.responseCode === "201") {
         toast.success(response.data.message);
+        navigate("/");
       } else {
-        toast.error("Failed to add employee.");
+        toast.error("Failed to save educational details.");
       }
     } catch (error) {
-      console.error("Error adding employee:", error);
-      toast.error("Error adding employee.");
+      console.error("Error uploading educational details:", error);
+      toast.error("An error occurred while saving educational details.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    const fetchEducationDetails = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get("/api/userEducation", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        if (response.data.responseCode === "200") {
+          const data = response.data.data;
+
+          setFormData((prev) => ({
+            ...prev,
+            documents: {
+              panNumber: data.panNumber || "",
+              panissuedPlace: data.panissuedPlace || "",
+              citizenshipNumber: data.citizenshipNumber || "",
+              issuedDate: data.issueDate || "",
+              citizenshipIssuedPlaceDistrict:
+                data.citizenshipIssuedPlaceDistrict || "",
+              panCardDocumentFile: null, // Assuming you want to keep the file input as null when fetching
+              citizenshipFrontDocumentFile: null,
+              citizenshipBackDocumentFile: null,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching document details:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEducationDetails();
+  }, [setFormData]);
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-700">
         Educational Details
       </h2>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Degree
+        </label>
+        <select
+          className="border border-gray-300 p-2 rounded-md w-full"
+          value={selectedDegree}
+          onChange={(e) => {
+            const degree = e.target.value;
+            setSelectedDegree(degree);
+            setFormData({
+              ...formData,
+              education: degrees
+                .slice(0, degrees.indexOf(degree) + 1)
+                .map(() => ({})),
+            });
+          }}>
+          <option value="">Select Degree</option>
+          {degrees.map((degree) => (
+            <option key={degree} value={degree}>
+              {degree}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Degree
-          </label>
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            // value={formData.education.degree}
-            onChange={(e) =>
-              handleNestedChange("education", null, "degree", e.target.value)
-            }>
-            <option value="">Select Degree</option>
-            {degrees.map((degree) => (
-              <option key={degree} value={degree}>
-                {degree}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Start Year
-            </label>
-            <Input
-              type="date"
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.education.startYear}
-              onChange={(e) =>
-                handleNestedChange(
-                  "education",
-                  null,
-                  "startYear",
-                  e.target.value
-                )
-              }
-            />
+      {Array.from({ length: numberOfItems }).map((_, index) => (
+        <div key={index} className="space-y-4 border p-4 rounded-md">
+          <h3 className="text-lg font-semibold text-gray-600">
+            {degrees[index]} Details
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Institution
+              </label>
+              <Input
+                type="text"
+                placeholder="Institution"
+                value={formData.education[index]?.institution || ""}
+                onChange={(e) =>
+                  handleChange(index, "institution", e.target.value)
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Faculty
+              </label>
+              <Input
+                type="text"
+                placeholder="Faculty"
+                value={formData.education[index]?.faculty || ""}
+                onChange={(e) => handleChange(index, "faculty", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Start Year
+              </label>
+              <Input
+                type="date"
+                value={formData.education[index]?.startYear || ""}
+                onChange={(e) =>
+                  handleChange(index, "startYear", e.target.value)
+                }
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                End Year
+              </label>
+              <Input
+                type="date"
+                value={formData.education[index]?.endYear || ""}
+                onChange={(e) => handleChange(index, "endYear", e.target.value)}
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              End Year
-            </label>
-            <Input
-              type="date"
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.education.endYear}
-              onChange={(e) =>
-                handleNestedChange("education", null, "endYear", e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-x-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
-            <select
-              className="border border-gray-300 p-2 rounded-md w-full"
-              // value={formData.education.status}
-              onChange={(e) =>
-                handleNestedChange("education", null, "status", e.target.value)
-              }>
-              <option value="">Select Status</option>
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Upload Files
-            </label>
-            <Input
-              type="file"
-              className="border border-gray-300 p-2 rounded-md w-full"
-              multiple
-              onChange={handleFileChange}
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              You can upload multiple files.
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Status
+              </label>
+              <select
+                className="border border-gray-300 p-2 rounded-md w-full"
+                value={formData.education[index]?.status || ""}
+                onChange={(e) => handleChange(index, "status", e.target.value)}>
+                <option value="">Select Status</option>
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Upload Files
+              </label>
+              <Input
+                type="file"
+                multiple
+                onChange={(e) =>
+                  handleFileChange(index, Array.from(e.target.files))
+                }
+              />
+            </div>
           </div>
           <div className="flex gap-x-4">
             <input
               type="checkbox"
               className="border border-gray-300 p-2 rounded-md w-3"
-              // onChange={formData.education.currentlyStudying}
+              onChange={(e) =>
+                handleNestedChange(
+                  "education",
+                  null,
+                  "currentlyStudying",
+                  e.target.checked
+                )
+              }
             />
             <label className="block text-sm font-medium text-gray-700">
-              Are you currently A student?
+              Are you currently a student?
             </label>
           </div>
         </div>
+      ))}
+      <div className="form-navigation flex justify-between mt-6">
+        <Button onPress={handleBack} className="px-4 py-2 bg-gray-300 rounded">
+          Back
+        </Button>
+        <button
+          onClick={onSubmit}
+          className="px-4 py-2 bg-green-500 text-white rounded"
+          disabled={isLoading}>
+          {isLoading ? "Submitting..." : "Submit"}
+        </button>
       </div>
     </div>
   );

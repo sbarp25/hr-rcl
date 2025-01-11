@@ -24,7 +24,6 @@ const Rstpwd = () => {
     if (resetpasswordData) {
       resetpasswordData = decodeURIComponent(resetpasswordData);
       resetpasswordData = resetpasswordData.replaceAll(" ", "+");
-      console.log(resetpasswordData);
       localStorage.setItem("resetpasswordData", resetpasswordData);
 
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -48,7 +47,7 @@ const Rstpwd = () => {
           },
         };
         const response = await axios.post(
-          "http://192.168.1.147:8090/auth/rstpwd",
+          "http://192.168.1.173:8090/auth/rstpwd",
           requestBody
         );
 
@@ -96,7 +95,7 @@ const Rstpwd = () => {
       };
 
       const response = await axios.post(
-        "http://192.168.1.147:8090/auth/set-password",
+        "http://192.168.1.173:8090/auth/set-password",
         newData,
         {
           headers: {
@@ -108,17 +107,22 @@ const Rstpwd = () => {
       if (response.data.responseCode === "200") {
         toast.success("Password reset successfully!");
         const accessToken = response.data.data.accessToken;
-        if (response.data.data.eKyeStatus === "NOT_INITIATED") {
+        const refreshToken = response.data.data.refreshToken;
+        const userName = response.data.data.fullName;
+        const email = response.data.data.email;
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("fullName", userName);
+        localStorage.setItem("email", email);
+
+        if (
+          response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
+          response?.data?.data?.ekyeStatus === "COMPLETED"
+        ) {
+          navigate("/");
+        } else {
           navigate("/EKYE");
         }
-        if (response.data.data.eKyeStatus === "COMPLETED") {
-          navigate("/");
-        }
-        localStorage.setItem("accessToken", accessToken);
-        navigate("/");
-      } else {
-        toast.error("Failed to reset password.");
-        navigate("/login");
       }
     } catch (error) {
       console.error("Error resetting password:", error);

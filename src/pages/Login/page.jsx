@@ -53,6 +53,7 @@ const Login = () => {
       localStorage.setItem("fullName", FullName);
       localStorage.setItem("email", Email);
       toast.success("Logged in successfully!");
+
       if (
         response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
         response?.data?.data?.ekyeStatus === "COMPLETED"

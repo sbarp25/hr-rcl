@@ -11,6 +11,7 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { Checkbox, Form } from "@nextui-org/react";
 
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
