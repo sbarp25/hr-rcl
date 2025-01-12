@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { Button, Input } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 
 const EducationalDetails = ({
@@ -144,29 +151,23 @@ const EducationalDetails = ({
         Educational Details
       </h2>
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Degree
-        </label>
-        <select
-          className="border border-gray-300 p-2 rounded-md w-full"
-          value={selectedDegree}
-          onChange={(e) => {
-            const degree = e.target.value;
-            setSelectedDegree(degree);
-            setFormData({
-              ...formData,
-              education: degrees
-                .slice(0, degrees.indexOf(degree) + 1)
-                .map(() => ({})),
-            });
-          }}>
-          <option value="">Select Degree</option>
-          {degrees.map((degree) => (
-            <option key={degree} value={degree}>
-              {degree}
-            </option>
-          ))}
-        </select>
+        <Dropdown>
+          <DropdownTrigger>
+            <Input className="text-left" label="Degree">
+              {selectedDegree || "Select Degree"}
+            </Input>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Degree Selection">
+            {degrees.map((degree) => (
+              <DropdownItem
+                key={degree}
+                onClick={() => setSelectedDegree(degree)}
+              >
+                {degree}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
       </div>
 
       {Array.from({ length: numberOfItems }).map((_, index) => (
@@ -181,7 +182,7 @@ const EducationalDetails = ({
               </label>
               <Input
                 type="text"
-                placeholder="Institution"
+                label="Institution"
                 value={formData.education[index]?.institution || ""}
                 onChange={(e) =>
                   handleChange(index, "institution", e.target.value)
@@ -194,7 +195,7 @@ const EducationalDetails = ({
               </label>
               <Input
                 type="text"
-                placeholder="Faculty"
+                label="Faculty"
                 value={formData.education[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
               />
@@ -227,17 +228,29 @@ const EducationalDetails = ({
               <label className="block text-sm font-medium text-gray-700">
                 Status
               </label>
-              <select
-                className="border border-gray-300 p-2 rounded-md w-full"
-                value={formData.education[index]?.status || ""}
-                onChange={(e) => handleChange(index, "status", e.target.value)}>
-                <option value="">Select Status</option>
-                {statusOptions.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Input readOnly className="text-left" label="Status">
+                    {formData.education[index]?.status || "Select Status"}
+                  </Input>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Status Selection">
+                  {statusOptions.map((status) => (
+                    <DropdownItem
+                      key={status}
+                      onPress={() => {
+                        handleChange(index, "status", status);
+                        setSelectedStatus((prev) => ({
+                          ...prev,
+                          [index]: status,
+                        }));
+                      }}
+                    >
+                      {status}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -271,6 +284,7 @@ const EducationalDetails = ({
           </div>
         </div>
       ))}
+
       <div className="form-navigation flex justify-between mt-6">
         <Button onPress={handleBack} className="px-4 py-2 bg-gray-300 rounded">
           Back
@@ -278,7 +292,8 @@ const EducationalDetails = ({
         <button
           onClick={onSubmit}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
+          disabled={isLoading}
+        >
           {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>

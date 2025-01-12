@@ -1,5 +1,13 @@
-import { Button, DatePicker, Input } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
+import React, { useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 
@@ -12,9 +20,11 @@ const PersonalDetails = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (e) => {
-    // e.preventDefault();
-    // setIsLoading(true);
+  const genderOptions = ["Male", "Female"];
+  const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+  const relationOptions = ["Father", "Mother", "Brother", "Sister"];
+
+  const onSubmit = async () => {
     const newData = {
       data: {
         email: formData.personalInfo.email,
@@ -29,7 +39,7 @@ const PersonalDetails = ({
         guardianNumber: formData.personalInfo.guardianPhone,
       },
     };
-    console.log(newData);
+
     try {
       const response = await axiosInstance.post(
         "/api/v1/personal-detail",
@@ -40,8 +50,8 @@ const PersonalDetails = ({
           },
         }
       );
+
       if (response.data.responseCode === "201") {
-        // Reset the form
         setFormData({
           email: "",
           dob: "",
@@ -65,19 +75,16 @@ const PersonalDetails = ({
     }
   };
 
-  const relations = ["Father", "Mother", "Brother", "Sister"];
-  const BloodGroup = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
-  const gender = ["Male", "Female"];
-
   const handlenextsubmit = () => {
     handleNext();
     onSubmit();
   };
+
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">Personal Information</h2>
+      <h2 className="text-2xl font-bold">Personal Information</h2>
+
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Personal Information</h3>
         <div className="grid grid-cols-2 gap-4">
           <Input
             type="email"
@@ -87,50 +94,83 @@ const PersonalDetails = ({
               handleNestedChange("personalInfo", null, "email", e.target.value)
             }
           />
-          <select
-            value={formData.personalInfo.gender}
-            onChange={(e) =>
-              handleNestedChange("personalInfo", null, "gender", e.target.value)
-            }
-            className="w-full p-2 border rounded">
-            <option value="">Select Gender</option>
-            {gender.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
+
+          {/* Gender Dropdown */}
+          <div className="flex items-center">
+            <Dropdown>
+              <DropdownTrigger>
+                <Input
+                  readOnly
+                  className="text-left"
+                  value={formData.personalInfo.gender}
+                  label="Gender"
+                />
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Select Gender"
+                selectionMode="single"
+                selectedKeys={[formData.personalInfo.gender]}
+                onSelectionChange={(keys) =>
+                  handleNestedChange(
+                    "personalInfo",
+                    null,
+                    "gender",
+                    [...keys][0]
+                  )
+                }
+              >
+                {genderOptions.map((g) => (
+                  <DropdownItem key={g}>{g}</DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
-        <div className="flex w-full gap-x-4">
-          <Input
-            type="date"
+
+        <div className="flex  gap-x-4">
+          {/* DatePicker for Date of Birth */}
+          <DatePicker
+            classNames="max-w-[50%] w-full"
             label="Date of Birth"
-            value={formData.personalInfo.dob}
-            onChange={(e) =>
-              handleNestedChange("personalInfo", null, "dob", e.target.value)
+            isRequired
+            selected={formData.personalInfo.dob}
+            onChange={(date) =>
+              handleNestedChange("personalInfo", null, "dob", date)
             }
           />
-          <select
-            value={formData.personalInfo.bloodType}
-            onChange={(e) =>
-              handleNestedChange(
-                "personalInfo",
-                null,
-                "bloodType",
-                e.target.value
-              )
-            }
-            className="w-full p-2 border rounded">
-            <option value="">Select Blood Group</option>
-            {BloodGroup.map((group) => (
-              <option key={group} value={group}>
-                {group}
-              </option>
-            ))}
-          </select>
+
+          {/* Blood Group Dropdown */}
+          <div className="flex items-center  w-full">
+            <Dropdown>
+              <DropdownTrigger>
+                <Input
+                  readOnly
+                  className="text-left"
+                  value={formData.personalInfo.bloodType}
+                  label="Blood Group"
+                />
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Select Blood Group"
+                selectionMode="single"
+                selectedKeys={[formData.personalInfo.bloodType]}
+                onSelectionChange={(keys) =>
+                  handleNestedChange(
+                    "personalInfo",
+                    null,
+                    "bloodType",
+                    [...keys][0]
+                  )
+                }
+              >
+                {bloodGroupOptions.map((group) => (
+                  <DropdownItem key={group}>{group}</DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
       </div>
-
       {/* Guardian Details */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Guardian Details</h3>
@@ -164,24 +204,36 @@ const PersonalDetails = ({
           />
         </div>
 
-        <select
-          value={formData.personalInfo.guardianRelation}
-          onChange={(e) =>
-            handleNestedChange(
-              "personalInfo",
-              null,
-              "guardianRelation",
-              e.target.value
-            )
-          }
-          className="w-full p-2 border rounded">
-          <option value="">Select Relation</option>
-          {relations.map((relation) => (
-            <option key={relation} value={relation}>
-              {relation}
-            </option>
-          ))}
-        </select>
+        {/* Guardian Relation Dropdown */}
+        <div className="flex items-center max-w-[49.5%]">
+          <Dropdown>
+            <DropdownTrigger>
+              <Input
+                readOnly
+                className="text-left"
+                value={formData.personalInfo.guardianRelation}
+                label="Guardian Relation"
+              />
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Select Relation"
+              selectionMode="single"
+              selectedKeys={[formData.personalInfo.guardianRelation]}
+              onSelectionChange={(keys) =>
+                handleNestedChange(
+                  "personalInfo",
+                  null,
+                  "guardianRelation",
+                  [...keys][0]
+                )
+              }
+            >
+              {relationOptions.map((relation) => (
+                <DropdownItem key={relation}>{relation}</DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       </div>
 
       {/* Emergency Details */}
@@ -216,6 +268,7 @@ const PersonalDetails = ({
           />
         </div>
         <Input
+          className="max-w-[49.5%]"
           type="text"
           label="Emergency Relation"
           value={formData.personalInfo.emergencyRelation}
@@ -229,16 +282,19 @@ const PersonalDetails = ({
           }
         />
       </div>
+
       <div className="flex justify-between mt-6">
         <Button
           onPress={handleBack}
           isDisabled
-          className="px-4 py-2 bg-gray-300 rounded">
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
           Back
         </Button>
         <Button
           onPress={handlenextsubmit}
-          className="px-4 py-2 bg-green-500 text-white rounded">
+          className="px-4 py-2 bg-green-500 text-white rounded"
+        >
           Submit
         </Button>
       </div>

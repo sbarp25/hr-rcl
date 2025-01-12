@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Input } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Checkbox,
+} from "@nextui-org/react";
 
 const AddressDetails = ({
   formData,
@@ -229,46 +237,56 @@ const AddressDetails = ({
         </h3>
 
         <div className="grid grid-cols-2 gap-4">
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full max-h-16 overflow-y-auto"
-            value={formData.address.permanent.provinceId}
-            onChange={(e) =>
-              handleNestedChange(
-                "address",
-                "permanent",
-                "provinceId",
-                e.target.value
-              )
-            }>
-            <option value="">Select Province</option>
-            {provinces.map((province) => (
-              <option key={province.id} value={province.id}>
-                {province.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            value={formData.address.permanent.districtId}
-            onChange={(e) =>
-              handleNestedChange(
-                "address",
-                "permanent",
-                "districtId",
-                e.target.value
-              )
-            }>
-            <option value="">Select District</option>
-            {districts.map((district) => (
-              <option key={district.id} value={district.id}>
-                {district.name}
-              </option>
-            ))}
-          </select>
+          {/* NextUI Dropdown for Province */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Input readOnly label="Select Province">
+                {provinces.find(
+                  (p) => p.id === formData.address.permanent.provinceId
+                )?.name || "Select Province"}
+              </Input>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Select Province"
+              onAction={(value) =>
+                handleNestedChange("address", "permanent", "provinceId", value)
+              }
+            >
+              {provinces.map((province) => (
+                <DropdownItem key={province.id} value={province.id}>
+                  {province.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
 
+          {/* NextUI Dropdown for District */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Input readOnly label="Select District">
+                {filteredDistricts.find(
+                  (d) => d.id === formData.address.permanent.districtId
+                )?.name || "Select District"}
+              </Input>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Select District"
+              onAction={(value) =>
+                handleNestedChange("address", "permanent", "districtId", value)
+              }
+            >
+              {filteredDistricts.map((district) => (
+                <DropdownItem key={district.id} value={district.id}>
+                  {district.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
+          {/* Other Address Fields */}
           <Input
             type="text"
-            placeholder="Municipality"
+            label="Municipality"
             value={formData.address.permanent.municipality}
             onChange={(e) =>
               handleNestedChange(
@@ -281,7 +299,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="Ward No."
+            label="Ward No."
             value={formData.address.permanent.wardNumber}
             onChange={(e) =>
               handleNestedChange(
@@ -294,7 +312,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="pinCode"
+            label="pinCode"
             value={formData.address.permanent.pinCode}
             onChange={(e) =>
               handleNestedChange(
@@ -307,7 +325,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="Tole/Area"
+            label="Tole/Area"
             value={formData.address.permanent.tole}
             onChange={(e) =>
               handleNestedChange("address", "permanent", "tole", e.target.value)
@@ -321,54 +339,63 @@ const AddressDetails = ({
         <h3 className="text-xl font-semibold text-gray-600">
           Temporary Address
         </h3>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.address.sameAsPermanent}
-            onChange={handleSameAsPermanent}
-          />
-          <span className="text-gray-600">Same as Permanent Address</span>
-        </label>
+        <Checkbox
+          isSelected={formData.address.sameAsPermanent}
+          onChange={(e) => handleSameAsPermanent(e)}
+        >
+          Same as Permanent Address
+        </Checkbox>
         <div className="grid grid-cols-2 gap-4">
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            value={formData.address.temporary.provinceId}
-            onChange={(e) =>
-              handleNestedChange(
-                "address",
-                "temporary",
-                "provinceId",
-                e.target.value
-              )
-            }>
-            <option value="">Select Province</option>
-            {provinces.map((province) => (
-              <option key={province.id} value={province.id}>
-                {province.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="border border-gray-300 p-2 rounded-md w-full"
-            value={formData.address.temporary.districtId}
-            onChange={(e) =>
-              handleNestedChange(
-                "address",
-                "temporary",
-                "districtId",
-                e.target.value
-              )
-            }>
-            <option value="">Select District</option>
-            {districts.map((district) => (
-              <option key={district.id} value={district.id}>
-                {district.name}
-              </option>
-            ))}
-          </select>
+          {/* NextUI Dropdown for Temporary Province */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Input readOnly label="Select Province">
+                {provinces.find(
+                  (p) => p.id === formData.address.permanent.provinceId
+                )?.name || "Select Province"}
+              </Input>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Select Province"
+              onAction={(value) =>
+                handleNestedChange("address", "temporary", "provinceId", value)
+              }
+            >
+              {provinces.map((province) => (
+                <DropdownItem key={province.id} value={province.id}>
+                  {province.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
+          {/* NextUI Dropdown for Temporary District */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Input readOnly label="Select District">
+                {filteredDistricts.find(
+                  (d) => d.id === formData.address.permanent.districtId
+                )?.name || "Select District"}
+              </Input>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Select District"
+              onAction={(value) =>
+                handleNestedChange("address", "temporary", "districtId", value)
+              }
+            >
+              {filteredDistricts.map((district) => (
+                <DropdownItem key={district.id} value={district.id}>
+                  {district.name}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
+          {/* Additional Fields */}
           <Input
             type="text"
-            placeholder="Municipality"
+            label="Municipality"
             value={formData.address.temporary.municipality}
             onChange={(e) =>
               handleNestedChange(
@@ -381,7 +408,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="Ward No."
+            label="Ward No."
             value={formData.address.temporary.wardNumber}
             onChange={(e) =>
               handleNestedChange(
@@ -394,7 +421,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="pinCode"
+            label="pinCode"
             value={formData.address.temporary.pinCode}
             onChange={(e) =>
               handleNestedChange(
@@ -407,7 +434,7 @@ const AddressDetails = ({
           />
           <Input
             type="text"
-            placeholder="Tole/Area"
+            label="Tole/Area"
             value={formData.address.temporary.tole}
             onChange={(e) =>
               handleNestedChange("address", "temporary", "tole", e.target.value)
@@ -417,12 +444,14 @@ const AddressDetails = ({
         <div className="form-navigation flex justify-between mt-6">
           <Button
             onPress={handleBack}
-            className="px-4 py-2 bg-gray-300 rounded">
+            className="px-4 py-2 bg-gray-300 rounded"
+          >
             Back
           </Button>
           <button
             onClick={handlenextsubmit}
-            className="px-4 py-2 bg-green-500 text-white rounded">
+            className="px-4 py-2 bg-green-500 text-white rounded"
+          >
             Submit
           </button>
         </div>

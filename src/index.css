@@ -29,3 +29,6 @@
     @apply text-lg font-medium;
   }
 }
+.left-align-dropdown-item {
+  text-align: left !important;
+}

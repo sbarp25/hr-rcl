@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, DatePicker } from "@nextui-org/react";
 import { toast } from "react-toastify";
 
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
@@ -148,19 +148,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             onChange={(e) =>
               handleNestedChange("documents", "panNumber", e.target.value)
             }
-            placeholder="Enter your PAN number"
+            label="Enter your PAN number"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Issued Date
           </label>
-          <Input
-            type="date"
+          <DatePicker
             value={formData.documents.panIssueDate}
-            onChange={(e) =>
-              handleNestedChange("documents", "panIssueDate", e.target.value)
+            onChange={(date) =>
+              handleNestedChange("documents", "panIssueDate", date)
             }
+            aria-label="Select Issued Date"
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -174,7 +174,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               onChange={(e) =>
                 handleNestedChange("documents", "panIssuePlace", e.target.value)
               }
-              placeholder="Enter PAN issued place"
+              label="Enter PAN issued place"
             />
           </div>
           <div>
@@ -186,7 +186,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 href={formData.documents.panCardDocumentFile}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-sm text-blue-600 underline mb-2">
+                className="block text-sm text-blue-600 underline mb-2"
+              >
                 View Uploaded PAN Card
               </a>
             )}
@@ -224,19 +225,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   e.target.value
                 )
               }
-              placeholder="Enter Citizenship Number"
+              label="Enter Citizenship Number"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Issued Date
             </label>
-            <Input
-              type="date"
-              value={formData.documents.issuedDate}
-              onChange={(e) =>
-                handleNestedChange("documents", "issuedDate", e.target.value)
+            <DatePicker
+              value={formData.documents.IssueDate}
+              onChange={(date) =>
+                handleNestedChange("documents", "IssueDate", date)
               }
+              aria-label="Select Issued Date"
             />
           </div>
         </div>
@@ -255,7 +256,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   e.target.value
                 )
               }
-              placeholder="Enter Citizenship Issued Place"
+              label="Enter Citizenship Issued Place"
             />
           </div>
           <div>
@@ -267,7 +268,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 href={formData.documents.citizenshipFrontDocumentFile}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-sm text-blue-600 underline mb-2">
+                className="block text-sm text-blue-600 underline mb-2"
+              >
                 View Uploaded Front Side
               </a>
             )}
@@ -292,7 +294,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               href={formData.documents.citizenshipBackDocumentFile}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-sm text-blue-600 underline mb-2">
+              className="block text-sm text-blue-600 underline mb-2"
+            >
               View Uploaded Back Side
             </a>
           )}
@@ -310,12 +313,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         <div className="form-navigation flex justify-between mt-6">
           <Button
             onPress={handleBack}
-            className="px-4 py-2 bg-gray-300 rounded">
+            className="px-4 py-2 bg-gray-300 rounded"
+          >
             Back
           </Button>
           <Button
             onPress={handleNextSubmit}
-            className="px-4 py-2 bg-green-500 text-white rounded">
+            className="px-4 py-2 bg-green-500 text-white rounded"
+          >
             Submit
           </Button>
         </div>
