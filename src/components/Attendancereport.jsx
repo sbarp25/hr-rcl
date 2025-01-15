@@ -94,8 +94,12 @@ const Attendancereport = () => {
     },
   ];
   return (
-    <div className="mb-2">
-      <Table aria-label="Dynamic Attendance Table">
+    <div className="p-4 w-full shadow-none">
+      <Table
+        bordered
+        aria-label="Dynamic Attendance Table"
+        className="h-auto  "
+      >
         <TableHeader className="capitalize">
           <TableColumn>S.N</TableColumn>
           <TableColumn>Week Days </TableColumn>

@@ -238,13 +238,7 @@ const EducationalDetails = ({
                   {statusOptions.map((status) => (
                     <DropdownItem
                       key={status}
-                      onPress={() => {
-                        handleChange(index, "status", status);
-                        setSelectedStatus((prev) => ({
-                          ...prev,
-                          [index]: status,
-                        }));
-                      }}
+                      onClick={() => handleChange(index, "status", status)}
                     >
                       {status}
                     </DropdownItem>
