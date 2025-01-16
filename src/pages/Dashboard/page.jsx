@@ -4,7 +4,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import WorkFromHome from "../../components/WorkFromHome.jsx";
 import Leave from "../../components/Leave.jsx";
-
+import { MdRadioButtonChecked } from "react-icons/md";
 const Page = () => {
   const [ischeckedin, setIscheckedin] = useState(true);
 
@@ -19,11 +19,28 @@ const Page = () => {
     <>
       <div className="h-[95vh] overflow-y-hidden  ">
         <div className="flex justify-end mb-4">
+          {ischeckedin ? (
+            <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
+          ) : (
+            <MdRadioButtonChecked className="text-green-700 h-10 mr-2  w-10" />
+          )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-bgprimaryhover mb-1  text-white px-4 py-2 tracking-normal"
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal"
           >
-            {ischeckedin ? "Check Out" : "Check In"}
+            {ischeckedin ? (
+              <>
+                <span className="text-white font-Poppins text-xl">
+                  Check In{" "}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-white font-Poppins text-xl">
+                  Check Out
+                </span>
+              </>
+            )}
           </Button>
         </div>
         <div>
@@ -44,11 +61,11 @@ const Page = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg max-h-[40vh] overflow-auto">
+            <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg  ">
               <h3 className="mt-5 ml-5"> Work from Home</h3>
 
-              <div className="flex w-80 ml-64">
-                <p className="-mt-6">Search:</p>
+              <div className="flex w-80 ml-64 ">
+                <p className="-mt-7">Search:</p>
                 <Input
                   className="-mt-8 ml-1"
                   type="search"
@@ -56,24 +73,25 @@ const Page = () => {
                   labelPlacement="outside"
                 />
               </div>
+
               <WorkFromHome />
             </div>
-            <div className=" max-h-[40vh] flex flex-col bg-white mt-2 pt-4 w-1/2 text-xl font-bold rounded-lg overflow-auto ">
+            <div className=" flex flex-col bg-white mt-2 pt-4 w-1/2 text-xl font-bold rounded-lg  ">
               <div className="flex justify-between items-center">
                 {/* Left aligned Leave text */}
-                <div className="flex w-fit ml-2">Leave</div>
+                <div className="flex w-fit ml-5">Leave</div>
 
                 {/* Button section */}
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-md"
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
                   >
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700 px-4 py-2 rounded-lg text-white mr-5 shadow-md"
+                    className="bg-red-700 px-4 py-2 rounded-lg text-white mr-5 shadow-lg"
                   >
                     Upcoming Leave
                   </Button>

@@ -51,7 +51,27 @@ const Leave = () => {
       ApprovedBy: "Sam Thapa",
     },
     {
+      Sn: 5,
+      RCLID: "01235642",
+      Name: "prativa Oli",
+      Email: "Example@gmail.com",
+      Department: "UI/UX",
+      Fromdate: "2025-02-01",
+      todate: "2025-03-01",
+      ApprovedBy: "Sam Thapa",
+    },
+    {
       Sn: 6,
+      RCLID: "01235642",
+      Name: "prativa Oli",
+      Email: "Example@gmail.com",
+      Department: "UI/UX",
+      Fromdate: "2025-02-01",
+      todate: "2025-03-01",
+      ApprovedBy: "Sam Thapa",
+    },
+    {
+      Sn: 7,
       RCLID: "01235642",
       Name: "prativa Oli",
       Email: "Example@gmail.com",
@@ -62,7 +82,7 @@ const Leave = () => {
     },
   ];
   return (
-    <div className="mt-2">
+    <div className="max-h-[28vh] overflow-auto">
       <Table bordered aria-label="Dyanamic Attendance Table">
         <TableHeader className="Capitalize">
           <TableColumn>S.N</TableColumn>

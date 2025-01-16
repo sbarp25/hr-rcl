@@ -7,8 +7,8 @@ const axiosInstance = axios.create({
 
   // Korash dai ko ip
   // baseURL: "http://192.168.1.173:8091/",
-  // baseURL: "http://192.168.1.173:8090/",
-     baseURL: "http://192.168.1.181:8090/",
+  baseURL: "http://192.168.1.173:8090/",
+    //  baseURL: "http://192.168.1.181:8090/",
  
 
   headers: {

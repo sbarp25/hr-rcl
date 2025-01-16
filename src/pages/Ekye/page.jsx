@@ -235,13 +235,15 @@ const Ekye = () => {
                     // onClick={() => handleStepClick(stepIndex)}
                     className={`flex-1 text-center relative cursor-pointer ${
                       step >= stepIndex ? "text-green-500" : "text-gray-500"
-                    }`}>
+                    }`}
+                  >
                     <div
                       className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center ${
                         step >= stepIndex
                           ? "bg-green-500 text-white"
                           : "bg-gray-300"
-                      }`}>
+                      }`}
+                    >
                       {nextstepIndex}
                     </div>
                     <div className="mt-2 text-xs">{label}</div>
@@ -292,7 +294,8 @@ const Ekye = () => {
             {step > 0 && (
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded">
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
                 Back
               </Button>
             )}
@@ -302,14 +305,16 @@ const Ekye = () => {
                   // onSubmit();
                   handleNext();
                 }}
-                className="px-4 py-2 bg-bgprimary text-white rounded">
+                className="px-4 py-2 bg-bgprimary text-white rounded"
+              >
                 Next
               </Button>
             )}
             {step === 3 && (
               <Button
                 onPress={onSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded">
+                className="px-4 py-2 bg-green-500 text-white rounded"
+              >
                 Submit
               </Button>
             )}

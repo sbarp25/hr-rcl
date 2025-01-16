@@ -43,7 +43,23 @@ const WorkFromHome = () => {
       ApprovedBy: "Sam Thapa",
     },
     {
+      Sn: 5,
+      RCLID: "01235642",
+      Name: "prativa Oli",
+      Email: "Example@gmail.com",
+      Department: "UI/UX",
+      ApprovedBy: "Sam Thapa",
+    },
+    {
       Sn: 6,
+      RCLID: "01235642",
+      Name: "prativa Oli",
+      Email: "Example@gmail.com",
+      Department: "UI/UX",
+      ApprovedBy: "Sam Thapa",
+    },
+    {
+      Sn: 7,
       RCLID: "01235642",
       Name: "prativa Oli",
       Email: "Example@gmail.com",
@@ -52,7 +68,7 @@ const WorkFromHome = () => {
     },
   ];
   return (
-    <div className="mt-2">
+    <div className=" max-h-[28vh] overflow-auto">
       <Table bordered aria-label="Dyanamic Attendance Table">
         <TableHeader className="Capitalize">
           <TableColumn>S.N</TableColumn>
