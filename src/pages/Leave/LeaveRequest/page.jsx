@@ -28,11 +28,11 @@ const LeaveRequest = () => {
       <Form className="h-fit bg-white rounded-3xl container p-4 w-full">
         <div className="pt-2 w-full">
           <label className="">Subject</label>
-          <Input label="Title" />
+          <Input label="Title" id="description" />
         </div>
         <div className=" w-full">
           <label>Desctiption</label>
-          <Input label="Content" />
+          <Input label="Content" id="description" />
         </div>
         <div className="flex flex-col justify-center items-center gap-x-10 w-full">
           <div className="flex w-full gap-10">

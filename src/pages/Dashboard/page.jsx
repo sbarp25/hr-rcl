@@ -11,7 +11,6 @@ const Page = () => {
   };
 
   const username = localStorage.getItem("fullName");
-  const email = localStorage.getItem("email");
 
   return (
     <>
@@ -40,8 +39,8 @@ const Page = () => {
               <p>Today Early Time: {}</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg">
+          <div className="flex gap-2 h-32">
+            <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg h-full">
               Work from Home
               <div className="flex w-80 ml-80">
                 <p className="mt-1">Search:</p>
@@ -52,7 +51,7 @@ const Page = () => {
                 />
               </div>
             </div>
-            <div className="h-48 flex bg-white mt-2 pt-4 w-1/2 text-xl font-bold rounded-lg justify-between">
+            <div className="h-full flex bg-white mt-2 pt-4 w-1/2 text-xl font-bold rounded-lg justify-between">
               Leave
               <div className="flex h-8 font-normal ">
                 <button

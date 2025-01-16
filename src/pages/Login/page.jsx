@@ -8,8 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import bcrypt from "bcryptjs";
-import { Button, Form, Input } from "@nextui-org/react";
-import axiosInstance from "../../lib/axios-Instance";
+import { Form, Input } from "@nextui-org/react";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +34,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.173:8090/auth/login",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login`,
         LoginData,
         {
           headers: {
@@ -52,7 +51,7 @@ const Login = () => {
       localStorage.setItem("userId", accessToken);
       localStorage.setItem("fullName", FullName);
       localStorage.setItem("email", Email);
-      toast.success("Logged in successfully!");
+      toast.success(response.data.message);
 
       if (
         response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
@@ -87,8 +86,7 @@ const Login = () => {
           <div className="px-16 pt-64 bg-white rounded-r-2xl">
             <Form
               onSubmit={handleSubmit(handleLogin)}
-              className="flex flex-col gap-y-8 justify-center items-center"
-            >
+              className="flex flex-col gap-y-8 justify-center items-center">
               <p className="text-xl font-semibold">Log in</p>
               <div className="w-full relative">
                 <label htmlFor="email">Email Address:</label>
@@ -133,8 +131,7 @@ const Login = () => {
                     type="button"
                     onClick={togglePasswordVisibility}
                     aria-label="Toggle Password Visibility"
-                    className="absolute right-3 text-gray-500 text-xl"
-                  >
+                    className="absolute right-3 text-gray-500 text-xl">
                     {showPassword ? <FaEye /> : <FaRegEyeSlash />}
                   </button>
                 </div>
@@ -147,8 +144,7 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full bg-bgprimary text-white px-5 py-2 rounded-md h-11 shadow-lg shadow-gray-300"
-              >
+                className="w-full bg-bgprimary text-white px-5 py-2 rounded-md h-11 shadow-lg shadow-gray-300">
                 Log In
               </button>
 

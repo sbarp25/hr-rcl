@@ -36,7 +36,7 @@ const Rstpwd = () => {
         const encryptedData = localStorage.getItem("resetpasswordData");
 
         if (!encryptedData) {
-          toast.error("No reset password data found");
+          toast.error(response.data.message);
           navigate("/login");
           return;
         }
@@ -47,20 +47,19 @@ const Rstpwd = () => {
           },
         };
         const response = await axios.post(
-          "http://192.168.1.173:8090/auth/rstpwd",
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/validPassword`,
           requestBody
         );
 
         if (response.status === 200) {
           // toast.success(response.data.message);
-          toast.success("Link validated successfully. Redirecting...");
+          // toast.success("Link validated successfully. Redirecting...");
         } else {
-          // toast.error(response.data.message);
-          toast.error("Failed to validate the link. Please try again.");
-          // navigate("/login");
+          toast.error(response.data.message);
+          // toast.error("Failed to validate the link. Please try again.");
         }
       } catch (error) {
-        toast.error("Please Contact the administrator and try again later");
+        toast.error(error.response?.data?.messages);
         console.error("An error occurred:", error);
         // navigate("/login");
       } finally {
@@ -95,7 +94,7 @@ const Rstpwd = () => {
       };
 
       const response = await axios.post(
-        "http://192.168.1.173:8090/auth/set-password",
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/setPassword`,
         newData,
         {
           headers: {
@@ -105,7 +104,7 @@ const Rstpwd = () => {
       );
 
       if (response.data.responseCode === "200") {
-        toast.success("Password reset successfully!");
+        toast.success(response.data.message);
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
         const userName = response.data.data.fullName;
@@ -126,7 +125,7 @@ const Rstpwd = () => {
       }
     } catch (error) {
       console.error("Error resetting password:", error);
-      toast.error("Error resetting password.");
+      toast.error(error.response?.data?.message);
       navigate("/login");
     } finally {
       setIsLoading(false);

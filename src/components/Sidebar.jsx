@@ -16,6 +16,9 @@ const Sidebar = () => {
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
 
+  const truncateText = (text, maxLength) =>
+    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
 
@@ -28,7 +31,7 @@ const Sidebar = () => {
       label: "Attendance",
       children: [
         { label: "My Attendence", to: "/Attendance" },
-        { label: "Request Attendence", to: "/Attendance/Request" },
+        // { label: "Request Attendence", to: "/Attendance/Request" },
       ],
     },
     {
@@ -140,8 +143,14 @@ const Sidebar = () => {
             />
             {isSidebarExpanded && (
               <div>
-                <p className="text-xl">{username}</p>
-                <p className="text-sm">{email}</p>
+                <p className="text-xl" title={username}>
+                  {" "}
+                  {truncateText(username, 7)}
+                </p>
+                <p className="text-sm" title={email}>
+                  {" "}
+                  {truncateText(email, 10)}
+                </p>
               </div>
             )}
             {isSidebarExpanded && (

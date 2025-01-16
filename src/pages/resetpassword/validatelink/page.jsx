@@ -40,23 +40,23 @@ const ValidateLink = () => {
           },
         };
         const response = await axios.post(
-          "http://192.168.1.173:8090/auth/rstpwd",
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/validPassword`,
           requestBody
         );
 
         if (response.status === 200) {
           // toast.success(response.data.message);
-          toast.success("Link validated successfully. Redirecting...");
+          toast.success(response.data.message);
           navigate("/resetpwd");
         } else {
           // toast.error(response.data.message);
           setError("API request failed. Please try again.");
-          toast.error("Failed to validate the link. Please try again.");
+          toast.error(response.data.message);
           navigate("/login");
         }
       } catch (error) {
         setError("An error occurred. Please try again later.");
-        toast.error("Please Contact the administrator and try again later");
+        toast.error(error.response?.data?.messages);
         console.error("An error occurred:", error);
         navigate("/login");
       } finally {
