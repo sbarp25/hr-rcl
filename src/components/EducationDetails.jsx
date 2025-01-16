@@ -5,6 +5,7 @@ import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
+import { FaRegEye } from "react-icons/fa";
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
   const [selectedDegree, setSelectedDegree] = useState("");
@@ -12,7 +13,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const navigate = useNavigate();
-
+  const [educationalDocument, setEducationalDocument] = useState(false);
   const numberOfItems = selectedDegree
     ? degrees.indexOf(selectedDegree) + 1
     : 0;
@@ -35,6 +36,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         ...prev.education.slice(index),
       ],
     }));
+    setEducationalDocument(false);
   };
 
   const handleChange = (index, field, value) => {
@@ -118,12 +120,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               files: [], // Initialize for user-uploaded files
             })),
           }));
-        } else {
-          toast.error("Failed to fetch education details.");
         }
+        setEducationalDocument(true);
       } catch (error) {
         console.error("Error fetching education details:", error);
-        toast.error("An error occurred while fetching education details.");
       } finally {
         setIsLoading(false);
       }
@@ -175,6 +175,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     try {
       const response = await axiosInstance.post(
         "/api/v1/education/save",
+        // "/user-education/create",
         formDataToSend,
         {
           headers: {
@@ -323,13 +324,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Institution
-              </label>
               <Input
                 variant="bordered"
                 type="text"
-                placeholder="Institution"
+                label="Institution"
                 value={formData.education[index]?.institution || ""}
                 onChange={(e) =>
                   handleChange(index, "institution", e.target.value)
@@ -337,24 +335,19 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Faculty
-              </label>
               <Input
                 variant="bordered"
                 type="text"
-                placeholder="Faculty"
+                label="Faculty"
                 value={formData.education[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Start Year
-              </label>
               <Input
                 variant="bordered"
                 type="date"
+                label="Select Start Date"
                 value={formData.education[index]?.startYear || ""}
                 onChange={(e) =>
                   handleChange(index, "startYear", e.target.value)
@@ -362,12 +355,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                End Year
-              </label>
               <Input
                 variant="bordered"
                 type="date"
+                label="Select End Date"
                 value={formData.education[index]?.endYear || ""}
                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
               />
@@ -375,12 +366,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Status
-              </label>
               <Select
                 variant="bordered"
                 className="w-full"
+                label="Status"
                 value={formData.education[index]?.status || ""}
                 onChange={(e) => handleChange(index, "status", e.target.value)}>
                 {statusOptions.map((status) => (
@@ -391,25 +380,34 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Upload Document
-              </label>
-              {formData.education[index]?.file && (
-                <a
-                  href={formData.education[index]?.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-sm text-blue-600 underline mb-2">
-                  View Uploaded Document
-                </a>
-              )}
               <Input
+                label="Upload Document"
                 variant="bordered"
                 type="file"
                 onChange={(e) =>
                   handleFileChange(index, Array.from(e.target.files))
                 }
               />
+              <div className="flex gap-x-4">
+                <label className="block text-xs font-medium text-gray-700">
+                  Please upload the image of type either PNG or jpg
+                </label>
+                {educationalDocument &&
+                  (formData.education[index]?.file ? (
+                    <a
+                      href={formData.education[index]?.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-sm text-green-600 underline mb-2">
+                      <span className="flex items-center gap-x-2">
+                        <FaRegEye />
+                        View Uploaded Document
+                      </span>
+                    </a>
+                  ) : (
+                    <div className="text-xs text-red-500">No Links Found</div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>

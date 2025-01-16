@@ -13,7 +13,7 @@ const AddEmployeeForm = () => {
     department: "",
     position: "",
     roles: "",
-    performEKYC: false,
+    performEKYC: true,
   });
   const [departmentsData, setDepartmentsData] = useState([]);
   const [positionData, setPositionData] = useState([]);
@@ -167,9 +167,9 @@ const AddEmployeeForm = () => {
   return (
     <>
       <ValidationComponent></ValidationComponent>
-      {isLoading && (
+      {/* {isLoading && (
         <Loader message="Please wait while the work is being done" />
-      )}
+      )} */}
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded px-8 py-6 max-h-[90vh] overflow-auto">
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Add Employee
@@ -330,17 +330,16 @@ const AddEmployeeForm = () => {
 
           {/* Perform eKYe */}
           <div className="mb-4 flex items-center">
-            <Input
+            <input
               type="checkbox"
               id="perform-ekyc"
               name="performEKYC"
               className="mr-2"
-              defaultChecked={formData.performEKYC}
-              // checked
+              checked={formData.performEKYC}
               onChange={handleChange}
             />
             <label htmlFor="perform-ekyc" className="text-gray-700 font-medium">
-              Perform eKYE
+              Perform eKYC
             </label>
           </div>
 

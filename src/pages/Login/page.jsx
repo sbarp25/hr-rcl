@@ -46,6 +46,8 @@ const Login = () => {
       const refreshToken = response?.data?.data?.refreshToken;
       const FullName = response?.data?.data?.fullName;
       const Email = response?.data?.data?.email;
+      const ekeyStep = response?.data?.data?.ekeyStep;
+      localStorage.setItem("ekeyStep", ekeyStep);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("userId", accessToken);

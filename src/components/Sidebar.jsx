@@ -12,6 +12,7 @@ import { Avatar } from "@nextui-org/avatar";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
+import { CiLogout } from "react-icons/ci";
 const Sidebar = () => {
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
@@ -71,6 +72,9 @@ const Sidebar = () => {
 
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
+  };
+  const handleLogOut = () => {
+    log;
   };
 
   return (
@@ -154,9 +158,14 @@ const Sidebar = () => {
               </div>
             )}
             {isSidebarExpanded && (
-              <a href="/settings">
-                <GoGear className="text-2xl" />
-              </a>
+              <div>
+                <a href="/settings">
+                  <GoGear className="text-2xl" />
+                </a>
+                <a>
+                  <CiLogout onClick={handleLogOut} />
+                </a>
+              </div>
             )}
           </div>
         </div>

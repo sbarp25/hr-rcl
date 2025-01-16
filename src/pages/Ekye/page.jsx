@@ -7,7 +7,8 @@ import axiosInstance from "../../lib/axios-Instance.js";
 import PersonalDetails from "../../components/PersonalDetails.jsx";
 import Loader from "../../components/Loader.jsx";
 import ValidationComponent from "../../components/ValidationComponent.jsx";
-
+import After from "../../assets/Images/After.png";
+import Before from "../../assets/Images/Before.png";
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,49 +67,6 @@ const Ekye = () => {
     },
   });
 
-  useEffect(() => {
-    setIsLoading(true);
-    const authToken = localStorage.getItem("authToken");
-    const fetchPersonalDetails = async () => {
-      try {
-        const response = await axiosInstance.get("/api/v1/personal/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        if (response.data.responseCode === "200") {
-          const data = response.data.data;
-
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              email: data.email || "",
-              dob: data.dateOfBirthAd || "",
-              gender: data.gender || "",
-              bloodType: data.bloodGroup || "",
-              emergencyNumber: data.emergencyNumber || "",
-              emergencyName: data.emergencyName || "",
-              emergencyRelation: data.emergencyType || "",
-              guardianName: data.guardianName || "",
-              guardianRelation: data.guardianType || "",
-              guardianPhone: data.guardianNumber || "",
-            },
-            // Update other sections if needed (address, education, documents)
-          }));
-        } else {
-          // toast.error("Failed to fetch data.");
-        }
-      } catch (error) {
-        console.error("Error fetching personal details:", error);
-        // toast.error("Error fetching data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPersonalDetails();
-  }, []);
-
   const handleChange = (section, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -118,6 +76,27 @@ const Ekye = () => {
       },
     }));
   };
+
+  useEffect(() => {
+    const ekye = localStorage.getItem("ekye");
+    switch (ekye) {
+      case "Personal_Details":
+        setStep(0);
+        break;
+      case "Address_Details":
+        setStep(1);
+        break;
+      case "Document_Details":
+        setStep(2);
+        break;
+      case "Education_Details":
+        setStep(3);
+        break;
+      default:
+        setStep(0); // Default to the first step if no match is found
+    }
+    console.log("Ekye step", step);
+  }, []);
 
   const handleNestedChange = (section, subSection, field, value) => {
     setFormData((prev) => ({
@@ -158,45 +137,52 @@ const Ekye = () => {
                 "Educational Details",
               ].map((label, index) => {
                 const stepIndex = index;
-
                 return (
                   <div
                     key={label}
-                    className={`flex-1 text-center relative cursor-pointer ${
-                      step >= stepIndex
-                        ? "text-bgprimaryhover"
-                        : "text-gray-500"
+                    className={`flex-1 flex flex-col items-center relative cursor-pointer ${
+                      step >= stepIndex ? "text-white" : "text-bgprimaryhover"
                     }`}>
-                    {/* Circle */}
-                    <div
-                      className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center ${
-                        step >= stepIndex
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-300"
-                      }`}>
-                      {index + 1}
+                    {/* Step Container */}
+                    <div className="relative flex items-center">
+                      {/* Step Image */}
+                      <div className="relative">
+                        <img
+                          src={step >= stepIndex ? After : Before}
+                          alt={
+                            step >= stepIndex
+                              ? "after complete"
+                              : "before complete"
+                          }
+                          className="w-10 h-10"
+                        />
+                        {/* Index Number */}
+                        <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
+                          {index + 1}
+                        </span>
+                      </div>
+                      {/* Connecting Line */}
+                      {stepIndex < 3 && (
+                        <div
+                          className={`absolute top-1/2 transform -translate-y-1/2 h-2 rounded-lg ${
+                            step > stepIndex ? "bg-sky-900" : "bg-gray-300"
+                          }`}
+                          style={{
+                            left: "90%", // Start from the end of the current step
+                            width: "750%", // Start from the end of the current step
+                          }}></div>
+                      )}
                     </div>
                     {/* Label */}
-                    <div className="mt-2 text-xs">{label}</div>
-
-                    {/* Connecting Line */}
-                    {stepIndex < 3 && (
-                      <div
-                        className={`absolute top-1/2 -z-10 h-px w-full transform -translate-y-1/2 ${
-                          step > stepIndex ? "bg-green-500" : "bg-gray-300"
-                        }`}
-                        style={{
-                          left: `${(100 / (stepIndex + 1)) * (stepIndex + 1)}%`,
-                          right: `${
-                            100 - (100 / stepIndex) * (stepIndex + 2)
-                          }%`, // Adjusted based on the number of steps
-                        }}></div>
-                    )}
+                    <div className="mt-2 text-xs text-bgprimaryhover">
+                      {label}
+                    </div>
                   </div>
                 );
               })}
             </div>
           </div>
+
           <ValidationComponent>
             <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto">
               {step === 0 && !isLoading && (

@@ -46,7 +46,7 @@ const ValidateLink = () => {
 
         if (response.status === 200) {
           // toast.success(response.data.message);
-          toast.success(response.data.message);
+          // toast.success(response.data.message);
           navigate("/resetpwd");
         } else {
           // toast.error(response.data.message);

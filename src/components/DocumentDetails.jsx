@@ -4,7 +4,7 @@ import { Button, Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
 import Loader from "./Loader";
-
+import { FaRegEye } from "react-icons/fa";
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -216,22 +216,24 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 />
               </div>
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
-                  label="PAN Card Photo"
-                  className=""
-                  variant="bordered"
-                  type="file"
-                  onChange={(e) =>
-                    handleNestedChange(
-                      "documents",
-                      "panCardDocumentFile",
-                      e.target.files[0]
-                    )
-                  }
-                />
+                <div>
+                  <Input
+                    classNames={{
+                      inputWrapper: "shadow-lg",
+                    }}
+                    variant="bordered"
+                    type="file"
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "documents",
+                        "panCardDocumentFile",
+                        e.target.files[0]
+                      )
+                    }
+                    label="Enter PAN issued place"
+                  />
+                </div>
+
                 <div className="flex gap-x-4">
                   <label className="text-xs">
                     Please upload the image of type either PNG or jpg
@@ -241,8 +243,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       href={formData.documents?.panCardDocumentFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-blue-600 underline mb-2">
-                      View Uploaded PAN Card
+                      className="block text-sm text-green-600 underline mb-2">
+                      <span className="flex items-center gap-x-2">
+                        <FaRegEye />
+                        View Uploaded PAN Card
+                      </span>
                     </a>
                   )}
                 </div>
@@ -313,21 +318,24 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 />
               </div>
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
-                  variant="bordered"
-                  type="file"
-                  label="Citizenship Front Photo"
-                  onChange={(e) => {
-                    handleNestedChange(
-                      "documents",
-                      "citizenshipFrontDocumentFile",
-                      e.target.files[0]
-                    );
-                  }}
-                />
+                <div>
+                  <Input
+                    classNames={{
+                      inputWrapper: "shadow-lg",
+                    }}
+                    type="file"
+                    variant="bordered"
+                    onChange={(e) => {
+                      handleNestedChange(
+                        "documents",
+                        "citizenshipFrontDocumentFile",
+                        e.target.files[0]
+                      );
+                    }}
+                    label="Citizenship Front Photo"
+                  />
+                </div>
+
                 <div className="flex gap-x-4">
                   <label className="text-xs">
                     Please upload the image of type either PNG or jpg
@@ -338,29 +346,35 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-blue-600 underline mb-2">
-                        View Uploaded Front Side
+                        className="block text-sm text-green-600 underline mb-2">
+                        <span className="flex items-center gap-x-2">
+                          <FaRegEye />
+                          View Uploaded Front Side
+                        </span>
                       </a>
                     )}
                 </div>
               </div>
             </div>
             <div>
-              <Input
-                classNames={{
-                  inputWrapper: "shadow-lg",
-                }}
-                variant="bordered"
-                type="file"
-                label="Citizenship Back Photo "
-                onChange={(e) =>
-                  handleNestedChange(
-                    "documents",
-                    "citizenshipBackDocumentFile",
-                    e.target.files[0]
-                  )
-                }
-              />
+              <div>
+                <Input
+                  classNames={{
+                    inputWrapper: "shadow-lg",
+                  }}
+                  variant="bordered"
+                  type="file"
+                  onChange={(e) =>
+                    handleNestedChange(
+                      "documents",
+                      "citizenshipBackDocumentFile",
+                      e.target.files[0]
+                    )
+                  }
+                  label="Citizenship Back Photo "
+                />
+              </div>
+
               <div className="flex gap-x-4">
                 <lable className="text-xs">
                   Please upload the image of type either PNG or jpg
@@ -371,8 +385,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       href={formData?.documents?.citizenshipBackDocumentFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-blue-600 underline mb-2">
-                      View Uploaded Back Side
+                      className="block text-sm text-green-600 underline mb-2">
+                      <span className="flex items-center gap-x-2">
+                        <FaRegEye />
+                        View Uploaded Back Side
+                      </span>
                     </a>
                   )}
               </div>

@@ -5,7 +5,7 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 
@@ -77,6 +77,48 @@ const PersonalDetails = ({
     handleNext();
     onSubmit();
   };
+  useEffect(() => {
+    setIsLoading(true);
+    const authToken = localStorage.getItem("authToken");
+    const fetchPersonalDetails = async () => {
+      try {
+        const response = await axiosInstance.get("/api/v1/personal/getById", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        if (response.data.responseCode === "200") {
+          const data = response.data.data;
+
+          setFormData((prev) => ({
+            ...prev,
+            personalInfo: {
+              email: data.email || "",
+              dob: data.dateOfBirthAd || "",
+              gender: data.gender || "",
+              bloodType: data.bloodGroup || "",
+              emergencyNumber: data.emergencyNumber || "",
+              emergencyName: data.emergencyName || "",
+              emergencyRelation: data.emergencyType || "",
+              guardianName: data.guardianName || "",
+              guardianRelation: data.guardianType || "",
+              guardianPhone: data.guardianNumber || "",
+            },
+            // Update other sections if needed (address, education, documents)
+          }));
+        } else {
+          // toast.error("Failed to fetch data.");
+        }
+      } catch (error) {
+        console.error("Error fetching personal details:", error);
+        // toast.error("Error fetching data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPersonalDetails();
+  }, []);
 
   return (
     <div className="space-y-4">

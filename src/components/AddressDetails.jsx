@@ -105,6 +105,7 @@ const AddressDetails = ({
     };
 
     fetchAddressDetails();
+    fetchAddressDetails();
   }, []);
 
   const handleSameAsPermanent = (e) => {
@@ -224,6 +225,20 @@ const AddressDetails = ({
 
               <div className="grid grid-cols-2 gap-4  ">
                 {/* NextUI Dropdown for Province */}
+                {/* <select
+                  className="w-full rounded-lg shadow-lg shadow-gray-300"
+                  aria-label="Select A Province"
+                  onChange="handleProvinceChange(event)">
+                  <option disabled selected value="">
+                    Select A Province
+                  </option>
+                  $
+                  {provinces.map((province) => (
+                    <option key={province.id} value={province.id}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select> */}
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
@@ -231,7 +246,11 @@ const AddressDetails = ({
                   variant="bordered"
                   className="w-full rounded-lg shadow-lg shadow-gray-300"
                   label="Select A Province"
-                  selectedKeys={[formData.address?.permanent?.provinceId]} // Ensure this is the correct key
+                  // value={formData.address?.permanent?.provinceId}
+                  items={provinces}
+                  selectedKeys={
+                    new Set([String(formData.address?.permanent?.provinceId)])
+                  } // Ensure this is the correct key
                   onSelectionChange={(keys) => {
                     const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
                     handleNestedChange(
@@ -245,15 +264,26 @@ const AddressDetails = ({
                     fetchDistrictsByProvince(provinceId);
                   }}>
                   {provinces.map((province) => (
-                    <SelectItem
-                      key={province.provinceId}
-                      value={province.provinceId}>
+                    <SelectItem key={province.id} value={province.id}>
                       {province.name}
                     </SelectItem>
                   ))}
                 </Select>
 
                 {/* NextUI Dropdown for District */}
+                {/* <select
+                  className="w-full rounded-lg shadow-lg shadow-gray-300"
+                  aria-label="Select A District"
+                  onChange="handleProvinceChange(event)">
+                  <option disabled selected value="">
+                    Select A District
+                  </option>
+                  {districts.map((district) => (
+                    <option key={district.districtId} value={district.name}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select> */}
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
@@ -387,9 +417,7 @@ const AddressDetails = ({
                     fetchDistrictsByProvince(provinceId);
                   }}>
                   {provinces.map((province) => (
-                    <SelectItem
-                      key={province.provinceId}
-                      value={province.provinceId}>
+                    <SelectItem key={province.id} value={province.id}>
                       {province.name}
                     </SelectItem>
                   ))}

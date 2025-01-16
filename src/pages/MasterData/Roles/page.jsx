@@ -247,7 +247,7 @@ const Roles = () => {
                         Role Name
                       </label>
                       <Input
-                        id="Name"
+                        id="name"
                         type="text"
                         placeholder="Enter role name"
                         value={roleName}
@@ -346,7 +346,7 @@ const Roles = () => {
 
                   <div className="flex flex-col flex-1 gap-4">
                     <Input
-                      id="Name"
+                      id="name"
                       type="text"
                       label="Enter Role Name "
                       value={roleName}

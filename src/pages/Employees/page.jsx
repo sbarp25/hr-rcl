@@ -84,10 +84,10 @@ const Employees = () => {
           </div>
           {editEmployee && <div>Editing Employee</div>}
           <div className="bg-white shadow-md rounded-lg overflow-x-auto max-h-[95vh] overflow-y-auto">
-            <table className="table-auto w-full border-collapse">
+            <table className="table-fixed w-full border-collapse">
               <thead>
                 <tr className="bg-gray-100 text-gray-700 text-left">
-                  <th className="border border-gray-300 px-4 py-2">S.N</th>
+                  <th className="border border-gray-300 px-2 py-1 w-16">S.N</th>
                   <th className="border border-gray-300 px-4 py-2">
                     Employee Name
                   </th>
@@ -105,7 +105,7 @@ const Employees = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="max-h-96">
+              <tbody>
                 {paginatedEmployees.length > 0 ? (
                   paginatedEmployees
                     .filter((position) => !position.isDeleted)
@@ -115,24 +115,23 @@ const Employees = () => {
                         className={`${
                           index % 2 === 0 ? "bg-gray-50" : "bg-white"
                         } hover:bg-gray-100`}>
-                        <td className="border border-gray-300 px-4 py-2">
+                        <td className="border border-gray-300 px-2 py-1 text-center w-16">
                           {startIndex + index + 1}
                         </td>
                         <td className="border border-gray-300 px-4 py-2">
                           {employee.fullName}
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 sm:overflow-y-hidden">
+                        <td className="border border-gray-300 px-4 py-2">
                           <div className="max-h-32 overflow-y-auto">
                             {employee.email}
                           </div>
                         </td>
-                        <td className="border border-gray-300 px-4 py-2 sm:overflow-y-hidden">
+                        <td className="border border-gray-300 px-4 py-2">
                           <div className="max-h-32 overflow-y-auto">
                             {employee.departmentName}
                           </div>
                         </td>
-
-                        <td className="border border-gray-300 px-4 py-2 sm:overflow-y-hidden">
+                        <td className="border border-gray-300 px-4 py-2">
                           <div className="max-h-32 overflow-y-auto">
                             {employee.postionName}
                           </div>
@@ -155,20 +154,20 @@ const Employees = () => {
                     ))
                 ) : (
                   <tr>
-                    <td colSpan="3" className="text-center text-gray-500 py-4">
+                    <td colSpan="6" className="text-center text-gray-500 py-4">
                       No employees found.
                     </td>
                   </tr>
                 )}
               </tbody>
-              <div>
-                <Pagination
-                  initialPage={1}
-                  total={Math.ceil(employeesData.length / noticesPerPage)}
-                  onChange={handlePageChange}
-                />
-              </div>
             </table>
+          </div>
+          <div>
+            <Pagination
+              initialPage={1}
+              total={Math.ceil(employeesData.length / noticesPerPage)}
+              onChange={handlePageChange}
+            />
           </div>
         </div>
       </ValidationComponent>

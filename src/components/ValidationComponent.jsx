@@ -23,7 +23,7 @@ const ValidationComponent = ({ children }) => {
       regex: /^[a-zA-Z0-9_]{3,30}$/,
       message: "Username must be 3-30 characters long",
     },
-    Name: {
+    name: {
       // this is Id which should be same in form comp
       regex: /^[a-zA-Z0-9_]{3,30}$/,
       message: "Name must be 3-30 characters long",
@@ -63,6 +63,19 @@ const ValidationComponent = ({ children }) => {
     }));
   };
 
+  const handleKeyDown = (e, id) => {
+    if (id === "phone") {
+      const isNumberKey =
+        (e.key >= "0" && e.key <= "9") ||
+        e.key === "Backspace" ||
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight";
+      if (!isNumberKey) {
+        e.preventDefault();
+      }
+    }
+  };
+
   const renderChildrenWithProps = (children) =>
     React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
@@ -74,9 +87,15 @@ const ValidationComponent = ({ children }) => {
                   handleInputChange(e);
                   child.props.onChange?.(e);
                 },
+                onKeyDown: (e) => handleKeyDown(e, child.props.id),
               })}
               {errors[child.props.id] && (
-                <div className="text-sm mt-1 text-red-500">
+                <div
+                  style={{
+                    color: "red",
+                    fontSize: "0.875rem",
+                    marginTop: "0.25rem",
+                  }}>
                   {errors[child.props.id]}
                 </div>
               )}

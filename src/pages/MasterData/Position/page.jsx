@@ -229,7 +229,7 @@ const Position = () => {
                 {/* Input Fields */}
                 <div className="flex flex-col flex-1 gap-4">
                   <Input
-                    id="Name"
+                    id="name"
                     type="text"
                     placeholder="Position Name"
                     value={positionName}
@@ -276,7 +276,7 @@ const Position = () => {
 
                 <div className="flex flex-col flex-1 gap-4">
                   <Input
-                    id="Name"
+                    id="name"
                     type="text"
                     label="Position Name"
                     value={positionName}

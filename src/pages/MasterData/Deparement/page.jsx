@@ -233,7 +233,7 @@ const Department = () => {
                 <div className="flex flex-col flex-1 gap-4">
                   <Input
                     type="text"
-                    id="Name"
+                    id="name"
                     placeholder="Department Name"
                     value={departmentName}
                     onChange={(e) => setDepartmentName(e.target.value)}
@@ -274,7 +274,7 @@ const Department = () => {
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex flex-col flex-1 gap-4">
                   <Input
-                    id="Name"
+                    id="name"
                     type="text"
                     label="Department Name"
                     value={departmentName}
