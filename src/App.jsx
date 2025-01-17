@@ -21,6 +21,7 @@ import AddEmployees from "./pages/Employees/AddEmployees/page.jsx";
 import Rstpwd from "./pages/resetpassword/page.jsx";
 import ValidateLink from "./pages/resetpassword/validatelink/page.jsx";
 import AuthLayout from "./components/AuthLayout/AuthLayout.jsx";
+import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
 function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -66,6 +67,7 @@ function App() {
             <Route path="/Leave/status" element={<LeaveStatus />} />
             <Route path="/Leave/Request" element={<LeaveRequest />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/AdminEkye" element={<AdminEkye />} />
           </Routes>
         </Layout>
       )}

@@ -70,6 +70,11 @@ const Sidebar = () => {
       label: "EKYE",
       to: "/EKYE",
     },
+    {
+      icon: IoIosPeople,
+      label: "Admin Ekye",
+      to: "/AdminEkye",
+    },
   ];
 
   const toggleSidebar = () => {
