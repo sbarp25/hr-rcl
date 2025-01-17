@@ -238,18 +238,23 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   <label className="text-xs">
                     Please upload the image of type either PNG or jpg
                   </label>
-                  {photoPAN && formData?.documents?.panCardDocumentFile && (
-                    <a
-                      href={formData.documents?.panCardDocumentFile}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
-                      <span className="flex items-center gap-x-2">
-                        <FaRegEye />
-                        View Uploaded PAN Card
-                      </span>
-                    </a>
-                  )}
+                  {photoPAN &&
+                    (formData?.documents?.panCardDocumentFile ? (
+                      <a
+                        href={formData.documents?.panCardDocumentFile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-green-600 underline mb-2">
+                        <span className="flex items-center gap-x-2">
+                          <FaRegEye />
+                          View Uploaded PAN Card
+                        </span>
+                      </a>
+                    ) : (
+                      <div className="text-xs text-red-500">
+                        No Links Available
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -285,8 +290,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     inputWrapper: "shadow-lg",
                   }}
                   variant="bordered"
-                  label="Citizenship Issue Date"
                   type="date"
+                  label="Citizenship Issue Date"
                   value={formData?.documents?.issuedDate}
                   onChange={(e) =>
                     handleNestedChange(
@@ -341,7 +346,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     Please upload the image of type either PNG or jpg
                   </label>
                   {citizenshipFront &&
-                    formData?.documents?.citizenshipFrontDocumentFile && (
+                    (formData?.documents?.citizenshipFrontDocumentFile ? (
                       <a
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
@@ -352,7 +357,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                           View Uploaded Front Side
                         </span>
                       </a>
-                    )}
+                    ) : (
+                      <div className="text-xs text-red-500">
+                        No Links Available
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
@@ -380,7 +389,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   Please upload the image of type either PNG or jpg
                 </lable>
                 {citizenshipBack &&
-                  formData?.documents?.citizenshipBackDocumentFile && (
+                  (formData?.documents?.citizenshipBackDocumentFile ? (
                     <a
                       href={formData?.documents?.citizenshipBackDocumentFile}
                       target="_blank"
@@ -391,7 +400,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         View Uploaded Back Side
                       </span>
                     </a>
-                  )}
+                  ) : (
+                    <div className="text-xs text-red-500">
+                      No Links Available
+                    </div>
+                  ))}
               </div>
             </div>
             <div className="form-navigation flex justify-between mt-6">

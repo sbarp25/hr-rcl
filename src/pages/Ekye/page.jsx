@@ -7,8 +7,8 @@ import axiosInstance from "../../lib/axios-Instance.js";
 import PersonalDetails from "../../components/PersonalDetails.jsx";
 import Loader from "../../components/Loader.jsx";
 import ValidationComponent from "../../components/ValidationComponent.jsx";
-import After from "../../assets/Images/After.png";
-import Before from "../../assets/Images/Before.png";
+import After from "../../assets/svgs/After.svg";
+import Before from "../../assets/svgs/Before.svg";
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -154,7 +154,7 @@ const Ekye = () => {
                               ? "after complete"
                               : "before complete"
                           }
-                          className="w-10 h-10"
+                          className="w-14 h-10"
                         />
                         {/* Index Number */}
                         <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">

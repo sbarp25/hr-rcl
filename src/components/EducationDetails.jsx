@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import { FaRegEye } from "react-icons/fa";
+import Inputcomp from "./Inputcomp";
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
   const [selectedDegree, setSelectedDegree] = useState("");
@@ -405,7 +406,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       </span>
                     </a>
                   ) : (
-                    <div className="text-xs text-red-500">No Links Found</div>
+                    <div className="text-xs text-red-500">
+                      No Links Available
+                    </div>
                   ))}
               </div>
             </div>

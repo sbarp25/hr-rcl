@@ -216,7 +216,7 @@ const AddressDetails = ({
           <h2 className="text-2xl font-semibold text-gray-700">
             Address Details
           </h2>
-          <form className="w-full" onSubmit={onSubmit}>
+          <form className="w-full">
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
