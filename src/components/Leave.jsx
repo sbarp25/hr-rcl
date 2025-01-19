@@ -82,8 +82,12 @@ const Leave = () => {
     },
   ];
   return (
-    <div className="max-h-[28vh] overflow-auto">
-      <Table bordered aria-label="Dyanamic Attendance Table">
+    <div>
+      <Table
+        bordered
+        aria-label="Dyanamic Attendance Table"
+        isHeaderSticky
+        className="max-h-[35vh] overflow-auto">
         <TableHeader className="Capitalize">
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>

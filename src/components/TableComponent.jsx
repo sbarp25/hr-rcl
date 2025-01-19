@@ -1,4 +1,4 @@
-import { Table, TableBody, TableHeader } from "@nextui-org/react";
+import { Table, TableBody, TableColumn, TableHeader } from "@nextui-org/react";
 import React from "react";
 
 const TableComponent = ({ headeritem }) => {
@@ -6,9 +6,9 @@ const TableComponent = ({ headeritem }) => {
     <Table>
       <TableHeader>
         {headeritem.map((item, index) => (
-          <BreadcrumbItem key={index} href={item.href}>
+          <TableColumn key={index} href={item.href}>
             {item.label}
-          </BreadcrumbItem>
+          </TableColumn>
         ))}
       </TableHeader>
       <TableBody></TableBody>

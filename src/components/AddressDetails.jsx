@@ -4,6 +4,7 @@ import axiosInstance from "../lib/axios-Instance";
 import { Button, Input, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
 import Loader from "./Loader";
+import Inputcomp from "./Inputcomp";
 
 const AddressDetails = ({
   formData,
@@ -25,12 +26,9 @@ const AddressDetails = ({
         const response = await axiosInstance.get("/api/v1/province/get/all");
         if (response.data.responseCode === "200") {
           setProvinces(response.data.datalist);
-        } else {
-          toast.error(response.data.message);
         }
       } catch (error) {
         console.error("Failed to fetch Province Data.", error);
-        toast.error("Failed to fetch Province Data.", error);
       } finally {
         setIsLoading(false);
       }
@@ -104,6 +102,7 @@ const AddressDetails = ({
       }
     };
 
+    fetchAddressDetails();
     fetchAddressDetails();
   }, []);
 
@@ -207,15 +206,16 @@ const AddressDetails = ({
     onSubmit();
     handleNext();
   };
+
   return (
     <>
-      {isLoading && <Loader />}
+      {/* {isLoading && <Loader />} */}
       <ValidationComponent>
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-700">
             Address Details
           </h2>
-          <form className="w-full" onSubmit={onSubmit}>
+          <form className="w-full">
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
@@ -224,6 +224,7 @@ const AddressDetails = ({
 
               <div className="grid grid-cols-2 gap-4  ">
                 {/* NextUI Dropdown for Province */}
+
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
@@ -231,7 +232,10 @@ const AddressDetails = ({
                   variant="bordered"
                   className="w-full rounded-lg shadow-lg shadow-gray-300"
                   label="Select A Province"
-                  selectedKeys={[formData.address?.permanent?.provinceId]} // Ensure this is the correct key
+                  items={formData.address?.permanent?.provinceId}
+                  selectedKeys={
+                    new Set([String(formData.address?.permanent?.provinceId)])
+                  }
                   onSelectionChange={(keys) => {
                     const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
                     handleNestedChange(
@@ -241,19 +245,17 @@ const AddressDetails = ({
                       provinceId
                     );
 
-                    // Fetch districts for the selected province
                     fetchDistrictsByProvince(provinceId);
                   }}>
                   {provinces.map((province) => (
-                    <SelectItem
-                      key={province.provinceId}
-                      value={province.provinceId}>
+                    <SelectItem key={province.id} value={province.id}>
                       {province.name}
                     </SelectItem>
                   ))}
                 </Select>
 
                 {/* NextUI Dropdown for District */}
+
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
@@ -262,7 +264,7 @@ const AddressDetails = ({
                   variant="bordered"
                   label="Select A District"
                   selectedKeys={[formData.address?.permanent?.districtId]}
-                  onSelectionChange={(value) => {
+                  onChange={(value) => {
                     const districtId = Array.from(value)[0];
                     handleNestedChange(
                       "address",
@@ -279,11 +281,8 @@ const AddressDetails = ({
                 </Select>
 
                 {/* Other Address Fields */}
-                <Input
+                <Inputcomp
                   id=""
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
                   variant="bordered"
                   type="text"
                   label="Municipality"
@@ -297,14 +296,7 @@ const AddressDetails = ({
                     )
                   }
                 />
-                <Input
-                  id="ward"
-                  variant="bordered"
-                  type="text"
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
-                  label="Ward No."
+                <Inputcomp
                   value={formData.address?.permanent?.wardNumber}
                   onChange={(e) =>
                     handleNestedChange(
@@ -314,14 +306,12 @@ const AddressDetails = ({
                       e.target.value
                     )
                   }
-                />
-                <Input
+                  label="Ward No"
                   variant="bordered"
                   type="text"
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
-                  label="pincode"
+                  id="ward"
+                />
+                <Inputcomp
                   value={formData.address?.permanent?.pinCode}
                   onChange={(e) =>
                     handleNestedChange(
@@ -331,13 +321,15 @@ const AddressDetails = ({
                       e.target.value
                     )
                   }
-                />
-                <Input
+                  label="Pin Code"
                   variant="bordered"
                   type="text"
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                  id="pincode"
+                />
+
+                <Inputcomp
+                  variant="bordered"
+                  type="text"
                   label="Tole/Area"
                   value={formData.address?.permanent?.tole}
                   onChange={(e) =>
@@ -387,9 +379,7 @@ const AddressDetails = ({
                     fetchDistrictsByProvince(provinceId);
                   }}>
                   {provinces.map((province) => (
-                    <SelectItem
-                      key={province.provinceId}
-                      value={province.provinceId}>
+                    <SelectItem key={province.id} value={province.id}>
                       {province.name}
                     </SelectItem>
                   ))}
@@ -422,10 +412,7 @@ const AddressDetails = ({
                 </Select>
 
                 {/* Additional Fields */}
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="text"
                   label="Municipality"
@@ -439,10 +426,7 @@ const AddressDetails = ({
                     )
                   }
                 />
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   id="ward"
                   variant="bordered"
                   type="text"
@@ -457,10 +441,7 @@ const AddressDetails = ({
                     )
                   }
                 />
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   id="pincode"
                   variant="bordered"
                   type="text"
@@ -476,10 +457,7 @@ const AddressDetails = ({
                   }
                 />
 
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="text"
                   label="Tole/Area"

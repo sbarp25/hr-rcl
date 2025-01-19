@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
-import { Form, Input, Select, SelectItem } from "@nextui-org/react";
+import Loader from "../../../components/Loader";
+import { Form, Input } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import ValidationComponent from "../../../components/ValidationComponent";
-import Inputcomp from "../../../components/Inputcomp";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-// import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
     fullname: "",
@@ -15,7 +13,6 @@ const AddEmployeeForm = () => {
     department: "",
     position: "",
     roles: "",
-    hiredate: "",
     performEKYC: true,
   });
   const [departmentsData, setDepartmentsData] = useState([]);
@@ -166,19 +163,14 @@ const AddEmployeeForm = () => {
       setIsLoading(false);
     }
   };
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Employees", href: "/Employees" },
-    { label: "Add Employees", href: "/AddEmployees" },
-  ];
+
   return (
     <>
       <ValidationComponent></ValidationComponent>
-      {/* {isLoading && (
+      {isLoading && (
         <Loader message="Please wait while the work is being done" />
-      )} */}
+      )}
       <div className="max-w-6xl mx-auto bg-white shadow-md rounded px-8 py-6 max-h-[90vh] overflow-auto">
-        <BreadcrumbsComponent items={breadcrumbItems} />
         <h1 className="text-2xl font-semibold text-gray-800 mb-6">
           Add Employee
         </h1>
@@ -186,12 +178,17 @@ const AddEmployeeForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {/* Full Name */}
             <div className="mb-4">
-              <Input
-                variant="bordered"
+              <label
+                htmlFor="fullname"
+                className="block text-gray-700 font-medium mb-2">
+                Full Name
+              </label>
+              <input
                 type="text"
-                id="phone"
+                id="username"
                 name="fullname"
-                label="Enter FullName"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter full name"
                 value={formData.fullname}
                 onChange={handleChange}
                 required
@@ -200,118 +197,140 @@ const AddEmployeeForm = () => {
 
             {/* Phone */}
             <div className="mb-4">
-              <Input
-                variant="bordered"
+              <label
+                htmlFor="phone"
+                className="block text-gray-700 font-medium mb-2">
+                Phone
+              </label>
+              <input
                 type="text"
                 id="phone"
                 name="phone"
-                label="Enter phone number"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter phone number"
                 value={formData.phone}
                 onChange={handleChange}
                 required
               />
             </div>
-
-            {/* Email */}
-            <div className="mb-4 ">
-              <Input
-                variant="bordered"
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 font-medium mb-2">
+                Email
+              </label>
+              <input
                 type="email"
                 id="email"
                 name="email"
-                label="Enter email address"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter email address"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
             </div>
           </div>
+
+          {/* Email */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {/* Department */}
             <div className="mb-4">
-              <Select
-                scrollShadowProps={{
-                  isEnabled: true, // Enable the scroll shadow if needed
-                }}
-                variant="bordered"
-                label={isLoading ? "Loading..." : "Select A Department"}
-                selectedKeys={formData.department}
-                onSelectionChange={handleChange}
-                defaultValue={"Select Department"}>
+              <label
+                htmlFor="department"
+                className="block text-gray-700 font-medium mb-2">
+                Department
+              </label>
+              <select
+                id="department"
+                name="department"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                value={formData.department}
+                onChange={handleChange}
+                required>
+                <option value="" disabled selected>
+                  Select department
+                </option>
                 {isLoading ? (
-                  <SelectItem key="loading">Loading departments...</SelectItem>
+                  <option>Loading departments...</option>
                 ) : (
-                  departmentsData?.length > 0 &&
+                  departmentsData.length > 0 &&
                   departmentsData
-                    .filter((department) => !department?.isDeleted) // Filter out deleted departments
+                    .filter((department) => !department.isDeleted) // Filter out deleted departments
                     .map((department) => (
-                      <SelectItem key={department?.id} value={department?.name}>
-                        {department?.name}
-                      </SelectItem>
+                      <option key={department.id} value={department.name}>
+                        {department.name}
+                      </option>
                     ))
                 )}
-              </Select>
+              </select>
             </div>
 
             {/* Position */}
             <div className="mb-4">
-              <Select
-                scrollShadowProps={{
-                  isEnabled: true, // Enable the scroll shadow if needed
-                }}
-                variant="bordered"
-                label={isLoading ? "Loading..." : "Select A Position"}
-                selectedKeys={formData.position}
-                onSelectionChange={handleChange}
-                defaultValue={"Select Position"}>
+              <label
+                htmlFor="position"
+                className="block text-gray-700 font-medium mb-2">
+                Position
+              </label>
+              <select
+                id="position"
+                name="position"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                value={formData.position}
+                onChange={handleChange}
+                required>
+                <option value="" disabled selected>
+                  Select position
+                </option>
                 {isLoading ? (
-                  <SelectItem key="loading">Loading Position...</SelectItem>
+                  <option>Loading positions...</option>
                 ) : (
-                  positionData?.length > 0 &&
-                  positionData
-                    .filter((position) => !position?.isDeleted) // Filter out deleted departments
-                    .map((position) => (
-                      <SelectItem key={position?.id} value={position?.name}>
-                        {position?.name}
-                      </SelectItem>
-                    ))
+                  positionData.length > 0 &&
+                  positionData.map((position) => (
+                    <option key={position.id} value={position.name}>
+                      {position.name}
+                    </option>
+                  ))
                 )}
-              </Select>
+              </select>
             </div>
-
             {/* Roles */}
             <div className="mb-4 ">
-              <Select
-                scrollShadowProps={{
-                  isEnabled: true, // Enable the scroll shadow if needed
-                }}
-                variant="bordered"
-                label={isLoading ? "Loading..." : "Select A Role"}
-                selectedKeys={formData.roles}
-                onSelectionChange={handleChange}
-                defaultValue={"Select Role"}>
+              <label
+                htmlFor="roles"
+                className="block text-gray-700 font-medium mb-2">
+                Roles
+              </label>
+              <select
+                id="roles"
+                name="roles"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                value={formData.roles}
+                onChange={handleChange}
+                required>
+                <option value="" disabled selected>
+                  Select role
+                </option>
                 {isLoading ? (
-                  <SelectItem key="loading">Loading Roles...</SelectItem>
+                  <option>Loading roles...</option>
                 ) : (
                   roleData &&
                   roleData.length > 0 &&
                   roleData.map((role) => (
-                    <SelectItem key={role.roleId} value={role.roleName}>
+                    <option key={role.roleId} value={role.roleName}>
                       {role.roleName}
-                    </SelectItem>
+                    </option>
                   ))
                 )}
-              </Select>
+              </select>
             </div>
           </div>
-
-          {/* Perform eKYe */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             <div>
               <Input
-                classNames={{
-                  inputWrapper: "shadow-lg",
-                }}
+                className="shadow-lg shadow-gray-300 rounded-lg"
                 label="Hiring Date"
                 variant="bordered"
                 type="date"
@@ -320,6 +339,7 @@ const AddEmployeeForm = () => {
               />
             </div>
           </div>
+          {/* Perform eKYe */}
           <div className="mb-4 flex items-center">
             <input
               type="checkbox"
