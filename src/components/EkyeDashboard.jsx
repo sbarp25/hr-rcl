@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -10,104 +10,57 @@ import {
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
 import { Pagination } from "@nextui-org/pagination";
+import { toast } from "react-toastify/unstyled";
+import axiosInstance from "../lib/axios-Instance";
 
 const EkyeDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const EkyeDashboardDataPerPage = 3;
+  const [isLoading, setIsLoading] = useState(false);
+  const EkyeDashboardDataPerPage = 10;
   const startIndex = (currentPage - 1) * EkyeDashboardDataPerPage;
   const endIndex = startIndex + EkyeDashboardDataPerPage;
-  const EkyeDashboardData = [
-    {
-      Sn: 1,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 2,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 3,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 4,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 5,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 6,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 7,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 8,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 9,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-    {
-      Sn: 10,
-      RCLID: "01235642",
-      Name: "prativa Oli",
-      Email: "Example@gmail.com",
-      Department: "UI/UX",
-      position: "junior",
-    },
-  ];
-  const paginatedEkye = EkyeDashboardData.slice(startIndex, endIndex);
+
+  const [eKyeData, setEkyeData] = useState([]);
+
+  const paginatedEkye = eKyeData.slice(startIndex, endIndex);
 
   const handlePageChange = (EkyeDashboard) => {
     setCurrentPage(EkyeDashboard);
   };
-
+  useEffect(() => {
+    const FetchAllEKYE = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get(
+          "/api/v1/admin/completed_ekye_users",
+          {}
+        );
+        if (response?.data?.responseCode === "200") {
+          setEkyeData(response?.data?.datalist);
+        } else {
+          toast.error(response?.data?.message);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("An error occurred while fetching EKYE data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    FetchAllEKYE();
+  }, []);
+  console.log(eKyeData);
+  const headeritem = [
+    { label: "Dashboard", href: "/" },
+    { label: "Notice", href: "/notice" },
+  ];
   return (
-    <div className=" overflow-auto mt-4  h-full">
-      <Table bordered aria-label="Dyanamic Attendance Table">
-        <TableHeader className="Capitalize">
+    <div className="max-h-[80vh] overflow-auto mt-4 rounded-lg max-w-[80vw]">
+      <Table
+        bordered
+        aria-label="List of Employees who have Completed into EKYE"
+      >
+        <TableHeader>
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>
           <TableColumn>Name</TableColumn>
@@ -117,14 +70,14 @@ const EkyeDashboard = () => {
           <TableColumn>Action</TableColumn>
         </TableHeader>
         <TableBody>
-          {EkyeDashboardData.map((data) => (
-            <TableRow key={data.Sn}>
-              <TableCell>{data.Sn}</TableCell>
-              <TableCell>{data.RCLID}</TableCell>
-              <TableCell>{data.Name}</TableCell>
-              <TableCell>{data.Email}</TableCell>
-              <TableCell>{data.Department}</TableCell>
-              <TableCell>{data.position}</TableCell>
+          {paginatedEkye.map((data, index) => (
+            <TableRow key={data.rclId}>
+              <TableCell>{startIndex + index + 1}</TableCell>
+              <TableCell>{data.rclId}</TableCell>
+              <TableCell>{data.fullName}</TableCell>
+              <TableCell>{data.email}</TableCell>
+              <TableCell>{data.departmentName}</TableCell>
+              <TableCell>{data.positionName}</TableCell>
               <TableCell>
                 {data.Action}
                 <div className="flex justify-start gap-4">
@@ -142,13 +95,13 @@ const EkyeDashboard = () => {
           ))}
         </TableBody>
       </Table>
-      {/* <div className="mt-4 ml-96">
-        {/* <Pagination
+      <div className="mt-4 ml-96">
+        <Pagination
           initialPage={1}
-          total={Math.ceil(EkyeDashboardData.length / EkyeDashboardDataPerPage)}
+          total={Math.ceil(eKyeData.length / EkyeDashboardDataPerPage)}
           onChange={handlePageChange}
-        /> */}
-      {/* </div> */}
+        />
+      </div>
     </div>
   );
 };
