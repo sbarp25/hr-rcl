@@ -17,6 +17,8 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import ValidationComponent from "../../../components/ValidationComponent";
+import { BsFilter } from "react-icons/bs";
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -72,14 +74,7 @@ const Department = () => {
     try {
       const response = await axiosInstance.post(
         "/api/v1/departments/register",
-        newDepartment,
-        {
-          headers: {
-            Authorization:
-              "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdXBlcmFkbWluQHJlYm9vdGVkY2wuY29tIiwiaWF0IjoxNzM1ODIwNjYxLCJleHAiOjE3MzU4MjA5NjF9.N0SS_Q656P8vm4-kCrPDwNDZ33LbPl9uI3qXaEeB4jh989t6g3cRi2-3E0w6vsUi",
-            "Content-Type": "application/json",
-          },
-        }
+        newDepartment
       );
       if (response.data.responseCode === "201") {
         setDepartmentName("");
@@ -194,6 +189,11 @@ const Department = () => {
   ];
   const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
 
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "MasterData", href: "" },
+    { label: "Department", href: "/master-data/Department" },
+  ];
   return (
     <>
       <ValidationComponent>
@@ -202,7 +202,13 @@ const Department = () => {
         )}
         <div className="p-4 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="page-title">Departments</h2>
+            <div className=" flex justify-between">
+              <div className=" flex flex-col">
+                <BreadcrumbsComponent items={breadcrumbItems} />
+                <h2 className="page-title">Departments</h2>
+              </div>
+            </div>
+
             <Button
               className="button bg-green-700 tracking-normal
   hover:bg-green-900"
@@ -301,7 +307,7 @@ const Department = () => {
             </form>
           ) : (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <Table aria-label="Example table with dynamic content">
+              <Table aria-label="Department Table">
                 <TableHeader columns={columns}>
                   {(column) => (
                     <TableColumn key={column.key} className="">

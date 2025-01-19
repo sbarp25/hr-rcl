@@ -1,3 +1,5 @@
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+
 const LeaveStatus = () => {
   const data = {
     employee: {
@@ -56,7 +58,11 @@ const LeaveStatus = () => {
       },
     ],
   };
-
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "Leave", href: "" },
+    { label: "Leave Status", href: "/Leave/Status" },
+  ];
   const statusColors = {
     Approved: "bg-green-500 text-white",
     Pending: "bg-yellow-500 text-white",
@@ -66,6 +72,7 @@ const LeaveStatus = () => {
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold text-center mb-4">Leave Status</h1>
+      <BreadcrumbsComponent items={breadcrumbItems} />
       <h2 className="text-xl font-semibold text-center mb-6">
         {data.employee.name} ({data.employee.designation})
       </h2>

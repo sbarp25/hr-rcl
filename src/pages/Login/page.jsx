@@ -42,6 +42,7 @@ const Login = () => {
           },
         }
       );
+      // if (response.data?.responseCode === 200) {
       const accessToken = response?.data?.data?.accessToken;
       const refreshToken = response?.data?.data?.refreshToken;
       const FullName = response?.data?.data?.fullName;
@@ -63,8 +64,11 @@ const Login = () => {
       } else {
         navigate("/EKYE");
       }
+      // } else {
+      //   toast.error(response?.data?.data?.message);
+      // }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed. Try again.");
+      toast.error("Login failed. Try again.");
       console.error("Error logging in:", error);
     } finally {
       setIsLoading(false);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import Loader from "../../../components/Loader";
@@ -9,7 +9,7 @@ import { IoMdAdd } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import { Checkbox } from "@nextui-org/checkbox";
 import ValidationComponent from "../../../components/ValidationComponent";
-
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 const Roles = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [addRole, setAddRole] = useState(false);
@@ -26,8 +26,8 @@ const Roles = () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.post(
-          // "/api/v1/master/menus/and/actions/",
-          "/api/master/menus-and-actions/",
+          "/api/v1/master/menus/and/actions/",
+          // "/api/master/menus-and-actions/",
           {}
         );
         if (response.data.responseCode === "201") {
@@ -51,8 +51,8 @@ const Roles = () => {
     const fetchRoles = async () => {
       setIsLoading(true);
       try {
-        // const response = await axiosInstance.post("/api/v1/role/get/all", {});
-        const response = await axiosInstance.post("/api/roles/get/all", {});
+        const response = await axiosInstance.post("/api/v1/role/get/all", {});
+        // const response = await axiosInstance.post("/api/roles/get/all", {});
         if (response.data.responseCode === "200") {
           setRoleData(response.data.datalist);
         } else {
@@ -202,6 +202,11 @@ const Roles = () => {
         console.log("Unknown action");
     }
   };
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "MasterData", href: "" },
+    { label: "Roles", href: "/master-data/Roles" },
+  ];
 
   return (
     <>
@@ -209,7 +214,10 @@ const Roles = () => {
         {isLoading && <Loader message="Loading data, please wait..." />}
         <div className="p-4 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="page-title">Roles</h2>
+            <div>
+              <BreadcrumbsComponent items={breadcrumbItems} />
+              <h2 className="page-title">Roles</h2>
+            </div>
             <Button
               className="button bg-green-700 tracking-normal
   hover:bg-green-900"

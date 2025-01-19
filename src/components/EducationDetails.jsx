@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { Button, Input, Select, SelectItem } from "@nextui-org/react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
@@ -168,7 +168,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
       if (edu.files?.length) {
         edu.files.forEach((file) => {
-          formDataToSend.append(`imageAttachments[${eduIndex}]`, file);
+          formDataToSend.append(`imageAttachments[${eduIndex + 1}]`, file);
         });
       }
     });
@@ -219,105 +219,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         </Select>
       </div>
 
-      {/* Always render the zeroth index card */}
-      {/* <div className="space-y-4 border p-4 rounded-md">
-        <h3 className="text-lg font-semibold text-gray-600">
-          {degrees[0]} Details
-        </h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Institution
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="text"
-              placeholder="Institution"
-              value={formData?.education[0]?.institution || ""}
-              onChange={(e) => handleChange(0, "institution", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Faculty
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="text"
-              placeholder="Faculty"
-              value={formData.education[0]?.faculty || ""}
-              onChange={(e) => handleChange(0, "faculty", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Start Year
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="date"
-              value={formData.education[0]?.startYear || ""}
-              onChange={(e) => handleChange(0, "startYear", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              End Year
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="date"
-              value={formData.education[0]?.endYear || ""}
-              onChange={(e) => handleChange(0, "endYear", e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
-            <Select
-              variant="bordered"
-              className="w-full"
-              label="Select Status"
-              value={formData.education[0]?.status || ""}
-              onChange={(e) => handleChange(0, "status", e.target.value)}>
-              {statusOptions.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Upload Files
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="file"
-              multiple
-              onChange={(e) => handleFileChange(0, Array.from(e.target.files))}
-            />
-          </div>
-        </div>
-      </div> */}
       {Array.from({ length: numberOfItems }).map((_, index) => (
         <div key={index} className="space-y-4 border p-4 rounded-md">
           <h3 className="text-lg font-semibold text-gray-600">
@@ -325,7 +226,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Input
+              <Inputcomp
                 variant="bordered"
                 type="text"
                 label="Institution"
@@ -336,7 +237,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             <div>
-              <Input
+              <Inputcomp
                 variant="bordered"
                 type="text"
                 label="Faculty"
@@ -345,7 +246,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             <div>
-              <Input
+              <Inputcomp
                 variant="bordered"
                 type="date"
                 label="Select Start Date"
@@ -356,7 +257,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             <div>
-              <Input
+              <Inputcomp
                 variant="bordered"
                 type="date"
                 label="Select End Date"
@@ -381,7 +282,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               </Select>
             </div>
             <div>
-              <Input
+              <Inputcomp
                 label="Upload Document"
                 variant="bordered"
                 type="file"

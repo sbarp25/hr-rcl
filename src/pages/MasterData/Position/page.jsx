@@ -16,7 +16,7 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import ValidationComponent from "../../../components/ValidationComponent";
-
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -187,6 +187,12 @@ const Position = () => {
     { key: "actions", label: "Actions" },
   ];
   const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
+
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "MasterData", href: "" },
+    { label: "Position", href: "/master-data/Position" },
+  ];
   return (
     <>
       <ValidationComponent>
@@ -197,7 +203,10 @@ const Position = () => {
         <div className="p-4 md:p-8">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="page-title">Position</h2>
+            <div>
+              <BreadcrumbsComponent items={breadcrumbItems} />
+              <h2 className="page-title">Position</h2>
+            </div>
             <Button
               className="button bg-green-700 tracking-normal
           hover:bg-green-900"

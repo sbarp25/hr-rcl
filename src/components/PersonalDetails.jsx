@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
+import Inputcomp from "./Inputcomp";
 
 const PersonalDetails = ({
   formData,
@@ -126,10 +127,7 @@ const PersonalDetails = ({
 
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+          <Inputcomp
             variant="bordered"
             type="email"
             id="email"
@@ -161,10 +159,7 @@ const PersonalDetails = ({
         </div>
 
         <div className="flex  gap-x-4">
-          <Input
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+          <Inputcomp
             variant="bordered"
             type="date"
             label="Date of Birth"
@@ -203,10 +198,7 @@ const PersonalDetails = ({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Guardian Details</h3>
         <div className="flex gap-x-4 w-full">
-          <Input
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+          <Inputcomp
             id="username"
             type="text"
             label="Guardian Name"
@@ -222,10 +214,7 @@ const PersonalDetails = ({
             }
           />
 
-          <Input
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+          <Inputcomp
             type="text"
             id="phone"
             label="Guardian Phone"
@@ -271,11 +260,8 @@ const PersonalDetails = ({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Emergency Details</h3>
         <div className="flex gap-x-4 w-full">
-          <Input
+          <Inputcomp
             id="username"
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
             variant="bordered"
             type="text"
             label="Emergency Name"
@@ -289,10 +275,7 @@ const PersonalDetails = ({
               )
             }
           />
-          <Input
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+          <Inputcomp
             id="phone"
             type="text"
             variant="bordered"
@@ -308,10 +291,7 @@ const PersonalDetails = ({
             }
           />
         </div>
-        <Input
-          classNames={{
-            inputWrapper: "shadow-lg",
-          }}
+        <Inputcomp
           className="max-w-[49.5%]"
           type="text"
           variant="bordered"

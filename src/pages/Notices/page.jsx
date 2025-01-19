@@ -1,6 +1,7 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
 import { useState } from "react";
+import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,16 +177,24 @@ const Page = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "Notice", href: "/notice" },
+  ];
   return (
     <div className="container">
       {/* Notice Heading section */}
       <div className="page-title">
-        <MdArticle />
-        <p className="-mt-1">Notices</p>
+        <div className="flex flex-col">
+          <BreadcrumbsComponent items={breadcrumbItems} />
+          <div className="flex flex-row">
+            <MdArticle />
+            <p className="-mt-1">Notices</p>
+          </div>
+        </div>
       </div>
-      <div className="bg-white h-auto rounded-md mt-8 ">
-        <div className="notices-container p-4 max-h-[40rem] overflow-y-auto">
+      <div className="bg-white max-h-[90vh]  rounded-md ">
+        <div className="p-4 max-h-[40rem] overflow-y-auto">
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}

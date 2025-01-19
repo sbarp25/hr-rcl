@@ -16,7 +16,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="h-[95vh] overflow-y-hidden  ">
+      <div className="max-h-[95vh] w-[80vw] overflow-y-auto  ">
         <div className="flex justify-end mb-4">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
@@ -54,8 +54,8 @@ const Page = () => {
             </div>
 
             <div className="text-md font-bold text-right mr-16">
-              <p className="text-green-700 mr-2">Today Early Time: {}</p>
-              <p className="text-red-700">Today Delay Time: {}</p>
+              <p className="text-green-700 mr-2">Total Early Time: {"1 hrs"}</p>
+              <p className="text-red-700">Total Delay Time: {".5 hrs"}</p>
             </div>
           </div>
           <div className="flex gap-2">

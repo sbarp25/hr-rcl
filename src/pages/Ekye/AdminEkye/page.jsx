@@ -1,14 +1,20 @@
 import { Button, Input } from "@nextui-org/react";
-import React from "react";
 import { BsFilter } from "react-icons/bs";
 import EkyeDashboard from "../../../components/EkyeDashboard";
-
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 const page = () => {
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "EKYE", href: "/EKYE" },
+  ];
   return (
     <div className=" max-w-[200vh] max-h-[450vh] h-full w-full ">
       <div className="flex justify-between items-center px-8 py-4">
         {/* Left Text */}
-        <h1 className="text-4xl font-bold">EKYE</h1>
+        <div className="flex flex-col">
+          <BreadcrumbsComponent items={breadcrumbItems} />
+          <h1 className="page-title">EKYE</h1>
+        </div>
 
         {/* Right Controls */}
         <div className="flex items-center space-x-4">

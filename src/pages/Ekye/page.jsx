@@ -9,6 +9,7 @@ import Loader from "../../components/Loader.jsx";
 import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
+import { Button } from "@nextui-org/react";
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -169,7 +170,7 @@ const Ekye = () => {
                           }`}
                           style={{
                             left: "90%", // Start from the end of the current step
-                            width: "750%", // Start from the end of the current step
+                            width: "500%", // Start from the end of the current step
                           }}></div>
                       )}
                     </div>
@@ -226,7 +227,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        {/* <div className="form-navigation flex justify-between mt-6">
+        <div className="form-navigation flex justify-between mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -243,7 +244,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div> */}
+        </div>
       </div>
     </>
   );

@@ -79,7 +79,7 @@ const ValidationComponent = ({ children }) => {
   const renderChildrenWithProps = (children) =>
     React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
-        if (child.props.id && child.type === "input") {
+        if (child.props.id && child.type === "Input") {
           return (
             <div style={{ marginBottom: "1rem" }}>
               {React.cloneElement(child, {

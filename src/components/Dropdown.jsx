@@ -1,27 +1,40 @@
-import { Select, SelectItem } from "@nextui-org/select";
+import React from "react";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+} from "@nextui-org/react";
 
-const Dropdown = ({
-  className = "w-full",
-  label = "Select an option",
-  data = [],
-  selectedValue,
-  onSelectionChange,
-  valueKey = "id",
-  labelKey = "name",
-}) => {
+const DropDownComp = ({ items }) => {
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["10"]));
+
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    [selectedKeys]
+  );
+
   return (
-    <Select
-      className={className}
-      label={label}
-      selectedKeys={[selectedValue]}
-      onSelectionChange={onSelectionChange}>
-      {data.map((item) => (
-        <SelectItem key={item[valueKey]} value={item[valueKey]}>
-          {item[labelKey]}
-        </SelectItem>
-      ))}
-    </Select>
+    <Dropdown>
+      <DropdownTrigger>
+        <Button className="capitalize" variant="bordered">
+          {selectedValue}
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu
+        disallowEmptySelection
+        aria-label="Single selection example"
+        selectedKeys={selectedKeys}
+        selectionMode="single"
+        variant="flat"
+        onSelectionChange={setSelectedKeys}>
+        {items.map((item) => (
+          <DropdownItem key={item}>{item}</DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
   );
 };
 
-export default Dropdown;
+export default DropDownComp;

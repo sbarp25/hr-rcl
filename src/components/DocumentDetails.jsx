@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
 import Loader from "./Loader";
 import { FaRegEye } from "react-icons/fa";
+import Inputcomp from "./Inputcomp";
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -162,11 +163,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <h3 className="text-xl font-semibold text-gray-600">PAN Details</h3>
             <div className="grid grid-cols-2 gap-x-4">
               <div>
-                <Input
+                <Inputcomp
                   id="panNumber"
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
                   variant="bordered"
                   type="text"
                   value={formData?.documents?.panNumber}
@@ -177,10 +175,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 />
               </div>
               <div className="">
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   className="h-[10vh]"
                   variant="bordered"
                   type="date"
@@ -198,10 +193,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="text"
                   value={formData.documents?.panIssuePlace}
@@ -217,10 +209,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
               <div>
                 <div>
-                  <Input
-                    classNames={{
-                      inputWrapper: "shadow-lg",
-                    }}
+                  <Inputcomp
                     variant="bordered"
                     type="file"
                     onChange={(e) =>
@@ -267,10 +256,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="text"
                   value={formData?.documents?.citizenshipNumber}
@@ -285,10 +271,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 />
               </div>
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="date"
                   label="Citizenship Issue Date"
@@ -305,10 +288,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   type="text"
                   variant="bordered"
                   value={formData?.documents?.isIssuedPlaceDistrict}
@@ -324,10 +304,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
               <div>
                 <div>
-                  <Input
-                    classNames={{
-                      inputWrapper: "shadow-lg",
-                    }}
+                  <Inputcomp
                     type="file"
                     variant="bordered"
                     onChange={(e) => {
@@ -367,10 +344,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </div>
             <div>
               <div>
-                <Input
-                  classNames={{
-                    inputWrapper: "shadow-lg",
-                  }}
+                <Inputcomp
                   variant="bordered"
                   type="file"
                   onChange={(e) =>

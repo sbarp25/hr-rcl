@@ -7,12 +7,17 @@ import {
 import { Form, Input, Button } from "@nextui-org/react";
 import { DateInput } from "@nextui-org/date-input";
 import { useState } from "react";
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 
 const LeaveRequest = () => {
   const [dropdown, setDropdown] = useState("");
   const [teamLeader, setTeamLeader] = useState("");
   const [leaveType, setLeaveType] = useState("");
-
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "Leave", href: "" },
+    { label: "Leave Request", href: "/Leave/Request" },
+  ];
   const handleDropdownChange = (key) => {
     setDropdown(key);
     setTeamLeader(key);
@@ -24,7 +29,10 @@ const LeaveRequest = () => {
 
   return (
     <div className="">
-      <div className="page-title">Leave Request</div>
+      <div className="flex flex-col">
+        <BreadcrumbsComponent items={breadcrumbItems} />
+        <div className="page-title">Leave Request</div>
+      </div>
       <Form className="h-fit bg-white rounded-3xl container p-4 w-full">
         <div className="pt-2 w-full">
           <label className="">Subject</label>
