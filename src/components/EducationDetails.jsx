@@ -208,7 +208,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         <Select
           variant="bordered"
           className="w-full rounded-lg shadow-lg shadow-gray-300"
-          label="Select A Degree"
+          label="Select A Level"
           value={selectedDegree}
           onChange={(e) => setSelectedDegree(e.target.value)}>
           {degrees.map((degree) => (
@@ -219,13 +219,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         </Select>
       </div>
 
-      {Array.from({ length: numberOfItems }).map((_, index) => (
-        <div key={index} className="space-y-4 border p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-gray-600">
-            {degrees[index]} Details
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+      {formData.education.length > 0 ? (
+        Array.from({ length: numberOfItems }).map((_, index) => (
+          <div
+            key={formData.education[index]?.degree || index}
+            className="space-y-4 border p-4 rounded-md">
+            <h3 className="text-lg font-semibold text-gray-600">
+              {degrees[index]} Details
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
               <Inputcomp
                 variant="bordered"
                 type="text"
@@ -235,8 +237,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   handleChange(index, "institution", e.target.value)
                 }
               />
-            </div>
-            <div>
               <Inputcomp
                 variant="bordered"
                 type="text"
@@ -244,8 +244,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 value={formData.education[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
               />
-            </div>
-            <div>
               <Inputcomp
                 variant="bordered"
                 type="date"
@@ -255,8 +253,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   handleChange(index, "startYear", e.target.value)
                 }
               />
-            </div>
-            <div>
               <Inputcomp
                 variant="bordered"
                 type="date"
@@ -265,12 +261,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
               />
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="grid grid-cols-2 gap-4">
               <Select
                 variant="bordered"
-                className="w-full"
+                className="w-full shadow-lg shadow-gray-300 rounded-lg"
                 label="Status"
                 value={formData.education[index]?.status || ""}
                 onChange={(e) => handleChange(index, "status", e.target.value)}>
@@ -280,42 +274,22 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   </SelectItem>
                 ))}
               </Select>
-            </div>
-            <div>
               <Inputcomp
+                type="file"
                 label="Upload Document"
                 variant="bordered"
-                type="file"
                 onChange={(e) =>
                   handleFileChange(index, Array.from(e.target.files))
                 }
               />
-              <div className="flex gap-x-4">
-                <label className="block text-xs font-medium text-gray-700">
-                  Please upload the image of type either PNG or jpg
-                </label>
-                {educationalDocument &&
-                  (formData.education[index]?.file ? (
-                    <a
-                      href={formData.education[index]?.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
-                      <span className="flex items-center gap-x-2">
-                        <FaRegEye />
-                        View Uploaded Document
-                      </span>
-                    </a>
-                  ) : (
-                    <div className="text-xs text-red-500">
-                      No Links Available
-                    </div>
-                  ))}
-              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="text-gray-500 text-center">
+          No educational details found.
+        </p>
+      )}
       <div className="flex flex-col gap-x-4 ">
         <div>
           <input

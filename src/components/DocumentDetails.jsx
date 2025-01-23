@@ -11,22 +11,113 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
   const [photoPAN, setPhotoPAN] = useState(false);
+  const [error, setError] = useState(false);
 
   // Utility function to handle nested changes
-  const handleNestedChange = (parentKey, childKey, value) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [parentKey]: {
-        ...prevState[parentKey],
-        [childKey]: value,
+  const handleNestedChange = (section, subSection, field, value) => {
+    // Define validation rules
+    const validateField = (field, value) => {
+      const errors = {};
+      if (field === "panNumber" && !value) {
+        errors[field] = "Pan number is required";
+      }
+      if (field === "panIssueDate" && !value) {
+        errors[field] = "Issue Date is required";
+      }
+      if (field === "panIssuePlace" && !value) {
+        errors[field] = "Issue Place is required ";
+      }
+      if (field === "citizenshipNumber" && !value) {
+        errors[field] = "Citizenship Number is required.";
+      }
+      if (field === "issuedDate" && !value) {
+        errors[field] = "Issue Date is required.";
+      }
+      if (field === "isIssuedPlaceDistrict" && !value) {
+        errors[field] = "Issue Place is required.";
+      }
+      if (field === "citizenshipFrontDocumentFile" && !value) {
+        errors[field] = "Photo of Citizernship is required.";
+      }
+      if (field === "citizenshipBackDocumentFile" && !value) {
+        errors[field] = "Photo of Citizernship is required.";
+      }
+      if (field === "panCardDocumentFile" && !value) {
+        errors[field] = "Photo of PAN card is required.";
+      }
+
+      return errors;
+    };
+
+    // Perform validation
+    const fieldErrors = validateField(field, value);
+
+    // Update errors
+    setError((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (!fieldErrors[field]) {
+        // Clear the error if validation passes
+        delete newErrors[field];
+      } else {
+        // Update the error if validation fails
+        newErrors[field] = fieldErrors[field];
+      }
+      return newErrors;
+    });
+
+    // Update form data
+    setFormData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
       },
     }));
     setCitizenshipBack(false), setCitizenshipFront(false), setPhotoPAN(false);
   };
+  const validateAllFields = () => {
+    const errors = {};
+    const docs = formData?.documents || {};
+
+    if (!docs.panNumber) {
+      errors.panNumber = "PAN number  is required.";
+    }
+    if (!docs.panIssueDate) {
+      errors.panIssueDate = "Issue date is required.";
+    }
+    if (!docs.panIssuePlace) {
+      errors.panIssuePlace = "Issue Place is required.";
+    }
+    if (!docs.citizenshipNumber) {
+      errors.citizenshipNumber = "Citizenship number is required.";
+    }
+    if (!docs.issuedDate) {
+      errors.issuedDate = "Issue date is required.";
+    }
+    if (!docs.isIssuedPlaceDistrict) {
+      errors.isIssuedPlaceDistrict = "Issued Place is required.";
+    }
+    if (!docs.guardianRelation) {
+      errors.guardianRelation = "Guardian Relation  is required";
+    }
+    if (!docs.citizenshipFrontDocumentFile) {
+      errors.citizenshipFrontDocumentFile = "Guardian Name is required";
+    }
+    if (!docs.citizenshipBackDocumentFile) {
+      errors.citizenshipBackDocumentFile = "Phone Number  is required";
+    }
+    if (!docs.panCardDocumentFile) {
+      errors.panCardDocumentFile = "Guardian Relation is required";
+    }
+    setError(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const onSubmit = async () => {
-    console.log("Pan Issue Date", formData?.documents?.panIssueDate);
-    console.log("Citizenship Issue Date", formData?.documents?.issuedDate);
+    if (!validateAllFields()) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
 
     const formDataToSubmit = new FormData();
@@ -84,6 +175,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
       if (response.data.responseCode === "200") {
         toast.success(response.data.message);
+        handleNext();
       } else {
         toast.error(response.data.message);
       }
@@ -97,7 +189,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
   const handleNextSubmit = () => {
     onSubmit();
-    handleNext();
+    // handleNext();
   };
 
   useEffect(() => {
@@ -162,7 +254,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-600">PAN Details</h3>
             <div className="grid grid-cols-2 gap-x-4">
-              <div>
+              <div className="flex flex-col items-center">
                 <Inputcomp
                   id="panNumber"
                   variant="bordered"
@@ -173,8 +265,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter your PAN number"
                 />
+                {error.panNumber && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.panNumber}
+                  </span>
+                )}
               </div>
-              <div className="">
+              <div className=" flex flex-col items-center">
                 <Inputcomp
                   className="h-[10vh]"
                   variant="bordered"
@@ -189,10 +286,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     )
                   }
                 />
+                {error.panIssueDate && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.panIssueDate}
+                  </span>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="flex flex-col items-center">
                 <Inputcomp
                   variant="bordered"
                   type="text"
@@ -206,9 +308,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter PAN issued place"
                 />
+                {error.panIssuePlace && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.panIssuePlace}
+                  </span>
+                )}
               </div>
               <div>
-                <div>
+                <div className="flex flex-col items-center">
                   <Inputcomp
                     variant="bordered"
                     type="file"
@@ -221,6 +328,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     }
                     label="Enter PAN issued place"
                   />
+                  {error.panCardDocumentFile && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {error.panCardDocumentFile}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex gap-x-4">
@@ -255,7 +367,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               Citizenship Details
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="flex flex-col items-center">
                 <Inputcomp
                   variant="bordered"
                   type="text"
@@ -269,8 +381,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter Citizenship Number"
                 />
+                {error.citizenshipNumber && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.citizenshipNumber}
+                  </span>
+                )}
               </div>
-              <div>
+              <div className=" flex flex-col items-center">
                 <Inputcomp
                   variant="bordered"
                   type="date"
@@ -284,10 +401,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     )
                   }
                 />
+                {error.issuedDate && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.issuedDate}
+                  </span>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className=" flex flex-col items-center">
                 <Inputcomp
                   type="text"
                   variant="bordered"
@@ -301,10 +423,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter Citizenship Issued Place"
                 />
+                {error.isIssuedPlaceDistrict && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.isIssuedPlaceDistrict}
+                  </span>
+                )}
               </div>
               <div>
-                <div>
-                  <Inputcomp
+                <div className="flex flex-col items-center">
+                  <Input
                     type="file"
                     variant="bordered"
                     onChange={(e) => {
@@ -316,6 +443,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     }}
                     label="Citizenship Front Photo"
                   />
+                  {error.citizenshipFrontDocumentFile && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {error.citizenshipFrontDocumentFile}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex gap-x-4">
@@ -343,7 +475,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
             </div>
             <div>
-              <div>
+              <div className="flex flex-col items-center">
                 <Inputcomp
                   variant="bordered"
                   type="file"
@@ -356,6 +488,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Citizenship Back Photo "
                 />
+                {error.citizenshipBackDocumentFile && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {error.citizenshipBackDocumentFile}
+                  </span>
+                )}
               </div>
 
               <div className="flex gap-x-4">

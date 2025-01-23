@@ -10,6 +10,7 @@ import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
+// import PersonalDetails from "../../components/Personal.jsx";
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,18 @@ const Ekye = () => {
       citizenshipBackDocumentFile: "",
     },
   });
-
+  const getValidationSchema = (step) => {
+    switch (step) {
+      case 1:
+        return step1Schema;
+      case 2:
+        return step2Schema;
+      case 3:
+        return step3Schema;
+      default:
+        return step1Schema;
+    }
+  };
   const handleChange = (section, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -170,7 +182,7 @@ const Ekye = () => {
                           }`}
                           style={{
                             left: "90%", // Start from the end of the current step
-                            width: "500%", // Start from the end of the current step
+                            width: "550%", // Start from the end of the current step
                           }}></div>
                       )}
                     </div>
@@ -187,6 +199,13 @@ const Ekye = () => {
           <ValidationComponent>
             <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto">
               {step === 0 && !isLoading && (
+                // <PersonalDetails
+                //   handleNext={handleNext}
+                //   formData={formData}
+                //   handleBack={handleBack}
+                //   handleNestedChange={handleNestedChange}
+                //   setFormData={setFormData}
+                // />
                 <PersonalDetails
                   handleNext={handleNext}
                   formData={formData}

@@ -1,11 +1,13 @@
+// ValidationComponent.jsx
 import React, { useState } from "react";
+import { Input } from "@nextui-org/react";
+import PropTypes from "prop-types";
 
 const ValidationComponent = ({ children }) => {
   const [errors, setErrors] = useState({});
 
   const validationRules = {
     email: {
-      // this is Id which should be same in form comp
       regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       message: "Invalid email format",
     },
@@ -14,24 +16,20 @@ const ValidationComponent = ({ children }) => {
       message: "Invalid area code. Must be a number between 1 and 32",
     },
     phone: {
-      // this is Id which should be same in form comp
       regex: /^[0-9]{10}$/,
       message: "Phone number must be 10 digits",
     },
     username: {
-      // this is Id which should be same in form comp
       regex: /^[a-zA-Z0-9_]{3,30}$/,
       message: "Username must be 3-30 characters long",
     },
     name: {
-      // this is Id which should be same in form comp
       regex: /^[a-zA-Z0-9_]{3,30}$/,
       message: "Name must be 3-30 characters long",
     },
     description: {
-      // this is Id which should be same in form comp
       regex: /^[a-zA-Z0-9_]{3,300}$/,
-      message: "Name must be 3-30 characters long",
+      message: "Description must be 3-300 characters long",
     },
     pincode: {
       regex: /^[1-9]\d{3}$/,
@@ -43,6 +41,7 @@ const ValidationComponent = ({ children }) => {
         "Invalid PAN number. Must be a 9-digit number starting with 1-9.",
     },
   };
+
   const validateField = (id, value) => {
     if (id in validationRules) {
       const { regex, message } = validationRules[id];
@@ -79,7 +78,7 @@ const ValidationComponent = ({ children }) => {
   const renderChildrenWithProps = (children) =>
     React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
-        if (child.props.id && child.type === "Input") {
+        if (child.props.id && child.type === Input) {
           return (
             <div style={{ marginBottom: "1rem" }}>
               {React.cloneElement(child, {
@@ -88,17 +87,9 @@ const ValidationComponent = ({ children }) => {
                   child.props.onChange?.(e);
                 },
                 onKeyDown: (e) => handleKeyDown(e, child.props.id),
+                status: errors[child.props.id] ? "error" : "default",
+                helperText: errors[child.props.id] || "",
               })}
-              {errors[child.props.id] && (
-                <div
-                  style={{
-                    color: "red",
-                    fontSize: "0.875rem",
-                    marginTop: "0.25rem",
-                  }}>
-                  {errors[child.props.id]}
-                </div>
-              )}
             </div>
           );
         }
@@ -112,6 +103,10 @@ const ValidationComponent = ({ children }) => {
     });
 
   return <div>{renderChildrenWithProps(children)}</div>;
+};
+
+ValidationComponent.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ValidationComponent;

@@ -5,6 +5,7 @@ import Loader from "../../../components/Loader";
 import { Form, Input } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import ValidationComponent from "../../../components/ValidationComponent";
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
     fullname: "",
@@ -20,6 +21,12 @@ const AddEmployeeForm = () => {
   const [roleData, setRoleData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "Employees", href: "/Employees" },
+    { label: "Add Employees", href: "/AddEmployees" },
+  ];
   // Fetch departments data
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -166,204 +173,212 @@ const AddEmployeeForm = () => {
 
   return (
     <>
-      <ValidationComponent></ValidationComponent>
-      {isLoading && (
-        <Loader message="Please wait while the work is being done" />
-      )}
-      <div className="max-w-6xl mx-auto bg-white shadow-md rounded px-8 py-6 max-h-[90vh] overflow-auto">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6">
-          Add Employee
-        </h1>
-        <Form onSubmit={handleAddEmployee} className="w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            {/* Full Name */}
-            <div className="mb-4">
-              <label
-                htmlFor="fullname"
-                className="block text-gray-700 font-medium mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="fullname"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter full name"
-                value={formData.fullname}
-                onChange={handleChange}
-                required
-              />
+      <ValidationComponent>
+        {isLoading && (
+          <Loader message="Please wait while the work is being done" />
+        )}
+        <div className="max-w-6xl mx-auto bg-white shadow-md rounded px-8 py-6 max-h-[90vh] overflow-auto">
+          <div className="flex flex-col">
+            <div className="text-sm">
+              <BreadcrumbsComponent items={breadcrumbItems} />
             </div>
-
-            {/* Phone */}
-            <div className="mb-4">
-              <label
-                htmlFor="phone"
-                className="block text-gray-700 font-medium mb-2">
-                Phone
-              </label>
-              <input
-                type="text"
-                id="phone"
-                name="phone"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter phone number"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-medium mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter email address"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+              Add Employee
+            </h1>
           </div>
+          <Form onSubmit={handleAddEmployee} className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              {/* Full Name */}
+              <div className="mb-4">
+                <label
+                  htmlFor="fullname"
+                  className="block text-gray-700 font-medium mb-2">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="fullname"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter full name"
+                  value={formData.fullname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-          {/* Email */}
+              {/* Phone */}
+              <div className="mb-4">
+                <label
+                  htmlFor="phone"
+                  className="block text-gray-700 font-medium mb-2">
+                  Phone
+                </label>
+                <input
+                  type="text"
+                  id="phone"
+                  name="phone"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="email"
+                  className="block text-gray-700 font-medium mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            {/* Department */}
-            <div className="mb-4">
-              <label
-                htmlFor="department"
-                className="block text-gray-700 font-medium mb-2">
-                Department
-              </label>
-              <select
-                id="department"
-                name="department"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                value={formData.department}
-                onChange={handleChange}
-                required>
-                <option value="" disabled selected>
-                  Select department
-                </option>
-                {isLoading ? (
-                  <option>Loading departments...</option>
-                ) : (
-                  departmentsData.length > 0 &&
-                  departmentsData
-                    .filter((department) => !department.isDeleted) // Filter out deleted departments
-                    .map((department) => (
-                      <option key={department.id} value={department.name}>
-                        {department.name}
+            {/* Email */}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              {/* Department */}
+              <div className="mb-4">
+                <label
+                  htmlFor="department"
+                  className="block text-gray-700 font-medium mb-2">
+                  Department
+                </label>
+                <select
+                  id="department"
+                  name="department"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  value={formData.department}
+                  onChange={handleChange}
+                  required>
+                  <option value="" disabled selected>
+                    Select department
+                  </option>
+                  {isLoading ? (
+                    <option>Loading departments...</option>
+                  ) : (
+                    departmentsData.length > 0 &&
+                    departmentsData
+                      .filter((department) => !department.isDeleted) // Filter out deleted departments
+                      .map((department) => (
+                        <option key={department.id} value={department.name}>
+                          {department.name}
+                        </option>
+                      ))
+                  )}
+                </select>
+              </div>
+
+              {/* Position */}
+              <div className="mb-4">
+                <label
+                  htmlFor="position"
+                  className="block text-gray-700 font-medium mb-2">
+                  Position
+                </label>
+                <select
+                  id="position"
+                  name="position"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  value={formData.position}
+                  onChange={handleChange}
+                  required>
+                  <option value="" disabled selected>
+                    Select position
+                  </option>
+                  {isLoading ? (
+                    <option>Loading positions...</option>
+                  ) : (
+                    positionData.length > 0 &&
+                    positionData.map((position) => (
+                      <option key={position.id} value={position.name}>
+                        {position.name}
                       </option>
                     ))
-                )}
-              </select>
+                  )}
+                </select>
+              </div>
+              {/* Roles */}
+              <div className="mb-4 ">
+                <label
+                  htmlFor="roles"
+                  className="block text-gray-700 font-medium mb-2">
+                  Roles
+                </label>
+                <select
+                  id="roles"
+                  name="roles"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
+                  value={formData.roles}
+                  onChange={handleChange}
+                  required>
+                  <option value="" disabled selected>
+                    Select role
+                  </option>
+                  {isLoading ? (
+                    <option>Loading roles...</option>
+                  ) : (
+                    roleData &&
+                    roleData.length > 0 &&
+                    roleData.map((role) => (
+                      <option key={role.roleId} value={role.roleName}>
+                        {role.roleName}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
             </div>
-
-            {/* Position */}
-            <div className="mb-4">
-              <label
-                htmlFor="position"
-                className="block text-gray-700 font-medium mb-2">
-                Position
-              </label>
-              <select
-                id="position"
-                name="position"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                value={formData.position}
-                onChange={handleChange}
-                required>
-                <option value="" disabled selected>
-                  Select position
-                </option>
-                {isLoading ? (
-                  <option>Loading positions...</option>
-                ) : (
-                  positionData.length > 0 &&
-                  positionData.map((position) => (
-                    <option key={position.id} value={position.name}>
-                      {position.name}
-                    </option>
-                  ))
-                )}
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              <div>
+                <Input
+                  className="shadow-lg shadow-gray-300 rounded-lg"
+                  label="Hiring Date"
+                  variant="bordered"
+                  type="date"
+                  value={formData.hiredate || ""}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
-            {/* Roles */}
-            <div className="mb-4 ">
-              <label
-                htmlFor="roles"
-                className="block text-gray-700 font-medium mb-2">
-                Roles
-              </label>
-              <select
-                id="roles"
-                name="roles"
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                value={formData.roles}
-                onChange={handleChange}
-                required>
-                <option value="" disabled selected>
-                  Select role
-                </option>
-                {isLoading ? (
-                  <option>Loading roles...</option>
-                ) : (
-                  roleData &&
-                  roleData.length > 0 &&
-                  roleData.map((role) => (
-                    <option key={role.roleId} value={role.roleName}>
-                      {role.roleName}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            <div>
-              <Input
-                className="shadow-lg shadow-gray-300 rounded-lg"
-                label="Hiring Date"
-                variant="bordered"
-                type="date"
-                value={formData.hiredate || ""}
+            {/* Perform eKYe */}
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                id="perform-ekyc"
+                name="performEKYC"
+                className="mr-2"
+                checked={formData.performEKYC}
                 onChange={handleChange}
               />
+              <label
+                htmlFor="perform-ekyc"
+                className="text-gray-700 font-medium">
+                Perform eKYE
+              </label>
             </div>
-          </div>
-          {/* Perform eKYe */}
-          <div className="mb-4 flex items-center">
-            <input
-              type="checkbox"
-              id="perform-ekyc"
-              name="performEKYC"
-              className="mr-2"
-              checked={formData.performEKYC}
-              onChange={handleChange}
-            />
-            <label htmlFor="perform-ekyc" className="text-gray-700 font-medium">
-              Perform eKYE
-            </label>
-          </div>
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg">
-              Submit
-            </button>
-          </div>
-        </Form>
-      </div>
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg">
+                Submit
+              </button>
+            </div>
+          </Form>
+        </div>
+      </ValidationComponent>
     </>
   );
 };

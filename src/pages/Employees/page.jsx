@@ -19,6 +19,7 @@ import { BsFilter } from "react-icons/bs";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import DropDownComp from "../../components/Dropdown";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import Search from "../../components/Search";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -86,17 +87,6 @@ const Employees = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  // const columns = [
-  //   { key: "sn", label: "S.N" },
-  //   { key: "RCL-ID", label: "RCL-ID" },
-  //   { key: "name", label: "Name" },
-  //   { key: "email", label: "Email" },
-  //   { key: "phone", label: "Phone" },
-  //   { key: "department", label: "Depratment" },
-  //   { key: "position", label: "Position" },
-  //   { key: "action", label: "Actions" },
-  // ];
-  // const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
 
   return (
     <>
@@ -112,7 +102,7 @@ const Employees = () => {
             </div>
             <div className="flex gap-x-4">
               <div className="flex items-center space-x-4">
-                <Input className="w-64" type="search" placeholder="Search..." />
+                <Search />
                 <Button className="flex items-center bg-white hover:bg-gray-200 text-black py-2 px-4">
                   <BsFilter className="mr-2 text-2xl" />
                   <span className="text-lg font-bold">Filter</span>

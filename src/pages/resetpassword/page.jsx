@@ -138,17 +138,13 @@ const Rstpwd = () => {
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-white">
         <h1 className="text-xl font-bold mb-4">Reset Password</h1>
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 text-sm font-medium mb-2">
-            New Password:
-          </label>
           <Input
+            variant="bordered"
             id="password"
             type="password"
             name="password"
-            placeholder="New Password"
-            className={`w-full p-3 rounded-lg border focus:outline-none focus:border-bgprimary ${
+            label="New Password"
+            className={`w-full p-3 rounded-lg  focus:outline-none  ${
               errors.password ? "border-red-500" : ""
             }`}
             {...register("password", { required: "Password is required" })}
@@ -159,17 +155,13 @@ const Rstpwd = () => {
             </p>
           )}
 
-          <label
-            htmlFor="confirmPassword"
-            className="block text-gray-700 text-sm font-medium mb-2">
-            Confirm Password:
-          </label>
           <Input
+            variant="bordered"
             id="confirmPassword"
             type="password"
             name="confirmPassword"
-            placeholder="Confirm Password"
-            className={`w-full p-3 rounded-lg border focus:outline-none focus:border-bgprimary ${
+            label="Confirm Password"
+            className={`w-full p-3 rounded-lg  focus:outline-none ${
               errors.confirmPassword ? "border-red-500" : ""
             }`}
             {...register("confirmPassword", {

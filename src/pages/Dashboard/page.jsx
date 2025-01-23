@@ -58,12 +58,13 @@ const Page = () => {
               <p className="text-red-700">Total Delay Time: {".5 hrs"}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex justify-between">
             <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg  ">
               <h3 className="mt-5 ml-5"> Work from Home</h3>
 
               <div className="flex w-80 ml-64 ">
                 <p className="-mt-7">Search:</p>
+
                 <Input
                   className="-mt-8 ml-1"
                   type="search"

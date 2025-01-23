@@ -9,7 +9,7 @@ import Inputcomp from "./Inputcomp";
 const AddressDetails = ({
   formData,
   handleChange,
-  handleNestedChange,
+  // handleNestedChange,
   handleNext,
   handleBack,
   setFormData,
@@ -17,6 +17,7 @@ const AddressDetails = ({
   const [isLoading, setIsLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [error, setError] = useState(false);
   //Fetch provience data
   useEffect(() => {
     // Fetch Province Data
@@ -143,7 +144,85 @@ const AddressDetails = ({
       setIsLoading(false);
     }
   };
+
+  const handleNestedChange = (section, subSection, field, value) => {
+    // Define validation rules
+    const validateField = (field, value) => {
+      const errors = {};
+      if (field === "provinceId" && !value) {
+        errors[field] = "Province is required";
+      }
+      if (field === "districtId" && !value) {
+        errors[field] = "District is required ";
+      }
+      if (field === "municipality" && !value) {
+        errors[field] = "Municipality is required.";
+      }
+      if (field === "wardNumber" && !value) {
+        errors[field] = "Ward Number is required  ";
+      }
+      if (field === "pinCode" && !value) {
+        errors[field] = "Pin code is required";
+      }
+      if (field === "tole" && !value) {
+        errors[field] = "Tole/Area is required";
+      }
+      return errors;
+    };
+    // Perform validation
+    const fieldErrors = validateField(field, value);
+
+    // Update errors
+    setError((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (!fieldErrors[field]) {
+        // Clear the error if validation passes
+        delete newErrors[field];
+      } else {
+        // Update the error if validation fails
+        newErrors[field] = fieldErrors[field];
+      }
+      return newErrors;
+    });
+
+    // Update form data
+    setFormData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+  };
+  const validateAllFields = () => {
+    const errors = {};
+    const docs = formData?.documents || {};
+
+    if (!docs.provinceId) {
+      errors.provinceId = "Province is required";
+    }
+    if (!docs.districtId) {
+      errors.districtId = "District is required";
+    }
+    if (!docs.municipality) {
+      errors.municipality = "Municipality is required";
+    }
+    if (!docs.wardNumber) {
+      errors.wardNumber = "Ward Number is required";
+    }
+    if (!docs.pinCode) {
+      errors.pinCode = "PinCode is required";
+    }
+    if (!docs.tole) {
+      errors.tole = "Tole/Area is required";
+    }
+    setError(errors);
+    return Object.keys(errors).length === 0;
+  };
   const onSubmit = async () => {
+    if (!validateAllFields()) {
+      return;
+    }
     setIsLoading(true);
     const sanitizedProvinceId = formData.address.permanent.provinceId.replace(
       /[^0-9]/g,
@@ -191,6 +270,7 @@ const AddressDetails = ({
       );
       if (response.data.responseCode === "201") {
         toast.success(response.data.message);
+        handleNext();
       } else {
         toast.error(response.data.message);
       }
@@ -204,7 +284,6 @@ const AddressDetails = ({
 
   const handlenextsubmit = () => {
     onSubmit();
-    handleNext();
   };
 
   return (
@@ -215,7 +294,7 @@ const AddressDetails = ({
           <h2 className="text-2xl font-semibold text-gray-700">
             Address Details
           </h2>
-          <form className="w-full">
+          <form className="w-full" onSubmit={onSubmit}>
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
@@ -230,7 +309,7 @@ const AddressDetails = ({
                     isEnabled: true, // Enable the scroll shadow
                   }}
                   variant="bordered"
-                  className="w-full rounded-lg shadow-lg shadow-gray-300"
+                  className="w-full rounded-lg shadow-lg shadow-gray-300 text-black"
                   label="Select A Province"
                   items={formData.address?.permanent?.provinceId}
                   selectedKeys={
@@ -248,14 +327,16 @@ const AddressDetails = ({
                     fetchDistrictsByProvince(provinceId);
                   }}>
                   {provinces.map((province) => (
-                    <SelectItem key={province.id} value={province.id}>
+                    <SelectItem
+                      key={province.id}
+                      textValue={province.name}
+                      className="text-black">
                       {province.name}
                     </SelectItem>
                   ))}
                 </Select>
 
                 {/* NextUI Dropdown for District */}
-
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
@@ -264,7 +345,7 @@ const AddressDetails = ({
                   variant="bordered"
                   label="Select A District"
                   selectedKeys={[formData.address?.permanent?.districtId]}
-                  onChange={(value) => {
+                  onSelectionChange={(value) => {
                     const districtId = Array.from(value)[0];
                     handleNestedChange(
                       "address",
@@ -274,7 +355,9 @@ const AddressDetails = ({
                     );
                   }}>
                   {districts.map((district) => (
-                    <SelectItem key={district.districtId} value={district.name}>
+                    <SelectItem
+                      key={district.districtId}
+                      textValue={district.name}>
                       {district.name}
                     </SelectItem>
                   ))}
@@ -346,7 +429,7 @@ const AddressDetails = ({
 
             {/* Temporary Address */}
             <div className="space-y-4">
-              <div className="flex justify-start gap-x-4 my-4 ">
+              <div className=" justify-start gap-x-4 my-4 ">
                 <h3 className="text-xl font-semibold text-gray-600">
                   Temporary Address
                 </h3>
@@ -358,39 +441,41 @@ const AddressDetails = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {/* NextUI Dropdown for Temporary Province */}
-                <Select
-                  scrollShadowProps={{
-                    isEnabled: true, // Enable the scroll shadow
-                  }}
-                  variant="bordered"
-                  className="w-full rounded-lg shadow-lg shadow-gray-300"
-                  label="Select A Province"
-                  selectedKeys={[formData.address?.temporary?.provinceId]}
-                  onSelectionChange={(keys) => {
-                    const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
-                    handleNestedChange(
-                      "address",
-                      "temporary",
-                      "provinceId",
-                      provinceId
-                    );
+                <div>
+                  <Select
+                    scrollShadowProps={{
+                      isEnabled: true, // Enable the scroll shadow
+                    }}
+                    variant="bordered"
+                    className="w-full rounded-lg shadow-lg shadow-gray-300"
+                    label="Select A Province"
+                    selectedKeys={[formData.address?.temporary?.provinceId]}
+                    onSelectionChange={(keys) => {
+                      const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
+                      handleNestedChange(
+                        "address",
+                        "temporary",
+                        "provinceId",
+                        provinceId
+                      );
 
-                    // Fetch districts for the selected province
-                    fetchDistrictsByProvince(provinceId);
-                  }}>
-                  {provinces.map((province) => (
-                    <SelectItem key={province.id} value={province.id}>
-                      {province.name}
-                    </SelectItem>
-                  ))}
-                </Select>
+                      // Fetch districts for the selected province
+                      fetchDistrictsByProvince(provinceId);
+                    }}>
+                    {provinces.map((province) => (
+                      <SelectItem key={province.id} textValue={province.name}>
+                        {province.name}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
                 {/* NextUI Dropdown for Temporary District */}
                 <Select
                   scrollShadowProps={{
                     isEnabled: true, // Enable the scroll shadow
                   }}
+                  className="rounded-lg shadow-lg shadow-gray-300"
                   variant="bordered"
-                  className=" rounded-lg shadow-lg shadow-gray-300"
                   label="Select A District"
                   selectedKeys={[formData.address?.temporary?.districtId]}
                   onSelectionChange={(value) => {
@@ -405,12 +490,11 @@ const AddressDetails = ({
                   {districts.map((district) => (
                     <SelectItem
                       key={district.districtId}
-                      value={district.districtId}>
+                      textValue={district.name}>
                       {district.name}
                     </SelectItem>
                   ))}
                 </Select>
-
                 {/* Additional Fields */}
                 <Inputcomp
                   variant="bordered"
