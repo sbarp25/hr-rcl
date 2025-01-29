@@ -4,7 +4,6 @@ import {
   DropdownItem,
   Select,
   SelectItem,
-  Form,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
@@ -13,125 +12,18 @@ import Inputcomp from "./Inputcomp";
 
 const PersonalDetails = ({
   formData,
-  // handleNestedChange,
+  handleNestedChange,
   handleNext,
   setFormData,
   handleBack,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const [errors, setErrors] = useState({});
   const genderOptions = ["Male", "Female"];
   const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   const relationOptions = ["Father", "Mother", "Brother", "Sister"];
-  const [error, setError] = useState(false);
 
-  const handleNestedChange = (section, subSection, field, value) => {
-    // Define validation rules
-    const validateField = (field, value) => {
-      const errors = {};
-      if (field === "email" && !value) {
-        errors[field] = "Email is required";
-      }
-      if (field === "gender" && !value) {
-        errors[field] = "Gender is required";
-      }
-      if (field === "dob" && !value) {
-        errors[field] = "Date Of Birth is required ";
-      }
-      if (field === "bloodType" && !value) {
-        errors[field] = "Blood Group is required.";
-      }
-      if (field === "guardianName" && !value) {
-        errors[field] = "GuardianName is required.";
-      }
-      if (field === "guardianPhone" && (!value || value.length !== 10)) {
-        errors[field] =
-          "Phone Number is required and it must be 10 digit long.";
-      }
-      if (field === "guardianRelation" && !value) {
-        errors[field] = "Guardian Relation  is required";
-      }
-      if (field === "emergencyName" && !value) {
-        errors[field] = "Emergency Contact is required.";
-      }
-      if (field === "emergencyNumber" && (!value || value.length !== 10)) {
-        errors[field] =
-          "Phone Number is required and it must be 10 digit long.";
-      }
-      if (field === "emergencyRelation" && !value) {
-        errors[field] = "Guardian Relation  is required";
-      }
-
-      return errors;
-    };
-
-    // Perform validation
-    const fieldErrors = validateField(field, value);
-
-    // Update errors
-    setError((prevErrors) => {
-      const newErrors = { ...prevErrors };
-      if (!fieldErrors[field]) {
-        // Clear the error if validation passes
-        delete newErrors[field];
-      } else {
-        // Update the error if validation fails
-        newErrors[field] = fieldErrors[field];
-      }
-      return newErrors;
-    });
-
-    // Update form data
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value,
-      },
-    }));
-  };
-  const validateAllFields = () => {
-    const errors = {};
-    const docs = formData?.documents || {};
-
-    if (!docs.email) {
-      errors.email = "Email is required.";
-    }
-    if (!docs.gender) {
-      errors.gender = "Gender is required.";
-    }
-    if (!docs.dob) {
-      errors.dob = "Date of birth is required.";
-    }
-    if (!docs.bloodType) {
-      errors.bloodType = "Blood Group is required.";
-    }
-    if (!docs.guardianName) {
-      errors.guardianName = "Guardian Name is required.";
-    }
-    if (!docs.guardianPhone || docs.guardianPhone.length != 10) {
-      errors.guardianPhone =
-        "Phone number is required and it must be 10 digit long.";
-    }
-    if (!docs.guardianRelation) {
-      errors.guardianRelation = "Guardian Relation  is required";
-    }
-    if (!docs.emergencyName) {
-      errors.emergencyName = "Guardian Name is required";
-    }
-    if (!docs.emergencyNumber) {
-      errors.emergencyNumber = "Phone Number  is required";
-    }
-    if (!docs.emergencyRelation) {
-      errors.emergencyRelation = "Guardian Relation is required";
-    }
-    setError(errors);
-    return Object.keys(errors).length === 0;
-  };
   const onSubmit = async () => {
-    if (!validateAllFields()) {
-      return;
-    }
     const newData = {
       data: {
         email: formData.personalInfo.email,
@@ -170,7 +62,6 @@ const PersonalDetails = ({
           guardianType: "",
           guardianNumber: "",
         });
-        handleNext();
         toast.success(response.data.data.message);
       } else {
         toast.error(response.data.data.message);
@@ -183,9 +74,54 @@ const PersonalDetails = ({
     }
   };
 
+  const validateFormData = () => {
+    const newErrors = {};
+    const {
+      email,
+      dob,
+      gender,
+      bloodType,
+      emergencyNumber,
+      emergencyName,
+      emergencyRelation,
+      guardianName,
+      guardianPhone,
+      guardianRelation,
+    } = formData.personalInfo;
+
+    if (!email) newErrors.email = "Email is required.";
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Invalid email format.";
+    }
+    if (!dob) newErrors.dob = "Date of Birth is required.";
+    if (!gender) newErrors.gender = "Gender is required.";
+    if (!bloodType) newErrors.bloodType = "Blood Type is required.";
+    if (!emergencyNumber)
+      newErrors.emergencyNumber = "Emergency Phone is required.";
+    if (emergencyNumber && emergencyNumber.length !== 10) {
+      newErrors.emergencyNumber = "Emergency Phone must be 10 digits.";
+    }
+    if (!emergencyRelation)
+      newErrors.emergencyRelation = "Emergency Relation is Required ";
+    if (!emergencyName) newErrors.emergencyName = "Emergency Name is required.";
+    if (!guardianName) newErrors.guardianName = "Guardian Name is required.";
+    if (!guardianPhone) newErrors.guardianPhone = "Guardian Phone is required.";
+    if (guardianPhone && guardianPhone.length !== 10) {
+      newErrors.guardianPhone = "Guardian Phone must be 10 digits.";
+    }
+    if (!guardianRelation)
+      newErrors.guardianRelation = "Guardain Relation is Required ";
+
+    setErrors(newErrors); // Update errors state
+
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   const handlenextsubmit = () => {
-    // handleNext();
-    onSubmit();
+    if (validateFormData()) {
+      onSubmit(); // Submit the form if valid
+      handleNext(); // Move to the next step
+    }
   };
   useEffect(() => {
     setIsLoading(true);
@@ -231,17 +167,19 @@ const PersonalDetails = ({
   }, []);
 
   return (
-    <div className="space-y-4 ">
-      <h2 className="text-2xl font-bold">Personal Information</h2>
+    <div className="space-y-8 p-8 bg-white rounded-2xl mx-auto w-[70vw]">
+      <h2 className="text-3xl font-bold text-gray-800">Personal Information</h2>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center flex-col">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Personal Email */}
+          <div>
             <Inputcomp
               variant="bordered"
               type="email"
               id="email"
               label="Personal Email"
+              className="sha"
               value={formData?.personalInfo?.email}
               onChange={(e) =>
                 handleNestedChange(
@@ -252,45 +190,36 @@ const PersonalDetails = ({
                 )
               }
             />
-            {error.email && (
-              <span className="text-red-500 text-xs mt-1">{error.email}</span>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
           {/* Gender Dropdown */}
           <div>
-            <div className="flex items-center flex-col">
-              <Select
-                scrollShadowProps={{
-                  isEnabled: true,
-                }}
-                variant="bordered"
-                className="w-full rounded-lg shadow-lg shadow-gray-300"
-                label="Gender"
-                selectedKeys={[formData?.personalInfo?.gender]}
-                onSelectionChange={(keys) =>
-                  handleNestedChange(
-                    "personalInfo",
-                    null,
-                    "gender",
-                    [...keys][0]
-                  )
-                }>
-                {genderOptions.map((g) => (
-                  <SelectItem key={g}>{g}</SelectItem>
-                ))}
-              </Select>
-              {error.gender && (
-                <span className="text-red-500 text-xs mt-1">
-                  {error.gender}
-                </span>
-              )}
-            </div>
+            <Select
+              scrollShadowProps={{ isEnabled: true }}
+              variant="bordered"
+              className="w-full rounded-lg shadow-md"
+              label="Gender"
+              selectedKeys={[formData?.personalInfo?.gender]}
+              onSelectionChange={(keys) =>
+                handleNestedChange("personalInfo", null, "gender", [...keys][0])
+              }
+            >
+              {genderOptions.map((g) => (
+                <SelectItem key={g}>{g}</SelectItem>
+              ))}
+            </Select>
+            {errors.gender && (
+              <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+            )}
           </div>
         </div>
-        <div className="flex  gap-x-4">
-          {/**Date of Birth */}
-          <div className="flex w-full flex-col items-center">
+
+        {/* Date of Birth and Blood Group */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
             <Inputcomp
               variant="bordered"
               type="date"
@@ -300,19 +229,16 @@ const PersonalDetails = ({
                 handleNestedChange("personalInfo", null, "dob", e.target.value)
               }
             />
-            {error.dob && (
-              <span className="text-red-500 text-xs">{error.dob}</span>
+            {errors.dob && (
+              <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
             )}
           </div>
 
-          {/* Blood Group Dropdown */}
-          <div className="flex items-center  w-full flex-col">
+          <div>
             <Select
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
+              classNames={{ inputWrapper: "shadow-md" }}
               variant="bordered"
-              className="w-full rounded-lg shadow-lg shadow-gray-300"
+              className="w-full rounded-lg"
               label="Blood Group"
               selectedKeys={[formData?.personalInfo?.bloodType]}
               onSelectionChange={(keys) =>
@@ -322,24 +248,29 @@ const PersonalDetails = ({
                   "bloodType",
                   [...keys][0]
                 )
-              }>
+              }
+            >
               {bloodGroupOptions.map((group) => (
                 <SelectItem key={group}>{group}</SelectItem>
               ))}
             </Select>
-            {error.bloodType && (
-              <span className="text-red-500 text-xs">{error.bloodType}</span>
+            {errors.bloodType && (
+              <p className="text-red-500 text-sm mt-1">{errors.bloodType}</p>
             )}
           </div>
         </div>
       </div>
+
       {/* Guardian Details */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Guardian Details</h3>
-        <div className="flex gap-x-4 w-full">
-          <div className="w-full items-center flex flex-col">
+      <div className="space-y-6">
+        <h3 className="text-xl font-semibold text-gray-800">
+          Guardian Details
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
             <Inputcomp
-              id="username"
+              id="guardianName"
               type="text"
               label="Guardian Name"
               value={formData?.personalInfo?.guardianName}
@@ -353,14 +284,15 @@ const PersonalDetails = ({
                 )
               }
             />
-            {error.guardianName && (
-              <span className="text-red-500 text-xs">{error.guardianName}</span>
+            {errors.guardianName && (
+              <p className="text-red-500 text-sm mt-1">{errors.guardianName}</p>
             )}
           </div>
-          <div className="w-full items-center flex flex-col">
+
+          <div>
             <Inputcomp
               type="text"
-              id="phone"
+              id="guardianPhone"
               label="Guardian Phone"
               variant="bordered"
               value={formData?.personalInfo?.guardianPhone}
@@ -373,22 +305,19 @@ const PersonalDetails = ({
                 )
               }
             />
-            {error.guardianPhone && (
-              <span className="text-red-500 text-xs">
-                {error.guardianPhone}
-              </span>
+            {errors.guardianPhone && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.guardianPhone}
+              </p>
             )}
           </div>
         </div>
 
-        {/* Guardian Relation Dropdown */}
-        <div className="flex items-center flex-col max-w-[49.5%]">
+        <div>
           <Select
-            classNames={{
-              inputWrapper: "shadow-lg",
-            }}
+            classNames={{ inputWrapper: "shadow-md" }}
             variant="bordered"
-            className="w-full rounded-lg shadow-lg shadow-gray-300"
+            className="w-full rounded-lg"
             label="Guardian Relation"
             selectedKeys={[formData?.personalInfo?.guardianRelation]}
             onSelectionChange={(keys) =>
@@ -398,26 +327,30 @@ const PersonalDetails = ({
                 "guardianRelation",
                 [...keys][0]
               )
-            }>
+            }
+          >
             {relationOptions.map((relation) => (
               <DropdownItem key={relation}>{relation}</DropdownItem>
             ))}
           </Select>
-          {error.guardianRelation && (
-            <span className="text-red-500 text-xs">
-              {error.guardianRelation}
-            </span>
+          {errors.guardianRelation && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.guardianRelation}
+            </p>
           )}
         </div>
       </div>
 
       {/* Emergency Details */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Emergency Details</h3>
-        <div className="flex gap-x-4 w-full">
-          <div className="w-full items-center flex flex-col">
+      <div className="space-y-6">
+        <h3 className="text-xl font-semibold text-gray-800">
+          Emergency Details
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
             <Inputcomp
-              id="username"
+              id="emergencyName"
               variant="bordered"
               type="text"
               label="Emergency Name"
@@ -431,15 +364,16 @@ const PersonalDetails = ({
                 )
               }
             />
-            {error.emergencyName && (
-              <span className="text-red-500 text-xs">
-                {error.emergencyName}
-              </span>
+            {errors.emergencyName && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.emergencyName}
+              </p>
             )}
           </div>
-          <div className="w-full items-center flex flex-col">
+
+          <div>
             <Inputcomp
-              id="phone"
+              id="emergencyPhone"
               type="text"
               variant="bordered"
               label="Emergency Phone"
@@ -453,15 +387,17 @@ const PersonalDetails = ({
                 )
               }
             />
-            {error.emergencyNumber && (
-              <span className="text-red-500 text-xs">
-                {error.emergencyNumber}
-              </span>
+            {errors.emergencyNumber && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.emergencyNumber}
+              </p>
             )}
           </div>
         </div>
-        <div className="max-w-[49.5%] items-center flex flex-col">
+
+        <div>
           <Inputcomp
+            className="w-full"
             type="text"
             variant="bordered"
             label="Emergency Relation"
@@ -475,24 +411,27 @@ const PersonalDetails = ({
               )
             }
           />
-          {error.emergencyRelation && (
-            <span className="text-red-500 text-xs">
-              {error.emergencyRelation}
-            </span>
+          {errors.emergencyRelation && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.emergencyRelation}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="flex justify-between mt-6">
+      {/* Actions */}
+      <div className="flex justify-between mt-8">
         <Button
           onPress={handleBack}
           isDisabled
-          className="px-4 py-2 bg-gray-300 rounded">
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
+        >
           Back
         </Button>
         <Button
           onPress={handlenextsubmit}
-          className="px-4 py-2 bg-green-500 text-white rounded">
+          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
+        >
           Submit
         </Button>
       </div>

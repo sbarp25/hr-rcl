@@ -22,6 +22,11 @@ import Rstpwd from "./pages/resetpassword/page.jsx";
 import ValidateLink from "./pages/resetpassword/validatelink/page.jsx";
 import AuthLayout from "./components/AuthLayout/AuthLayout.jsx";
 import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
+// import EkyeAction from "./components/EkyeAction.jsx";
+// import View from "./pages/Ekye/AdminEkye/EKyeView/Page.jsx";
+import EkyeAction from "./components/Ekye/EkyeAction.jsx";
+import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
+
 function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -68,6 +73,8 @@ function App() {
             <Route path="/Leave/Request" element={<LeaveRequest />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/AdminEkye" element={<AdminEkye />} />
+            <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
+            <Route path="/View/:rclId" element={<View />} />
           </Routes>
         </Layout>
       )}

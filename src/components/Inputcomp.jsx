@@ -10,6 +10,8 @@ const Inputcomp = ({
   id,
   startContent,
   placeholder,
+  errorMessage,
+  isInvalid,
 }) => {
   return (
     <>
@@ -24,6 +26,8 @@ const Inputcomp = ({
         onChange={onChange}
         startContent={startContent}
         label={label}
+        errorMessage={errorMessage}
+        isInvalid={isInvalid}
       />
     </>
   );

@@ -82,38 +82,43 @@ const Leave = () => {
     },
   ];
   return (
-    <div>
-      <Table
-        bordered
-        aria-label="Dyanamic Attendance Table"
-        isHeaderSticky
-        className="max-h-[35vh] overflow-auto">
-        <TableHeader className="Capitalize">
-          <TableColumn>S.N</TableColumn>
-          <TableColumn>RCL-ID</TableColumn>
-          <TableColumn>Name</TableColumn>
-          <TableColumn>Email</TableColumn>
-          <TableColumn>Department</TableColumn>
-          <TableColumn>From Date</TableColumn>
-          <TableColumn>To date</TableColumn>
-          <TableColumn>Approved By</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {LeaveList.map((data) => (
-            <TableRow key={data.Sn}>
-              <TableCell>{data.Sn}</TableCell>
-              <TableCell>{data.RCLID}</TableCell>
-              <TableCell>{data.Name}</TableCell>
-              <TableCell>{data.Email}</TableCell>
-              <TableCell>{data.Department}</TableCell>
-              <TableCell>{data.Fromdate}</TableCell>
-              <TableCell>{data.todate}</TableCell>
-              <TableCell>{data.ApprovedBy}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      <div>
+        <div className="max-h-[28vh] overflow-auto ">
+          <Table
+            bordered
+            isHeaderSticky
+            aria-label="Dynamic Attendance Table"
+            className="max-h-[25vh] overflow-auto"
+          >
+            <TableHeader className="Capitalize  ">
+              <TableColumn>S.N</TableColumn>
+              <TableColumn>RCL-ID</TableColumn>
+              <TableColumn>Name</TableColumn>
+              <TableColumn>Email</TableColumn>
+              <TableColumn>Department</TableColumn>
+              <TableColumn>From Date</TableColumn>
+              <TableColumn>To Date</TableColumn>
+              <TableColumn>Approved By</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {LeaveList.map((data) => (
+                <TableRow key={data.Sn}>
+                  <TableCell>{data.Sn}</TableCell>
+                  <TableCell>{data.RCLID}</TableCell>
+                  <TableCell>{data.Name}</TableCell>
+                  <TableCell>{data.Email}</TableCell>
+                  <TableCell>{data.Department}</TableCell>
+                  <TableCell>{data.Fromdate}</TableCell>
+                  <TableCell>{data.todate}</TableCell>
+                  <TableCell>{data.ApprovedBy}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </>
   );
 };
 

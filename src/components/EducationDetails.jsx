@@ -3,11 +3,14 @@ import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+
 import { TimeInput } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import { FaRegEye } from "react-icons/fa";
 import Inputcomp from "./Inputcomp";
+
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
+  const [errors, setErrors] = useState({});
   const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
   const [selectedDegree, setSelectedDegree] = useState("");
   const statusOptions = ["COMPLETED", "IN_PROGRESS"];
@@ -133,58 +136,78 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     fetchEducationDetails();
   }, [setFormData]);
 
+  const validateFormData = () => {
+    const newErrors = {};
+
+    if (!formData?.education || formData.education.length === 0) {
+      newErrors.education = "At least one education entry is required.";
+    } else {
+      formData.education.forEach((edu, index) => {
+        if (!edu.institution)
+          newErrors[`institution_${index}`] = "Institution is required.";
+        if (!edu.faculty)
+          newErrors[`faculty_${index}`] = "Faculty is required.";
+        if (!edu.startYear)
+          newErrors[`startYear_${index}`] = "Start year is required.";
+        if (!edu.endYear)
+          newErrors[`endYear_${index}`] = "End year is required.";
+        if (!edu.status) newErrors[`status_${index}`] = "Status is required.";
+      });
+    }
+    console.log(newErrors);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const onSubmit = async () => {
-    if (!validateFields()) return;
+    if (!validateFormData()) return;
+
     setIsLoading(true);
 
     const formDataToSend = new FormData();
 
-    formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
+    formDataToSend.append(
+      "educationData",
+      JSON.stringify(
+        formData?.education?.map((edu, index) => ({
+          level: edu.degrees || "",
+          institution: edu.institution || "",
+          faculty: edu.faculty || "",
+          startYear: edu.startYear || "",
+          endYear: edu.endYear || "",
+          status: edu.status || "",
+          imageIndex: index + 1,
+        }))
+      )
+    );
 
-    if (isCurrentlyStudying === true) {
-      const formattedTime = handleTimeChange(Time);
-      if (formattedTime) {
-        formDataToSend.append("expectedCheckingTime", formattedTime);
-      }
-    }
-
-    formData.education.forEach((edu, eduIndex) => {
-      formDataToSend.append(`eduData[${eduIndex}].degree`, degrees[eduIndex]);
-      formDataToSend.append(
-        `eduData[${eduIndex}].institution`,
-        edu.institution || ""
-      );
-      formDataToSend.append(`eduData[${eduIndex}].faculty`, edu.faculty || "");
-      formDataToSend.append(
-        `eduData[${eduIndex}].startYear`,
-        edu.startYear || ""
-      );
-      formDataToSend.append(`eduData[${eduIndex}].endYear`, edu.endYear || "");
-      formDataToSend.append(`eduData[${eduIndex}].status`, edu.status || "");
-      formDataToSend.append(
-        `eduData[${eduIndex}].imageIndex`,
-        `${eduIndex + 1}` || ""
-      );
-
-      if (edu.files?.length) {
+    // Append files for each education record
+    formData?.education?.forEach((edu, index) => {
+      if (edu?.files && edu.files.length > 0) {
         edu.files.forEach((file) => {
-          formDataToSend.append(`imageAttachments[${eduIndex + 1}]`, file);
+          formDataToSend.append(`files`, file);
         });
       }
     });
 
+    formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
+    if (isCurrentlyStudying) {
+      formDataToSend.append(
+        "expectedCheckingTime",
+        handleTimeChange(Time) || ""
+      );
+    }
+
     try {
       const response = await axiosInstance.post(
         "/api/v1/education/save",
-        // "/user-education/create",
         formDataToSend,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      if (response.data.responseCode === "200") {
+
+      if (response.data.responseCode === "201") {
         toast.success(response.data.message);
         navigate("/");
       } else {
@@ -198,6 +221,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
   };
 
+  const handleSubmit = () => {
+    if (validateFormData()) {
+      console.log("Submitting the data");
+      onSubmit();
+    }
+  };
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -208,9 +237,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         <Select
           variant="bordered"
           className="w-full rounded-lg shadow-lg shadow-gray-300"
-          label="Select A Level"
+          label="Select A Degree"
           value={selectedDegree}
-          onChange={(e) => setSelectedDegree(e.target.value)}>
+          onChange={(e) => setSelectedDegree(e.target.value)}
+        >
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
               {degree}
@@ -218,16 +248,113 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           ))}
         </Select>
       </div>
+      {/* Always render the zeroth index card */}
+      {/* <div className="space-y-4 border p-4 rounded-md">
+        <h3 className="text-lg font-semibold text-gray-600">
+          {degrees[0]} Details
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Institution
+            </label>
+            <Input
+              classNames={{
+                inputWrapper: "shadow-lg",
+              }}
+              variant="bordered"
+              type="text"
+              placeholder="Institution"
+              value={formData?.education[0]?.institution || ""}
+              onChange={(e) => handleChange(0, "institution", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Faculty
+            </label>
+            <Input
+              classNames={{
+                inputWrapper: "shadow-lg",
+              }}
+              variant="bordered"
+              type="text"
+              placeholder="Faculty"
+              value={formData.education[0]?.faculty || ""}
+              onChange={(e) => handleChange(0, "faculty", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Start Year
+            </label>
+            <Input
+              classNames={{
+                inputWrapper: "shadow-lg",
+              }}
+              variant="bordered"
+              type="date"
+              value={formData.education[0]?.startYear || ""}
+              onChange={(e) => handleChange(0, "startYear", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              End Year
+            </label>
+            <Input
+              classNames={{
+                inputWrapper: "shadow-lg",
+              }}
+              variant="bordered"
+              type="date"
+              value={formData.education[0]?.endYear || ""}
+              onChange={(e) => handleChange(0, "endYear", e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Status
+            </label>
+            <Select
+              variant="bordered"
+              className="w-full"
+              label="Select Status"
+              value={formData.education[0]?.status || ""}
+              onChange={(e) => handleChange(0, "status", e.target.value)}>
+              {statusOptions.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Upload Files
+            </label>
+            <Input
+              classNames={{
+                inputWrapper: "shadow-lg",
+              }}
+              variant="bordered"
+              type="file"
+              multiple
+              onChange={(e) => handleFileChange(0, Array.from(e.target.files))}
+            />
+          </div>
+        </div>
+      </div> */}
 
-      {formData.education.length > 0 ? (
-        Array.from({ length: numberOfItems }).map((_, index) => (
-          <div
-            key={formData.education[index]?.degree || index}
-            className="space-y-4 border p-4 rounded-md">
-            <h3 className="text-lg font-semibold text-gray-600">
-              {degrees[index]} Details
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
+      {Array.from({ length: numberOfItems }).map((_, index) => (
+        <div key={index} className="space-y-4 border p-4 rounded-md">
+          <h3 className="text-lg font-semibold text-gray-600">
+            {degrees[index]} Details
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Inputcomp
                 variant="bordered"
                 type="text"
@@ -237,6 +364,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   handleChange(index, "institution", e.target.value)
                 }
               />
+              {errors[`institution_${index}`] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[`institution_${index}`]}
+                </p>
+              )}
+            </div>
+            <div>
               <Inputcomp
                 variant="bordered"
                 type="text"
@@ -244,6 +378,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 value={formData.education[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
               />
+              {errors[`faculty_${index}`] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[`faculty_${index}`]}
+                </p>
+              )}
+            </div>
+            <div>
               <Inputcomp
                 variant="bordered"
                 type="date"
@@ -253,6 +394,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   handleChange(index, "startYear", e.target.value)
                 }
               />
+              {errors[`startYear_${index}`] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[`startYear_${index}`]}
+                </p>
+              )}
+            </div>
+            <div>
               <Inputcomp
                 variant="bordered"
                 type="date"
@@ -261,35 +409,71 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            {errors[`endYear_${index}`] && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors[`endYear_${index}`]}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Select
                 variant="bordered"
-                className="w-full shadow-lg shadow-gray-300 rounded-lg"
+                className="w-full"
                 label="Status"
                 value={formData.education[index]?.status || ""}
-                onChange={(e) => handleChange(index, "status", e.target.value)}>
+                onChange={(e) => handleChange(index, "status", e.target.value)}
+              >
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status}>
                     {status}
                   </SelectItem>
                 ))}
               </Select>
-              <Inputcomp
-                type="file"
-                label="Upload Document"
-                variant="bordered"
-                onChange={(e) =>
-                  handleFileChange(index, Array.from(e.target.files))
-                }
-              />
+              {errors[`status_${index}`] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[`status_${index}`]}
+                </p>
+              )}
+            </div>
+            <div>
+              <div>
+                <Inputcomp
+                  label="Upload Document"
+                  variant="bordered"
+                  type="file"
+                  onChange={(e) =>
+                    handleFileChange(index, Array.from(e.target.files))
+                  }
+                />
+              </div>
+              <div className="flex gap-x-4">
+                <label className="block text-xs font-medium text-gray-700">
+                  Please upload the image of type either PNG or jpg
+                </label>
+                {educationalDocument &&
+                  (formData.education[index]?.file ? (
+                    <a
+                      href={formData.education[index]?.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
+                      <span className="flex items-center gap-x-2">
+                        <FaRegEye />
+                        View Uploaded Document
+                      </span>
+                    </a>
+                  ) : (
+                    <div className="text-xs text-red-500">
+                      No Links Available
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
-        ))
-      ) : (
-        <p className="text-gray-500 text-center">
-          No educational details found.
-        </p>
-      )}
+        </div>
+      ))}
       <div className="flex flex-col gap-x-4 ">
         <div>
           <input
@@ -330,9 +514,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           Back
         </Button>
         <button
-          onClick={onSubmit}
+          onClick={() => {
+            handleSubmit();
+          }}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
+          disabled={isLoading}
+        >
           {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>

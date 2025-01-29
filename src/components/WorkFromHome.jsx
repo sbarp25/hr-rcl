@@ -73,7 +73,8 @@ const WorkFromHome = () => {
         bordered
         aria-label="Dyanamic Attendance Table"
         isHeaderSticky
-        className="max-h-[35vh] overflow-auto">
+        className="max-h-[25vh] overflow-auto"
+      >
         <TableHeader className="Capitalize ">
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>

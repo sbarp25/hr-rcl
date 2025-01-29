@@ -11,113 +11,78 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
   const [photoPAN, setPhotoPAN] = useState(false);
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Utility function to handle nested changes
-  const handleNestedChange = (section, subSection, field, value) => {
-    // Define validation rules
-    const validateField = (field, value) => {
-      const errors = {};
-      if (field === "panNumber" && !value) {
-        errors[field] = "Pan number is required";
-      }
-      if (field === "panIssueDate" && !value) {
-        errors[field] = "Issue Date is required";
-      }
-      if (field === "panIssuePlace" && !value) {
-        errors[field] = "Issue Place is required ";
-      }
-      if (field === "citizenshipNumber" && !value) {
-        errors[field] = "Citizenship Number is required.";
-      }
-      if (field === "issuedDate" && !value) {
-        errors[field] = "Issue Date is required.";
-      }
-      if (field === "isIssuedPlaceDistrict" && !value) {
-        errors[field] = "Issue Place is required.";
-      }
-      if (field === "citizenshipFrontDocumentFile" && !value) {
-        errors[field] = "Photo of Citizernship is required.";
-      }
-      if (field === "citizenshipBackDocumentFile" && !value) {
-        errors[field] = "Photo of Citizernship is required.";
-      }
-      if (field === "panCardDocumentFile" && !value) {
-        errors[field] = "Photo of PAN card is required.";
-      }
-
-      return errors;
-    };
-
-    // Perform validation
-    const fieldErrors = validateField(field, value);
-
-    // Update errors
-    setError((prevErrors) => {
-      const newErrors = { ...prevErrors };
-      if (!fieldErrors[field]) {
-        // Clear the error if validation passes
-        delete newErrors[field];
-      } else {
-        // Update the error if validation fails
-        newErrors[field] = fieldErrors[field];
-      }
-      return newErrors;
-    });
-
-    // Update form data
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value,
+  const handleNestedChange = (parentKey, childKey, value) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [parentKey]: {
+        ...prevState[parentKey],
+        [childKey]: value,
       },
     }));
     setCitizenshipBack(false), setCitizenshipFront(false), setPhotoPAN(false);
   };
-  const validateAllFields = () => {
-    const errors = {};
-    const docs = formData?.documents || {};
+  // const getPanNumberError = (value) => {
+  //   if (!value) {
+  //     return "Province must not be empty";
+  //   }
+  //   return null;
+  // };
+  // const getPanIssuePlaceError = (value) => {
+  //   if (!value) {
+  //     return "Province must not be empty";
+  //   }
+  //   return null;
+  // };
+  // const getCitizenNumberError = (value) => {
+  //   if (!value) {
+  //     return "Province must not be empty";
+  //   }
+  //   return null;
+  // };
+  // const getCitizenIssuePlaceError = (value) => {
+  //   if (!value) {
+  //     return "Province must not be empty";
+  //   }
+  //   return null;
+  // };
+  const validateFormData = () => {
+    const newErrors = {};
+    const {
+      panNumber,
+      panIssuePlace,
+      panIssueDate,
+      PanPhoto,
+      citizenshipNumber,
+      isIssuedPlaceDistrict,
+      issuedDate,
+      citizenshipFront,
+      citizenshipBack,
+    } = formData.documents;
+    if (!panNumber) newErrors.panNumber = "PanNumber is Required";
+    if (!panIssueDate) newErrors.panIssueDate = "pan Issued date is required";
+    if (!panIssuePlace)
+      newErrors.panIssuePlace = "Pan Issued place is required";
+    // if (!PanPhoto) newErrors.PanPhoto = "pan Photo is required";
+    if (!citizenshipNumber)
+      newErrors.citizenshipNumber = "Citizenship Number is required";
+    if (!isIssuedPlaceDistrict)
+      newErrors.citizenshipIssuedPlace = "Citizenship Issued place is required";
+    if (!issuedDate)
+      newErrors.issuedDate = "Citizenship Issued Date  is required";
+    // if (!citizenshipFront)
+    //   newErrors.citizenshipFront = "Citizenship Front picture is Required";
+    // if (!citizenshipBack)
+    //   newErrors.citizenshipBack = "Citizenship bacK picture is required";
 
-    if (!docs.panNumber) {
-      errors.panNumber = "PAN number  is required.";
-    }
-    if (!docs.panIssueDate) {
-      errors.panIssueDate = "Issue date is required.";
-    }
-    if (!docs.panIssuePlace) {
-      errors.panIssuePlace = "Issue Place is required.";
-    }
-    if (!docs.citizenshipNumber) {
-      errors.citizenshipNumber = "Citizenship number is required.";
-    }
-    if (!docs.issuedDate) {
-      errors.issuedDate = "Issue date is required.";
-    }
-    if (!docs.isIssuedPlaceDistrict) {
-      errors.isIssuedPlaceDistrict = "Issued Place is required.";
-    }
-    if (!docs.guardianRelation) {
-      errors.guardianRelation = "Guardian Relation  is required";
-    }
-    if (!docs.citizenshipFrontDocumentFile) {
-      errors.citizenshipFrontDocumentFile = "Guardian Name is required";
-    }
-    if (!docs.citizenshipBackDocumentFile) {
-      errors.citizenshipBackDocumentFile = "Phone Number  is required";
-    }
-    if (!docs.panCardDocumentFile) {
-      errors.panCardDocumentFile = "Guardian Relation is required";
-    }
-    setError(errors);
-    return Object.keys(errors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
-
   const onSubmit = async () => {
-    if (!validateAllFields()) {
-      setIsLoading(false);
-      return;
-    }
+    console.log("Pan Issue Date", formData?.documents?.panIssueDate);
+    console.log("Citizenship Issue Date", formData?.documents?.issuedDate);
     setIsLoading(true);
 
     const formDataToSubmit = new FormData();
@@ -175,7 +140,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
       if (response.data.responseCode === "200") {
         toast.success(response.data.message);
-        handleNext();
       } else {
         toast.error(response.data.message);
       }
@@ -188,8 +152,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   };
 
   const handleNextSubmit = () => {
-    onSubmit();
-    // handleNext();
+    if (validateFormData()) {
+      onSubmit();
+      handleNext();
+    }
   };
 
   useEffect(() => {
@@ -213,7 +179,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               panIssuePlace: data.panIssuePlace || "",
               citizenshipNumber: data.citizenshipNumber || "",
               panIssueDate: data.panIssueDate || "",
-              citizenshipIssueDate: data.citizenshipIssueDate || "",
+              issuedDate: data.citizenshipIssueDate || "",
               isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
               panCardDocumentFile: data.panCardDocumentUrl || null,
               citizenshipFrontDocumentFile:
@@ -254,7 +220,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-600">PAN Details</h3>
             <div className="grid grid-cols-2 gap-x-4">
-              <div className="flex flex-col items-center">
+              <div>
                 <Inputcomp
                   id="panNumber"
                   variant="bordered"
@@ -265,13 +231,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter your PAN number"
                 />
-                {error.panNumber && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.panNumber}
-                  </span>
+                {errors.panNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.panNumber}
+                  </p>
                 )}
               </div>
-              <div className=" flex flex-col items-center">
+              <div className="">
                 <Inputcomp
                   className="h-[10vh]"
                   variant="bordered"
@@ -286,15 +252,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     )
                   }
                 />
-                {error.panIssueDate && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.panIssueDate}
-                  </span>
+                {errors.panIssueDate && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.panIssueDate}
+                  </p>
                 )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center">
+              <div>
                 <Inputcomp
                   variant="bordered"
                   type="text"
@@ -308,14 +274,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter PAN issued place"
                 />
-                {error.panIssuePlace && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.panIssuePlace}
-                  </span>
+                {errors.panIssuePlace && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.panIssuePlace}
+                  </p>
                 )}
               </div>
               <div>
-                <div className="flex flex-col items-center">
+                <div>
                   <Inputcomp
                     variant="bordered"
                     type="file"
@@ -326,12 +292,12 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         e.target.files[0]
                       )
                     }
-                    label="Enter PAN issued place"
+                    label="Enter Photo"
                   />
-                  {error.panCardDocumentFile && (
-                    <span className="text-red-500 text-xs mt-1">
-                      {error.panCardDocumentFile}
-                    </span>
+                  {errors.PanPhoto && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.PanPhoto}
+                    </p>
                   )}
                 </div>
 
@@ -345,7 +311,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData.documents?.panCardDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2">
+                        className="block text-sm text-green-600 underline mb-2"
+                      >
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded PAN Card
@@ -367,7 +334,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               Citizenship Details
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center">
+              <div>
                 <Inputcomp
                   variant="bordered"
                   type="text"
@@ -381,13 +348,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter Citizenship Number"
                 />
-                {error.citizenshipNumber && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.citizenshipNumber}
-                  </span>
+                {errors.citizenshipNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.citizenshipNumber}
+                  </p>
                 )}
               </div>
-              <div className=" flex flex-col items-center">
+              <div>
                 <Inputcomp
                   variant="bordered"
                   type="date"
@@ -401,15 +368,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     )
                   }
                 />
-                {error.issuedDate && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.issuedDate}
-                  </span>
+                {errors.issuedDate && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.issuedDate}
+                  </p>
                 )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className=" flex flex-col items-center">
+              <div>
                 <Inputcomp
                   type="text"
                   variant="bordered"
@@ -423,15 +390,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Enter Citizenship Issued Place"
                 />
-                {error.isIssuedPlaceDistrict && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.isIssuedPlaceDistrict}
-                  </span>
+                {errors.citizenshipIssuedPlace && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.citizenshipIssuedPlace}
+                  </p>
                 )}
               </div>
               <div>
-                <div className="flex flex-col items-center">
-                  <Input
+                <div>
+                  <Inputcomp
                     type="file"
                     variant="bordered"
                     onChange={(e) => {
@@ -443,10 +410,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     }}
                     label="Citizenship Front Photo"
                   />
-                  {error.citizenshipFrontDocumentFile && (
-                    <span className="text-red-500 text-xs mt-1">
-                      {error.citizenshipFrontDocumentFile}
-                    </span>
+                  {errors.citizenshipFront && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.citizenshipFront}
+                    </p>
                   )}
                 </div>
 
@@ -460,7 +427,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2">
+                        className="block text-sm text-green-600 underline mb-2"
+                      >
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Front Side
@@ -475,7 +443,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
             </div>
             <div>
-              <div className="flex flex-col items-center">
+              <div>
                 <Inputcomp
                   variant="bordered"
                   type="file"
@@ -488,10 +456,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   }
                   label="Citizenship Back Photo "
                 />
-                {error.citizenshipBackDocumentFile && (
-                  <span className="text-red-500 text-xs mt-1">
-                    {error.citizenshipBackDocumentFile}
-                  </span>
+                {errors.citizenshipBack && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.citizenshipBack}
+                  </p>
                 )}
               </div>
 
@@ -505,7 +473,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       href={formData?.documents?.citizenshipBackDocumentFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Back Side
@@ -521,12 +490,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded">
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
                 Back
               </Button>
               <Button
                 onPress={handleNextSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded">
+                className="px-4 py-2 bg-green-500 text-white rounded"
+              >
                 Submit
               </Button>
             </div>

@@ -16,7 +16,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="max-h-[95vh] w-[80vw] overflow-y-auto  ">
+      <div className="max-h-[98vh] w-[85vw] overflow-y-auto  ">
         <div className="flex justify-end mb-4">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
@@ -25,7 +25,8 @@ const Page = () => {
           )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal">
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal"
+          >
             {ischeckedin ? (
               <>
                 <span className="text-white font-Poppins text-xl">
@@ -84,12 +85,14 @@ const Page = () => {
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg">
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
+                  >
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700 px-4 py-2 rounded-lg text-white mr-5 shadow-lg">
+                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg"
+                  >
                     Upcoming Leave
                   </Button>
                 </div>
