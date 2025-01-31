@@ -91,8 +91,8 @@ const Ekye = () => {
   };
 
   useEffect(() => {
-    const ekye = localStorage.getItem("ekye");
-    switch (ekye) {
+    const ekeyStep = localStorage.getItem("ekeyStep");
+    switch (ekeyStep) {
       case "Personal_Details":
         setStep(0);
         break;
@@ -155,7 +155,8 @@ const Ekye = () => {
                     key={label}
                     className={`flex-1 flex flex-col items-center relative cursor-pointer ${
                       step >= stepIndex ? "text-white" : "text-bgprimaryhover"
-                    }`}>
+                    }`}
+                  >
                     {/* Step Container */}
                     <div className="relative flex items-center">
                       {/* Step Image */}
@@ -183,7 +184,8 @@ const Ekye = () => {
                           style={{
                             left: "90%", // Start from the end of the current step
                             width: "550%", // Start from the end of the current step
-                          }}></div>
+                          }}
+                        ></div>
                       )}
                     </div>
                     {/* Label */}
@@ -250,7 +252,8 @@ const Ekye = () => {
           {step > 0 && (
             <Button
               onPress={handleBack}
-              className="px-4 py-2 bg-gray-300 rounded">
+              className="px-4 py-2 bg-gray-300 rounded"
+            >
               Back
             </Button>
           )}
@@ -259,7 +262,8 @@ const Ekye = () => {
               onPress={() => {
                 handleNext();
               }}
-              className="px-4 py-2 bg-bgprimary text-white rounded">
+              className="px-4 py-2 bg-bgprimary text-white rounded"
+            >
               Next
             </Button>
           )}

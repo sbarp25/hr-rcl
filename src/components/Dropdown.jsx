@@ -7,13 +7,18 @@ import {
   Button,
 } from "@nextui-org/react";
 
-const DropDownComp = ({ items }) => {
+const DropDownComp = ({ items, onSelect }) => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(["10"]));
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
     [selectedKeys]
   );
+  const handleSelectionChange = (keys) => {
+    const selected = Array.from(keys)[0]; // Get selected value
+    setSelectedKeys(keys);
+    onSelect(Number(selected)); // Pass selected value to parent
+  };
 
   return (
     <Dropdown>
@@ -28,7 +33,8 @@ const DropDownComp = ({ items }) => {
         selectedKeys={selectedKeys}
         selectionMode="single"
         variant="flat"
-        onSelectionChange={setSelectedKeys}>
+        onSelectionChange={handleSelectionChange}
+      >
         {items.map((item) => (
           <DropdownItem key={item}>{item}</DropdownItem>
         ))}

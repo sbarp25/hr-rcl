@@ -13,33 +13,27 @@ import {
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
 
-const Filter = () => {
+const Filter = ({ onApplyFilters }) => {
   const [formData, setFormData] = useState({
     department: "",
     position: "",
     roles: "",
   });
 
-  // Data states
   const [departmentsData, setDepartmentsData] = useState([]);
   const [positionData, setPositionData] = useState([]);
-  const [roleData, setRoleData] = useState([]);
 
-  // Individual loading states
   const [loadingDepartments, setLoadingDepartments] = useState(false);
   const [loadingPositions, setLoadingPositions] = useState(false);
-  const [loadingRoles, setLoadingRoles] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleChange = (name, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Fetch departments data
   useEffect(() => {
     const fetchDepartments = async () => {
       setLoadingDepartments(true);
@@ -48,9 +42,9 @@ const Filter = () => {
           "/api/v1/departments/get/all"
         );
         if (response.data.responseCode === "200") {
-          setDepartmentsData(response.data.datalist);
+          setDepartmentsData(response?.data?.data?.content);
         } else {
-          toast.error(response.data.message);
+          toast.error(response.data.data.message);
         }
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -59,18 +53,16 @@ const Filter = () => {
         setLoadingDepartments(false);
       }
     };
-
     fetchDepartments();
   }, []);
 
-  // Fetch positions data
   useEffect(() => {
     const fetchPositions = async () => {
       setLoadingPositions(true);
       try {
         const response = await axiosInstance.post("/api/v1/positions/get/all");
         if (response.data.responseCode === "200") {
-          setPositionData(response.data.datalist);
+          setPositionData(response?.data?.data?.content);
         } else {
           toast.error(response.data.message);
         }
@@ -81,38 +73,53 @@ const Filter = () => {
         setLoadingPositions(false);
       }
     };
-
     fetchPositions();
   }, []);
 
-  // Fetch roles data
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setLoadingRoles(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/role/get/all");
-        if (response.data.responseCode === "200") {
-          setRoleData(response.data.datalist);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-        toast.error("Error fetching roles.");
-      } finally {
-        setLoadingRoles(false);
-      }
+  const resetFilters = () => {
+    setFormData({ department: "", position: "" });
+  };
+
+  const onSubmit = async () => {
+    setIsLoading(true);
+
+    const requestBody = {
+      pageIndex: 0,
+      pageSize: 10, // Set the page size as needed
+      filterCriteria: {
+        // fromDate: "2025-01-16",
+        // toDate: "2025-01-25",
+        departmentName: formData.department || "",
+        positionName: formData.position || "",
+      },
     };
 
-    fetchRoles();
-  }, []);
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/admin/completedEkyeUsers",
+        requestBody,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-  const resetFilters = () => {
-    setFormData({ department: "", position: "", roles: "" });
+      if (response.data.responseCode === "201") {
+        resetFilters();
+        toast.success(response.data.data.message);
+      } else {
+        toast.error(response.data.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching data", error);
+      toast.error("Error fetching data.");
+    } finally {
+      setIsLoading(false);
+    }
+    onApplyFilters(formData);
   };
 
   const filteredDepartments = useMemo(
-    () => departmentsData.filter((department) => !department?.isDeleted),
+    () => departmentsData?.filter((department) => !department?.isDeleted),
     [departmentsData]
   );
 
@@ -121,14 +128,9 @@ const Filter = () => {
     [positionData]
   );
 
-  const filteredRoles = useMemo(
-    () => roleData.filter((role) => !role?.isDeleted),
-    [roleData]
-  );
-
   return (
     <div className="bg-gray-200">
-      <Button onPress={onOpen} className="">
+      <Button onPress={onOpen}>
         <BsFilter className="mr-2" />
         Filters
       </Button>
@@ -137,7 +139,6 @@ const Filter = () => {
           <DrawerHeader>Filter Options</DrawerHeader>
           <DrawerBody>
             <div className="p-4 space-y-6">
-              {/* Date Pickers */}
               <div className="flex gap-4">
                 <DatePicker
                   isRequired
@@ -153,65 +154,45 @@ const Filter = () => {
                 />
               </div>
 
-              {/* Department Dropdown */}
               <Select
                 label={loadingDepartments ? "Loading..." : "Department"}
                 value={formData.department}
-                onChange={(value) => handleChange("department", value)}
+                onChange={(e) => handleChange("department", e.target.value)}
                 placeholder="Select a department"
               >
                 {loadingDepartments ? (
                   <SelectItem key="loading">Loading departments...</SelectItem>
                 ) : (
-                  filteredDepartments.map((department) => (
-                    <SelectItem key={department.id} value={department.name}>
+                  filteredDepartments?.map((department) => (
+                    <SelectItem key={department.name} value={department.name}>
                       {department.name}
                     </SelectItem>
                   ))
                 )}
               </Select>
 
-              {/* Position Dropdown */}
               <Select
                 label={loadingPositions ? "Loading..." : "Position"}
                 value={formData.position}
-                onChange={(value) => handleChange("position", value)}
+                onChange={(e) => handleChange("position", e.target.value)}
                 placeholder="Select a position"
               >
                 {loadingPositions ? (
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
-                  filteredPositions.map((position) => (
-                    <SelectItem key={position.id} value={position.name}>
+                  filteredPositions?.map((position) => (
+                    <SelectItem key={position.name} value={position.name}>
                       {position.name}
                     </SelectItem>
                   ))
                 )}
               </Select>
 
-              {/* Role Dropdown */}
-              {/* <Select
-                label={loadingRoles ? "Loading..." : "Role"}
-                value={formData.roles}
-                onChange={(value) => handleChange("roles", value)}
-                placeholder="Select a role"
-              >
-                {loadingRoles ? (
-                  <SelectItem key="loading">Loading roles...</SelectItem>
-                ) : (
-                  filteredRoles.map((role) => (
-                    <SelectItem key={role.roleId} value={role.roleName}>
-                      {role.roleName}
-                    </SelectItem>
-                  ))
-                )}
-              </Select> */}
-
-              {/* Action Buttons */}
               <div className="flex justify-between">
                 <Button
-                  className="bg-blue-500 text-white"
-                  onPress={() => toast.success("Filters applied!")}
+                  className="bg-black text-white hover:bg-hoverbackground"
+                  onPress={onSubmit}
+                  isLoading={isLoading}
                 >
                   <BsFilter className="mr-2" />
                   Apply Filters

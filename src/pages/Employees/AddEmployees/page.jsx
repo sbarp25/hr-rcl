@@ -37,7 +37,7 @@ const AddEmployeeForm = () => {
           // "/api/departments/get/all"
         );
         if (response.data.responseCode === "200") {
-          setDepartmentsData(response.data.datalist);
+          setDepartmentsData(response?.data?.data?.content);
         } else {
           toast.error(response.data.data.message);
         }
@@ -60,7 +60,7 @@ const AddEmployeeForm = () => {
         const response = await axiosInstance.post("/api/v1/positions/get/all");
         // const response = await axiosInstance.post("/api/positions/get/all");
         if (response.data.responseCode === "200") {
-          setPositionData(response.data.datalist);
+          setPositionData(response?.data?.data?.content);
         } else {
           toast.error(response.data.message);
         }
@@ -192,7 +192,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="fullname"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Full Name
                 </label>
                 <input
@@ -211,7 +212,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="phone"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Phone
                 </label>
                 <input
@@ -228,7 +230,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="email"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -251,7 +254,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="department"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Department
                 </label>
                 <select
@@ -260,7 +264,8 @@ const AddEmployeeForm = () => {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   value={formData.department}
                   onChange={handleChange}
-                  required>
+                  required
+                >
                   <option value="" disabled selected>
                     Select department
                   </option>
@@ -283,7 +288,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4">
                 <label
                   htmlFor="position"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Position
                 </label>
                 <select
@@ -292,7 +298,8 @@ const AddEmployeeForm = () => {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   value={formData.position}
                   onChange={handleChange}
-                  required>
+                  required
+                >
                   <option value="" disabled selected>
                     Select position
                   </option>
@@ -312,7 +319,8 @@ const AddEmployeeForm = () => {
               <div className="mb-4 ">
                 <label
                   htmlFor="roles"
-                  className="block text-gray-700 font-medium mb-2">
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Roles
                 </label>
                 <select
@@ -321,7 +329,8 @@ const AddEmployeeForm = () => {
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
                   value={formData.roles}
                   onChange={handleChange}
-                  required>
+                  required
+                >
                   <option value="" disabled selected>
                     Select role
                   </option>
@@ -346,8 +355,6 @@ const AddEmployeeForm = () => {
                   label="Hiring Date"
                   variant="bordered"
                   type="date"
-                  value={formData.hiredate || ""}
-                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -363,7 +370,8 @@ const AddEmployeeForm = () => {
               />
               <label
                 htmlFor="perform-ekyc"
-                className="text-gray-700 font-medium">
+                className="text-gray-700 font-medium"
+              >
                 Perform eKYE
               </label>
             </div>
@@ -372,7 +380,8 @@ const AddEmployeeForm = () => {
             <div>
               <button
                 type="submit"
-                className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg">
+                className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg"
+              >
                 Submit
               </button>
             </div>

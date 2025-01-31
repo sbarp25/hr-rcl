@@ -95,7 +95,7 @@ const AddressDetails = ({
                 tole: permanentAddress.tole || "",
               },
               temporary: {
-                provinceId: temporaryAddress.provinceName || "",
+                provinceId: temporaryAddress.provinceId || "",
                 provinceName: temporaryAddress.provinceName || "",
                 districtId: temporaryAddress.districtName || "",
                 municipality: temporaryAddress.municipality || "",
@@ -159,18 +159,18 @@ const AddressDetails = ({
 
     try {
       // Ensure IDs exist before calling .replace()
-      const sanitizedProvinceId = formData.address.permanent.provinceId
-        ? formData.address.permanent.provinceId.replace(/\D/g, "")
-        : "";
-      const sanitizedTemporaryProvinceId = formData.address.temporary.provinceId
-        ? formData.address.temporary.provinceId.replace(/\D/g, "")
-        : "";
-      const sanitizedDistrictId = formData.address.permanent.districtId
-        ? formData.address.permanent.districtId.replace(/\D/g, "")
-        : "";
-      const sanitizedTemporaryDistrictId = formData.address.temporary.districtId
-        ? formData.address.temporary.districtId.replace(/\D/g, "")
-        : "";
+      const sanitizedProvinceId = formData.address.permanent.provinceId.replace(
+        /[^0-9]/g,
+        ""
+      );
+      const sanitizedTemporaryProvinceId =
+        formData.address.temporary.provinceId.replace(/[^0-9]/g, "");
+      const sanitizedDistrictId = formData.address.permanent.districtId.replace(
+        /[^0-9]/g,
+        ""
+      );
+      const sanitizedtemporaryDistrictId =
+        formData.address.temporary.districtId.replace(/[^0-9]/g, "");
 
       const newData = {
         data: [
@@ -185,7 +185,7 @@ const AddressDetails = ({
           },
           {
             provinceId: sanitizedTemporaryProvinceId,
-            districtId: sanitizedTemporaryDistrictId,
+            districtId: sanitizedtemporaryDistrictId,
             municipality: formData.address.temporary.municipality,
             wardNumber: formData.address.temporary.wardNumber,
             pinCode: formData.address.temporary.pinCode,
@@ -290,7 +290,7 @@ const AddressDetails = ({
     if (validateForm()) {
       handleNextSubmit();
       console.log("submitdata");
-      handleNext();
+      // handleNext();
     }
   };
 
@@ -324,10 +324,7 @@ const AddressDetails = ({
                     className="w-full rounded-lg shadow-lg shadow-gray-300"
                     label="Select A Province"
                     items={formData.address?.permanent?.provinceId}
-                    value={formData.address?.permanent?.provinceId}
-                    selectedKeys={
-                      new Set([String(formData.address?.permanent?.provinceId)])
-                    }
+                    placeholder={formData.address?.permanent?.provinceName}
                     onSelectionChange={(keys) => {
                       const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
                       handleNestedChange(
@@ -352,8 +349,8 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
-
-                {/* <Input
+                {/* 
+                <Input
                   isReadOnly
                   value={formData.address?.permanent?.provinceName}
                 /> */}
@@ -368,6 +365,7 @@ const AddressDetails = ({
                     variant="bordered"
                     label="Select A District"
                     selectedKeys={[formData.address?.permanent?.districtId]}
+                    placeholder={formData.address?.permanent?.districtId}
                     onSelectionChange={(value) => {
                       const districtId = Array.from(value)[0];
                       handleNestedChange(
@@ -508,6 +506,7 @@ const AddressDetails = ({
                     variant="bordered"
                     className="w-full rounded-lg shadow-lg shadow-gray-300"
                     label="Select A Province"
+                    placeholder={formData.address?.temporary?.provinceName}
                     selectedKeys={[formData.address?.temporary?.provinceId]}
                     onSelectionChange={(keys) => {
                       const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
@@ -544,6 +543,7 @@ const AddressDetails = ({
                     className=" rounded-lg shadow-lg shadow-gray-300"
                     label="Select A District"
                     selectedKeys={[formData.address?.temporary?.districtId]}
+                    placeholder={formData.address?.temporary?.districtId}
                     onSelectionChange={(value) => {
                       const districtId = Array.from(value)[0];
                       handleNestedChange(

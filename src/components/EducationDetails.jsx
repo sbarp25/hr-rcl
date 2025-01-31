@@ -8,6 +8,7 @@ import { TimeInput } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import { FaRegEye } from "react-icons/fa";
 import Inputcomp from "./Inputcomp";
+import { Input } from "@nextui-org/input";
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [errors, setErrors] = useState({});
@@ -18,28 +19,39 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const navigate = useNavigate();
   const [educationalDocument, setEducationalDocument] = useState(false);
-  const numberOfItems = selectedDegree
-    ? degrees.indexOf(selectedDegree) + 1
-    : 0;
+  const degreeIndex = degrees.indexOf(selectedDegree);
+  const [numberOfItems, setNumberOfItems] = useState(0);
 
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      education: degrees
-        .slice(0, numberOfItems)
-        .map((_, i) => prev.education[i] || {}),
-    }));
-  }, [numberOfItems, setFormData]);
+    if (degrees.includes(selectedDegree)) {
+      const index = degrees.indexOf(selectedDegree);
+      setFormData((prev) => {
+        console.log("Previous formData:", prev); // Debugging
+        return {
+          ...prev,
+          education: degrees
+            .slice(0, index + 1)
+            .map((_, i) => (prev.education ? prev.education[i] || {} : {})),
+        };
+      });
+    }
+  }, [selectedDegree]);
 
   const handleFileChange = (index, files) => {
-    setFormData((prev) => ({
-      ...prev,
-      education: [
-        ...prev.education.slice(0, index),
-        { ...prev.education[index], files },
-        ...prev.education.slice(index),
-      ],
-    }));
+    setFormData((prev) => {
+      const updatedEducation = [...prev.education];
+      const targetIndex = index - 1; // Adjust the index to index - 1
+
+      // Ensure targetIndex is valid (within bounds)
+      if (targetIndex >= 0 && targetIndex < updatedEducation.length) {
+        updatedEducation[targetIndex] = {
+          ...updatedEducation[targetIndex],
+          files,
+        };
+      }
+
+      return { ...prev, education: updatedEducation };
+    });
     setEducationalDocument(false);
   };
 
@@ -56,16 +68,21 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const validateFields = () => {
-    for (let i = 0; i < formData.education.length; i++) {
-      const edu = formData.education[i];
-      if (!edu.institution || !edu.startYear || !edu.endYear || !edu.status) {
-        toast.error(`Please fill all required fields for ${degrees[i]}.`);
-        return false;
+    let isValid = true;
+    formData.education.forEach((edu, index) => {
+      if (
+        !edu.institution ||
+        !edu.startYear ||
+        !edu.endYear ||
+        !edu.status ||
+        !edu.faculty
+      ) {
+        toast.error(`Please fill all required fields for ${degrees[index]}.`);
+        isValid = false;
       }
-    }
-    return true;
+    });
+    return isValid;
   };
-
   const handleTimeChange = (expectedCheckingTime) => {
     if (
       expectedCheckingTime &&
@@ -95,6 +112,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       return null;
     }
   };
+  useEffect(() => {
+    if (degrees.includes(selectedDegree)) {
+      setNumberOfItems(degrees.indexOf(selectedDegree) + 1);
+    } else {
+      setNumberOfItems(0);
+    }
+  }, [selectedDegree]);
 
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
@@ -139,22 +163,24 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const validateFormData = () => {
     const newErrors = {};
 
-    if (!formData?.education || formData.education.length === 0) {
+    const filteredEducation = formData.education.filter(
+      (edu) => Object.keys(edu).length > 0
+    );
+
+    if (!filteredEducation.length) {
       newErrors.education = "At least one education entry is required.";
     } else {
-      formData.education.forEach((edu, index) => {
+      filteredEducation.forEach((edu, index) => {
         if (!edu.institution)
           newErrors[`institution_${index}`] = "Institution is required.";
         if (!edu.faculty)
           newErrors[`faculty_${index}`] = "Faculty is required.";
         if (!edu.startYear)
           newErrors[`startYear_${index}`] = "Start year is required.";
-        if (!edu.endYear)
-          newErrors[`endYear_${index}`] = "End year is required.";
         if (!edu.status) newErrors[`status_${index}`] = "Status is required.";
       });
     }
-    console.log(newErrors);
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -170,31 +196,40 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       "educationData",
       JSON.stringify(
         formData?.education?.map((edu, index) => ({
-          level: edu.degrees || "",
+          level: degrees[index] || "",
           institution: edu.institution || "",
           faculty: edu.faculty || "",
           startYear: edu.startYear || "",
           endYear: edu.endYear || "",
           status: edu.status || "",
-          imageIndex: index + 1,
+          imageIndex: index,
         }))
       )
     );
 
     // Append files for each education record
     formData?.education?.forEach((edu, index) => {
-      if (edu?.files && edu.files.length > 0) {
-        edu.files.forEach((file) => {
-          formDataToSend.append(`files`, file);
-        });
+      // If files exist at the current index or the adjusted index (index - 1)
+      const targetIndex = index - 1;
+
+      if (targetIndex >= 0 && targetIndex < formData.education.length) {
+        const eduAtTargetIndex = formData.education[targetIndex];
+
+        if (eduAtTargetIndex?.files && eduAtTargetIndex.files.length > 0) {
+          eduAtTargetIndex.files.forEach((file) => {
+            formDataToSend.append("files", file);
+          });
+        }
       }
+      0;
     });
 
     formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
     if (isCurrentlyStudying) {
+      const currentTime = new Time(10); // Example time instance
       formDataToSend.append(
         "expectedCheckingTime",
-        handleTimeChange(Time) || ""
+        handleTimeChange(currentTime) || ""
       );
     }
 
@@ -222,10 +257,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    if (validateFormData()) {
-      console.log("Submitting the data");
-      onSubmit();
-    }
+    if (!validateFormData()) return;
+    onSubmit();
   };
   return (
     <div className="space-y-4">
@@ -239,7 +272,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           className="w-full rounded-lg shadow-lg shadow-gray-300"
           label="Select A Degree"
           value={selectedDegree}
-          onChange={(e) => setSelectedDegree(e.target.value)}
+          onChange={(e) => {
+            const selected = e.target.value;
+            console.log("Dropdown selection:", selected);
+            setSelectedDegree(selected);
+          }}
         >
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
@@ -248,106 +285,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           ))}
         </Select>
       </div>
-      {/* Always render the zeroth index card */}
-      {/* <div className="space-y-4 border p-4 rounded-md">
-        <h3 className="text-lg font-semibold text-gray-600">
-          {degrees[0]} Details
-        </h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Institution
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="text"
-              placeholder="Institution"
-              value={formData?.education[0]?.institution || ""}
-              onChange={(e) => handleChange(0, "institution", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Faculty
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="text"
-              placeholder="Faculty"
-              value={formData.education[0]?.faculty || ""}
-              onChange={(e) => handleChange(0, "faculty", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Start Year
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="date"
-              value={formData.education[0]?.startYear || ""}
-              onChange={(e) => handleChange(0, "startYear", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              End Year
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="date"
-              value={formData.education[0]?.endYear || ""}
-              onChange={(e) => handleChange(0, "endYear", e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
-            <Select
-              variant="bordered"
-              className="w-full"
-              label="Select Status"
-              value={formData.education[0]?.status || ""}
-              onChange={(e) => handleChange(0, "status", e.target.value)}>
-              {statusOptions.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Upload Files
-            </label>
-            <Input
-              classNames={{
-                inputWrapper: "shadow-lg",
-              }}
-              variant="bordered"
-              type="file"
-              multiple
-              onChange={(e) => handleFileChange(0, Array.from(e.target.files))}
-            />
-          </div>
-        </div>
-      </div> */}
-
       {Array.from({ length: numberOfItems }).map((_, index) => (
         <div key={index} className="space-y-4 border p-4 rounded-md">
           <h3 className="text-lg font-semibold text-gray-600">
@@ -421,6 +358,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 variant="bordered"
                 className="w-full"
                 label="Status"
+                placeholder={formData.education[index]?.status || ""}
                 value={formData.education[index]?.status || ""}
                 onChange={(e) => handleChange(index, "status", e.target.value)}
               >

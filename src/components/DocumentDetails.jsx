@@ -292,7 +292,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         e.target.files[0]
                       )
                     }
-                    label="Enter Photo"
+                    placeholder="PanPhoto"
                   />
                   {errors.PanPhoto && (
                     <p className="text-red-500 text-sm mt-1">

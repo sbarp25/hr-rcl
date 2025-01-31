@@ -20,30 +20,32 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import DropDownComp from "../../components/Dropdown";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import Search from "../../components/Search";
+import Filter from "../../components/Filter";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [employeesData, setEmployeesData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const employeesPerPage = 10;
+  const [employeesPerPage, setEmployessPerPage] = useState(10);
   const TotalEmployee = 30;
   const startIndex = (currentPage - 1) * employeesPerPage;
   const endIndex = startIndex + employeesPerPage;
-  const paginatedEmployees = employeesData.slice(startIndex, endIndex);
+  const paginatedEmployees = employeesData?.slice(startIndex, endIndex);
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
   ];
 
-  const dropdownItems = [10, 20, 30, 50, 100];
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
   useEffect(() => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.get("/api/v1/auth/get/all");
+        const response = await axiosInstance.post("/api/v1/auth/get/all");
         if (response.data.responseCode === "200") {
-          setEmployeesData(response.data.datalist);
+          setEmployeesData(response?.data?.data?.content || []);
+          setEmployessPerPage(response?.data?.data?.pageable?.pageSize);
         } else {
           toast.error(response.data.message);
         }
@@ -103,14 +105,12 @@ const Employees = () => {
             <div className="flex gap-x-4">
               <div className="flex items-center space-x-4">
                 <Search />
-                <Button className="flex items-center bg-white hover:bg-gray-200 text-black py-2 px-4">
-                  <BsFilter className="mr-2 text-2xl" />
-                  <span className="text-lg font-bold">Filter</span>
-                </Button>
+                <Filter />
               </div>
               <a
                 className="flex items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
-                href="/AddEmployees">
+                href="/AddEmployees"
+              >
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employee
               </a>
@@ -129,8 +129,8 @@ const Employees = () => {
                 <TableColumn>Action</TableColumn>
               </TableHeader>
               <TableBody>
-                {paginatedEmployees.map((employee, index) => (
-                  <TableRow key={employee.employeeId}>
+                {paginatedEmployees?.map((employee, index) => (
+                  <TableRow key={employee.employeeId} className="h-14">
                     <TableCell>{startIndex + index + 1}</TableCell>
                     <TableCell>{employee.rclId}</TableCell>
                     <TableCell>{employee.fullName}</TableCell>
@@ -169,13 +169,19 @@ const Employees = () => {
             </div>
             <Pagination
               initialPage={1}
-              total={Math.ceil(employeesData.length / employeesPerPage)}
+              total={Math.ceil(
+                (employeesData.length > 0 ? employeesData.length : 0) /
+                  employeesPerPage
+              )}
               onChange={handlePageChange}
             />
             <div className="flex justify-center items-center">
               <span className="text-xs">Lines Per Page :</span>
               <div>
-                <DropDownComp items={dropdownItems} />
+                <DropDownComp
+                  items={dropdownItems}
+                  onSelect={(value) => setEmployessPerPage(value)}
+                />
               </div>
             </div>
           </div>

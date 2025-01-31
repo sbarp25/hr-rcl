@@ -4,19 +4,11 @@ import { MdDelete } from "react-icons/md";
 import Loader from "../../../components/Loader";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { Button, Input, Textarea } from "@nextui-org/react";
 import { IoMdAdd } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
-import ValidationComponent from "../../../components/ValidationComponent";
+import { Button } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -28,8 +20,9 @@ const Position = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingPositionId, setEditingPositionId] = useState(null);
 
-  /**Start of Get API for Getting the Positions */
-
+  {
+    /**Start of Get API for Getting the Positions */
+  }
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
@@ -39,13 +32,13 @@ const Position = () => {
           {}
         );
         if (response.data.responseCode === "200") {
-          setPositionData(response.data.datalist);
+          setPositionData(response?.data?.data?.content);
         } else {
-          toast.error(response.data.message);
+          toast.error("Failed to fetch positions.");
         }
       } catch (error) {
         console.error("Error fetching positions:", error);
-        toast.error(error.response?.data?.message);
+        toast.error("Error fetching positions.");
       } finally {
         setIsLoading(false);
       }
@@ -53,10 +46,13 @@ const Position = () => {
 
     fetchPositions();
   }, []);
-  /**End of Get API for Getting the Positions */
+  {
+    /**End of Get API for Getting the Positions */
+  }
 
-  /** start of API calls to Add Position */
-
+  {
+    /** start of API calls to Add Position */
+  }
   const handleAddPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -69,7 +65,7 @@ const Position = () => {
 
     try {
       const response = await axiosInstance.post(
-        "/api/v1/positions/save",
+        "/positions/register",
         newPosition,
         {
           headers: {
@@ -80,22 +76,25 @@ const Position = () => {
         }
       );
       console.log("Position added successfully:", response.data);
-      toast.success(response.data.message);
+      toast.success("Position added successfully!");
       // Reset form fields
       setPositionName("");
       setDescription("");
     } catch (error) {
       console.error("Error adding position:", error);
-      toast.error(error.response?.data?.message);
+      toast.error("Error adding position.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  /** end of API calls to Add Position */
+  {
+    /** end of API calls to Add Position */
+  }
 
-  /**Start Of handleActions*/
-
+  {
+    /**Start Of handleActions*/
+  }
   const handleAction = async (action, position) => {
     switch (action) {
       // Start Of Edit Operation
@@ -113,16 +112,23 @@ const Position = () => {
         try {
           console.log(`Deleting position ID: ${position.id}`);
           const response = await axiosInstance.delete(
-            `/api/v1/positions/delete/${position.id}`
+            `/positions/delete/${position.id}`
+            // {
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //     accessToken: accessToken,
+            //     refreshToken: refreshToken,
+            //   },
+            // }
           );
           if (response.data.responseCode === "204") {
-            toast.success(response.data.messages);
+            toast.success("Position deleted successfully!");
           } else {
-            toast.error(response.data.message);
+            toast.error("Failed to delete the position.");
           }
         } catch (error) {
           console.error("Error deleting position:", error);
-          toast.error(error.response?.data?.message);
+          toast.error("Error deleting position.");
         }
         break;
       // End Of Delete Operation
@@ -131,9 +137,12 @@ const Position = () => {
     }
   };
 
-  /**End of Handleaction */
-
-  /**Start of Edit */
+  {
+    /**End of Handleaction */
+  }
+  {
+    /**Start of Edit */
+  }
   const handleEditPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -147,7 +156,7 @@ const Position = () => {
 
     try {
       const response = await axiosInstance.put(
-        `/api/v1/positions/update/${editingPositionId}`,
+        `/positions/update/${editingPositionId}`,
         updatedPosition,
         {
           headers: {
@@ -157,7 +166,7 @@ const Position = () => {
       );
 
       if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+        toast.success("Position updated successfully!");
         setPositionData((prevData) =>
           prevData.map((item) =>
             item.id === editingPositionId
@@ -171,23 +180,18 @@ const Position = () => {
         setShowEditForm(false);
         setEditingPositionId(null);
       } else {
-        toast.error(response.data.message);
+        toast.error("Failed to update the position.");
       }
     } catch (error) {
       console.error("Error updating position:", error);
-      toast.error(error.response?.data?.message);
+      toast.error("Error updating position.");
     } finally {
       setIsLoading(false);
     }
   };
-  /**end of Edit */
-  const columns = [
-    { key: "name", label: "Department Name" },
-    { key: "description", label: "Description" },
-    { key: "actions", label: "Actions" },
-  ];
-  const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
-
+  {
+    /**Edit of Edit */
+  }
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -195,169 +199,191 @@ const Position = () => {
   ];
   return (
     <>
-      <ValidationComponent>
-        {isLoading && (
-          <Loader message="Please wait while the work is being done" />
-        )}
+      {isLoading && (
+        <Loader message="Please wait while the work is being done" />
+      )}
 
-        <div className="p-4 md:p-8">
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div>
+      <div className="p-4 md:p-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <div className=" flex justify-between">
+            <div className=" flex flex-col">
               <BreadcrumbsComponent items={breadcrumbItems} />
-              <h2 className="page-title">Position</h2>
+              <h2 className="page-title">Departments</h2>
             </div>
-            <Button
-              className="button bg-green-700 tracking-normal
-          hover:bg-green-900"
-              onPress={() => setShowAddForm(!showAddForm)}>
-              {showAddForm ? (
-                <>
-                  <IoReturnDownBack className="text-white h-24 w-24" />
-                  <span className="text-white font-Poppins text-xl ">
-                    Return
-                  </span>
-                </>
-              ) : (
-                <>
-                  <IoMdAdd className="text-white h-24 w-24" />
-                  <span className="text-white font-Poppins text-xl">Add</span>
-                </>
-              )}
-            </Button>
           </div>
-          {/**  Edit Postion form */}
-          {showEditForm && (
-            <form
-              className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-              onSubmit={handleEditPosition}>
-              <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-                Edit Position
-              </h2>
-              <div className="flex flex-col md:flex-row gap-6">
-                {/* Input Fields */}
-                <div className="flex flex-col flex-1 gap-4">
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Position Name"
-                    value={positionName}
-                    onChange={(e) => setPositionName(e.target.value)}
-                    className="input border rounded-lg px-4 py-2 focus:outline-none  w-full"
-                    required
-                  />
-                  <textarea
-                    id="description"
-                    placeholder="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                    required></textarea>
-                </div>
 
-                {/* Submit and Cancel Buttons */}
-                <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                  <Button
-                    type="submit"
-                    className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4">
-                    Save Changes
-                  </Button>
-                  <Button
-                    type="button"
-                    className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                    onPress={() => setShowEditForm(false)}>
-                    Cancel
-                  </Button>
-                </div>
+          <Button
+            className="button bg-green-700 tracking-normal
+  hover:bg-green-900"
+            onPress={() => setShowAddForm(!showAddForm)}
+          >
+            {showAddForm ? (
+              <>
+                <IoReturnDownBack className="text-white h-24 w-24" />
+                <span className="text-white font-Poppins text-xl">Return</span>
+              </>
+            ) : (
+              <>
+                <IoMdAdd className="text-white h-24 w-24" />
+                <span className="text-white font-Poppins text-xl">Add</span>
+              </>
+            )}
+          </Button>
+        </div>
+        {/**  Edit Postion form */}
+        {showEditForm && (
+          <form
+            className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
+            onSubmit={handleEditPosition}
+          >
+            <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
+              Edit Position
+            </h2>
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Input Fields */}
+              <div className="flex flex-col flex-1 gap-4">
+                <input
+                  type="text"
+                  placeholder="Position Name"
+                  value={positionName}
+                  onChange={(e) => setPositionName(e.target.value)}
+                  className="input border rounded-lg px-4 py-2 focus:outline-none  w-full"
+                  required
+                />
+                <textarea
+                  placeholder="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
+                  required
+                ></textarea>
               </div>
-            </form>
-          )}
-          {/* Add Position Form */}
-          {showAddForm ? (
-            <form
-              className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto "
-              onSubmit={handleAddPosition}>
-              <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-                Add New Position
-              </h2>
-              <div className="flex flex-col md:flex-row gap-6">
-                {/* Input Fields */}
 
-                <div className="flex flex-col flex-1 gap-4">
-                  <Input
-                    id="name"
-                    type="text"
-                    label="Position Name"
-                    value={positionName}
-                    onChange={(e) => setPositionName(e.target.value)}
-                    className="rounded-xl shadow-md  focus:outline-none w-full"
-                    required
-                  />
-                  <Textarea
-                    id="description"
-                    label="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
-                    required></Textarea>
-                </div>
-              </div>
+              {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
-                  className=" bg-bgprimary text-white rounded-lg p-2 hover:bg-bgprimaryhover transition  md:w-auto mt-6">
-                  Submit
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
+                  onClick={() => setShowEditForm(false)}
+                >
+                  Cancel
                 </button>
               </div>
-            </form>
-          ) : (
-            /* Table Section */
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <Table aria-label="Example table with dynamic content">
-                <TableHeader columns={columns}>
-                  {(column) => (
-                    <TableColumn key={column.key} className="">
-                      {column.label}
-                    </TableColumn>
-                  )}
-                </TableHeader>
-                <TableBody items={positionData}>
-                  {(department) => (
-                    <TableRow key={Position.id}>
-                      {(columnKey) => (
-                        <TableCell className="justify-between">
-                          {columnKey === "actions" ? (
-                            <div className="flex justify-start ">
-                              <HiPencilSquare
-                                className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                title="Edit"
-                                onClick={() => handleAction("edit", department)}
-                              />
-                              <MdDelete
-                                className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("delete", department)
-                                }
-                              />
-                            </div>
-                          ) : columnKey === "description" ? (
-                            <div className="max-w-[60vw]">
-                              {getKeyValue(department, columnKey)}
-                            </div>
-                          ) : (
-                            getKeyValue(department, columnKey)
-                          )}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
             </div>
-          )}
-        </div>
-      </ValidationComponent>
+          </form>
+        )}
+        {/* Add Position Form */}
+        {showAddForm ? (
+          <form
+            className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
+            onSubmit={handleAddPosition}
+          >
+            <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
+              Add New Position
+            </h2>
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Input Fields */}
+              <div className="flex flex-col flex-1 gap-4">
+                <input
+                  type="text"
+                  placeholder="Position Name"
+                  value={positionName}
+                  onChange={(e) => setPositionName(e.target.value)}
+                  className="input border rounded-lg px-4 py-2 focus:outline-none  w-full"
+                  required
+                />
+                <textarea
+                  placeholder="Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="input border rounded-lg px-4 py-2 h-24 focus:outline-none  resize-none w-full"
+                  required
+                ></textarea>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
+                <button
+                  type="submit"
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto"
+                >
+                  Add Position
+                </button>
+              </div>
+            </div>
+          </form>
+        ) : (
+          /* Table Section */
+          <div className="bg-white shadow-md rounded-lg overflow-x-auto">
+            <table className="table-auto w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 text-left">
+                  <th className="border border-gray-300 px-4 py-2">
+                    Position Name
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    Description
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {positionData.length > 0 ? (
+                  positionData
+                    .filter((position) => !position.isDeleted)
+                    .map((position, index) => (
+                      <tr
+                        key={position.id}
+                        className={`${
+                          index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                        } hover:bg-gray-100`}
+                      >
+                        <td className="border border-gray-300 px-4 py-2">
+                          {position.name || "N/A"}
+                          {position.id}
+                        </td>
+                        <td className="border max-w-96 border-gray-300 px-4 py-2 sm:overflow-y-hidden">
+                          <div className="max-h-32 max-w-96 overflow-y-auto">
+                            {position.description}
+                          </div>
+                        </td>
+                        <td className="border border-gray-300 px-4 py-2 text-center">
+                          <div className="flex justify-center gap-4">
+                            <HiPencilSquare
+                              className="text-green-500 cursor-pointer hover:text-green-700"
+                              title="Edit"
+                              onClick={() => handleAction("edit", position)}
+                            />
+                            <MdDelete
+                              className="text-red-500 cursor-pointer hover:text-red-700"
+                              title="Delete"
+                              onClick={() => handleAction("delete", position)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center text-gray-500 py-4">
+                      No Positions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </>
   );
 };
