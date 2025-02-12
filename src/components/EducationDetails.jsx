@@ -3,24 +3,30 @@ import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-
 import { TimeInput } from "@nextui-org/react";
-import { Time } from "@internationalized/date";
 import { FaRegEye } from "react-icons/fa";
-import Inputcomp from "./Inputcomp";
+import {
+  parseAbsoluteToLocal,
+  Time,
+  ZonedDateTime,
+} from "@internationalized/date";
+import { useDateFormatter } from "@react-aria/i18n";
+// import Inputcomp from "./Inputcomp";
 import { Input } from "@nextui-org/input";
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [errors, setErrors] = useState({});
   const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
-  const [selectedDegree, setSelectedDegree] = useState("");
+  const [selectedDegree, setSelectedDegree] = useState(degrees[0]); // Initialize with the first degree
   const statusOptions = ["COMPLETED", "IN_PROGRESS"];
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const navigate = useNavigate();
   const [educationalDocument, setEducationalDocument] = useState(false);
-  const degreeIndex = degrees.indexOf(selectedDegree);
-  const [numberOfItems, setNumberOfItems] = useState(0);
+  let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45)); // Default to 10:30 AM
+
+  // const degreeIndex = degrees.indexOf(selectedDegree);
+  const [numberOfItems, setNumberOfItems] = useState(1); // Initialize with 1 to show the first degree by default
 
   useEffect(() => {
     if (degrees.includes(selectedDegree)) {
@@ -30,7 +36,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         return {
           ...prev,
           education: degrees
-            .slice(0, index + 1)
+            .slice(0, index)
             .map((_, i) => (prev.education ? prev.education[i] || {} : {})),
         };
       });
@@ -40,12 +46,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const handleFileChange = (index, files) => {
     setFormData((prev) => {
       const updatedEducation = [...prev.education];
-      const targetIndex = index - 1; // Adjust the index to index - 1
 
-      // Ensure targetIndex is valid (within bounds)
-      if (targetIndex >= 0 && targetIndex < updatedEducation.length) {
-        updatedEducation[targetIndex] = {
-          ...updatedEducation[targetIndex],
+      // Ensure index is valid (within bounds)
+      if (index >= 0 && index < updatedEducation.length) {
+        updatedEducation[index] = {
+          ...updatedEducation[index],
           files,
         };
       }
@@ -56,7 +61,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleChange = (index, field, value) => {
-    const updatedEducation = [...formData.education];
+    const updatedEducation = [...(formData.education || [])]; // Ensure it's an array
     updatedEducation[index] = {
       ...updatedEducation[index],
       [field]: value,
@@ -67,51 +72,27 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     });
   };
 
-  const validateFields = () => {
-    let isValid = true;
-    formData.education.forEach((edu, index) => {
-      if (
-        !edu.institution ||
-        !edu.startYear ||
-        !edu.endYear ||
-        !edu.status ||
-        !edu.faculty
-      ) {
-        toast.error(`Please fill all required fields for ${degrees[index]}.`);
-        isValid = false;
-      }
-    });
-    return isValid;
-  };
-  const handleTimeChange = (expectedCheckingTime) => {
-    if (
-      expectedCheckingTime &&
-      typeof expectedCheckingTime.hour === "number" &&
-      typeof expectedCheckingTime.minute === "number" &&
-      typeof expectedCheckingTime.second === "number"
-    ) {
-      // Determine whether the time is AM or PM
-      const hour = expectedCheckingTime.hour;
-      const period = hour >= 12 ? "PM" : "AM";
-      const hour12 = hour % 12 || 12; // Convert to 12-hour format (12:00 is not 0:00)
+  // const validateFields = () => {
+  //   let isValid = true;
+  //   formData.education.forEach((edu, index) => {
+  //     if (
+  //       !edu.institution ||
+  //       !edu.startYear ||
+  //       !edu.endYear ||
+  //       !edu.status ||
+  //       !edu.faculty
+  //     ) {
+  //       toast.error(`Please fill all required fields for ${degrees[index]}.`);
+  //       isValid = false;
+  //     }
+  //   });
+  //   return isValid;
+  // };
 
-      // Format the time as "hh:mm:ss AM/PM"
-      const formattedTime =
-        [
-          String(hour12).padStart(2, "0"),
-          String(expectedCheckingTime.minute).padStart(2, "0"),
-          String(expectedCheckingTime.second).padStart(2, "0"),
-        ].join(":") +
-        " " +
-        period;
-
-      console.log("Formatted Time:", formattedTime);
-      return formattedTime; // Return or use the formatted time as needed
-    } else {
-      console.error("Invalid time object:", expectedCheckingTime);
-      return null;
-    }
+  const handleTimeChange = (newTime) => {
+    setSelectedTime(newTime);
   };
+
   useEffect(() => {
     if (degrees.includes(selectedDegree)) {
       setNumberOfItems(degrees.indexOf(selectedDegree) + 1);
@@ -137,16 +118,18 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
           setFormData((prev) => ({
             ...prev,
-            education: data.map((edu) => ({
-              degree: edu.degree || "",
-              institution: edu.institution || "",
-              faculty: edu.faculty || "",
-              startYear: edu.startYear || "",
-              endYear: edu.endYear || "",
-              status: edu.status || "",
-              file: edu.documentUrl || "", // If document URL is fetched
-              files: [], // Initialize for user-uploaded files
-            })),
+            education: data.length
+              ? data.map((edu) => ({
+                  degree: edu.degree || "",
+                  institution: edu.institution || "",
+                  faculty: edu.faculty || "",
+                  startYear: edu.startYear || "",
+                  endYear: edu.endYear || "",
+                  status: edu.status || "",
+                  file: edu.documentUrl || "",
+                  files: [],
+                }))
+              : degrees.map(() => ({})), // Ensure there's an empty object for each degree
           }));
         }
         setEducationalDocument(true);
@@ -163,23 +146,22 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const validateFormData = () => {
     const newErrors = {};
 
-    const filteredEducation = formData.education.filter(
-      (edu) => Object.keys(edu).length > 0
-    );
-
-    if (!filteredEducation.length) {
-      newErrors.education = "At least one education entry is required.";
-    } else {
-      filteredEducation.forEach((edu, index) => {
-        if (!edu.institution)
-          newErrors[`institution_${index}`] = "Institution is required.";
-        if (!edu.faculty)
-          newErrors[`faculty_${index}`] = "Faculty is required.";
-        if (!edu.startYear)
-          newErrors[`startYear_${index}`] = "Start year is required.";
-        if (!edu.status) newErrors[`status_${index}`] = "Status is required.";
-      });
-    }
+    // Iterate over the education entries
+    formData.education.forEach((edu, index) => {
+      if (!edu.institution) {
+        newErrors[`institution_${index}`] = "Institution is required.";
+      }
+      if (!edu.faculty) {
+        newErrors[`faculty_${index}`] = "Faculty is required.";
+      }
+      if (!edu.startYear) {
+        newErrors[`startYear_${index}`] = "Start year is required.";
+      }
+      if (!edu.status) {
+        newErrors[`status_${index}`] = "Status is required.";
+      }
+      // You can also add other validation rules here if needed.
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -207,30 +189,33 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       )
     );
 
-    // Append files for each education record
-    formData?.education?.forEach((edu, index) => {
-      // If files exist at the current index or the adjusted index (index - 1)
-      const targetIndex = index - 1;
+    // formData?.education?.forEach((edu, index) => {
+    //   const targetIndex = index;
 
-      if (targetIndex >= 0 && targetIndex < formData.education.length) {
-        const eduAtTargetIndex = formData.education[targetIndex];
+    //   if (targetIndex === 0 && targetIndex < formData.education.length) {
+    //     const eduAtTargetIndex = formData.education[targetIndex];
 
-        if (eduAtTargetIndex?.files && eduAtTargetIndex.files.length > 0) {
-          eduAtTargetIndex.files.forEach((file) => {
-            formDataToSend.append("files", file);
-          });
-        }
+    //     if (eduAtTargetIndex?.files && eduAtTargetIndex.files.length === 0) {
+    //       eduAtTargetIndex.files.forEach((file) => {
+    //         formDataToSend.append("files", file);
+    //       });
+    //     }
+    //   }
+    // });
+    formData?.education?.forEach((edu) => {
+      if (edu?.files && edu.files.length > 0) {
+        edu.files.forEach((file) => {
+          formDataToSend.append("files", file);
+        });
       }
-      0;
     });
+
+    console.log([...formDataToSend.entries()]);
 
     formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
     if (isCurrentlyStudying) {
-      const currentTime = new Time(10); // Example time instance
-      formDataToSend.append(
-        "expectedCheckingTime",
-        handleTimeChange(currentTime) || ""
-      );
+      const formattedTime = `${selectedTime.hour}:${selectedTime.minute}:${selectedTime.second}`;
+      formDataToSend.append("expectedCheckingTime", formattedTime);
     }
 
     try {
@@ -260,6 +245,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     if (!validateFormData()) return;
     onSubmit();
   };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -271,7 +257,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           variant="bordered"
           className="w-full rounded-lg shadow-lg shadow-gray-300"
           label="Select A Degree"
-          value={selectedDegree}
+          selectedKeys={[selectedDegree]} // Use selectedKeys to control the selected value
           onChange={(e) => {
             const selected = e.target.value;
             console.log("Dropdown selection:", selected);
@@ -292,11 +278,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Inputcomp
-                variant="bordered"
+              <Input
+                className={`w-full border-2 rounded-xl ${
+                  errors[`institution_${index}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
                 type="text"
                 label="Institution"
-                value={formData.education[index]?.institution || ""}
+                value={formData?.education?.[index]?.institution || ""}
                 onChange={(e) =>
                   handleChange(index, "institution", e.target.value)
                 }
@@ -307,12 +297,17 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
+
             <div>
-              <Inputcomp
-                variant="bordered"
+              <Input
+                className={`w-full border-2 rounded-xl ${
+                  errors[`faculty_${index}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
                 type="text"
                 label="Faculty"
-                value={formData.education[index]?.faculty || ""}
+                value={formData?.education?.[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
               />
               {errors[`faculty_${index}`] && (
@@ -321,12 +316,17 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
+
             <div>
-              <Inputcomp
-                variant="bordered"
+              <Input
+                className={`w-full border-2 rounded-xl ${
+                  errors[`startYear_${index}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
                 type="date"
                 label="Select Start Date"
-                value={formData.education[index]?.startYear || ""}
+                value={formData?.education?.[index]?.startYear || ""}
                 onChange={(e) =>
                   handleChange(index, "startYear", e.target.value)
                 }
@@ -338,28 +338,36 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               )}
             </div>
             <div>
-              <Inputcomp
-                variant="bordered"
+              <Input
+                className={`w-full border-2 rounded-xl ${
+                  errors[`endYear_${index}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
                 type="date"
                 label="Select End Date"
-                value={formData.education[index]?.endYear || ""}
+                value={formData?.education?.[index]?.endYear || ""}
                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
               />
+              {errors[`endYear_${index}`] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[`endYear_${index}`]}
+                </p>
+              )}
             </div>
-            {errors[`endYear_${index}`] && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors[`endYear_${index}`]}
-              </p>
-            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Select
                 variant="bordered"
-                className="w-full"
+                className={`w-full border-2 rounded-xl ${
+                  errors[`status_${index}`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
                 label="Status"
-                placeholder={formData.education[index]?.status || ""}
-                value={formData.education[index]?.status || ""}
+                placeholder={formData?.education?.[index]?.status || ""}
+                value={formData?.education?.[index]?.status || ""}
                 onChange={(e) => handleChange(index, "status", e.target.value)}
               >
                 {statusOptions.map((status) => (
@@ -376,14 +384,34 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             </div>
             <div>
               <div>
-                <Inputcomp
-                  label="Upload Document"
-                  variant="bordered"
+                {/* <Input
+                  isClearable
+                  className=""
+                  label="Upload your educational certificate"
+                  placeholder="Choose a file"
                   type="file"
+                  variant="bordered"
+                  // eslint-disable-next-line no-console
+                  onClear={() => console.log("input cleared")}
                   onChange={(e) =>
                     handleFileChange(index, Array.from(e.target.files))
                   }
-                />
+                /> */}
+
+                <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                  <span className="text-gray-600 px-4">
+                    {formData?.education?.[index]?.files?.length > 0
+                      ? formData?.education?.[index]?.files[0].name
+                      : "Upload Education Certificate"}
+                  </span>
+                  <input
+                    type="file"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={(e) =>
+                      handleFileChange(index, Array.from(e.target.files))
+                    }
+                  />
+                </label>
               </div>
               <div className="flex gap-x-4">
                 <label className="block text-xs font-medium text-gray-700">
@@ -433,17 +461,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         </div>
         <div>
           {isCurrentlyStudying && (
-            <div>
-              <TimeInput
-                label="Select Your Expected Time Of Arrival"
-                defaultValue={new Time(10)}
-                minValue={new Time(10)}
-                onChange={(time) => {
-                  const formattedTime = handleTimeChange(time);
-                  console.log("Selected Time:", formattedTime);
-                }}
-              />
-            </div>
+            <TimeInput
+              label="Expected Checking Time"
+              value={selectedTime}
+              onChange={handleTimeChange}
+            />
           )}
         </div>
       </div>

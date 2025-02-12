@@ -47,15 +47,7 @@ const Ekye = () => {
       sameAsPermanent: false,
     },
 
-    education: [
-      {
-        degree: "",
-        startYear: "",
-        endYear: "",
-        status: "",
-        files: [],
-      },
-    ],
+    education: [],
     documents: {
       documentType: "",
       panNumber: "",

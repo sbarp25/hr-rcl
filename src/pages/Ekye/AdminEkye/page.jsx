@@ -66,12 +66,14 @@ const Page = () => {
     const FetchAllEKYE = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance.post(
-          "/api/v1/admin/completedEkyeUsers",
+        const response = await axiosInstance.get(
+          "/api/v1/admin/completed_ekye_users",
+          // "/api/v1/admin/completedEkyeUsers",
           {}
         );
         if (response?.data?.responseCode === "200") {
           setEkyeData(response?.data?.data?.content);
+          setEkyeData(response?.data?.data);
           setEkyeDashboardDataPerPage(response?.data?.data?.pageable?.pageSize);
         } else {
           toast.error(response?.data?.message);
@@ -93,8 +95,9 @@ const Page = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/admin/completedEkyeUsers",
+      const response = await axiosInstance.get(
+        "/api/v1/admin/completed_ekye_users",
+        // "/api/v1/admin/completedEkyeUsers",
         {
           filterCriteria: {
             departmentName: filters.department || "",
@@ -151,7 +154,7 @@ const Page = () => {
               <TableColumn>Action</TableColumn>
             </TableHeader>
             <TableBody>
-              {paginatedEkye.map((data, index) => (
+              {paginatedEkye?.map((data, index) => (
                 <TableRow
                   key={data.rclId}
                   className="h-14" // Adjusts row height
@@ -195,7 +198,7 @@ const Page = () => {
           </div>
           <Pagination
             initialPage={1}
-            total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
+            total={Math.ceil(eKyeData?.length / ekyeDashboardDataPerPage)}
             onChange={handlePageChange}
           />
           <div className="flex justify-center items-center">

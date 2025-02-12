@@ -48,6 +48,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   //   }
   //   return null;
   // };
+
   const validateFormData = () => {
     const newErrors = {};
     const {
@@ -62,12 +63,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       citizenshipBack,
     } = formData.documents;
     if (!panNumber) newErrors.panNumber = "PanNumber is Required";
+    if (panNumber && !/^[0-9]{0,16}$/.test(panNumber)) {
+      newErrors.panNumber = "Invalid format";
+    }
+
     if (!panIssueDate) newErrors.panIssueDate = "pan Issued date is required";
     if (!panIssuePlace)
       newErrors.panIssuePlace = "Pan Issued place is required";
     // if (!PanPhoto) newErrors.PanPhoto = "pan Photo is required";
     if (!citizenshipNumber)
       newErrors.citizenshipNumber = "Citizenship Number is required";
+    if (citizenshipNumber && !/^[0-9]{0,16}$/.test(citizenshipNumber)) {
+      newErrors.citizenshipNumber = "Invalid format";
+    }
     if (!isIssuedPlaceDistrict)
       newErrors.citizenshipIssuedPlace = "Citizenship Issued place is required";
     if (!issuedDate)
@@ -209,10 +217,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {/* {isLoading && <Loader />} */}
       <ValidationComponent>
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Document Details
           </h2>
 
@@ -221,15 +229,18 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <h3 className="text-xl font-semibold text-gray-600">PAN Details</h3>
             <div className="grid grid-cols-2 gap-x-4">
               <div>
-                <Inputcomp
+                <Input
                   id="panNumber"
-                  variant="bordered"
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.panNumber ? "border-red-500" : "border-gray-300"
+                  }`}
                   type="text"
                   value={formData?.documents?.panNumber}
                   onChange={(e) =>
                     handleNestedChange("documents", "panNumber", e.target.value)
                   }
                   label="Enter your PAN number"
+                  //   className={${errors.panNumber  ? 'border-red-500':""}}
                 />
                 {errors.panNumber && (
                   <p className="text-red-500 text-sm mt-1">
@@ -238,9 +249,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 )}
               </div>
               <div className="">
-                <Inputcomp
-                  className="h-[10vh]"
-                  variant="bordered"
+                <Input
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.panIssueDate ? "border-red-500" : "border-gray-300"
+                  }`}
                   type="date"
                   label="Pan Issue Date"
                   value={formData.documents?.panIssueDate}
@@ -261,8 +273,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Inputcomp
-                  variant="bordered"
+                <Input
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.panIssuePlace ? "border-red-500" : "border-gray-300"
+                  }`}
                   type="text"
                   value={formData.documents?.panIssuePlace}
                   onChange={(e) =>
@@ -282,9 +296,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
               <div>
                 <div>
-                  <Inputcomp
-                    variant="bordered"
+                  {/* <Input
+                    isClearable
+                    className="  "
+                    placeholder="Choose a Pan Photo"
                     type="file"
+                    variant="bordered"
+                    // eslint-disable-next-line no-console
                     onChange={(e) =>
                       handleNestedChange(
                         "documents",
@@ -292,8 +310,27 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         e.target.files[0]
                       )
                     }
-                    placeholder="PanPhoto"
-                  />
+                  /> */}
+                  <label className="relative flex items-center justify-left w-full h-14 border-2  border-gray-300 rounded-xl  cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                    <span className="text-gray-600 px-4">
+                      {formData?.documents?.panCardDocumentFile?.name
+                        ? formData.documents?.panCardDocumentFile?.name
+                        : "Upload Front photo of Pan Card "}
+                    </span>
+                    <input
+                      type="file"
+                      className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl  ${
+                        errors.PanPhoto ? "border-red-500" : "border-gray-300"
+                      }`}
+                      onChange={(e) => {
+                        handleNestedChange(
+                          "documents",
+                          "panCardDocumentFile",
+                          e.target.files[0]
+                        );
+                      }}
+                    />
+                  </label>
                   {errors.PanPhoto && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.PanPhoto}
@@ -335,8 +372,12 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Inputcomp
-                  variant="bordered"
+                <Input
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.citizenshipNumber
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
                   type="text"
                   value={formData?.documents?.citizenshipNumber}
                   onChange={(e) =>
@@ -355,8 +396,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 )}
               </div>
               <div>
-                <Inputcomp
-                  variant="bordered"
+                <Input
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.issuedDate ? "border-red-500" : "border-gray-300"
+                  }`}
                   type="date"
                   label="Citizenship Issue Date"
                   value={formData?.documents?.issuedDate}
@@ -375,11 +418,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <Inputcomp
+                <Input
                   type="text"
-                  variant="bordered"
+                  className={`w-full  border-2 rounded-xl ${
+                    errors.citizenshipIssuedPlace
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
                   value={formData?.documents?.isIssuedPlaceDistrict}
                   onChange={(e) =>
                     handleNestedChange(
@@ -398,9 +445,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
               <div>
                 <div>
-                  <Inputcomp
+                  {/* <Input
+                    isClearable
+                    className=""
+                    placeholder="Citizenship Front Photo"
                     type="file"
                     variant="bordered"
+                    // eslint-disable-next-line no-console
+                    onClear={() => console.log("input cleared")}
                     onChange={(e) => {
                       handleNestedChange(
                         "documents",
@@ -408,8 +460,31 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         e.target.files[0]
                       );
                     }}
-                    label="Citizenship Front Photo"
-                  />
+                  /> */}
+                  <label className="relative flex items-center justify-left w-full h-14 border-2  border-gray-300 rounded-xl  cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                    <span className="text-gray-600 px-4">
+                      {/* Upload Front photo of citizenship */}
+                      {formData?.documents?.citizenshipFrontDocumentFile?.name
+                        ? formData.documents?.citizenshipFrontDocumentFile?.name
+                        : "Upload front Photo of citizenship"}
+                    </span>
+                    <input
+                      type="file"
+                      className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl  ${
+                        errors.citizenshipFront
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                      onChange={(e) => {
+                        handleNestedChange(
+                          "documents",
+                          "citizenshipFrontDocumentFile",
+                          e.target.files[0]
+                        );
+                      }}
+                    />
+                  </label>
+
                   {errors.citizenshipFront && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.citizenshipFront}
@@ -444,9 +519,16 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             </div>
             <div>
               <div>
-                <Inputcomp
-                  variant="bordered"
+                {" "}
+                {/* <Input
+                  isClearable
+                  className=""
+                  // label="Upload File"
+                  placeholder="Choose a file"
                   type="file"
+                  variant="bordered"
+                  // eslint-disable-next-line no-console
+                  onClear={() => console.log("input cleared")}
                   onChange={(e) =>
                     handleNestedChange(
                       "documents",
@@ -454,8 +536,32 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       e.target.files[0]
                     )
                   }
-                  label="Citizenship Back Photo "
-                />
+                /> */}
+                <label className="relative flex items-center justify-left w-[49%] h-14 border-2 -mt-5 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                  <span className="text-gray-600 px-4 truncate">
+                    {formData?.documents?.citizenshipBackDocumentFile?.name
+                      ? formData.documents.citizenshipBackDocumentFile?.name
+                      : "Upload back Photo of citizenship"}
+                  </span>
+                  <input
+                    type="file"
+                    className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl ${
+                      errors.citizenshipBack
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        handleNestedChange(
+                          "documents",
+                          "citizenshipBackDocumentFile",
+                          file
+                        );
+                      }
+                    }}
+                  />
+                </label>
                 {errors.citizenshipBack && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.citizenshipBack}
@@ -487,6 +593,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   ))}
               </div>
             </div>
+
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}

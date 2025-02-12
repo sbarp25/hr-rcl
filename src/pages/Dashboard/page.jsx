@@ -5,18 +5,84 @@ import { Button } from "@nextui-org/react";
 import WorkFromHome from "../../components/WorkFromHome.jsx";
 import Leave from "../../components/Leave.jsx";
 import { MdRadioButtonChecked } from "react-icons/md";
+import { iframe } from "framer-motion/client";
+import axiosInstance from "../../lib/axios-Instance.js";
+import { toast } from "react-toastify";
 const Page = () => {
-  const [ischeckedin, setIscheckedin] = useState(true);
+  const [ischeckedin, setIscheckedin] = useState();
 
-  const handleCheckin = () => {
+  const handleCheckin = async () => {
+    if (ischeckedin) {
+      const requestData = {
+        data: {
+          requestLat: 27.675581079412435,
+          requestLong: 85.31389434151733,
+          requestDevice: "Mobile",
+          checkInType: "office",
+          requestIp: "192.168.1.1",
+          isStudent: false,
+        },
+      };
+      try {
+        const response = await axiosInstance.post(
+          "/api/attendance/check_in",
+          requestData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data.responseCode === "200") {
+          toast.success(response?.data?.message);
+          setIscheckedin(true);
+          localStorage.setItems("ischecked", ischeckedin);
+        } else {
+          toast.error(response?.data?.message);
+        }
+      } catch (error) {
+        console.error("error during Check-In", error);
+        toast.error("Check-In Failed");
+      }
+    } else {
+      const requestData = {
+        data: {
+          requestLat: 27.675449,
+          requestLong: 85.313975,
+          requestIp: "requestIp_0c180fe165c6",
+        },
+      };
+      try {
+        const response = await axiosInstance.post(
+          "/api/attendance/check_out",
+          requestData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data.responseCode === "200") {
+          toast.success("checked out successfully!");
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("error during checkOut", error);
+        toast.error("checkOut Failed");
+      }
+    }
+
     setIscheckedin(!ischeckedin);
   };
 
+  // requestlat:"27.675449"
+  // requestlong:" 85.313975"
   const username = localStorage.getItem("fullName");
 
   return (
     <>
-      <div className="max-h-[98vh] w-[85vw] overflow-y-auto  ">
+      <div className="max-h-[98vh] w-full overflow-y-auto  ">
         <div className="flex justify-end mb-4">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />

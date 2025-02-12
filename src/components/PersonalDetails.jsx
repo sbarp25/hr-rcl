@@ -101,13 +101,17 @@ const PersonalDetails = ({
     if (emergencyNumber && emergencyNumber.length !== 10) {
       newErrors.emergencyNumber = "Emergency Phone must be 10 digits.";
     }
+    if (emergencyNumber && !/^[0-9]{10,10}$/.test(emergencyNumber)) {
+      newErrors.emergencyNumber = "Invalid emergencyNumber format.";
+    }
     if (!emergencyRelation)
       newErrors.emergencyRelation = "Emergency Relation is Required ";
     if (!emergencyName) newErrors.emergencyName = "Emergency Name is required.";
     if (!guardianName) newErrors.guardianName = "Guardian Name is required.";
     if (!guardianPhone) newErrors.guardianPhone = "Guardian Phone is required.";
-    if (guardianPhone && guardianPhone.length !== 10) {
-      newErrors.guardianPhone = "Guardian Phone must be 10 digits.";
+
+    if (guardianPhone && !/^[0-9]{10,10}$/.test(guardianPhone)) {
+      newErrors.guardianPhone = "Invalid guardianPhone format.";
     }
     if (!guardianRelation)
       newErrors.guardianRelation = "Guardain Relation is Required ";
@@ -168,18 +172,20 @@ const PersonalDetails = ({
 
   return (
     <div className="space-y-8 p-8 bg-white rounded-2xl mx-auto w-[70vw]">
-      <h2 className="text-3xl font-bold text-gray-800">Personal Information</h2>
-
       <div className="space-y-6">
+        <h2 className="text-2xl font-semibold text-gray-700 py-3">
+          Personal Information
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Personal Email */}
           <div>
-            <Inputcomp
-              variant="bordered"
+            <Input
               type="email"
               id="email"
               label="Personal Email"
-              className="sha"
+              className={`w-full  border-2 rounded-xl ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
               value={formData?.personalInfo?.email}
               onChange={(e) =>
                 handleNestedChange(
@@ -199,8 +205,9 @@ const PersonalDetails = ({
           <div>
             <Select
               scrollShadowProps={{ isEnabled: true }}
-              variant="bordered"
-              className="w-full rounded-lg shadow-md"
+              className={`w-full  border-2 rounded-xl ${
+                errors.gender ? "border-red-500" : "border-gray-300"
+              }`}
               label="Gender"
               selectedKeys={[formData?.personalInfo?.gender]}
               onSelectionChange={(keys) =>
@@ -220,10 +227,12 @@ const PersonalDetails = ({
         {/* Date of Birth and Blood Group */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <Inputcomp
-              variant="bordered"
+            <Input
               type="date"
               label="Date of Birth"
+              className={`w-full  border-2 rounded-xl ${
+                errors.dob ? "border-red-500" : "border-gray-300"
+              }`}
               value={formData?.personalInfo?.dob}
               onChange={(e) =>
                 handleNestedChange("personalInfo", null, "dob", e.target.value)
@@ -237,8 +246,9 @@ const PersonalDetails = ({
           <div>
             <Select
               classNames={{ inputWrapper: "shadow-md" }}
-              variant="bordered"
-              className="w-full rounded-lg"
+              className={`w-full  border-2 rounded-xl ${
+                errors.bloodType ? "border-red-500" : "border-gray-300"
+              }`}
               label="Blood Group"
               selectedKeys={[formData?.personalInfo?.bloodType]}
               onSelectionChange={(keys) =>
@@ -269,12 +279,14 @@ const PersonalDetails = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <Inputcomp
+            <Input
               id="guardianName"
               type="text"
               label="Guardian Name"
               value={formData?.personalInfo?.guardianName}
-              variant="bordered"
+              className={`w-full  border-2 rounded-xl ${
+                errors.guardianName ? "border-red-500" : "border-gray-300"
+              }`}
               onChange={(e) =>
                 handleNestedChange(
                   "personalInfo",
@@ -290,11 +302,13 @@ const PersonalDetails = ({
           </div>
 
           <div>
-            <Inputcomp
+            <Input
               type="text"
               id="guardianPhone"
               label="Guardian Phone"
-              variant="bordered"
+              className={`w-full  border-2 rounded-xl ${
+                errors.guardianPhone ? "border-red-500" : "border-gray-300"
+              }`}
               value={formData?.personalInfo?.guardianPhone}
               onChange={(e) =>
                 handleNestedChange(
@@ -315,9 +329,9 @@ const PersonalDetails = ({
 
         <div>
           <Select
-            classNames={{ inputWrapper: "shadow-md" }}
-            variant="bordered"
-            className="w-full rounded-lg"
+            className={`w-full  border-2 rounded-xl ${
+              errors.guardianRelation ? "border-red-500" : "border-gray-300"
+            }`}
             label="Guardian Relation"
             selectedKeys={[formData?.personalInfo?.guardianRelation]}
             onSelectionChange={(keys) =>
@@ -349,9 +363,11 @@ const PersonalDetails = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <Inputcomp
+            <Input
               id="emergencyName"
-              variant="bordered"
+              className={`w-full  border-2 rounded-xl ${
+                errors.emergencyName ? "border-red-500" : "border-gray-300"
+              }`}
               type="text"
               label="Emergency Name"
               value={formData?.personalInfo?.emergencyName}
@@ -372,10 +388,12 @@ const PersonalDetails = ({
           </div>
 
           <div>
-            <Inputcomp
+            <Input
               id="emergencyPhone"
               type="text"
-              variant="bordered"
+              className={`w-full  border-2 rounded-xl ${
+                errors.emergencyNumber ? "border-red-500" : "border-gray-300"
+              }`}
               label="Emergency Phone"
               value={formData?.personalInfo?.emergencyNumber}
               onChange={(e) =>
@@ -396,10 +414,11 @@ const PersonalDetails = ({
         </div>
 
         <div>
-          <Inputcomp
-            className="w-full"
+          <Input
             type="text"
-            variant="bordered"
+            className={`w-full  border-2 rounded-xl ${
+              errors.emergencyRelation ? "border-red-500" : "border-gray-300"
+            }`}
             label="Emergency Relation"
             value={formData?.personalInfo?.emergencyRelation}
             onChange={(e) =>

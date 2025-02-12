@@ -136,9 +136,9 @@ const Rstpwd = () => {
 
   return (
     <div className="p-6 bg-gray-200 h-[100vh]">
-      <div className="grid grid-cols-2 items-center justify-center h-auto bg-red-500 rounded-2xl mt-16 ">
+      <div className="grid grid-cols-2 items-center justify-center h-auto  rounded-2xl mt-16 ">
         <div className=" bg-bgprimary rounded-l-2xl">
-          <div className="mt-64 mb-48 flex flex-col gap-y-16 items-center justify-center">
+          <div className="mt-64 mb-48 flex flex-col gap-y-16  h-auto items-center justify-center">
             <img src={Logo} alt="logo" className="w-96" />
             <p className="text-2xl leading-10 text-white text-center font-normal">
               Whispers of Code,
@@ -146,7 +146,7 @@ const Rstpwd = () => {
             </p>
           </div>
         </div>
-        <div className=" px-16 pt-[30vh] bg-white rounded-r-2xl ">
+        <div className=" px-16 pt-[27.5vh] bg-white rounded-r-2xl ">
           <h1 className="flex text-xl font-bold mb-4">Reset Password</h1>
 
           <Form

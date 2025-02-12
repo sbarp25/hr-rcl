@@ -3,6 +3,10 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  DatePicker,
+  Select,
+  SelectSection,
+  SelectItem,
 } from "@nextui-org/react";
 import { Form, Input, Button } from "@nextui-org/react";
 import { DateInput } from "@nextui-org/date-input";
@@ -45,43 +49,46 @@ const LeaveRequest = () => {
         <div className="flex flex-col justify-center items-center gap-x-10 w-full">
           <div className="flex w-full gap-10">
             <div className="w-full">
-              <label>Team Leader</label>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Input
-                    isReadOnly
-                    label={teamLeader}
-                    className=""
-                    aria-label
-                  />
-                </DropdownTrigger>
-
-                <DropdownMenu
-                  disallowEmptySelection
-                  aria-label="Single selection example"
-                  selectedKeys={dropdown}
-                  selectionMode="single"
-                  variant="flat"
-                  onSelectionChange={handleDropdownChange}>
-                  <DropdownItem key="mother">HR</DropdownItem>
-                  <DropdownItem key="Father">District</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+              <Select
+                label="Team Leader"
+                selectedKeys={dropdown}
+                selectionMode="single"
+                onSelectionChange={handleDropdownChange}
+                className="w-full mt-4"
+              >
+                <SelectItem key="mother" value="HR">
+                  HR
+                </SelectItem>
+                <SelectItem key="Father" value="District">
+                  District
+                </SelectItem>
+              </Select>
             </div>
             <div className="w-full">
-              <label>Leave Type</label>
-              <Input value={leaveType} onChange={handleLeaveTypeChange} />
+              <Select
+                label="Leave Type"
+                value={Dropdown} // Use 'value' instead of 'selectedKeys' for single selection
+                onChange={handleDropdownChange}
+                className="w-full mt-4"
+              >
+                <SelectItem key="Sick Leave" value="Seasonal Illness">
+                  Seasonal Illness
+                </SelectItem>
+                <SelectItem key="Month Leave" value="Paid Leave">
+                  Paid Leave
+                </SelectItem>
+              </Select>
             </div>
           </div>
 
           <div className="flex gap-10 w-full">
             <div className="w-full">
               <label>Start Date</label>
-              <DateInput />
+              <DatePicker />
             </div>
             <div className="w-full">
               <label>End Date</label>
-              <DateInput />
+              <DatePicker />
             </div>
           </div>
         </div>

@@ -26,6 +26,7 @@ import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
 // import View from "./pages/Ekye/AdminEkye/EKyeView/Page.jsx";
 import EkyeAction from "./components/Ekye/EkyeAction.jsx";
 import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
+import LocationComponent from "./components/LocationComponent.jsx";
 
 function App() {
   useEffect(() => {
@@ -46,6 +47,7 @@ function App() {
   const isAuthRoute = authRoutes.includes(location.pathname);
   return (
     <>
+      <LocationComponent />
       <ToastContainer />
       {isAuthRoute ? (
         <AuthLayout>

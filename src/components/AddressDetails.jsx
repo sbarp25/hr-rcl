@@ -25,9 +25,9 @@ const AddressDetails = ({
   const [provinces, setProvinces] = useState([]);
   const [errors, setErrors] = useState({});
   const [districts, setDistricts] = useState([]);
-  //Fetch provience data
+
+  // Fetch Province Data
   useEffect(() => {
-    // Fetch Province Data
     const fetchProvinces = async () => {
       setIsLoading(true);
       try {
@@ -45,7 +45,7 @@ const AddressDetails = ({
     fetchProvinces();
   }, []);
 
-  //Get Address Data
+  // Get Address Data
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     const fetchAddressDetails = async () => {
@@ -133,6 +133,7 @@ const AddressDetails = ({
     }
     handleChange("address", "sameAsPermanent", isChecked);
   };
+
   const fetchDistrictsByProvince = async (provinceId) => {
     if (!provinceId) return;
 
@@ -154,6 +155,31 @@ const AddressDetails = ({
       setIsLoading(false);
     }
   };
+
+  const handleProvinceChange = (keys) => {
+    const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
+    handleNestedChange("address", "permanent", "provinceId", provinceId);
+
+    // Reset districts and districtId
+    setDistricts([]);
+    handleNestedChange("address", "permanent", "districtId", "");
+
+    // Fetch districts for the selected province
+    fetchDistrictsByProvince(provinceId);
+  };
+
+  const handleTemporaryProvinceChange = (keys) => {
+    const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
+    handleNestedChange("address", "temporary", "provinceId", provinceId);
+
+    // Reset districts and districtId
+    setDistricts([]);
+    handleNestedChange("address", "temporary", "districtId", "");
+
+    // Fetch districts for the selected province
+    fetchDistrictsByProvince(provinceId);
+  };
+
   const onSubmit = async () => {
     setIsLoading(true);
 
@@ -299,7 +325,7 @@ const AddressDetails = ({
       {/* {isLoading && <Loader />} */}
       <ValidationComponent>
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>
           <form
@@ -320,22 +346,15 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    variant="bordered"
-                    className="w-full rounded-lg shadow-lg shadow-gray-300"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentProvinceId
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     label="Select A Province"
                     items={formData.address?.permanent?.provinceId}
                     placeholder={formData.address?.permanent?.provinceName}
-                    onSelectionChange={(keys) => {
-                      const provinceId = Array.from(keys)[0]; // Extract the first value from the Set
-                      handleNestedChange(
-                        "address",
-                        "permanent",
-                        "provinceId",
-                        provinceId
-                      );
-
-                      fetchDistrictsByProvince(provinceId);
-                    }}
+                    onSelectionChange={handleProvinceChange}
                   >
                     {provinces.map((province) => (
                       <SelectItem key={province.id} textValue={province.name}>
@@ -349,11 +368,6 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
-                {/* 
-                <Input
-                  isReadOnly
-                  value={formData.address?.permanent?.provinceName}
-                /> */}
 
                 {/* NextUI Dropdown for District */}
                 <div>
@@ -361,8 +375,11 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    className="rounded-lg shadow-lg shadow-gray-300"
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentDistrictId
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     label="Select A District"
                     selectedKeys={[formData.address?.permanent?.districtId]}
                     placeholder={formData.address?.permanent?.districtId}
@@ -394,9 +411,13 @@ const AddressDetails = ({
 
                 {/* Other Address Fields */}
                 <div>
-                  <Inputcomp
+                  <Input
                     id=""
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentMunicipality
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="Municipality"
                     value={formData.address?.permanent?.municipality}
@@ -416,7 +437,7 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
+                  <Input
                     value={formData.address?.permanent?.wardNumber}
                     onChange={(e) =>
                       handleNestedChange(
@@ -427,7 +448,11 @@ const AddressDetails = ({
                       )
                     }
                     label="Ward No"
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentWardNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     id="ward"
                   />
@@ -438,7 +463,7 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
+                  <Input
                     value={formData.address?.permanent?.pinCode}
                     onChange={(e) =>
                       handleNestedChange(
@@ -449,7 +474,11 @@ const AddressDetails = ({
                       )
                     }
                     label="Pin Code"
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentPinCode
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     id="pincode"
                   />
@@ -460,8 +489,12 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
-                    variant="bordered"
+                  <Input
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.permanentTole
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="Tole/Area"
                     value={formData.address?.permanent?.tole}
@@ -503,8 +536,11 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    variant="bordered"
-                    className="w-full rounded-lg shadow-lg shadow-gray-300"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryProvinceId
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     label="Select A Province"
                     placeholder={formData.address?.temporary?.provinceName}
                     selectedKeys={[formData.address?.temporary?.provinceId]}
@@ -539,8 +575,11 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    variant="bordered"
-                    className=" rounded-lg shadow-lg shadow-gray-300"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryDistrictId
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     label="Select A District"
                     selectedKeys={[formData.address?.temporary?.districtId]}
                     placeholder={formData.address?.temporary?.districtId}
@@ -572,8 +611,12 @@ const AddressDetails = ({
 
                 {/* Additional Fields */}
                 <div>
-                  <Inputcomp
-                    variant="bordered"
+                  <Input
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryMunicipality
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="Municipality"
                     value={formData.address?.temporary?.municipality}
@@ -593,9 +636,13 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
+                  <Input
                     id="ward"
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryWardNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="Ward No."
                     value={formData.address?.temporary?.wardNumber}
@@ -615,9 +662,13 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
+                  <Input
                     id="pincode"
-                    variant="bordered"
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryPinCode
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="pinCode"
                     value={formData.address?.temporary?.pinCode}
@@ -637,8 +688,12 @@ const AddressDetails = ({
                   )}
                 </div>
                 <div>
-                  <Inputcomp
-                    variant="bordered"
+                  <Input
+                    className={`w-full  border-2 rounded-xl ${
+                      errors.temporaryTole
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                     type="text"
                     label="Tole/Area"
                     value={formData.address?.temporary?.tole}

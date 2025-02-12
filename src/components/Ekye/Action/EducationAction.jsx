@@ -2,8 +2,42 @@ import React from "react";
 import { Divider, Form, Input, Button } from "@nextui-org/react";
 import { FaDiamond } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
+import axiosInstance from "../../../lib/axios-Instance";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const EducationAction = () => {
+  const navigate = useNavigate();
+  const onApprove = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/approved/users",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response?.data?.responseCode === "201") {
+        toast.success(response?.data?.message);
+        navigate("/AdminEkye");
+      } else {
+        toast.error(response?.data?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    }
+  };
+  // const onReject= async()=>{
+  //   try{
+  //     const response = await axiosInstance.post(
+
+  //     )
+  //   }
+  // }
   return (
     <div className="relative flex flex-col bg-white mt-16 border-2 rounded-md shadow-lg p-8">
       {/* Header Section */}
@@ -74,7 +108,9 @@ const EducationAction = () => {
       {/* Buttons Section */}
       <div className="mt-6 flex justify-end gap-4">
         <Button className="bg-red-700 text-white">Reject</Button>
-        <Button className="bg-green-700 text-white">Accept</Button>
+        <Button className="bg-green-700 text-white" onPress={onApprove}>
+          Accept
+        </Button>
       </div>
     </div>
   );

@@ -42,9 +42,9 @@ const Filter = ({ onApplyFilters }) => {
           "/api/v1/departments/get/all"
         );
         if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.data?.content);
+          setDepartmentsData(response?.data?.datalist);
         } else {
-          toast.error(response.data.data.message);
+          toast.error(response.data?.data?.message);
         }
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -62,7 +62,7 @@ const Filter = ({ onApplyFilters }) => {
       try {
         const response = await axiosInstance.post("/api/v1/positions/get/all");
         if (response.data.responseCode === "200") {
-          setPositionData(response?.data?.data?.content);
+          setPositionData(response?.data?.datalist);
         } else {
           toast.error(response.data.message);
         }
@@ -124,7 +124,7 @@ const Filter = ({ onApplyFilters }) => {
   );
 
   const filteredPositions = useMemo(
-    () => positionData.filter((position) => !position?.isDeleted),
+    () => positionData?.filter((position) => !position?.isDeleted),
     [positionData]
   );
 
