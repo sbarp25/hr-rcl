@@ -6,7 +6,7 @@ import {
   DropdownItem,
   Button,
 } from "@nextui-org/react";
-
+import { MdKeyboardArrowDown } from "react-icons/md";
 const DropDownComp = ({ items, onSelect }) => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(["10"]));
 
@@ -25,6 +25,7 @@ const DropDownComp = ({ items, onSelect }) => {
       <DropdownTrigger>
         <Button className="capitalize" variant="bordered">
           {selectedValue}
+          <MdKeyboardArrowDown />
         </Button>
       </DropdownTrigger>
       <DropdownMenu
@@ -33,8 +34,7 @@ const DropDownComp = ({ items, onSelect }) => {
         selectedKeys={selectedKeys}
         selectionMode="single"
         variant="flat"
-        onSelectionChange={handleSelectionChange}
-      >
+        onSelectionChange={handleSelectionChange}>
         {items.map((item) => (
           <DropdownItem key={item}>{item}</DropdownItem>
         ))}

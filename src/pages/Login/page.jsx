@@ -42,31 +42,31 @@ const Login = () => {
           },
         }
       );
-      // if (response.data?.responseCode === 200) {
-      const accessToken = response?.data?.data?.accessToken;
-      const refreshToken = response?.data?.data?.refreshToken;
-      const FullName = response?.data?.data?.fullName;
-      const Email = response?.data?.data?.email;
-      const ekeyStep = response?.data?.data?.ekeyStep;
-      localStorage.setItem("ekeyStep", ekeyStep);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("userId", accessToken);
-      localStorage.setItem("fullName", FullName);
-      localStorage.setItem("email", Email);
-      toast.success(response.data.message);
+      if (response.data?.responseCode === "200") {
+        const accessToken = response?.data?.data?.accessToken;
+        const refreshToken = response?.data?.data?.refreshToken;
+        const FullName = response?.data?.data?.fullName;
+        const Email = response?.data?.data?.email;
+        const ekeyStep = response?.data?.data?.ekeyStep;
+        localStorage.setItem("ekeyStep", ekeyStep);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userId", accessToken);
+        localStorage.setItem("fullName", FullName);
+        localStorage.setItem("email", Email);
+        toast.success(response.data.message);
 
-      if (
-        response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
-        response?.data?.data?.ekyeStatus === "COMPLETED"
-      ) {
-        navigate("/");
+        if (
+          response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
+          response?.data?.data?.ekyeStatus === "COMPLETED"
+        ) {
+          navigate("/");
+        } else {
+          navigate("/EKYE");
+        }
       } else {
-        navigate("/EKYE");
+        toast.error(response?.data?.data?.message);
       }
-      // } else {
-      //   toast.error(response?.data?.data?.message);
-      // }
     } catch (error) {
       toast.error("Login failed. Try again.");
       console.error("Error logging in:", error);

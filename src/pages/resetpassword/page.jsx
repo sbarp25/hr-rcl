@@ -135,71 +135,76 @@ const Rstpwd = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-200 h-[100vh]">
-      <div className="grid grid-cols-2 items-center justify-center h-auto  rounded-2xl mt-16 ">
-        <div className=" bg-bgprimary rounded-l-2xl">
-          <div className="mt-64 mb-48 flex flex-col gap-y-16  h-auto items-center justify-center">
-            <img src={Logo} alt="logo" className="w-96" />
-            <p className="text-2xl leading-10 text-white text-center font-normal">
-              Whispers of Code,
-              <br /> Symphonies of Solution
-            </p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="grid grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
+        {/* Left Section - Logo & Tagline */}
+        <div className="bg-bgprimary flex flex-col items-center justify-center text-white px-12 py-20">
+          <img src={Logo} alt="logo" className="w-72 mb-8" />
+          <p className="text-2xl font-medium text-center leading-10">
+            Whispers of Code, <br /> Symphonies of Solution
+          </p>
         </div>
-        <div className=" px-16 pt-[27.5vh] bg-white rounded-r-2xl ">
-          <h1 className="flex text-xl font-bold mb-4">Reset Password</h1>
 
-          <Form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 mb-[16vh] "
-          >
-            <Input
-              variant="bordered"
-              id="password"
-              type="password"
-              name="password"
-              label="New Password"
-              className={`w-full p-3 rounded-lg  focus:outline-none  ${
-                errors.password ? "border-red-500" : ""
-              }`}
-              {...register("password", { required: "Password is required" })}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
+        {/* Right Section - Reset Password Form */}
+        <div className="px-16 py-20 flex flex-col justify-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">
+            Reset Password
+          </h1>
 
-            <Input
-              variant="bordered"
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              label="Confirm Password"
-              className={`w-full p-3 rounded-lg  focus:outline-none ${
-                errors.confirmPassword ? "border-red-500" : ""
-              }`}
-              {...register("confirmPassword", {
-                required: "Confirm password is required",
-                validate: (value) =>
-                  value === password || "Passwords do not match",
-              })}
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+          <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* New Password Input */}
+            <div>
+              <Input
+                variant="bordered"
+                id="password"
+                type="password"
+                name="password"
+                label="New Password"
+                className={`w-96 p-3 ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
+                {...register("password", { required: "Password is required" })}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
+            {/* Confirm Password Input */}
+            <div>
+              <Input
+                variant="bordered"
+                id="confirmPassword"
+                type="password"
+                name="confirmPassword"
+                label="Confirm Password"
+                className={`w-96 p-3 ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
+                {...register("confirmPassword", {
+                  required: "Confirm password is required",
+                  validate: (value) =>
+                    value === password || "Passwords do not match",
+                })}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-bgprimary text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
+              className={` bg-bgprimary text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
                 errors.password || errors.confirmPassword
-                  ? "opacity-50 cursor-not-allowed"
+                  ? " cursor-not-allowed"
                   : ""
-              }`}
-            >
+              }`}>
               {isLoading ? "Loading..." : "Submit"}
             </Button>
           </Form>

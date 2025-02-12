@@ -328,21 +328,18 @@ const AddressDetails = ({
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>
-          <form
-            className="w-full"
-            // validationBehavior="native"
-            // validationErrors={errors}
-          >
+          <form className="w-full">
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
                 Permanent Address
               </h3>
 
-              <div className="grid grid-cols-2 gap-4  ">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4  ">
                 {/* NextUI Dropdown for Province */}
                 <div>
                   <Select
+                    variant="bordered"
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
@@ -354,8 +351,7 @@ const AddressDetails = ({
                     label="Select A Province"
                     items={formData.address?.permanent?.provinceId}
                     placeholder={formData.address?.permanent?.provinceName}
-                    onSelectionChange={handleProvinceChange}
-                  >
+                    onSelectionChange={handleProvinceChange}>
                     {provinces.map((province) => (
                       <SelectItem key={province.id} textValue={province.name}>
                         {province.name}
@@ -372,6 +368,7 @@ const AddressDetails = ({
                 {/* NextUI Dropdown for District */}
                 <div>
                   <Select
+                    variant="bordered"
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
@@ -391,13 +388,11 @@ const AddressDetails = ({
                         "districtId",
                         districtId
                       );
-                    }}
-                  >
+                    }}>
                     {districts.map((district) => (
                       <SelectItem
                         key={district.districtId}
-                        textValue={district.name}
-                      >
+                        textValue={district.name}>
                         {district.name}
                       </SelectItem>
                     ))}
@@ -409,9 +404,10 @@ const AddressDetails = ({
                   )}
                 </div>
 
-                {/* Other Address Fields */}
+                {/* Municipality Fields */}
                 <div>
                   <Input
+                    variant="bordered"
                     id=""
                     className={`w-full  border-2 rounded-xl ${
                       errors.permanentMunicipality
@@ -436,8 +432,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Ward Number */}
                 <div>
                   <Input
+                    variant="bordered"
                     value={formData.address?.permanent?.wardNumber}
                     onChange={(e) =>
                       handleNestedChange(
@@ -462,8 +460,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Pin Code */}
                 <div>
                   <Input
+                    variant="bordered"
                     value={formData.address?.permanent?.pinCode}
                     onChange={(e) =>
                       handleNestedChange(
@@ -488,8 +488,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Tole/Area */}
                 <div>
                   <Input
+                    variant="bordered"
                     className={`w-full  border-2 rounded-xl ${
                       errors.permanentTole
                         ? "border-red-500"
@@ -518,21 +520,21 @@ const AddressDetails = ({
 
             {/* Temporary Address */}
             <div className="space-y-4">
-              <div className="flex justify-start gap-x-4 my-4 ">
+              <div className="flex flex-col justify-start gap-x-4 my-4 ">
                 <h3 className="text-xl font-semibold text-gray-600">
                   Temporary Address
                 </h3>
                 <Checkbox
                   isSelected={formData.address?.sameAsPermanent}
-                  onChange={(e) => handleSameAsPermanent(e)}
-                >
+                  onChange={(e) => handleSameAsPermanent(e)}>
                   Same as Permanent Address
                 </Checkbox>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {/* NextUI Dropdown for Temporary Province */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Dropdown for Temporary Province */}
                 <div>
                   <Select
+                    variant="bordered"
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
@@ -555,8 +557,7 @@ const AddressDetails = ({
 
                       // Fetch districts for the selected province
                       fetchDistrictsByProvince(provinceId);
-                    }}
-                  >
+                    }}>
                     {provinces.map((province) => (
                       <SelectItem key={province.id} textValue={province.name}>
                         {province.name}
@@ -569,9 +570,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
-                {/* NextUI Dropdown for Temporary District */}
+                {/* Dropdown for Temporary District */}
                 <div>
                   <Select
+                    variant="bordered"
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
@@ -591,13 +593,11 @@ const AddressDetails = ({
                         "districtId",
                         districtId
                       );
-                    }}
-                  >
+                    }}>
                     {districts.map((district) => (
                       <SelectItem
                         key={district.districtId}
-                        textValue={district.name}
-                      >
+                        textValue={district.name}>
                         {district.name}
                       </SelectItem>
                     ))}
@@ -609,9 +609,10 @@ const AddressDetails = ({
                   )}
                 </div>
 
-                {/* Additional Fields */}
+                {/* Municipality Fields */}
                 <div>
                   <Input
+                    variant="bordered"
                     className={`w-full  border-2 rounded-xl ${
                       errors.temporaryMunicipality
                         ? "border-red-500"
@@ -635,8 +636,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Ward Number */}
                 <div>
                   <Input
+                    variant="bordered"
                     id="ward"
                     className={`w-full  border-2 rounded-xl ${
                       errors.temporaryWardNumber
@@ -661,8 +664,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Pin Code */}
                 <div>
                   <Input
+                    variant="bordered"
                     id="pincode"
                     className={`w-full  border-2 rounded-xl ${
                       errors.temporaryPinCode
@@ -687,8 +692,10 @@ const AddressDetails = ({
                     </p>
                   )}
                 </div>
+                {/**Tole/Area */}
                 <div>
                   <Input
+                    variant="bordered"
                     className={`w-full  border-2 rounded-xl ${
                       errors.temporaryTole
                         ? "border-red-500"
@@ -717,14 +724,12 @@ const AddressDetails = ({
               <div className="form-navigation flex justify-between mt-6">
                 <Button
                   onPress={handleBack}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
+                  className="px-4 py-2 bg-gray-300 rounded">
                   Back
                 </Button>
                 <button
                   onClick={handlesubmit}
-                  className="px-4 py-2 bg-green-500 text-white rounded"
-                >
+                  className="px-4 py-2 bg-green-500 text-white rounded">
                   Submit
                 </button>
               </div>

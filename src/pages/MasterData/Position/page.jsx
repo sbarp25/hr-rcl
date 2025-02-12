@@ -216,8 +216,7 @@ const Position = () => {
           <Button
             className="button bg-green-700 tracking-normal
   hover:bg-green-900"
-            onPress={() => setShowAddForm(!showAddForm)}
-          >
+            onPress={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? (
               <>
                 <IoReturnDownBack className="text-white h-24 w-24" />
@@ -235,8 +234,7 @@ const Position = () => {
         {showEditForm && (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleEditPosition}
-          >
+            onSubmit={handleEditPosition}>
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Edit Position
             </h2>
@@ -256,23 +254,20 @@ const Position = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                  required
-                ></textarea>
+                  required></textarea>
               </div>
 
               {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4"
-                >
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4">
                   Save Changes
                 </button>
                 <button
                   type="button"
                   className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onClick={() => setShowEditForm(false)}
-                >
+                  onClick={() => setShowEditForm(false)}>
                   Cancel
                 </button>
               </div>
@@ -283,8 +278,7 @@ const Position = () => {
         {showAddForm ? (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleAddPosition}
-          >
+            onSubmit={handleAddPosition}>
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Add New Position
             </h2>
@@ -304,16 +298,14 @@ const Position = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="input border rounded-lg px-4 py-2 h-24 focus:outline-none  resize-none w-full"
-                  required
-                ></textarea>
+                  required></textarea>
               </div>
 
               {/* Submit Button */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto"
-                >
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
                   Add Position
                 </button>
               </div>
@@ -337,7 +329,7 @@ const Position = () => {
                 </tr>
               </thead>
               <tbody>
-                {positionData.length > 0 ? (
+                {positionData?.length > 0 ? (
                   positionData
                     .filter((position) => !position.isDeleted)
                     .map((position, index) => (
@@ -345,8 +337,7 @@ const Position = () => {
                         key={position.id}
                         className={`${
                           index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        } hover:bg-gray-100`}
-                      >
+                        } hover:bg-gray-100`}>
                         <td className="border border-gray-300 px-4 py-2">
                           {position.name || "N/A"}
                           {position.id}

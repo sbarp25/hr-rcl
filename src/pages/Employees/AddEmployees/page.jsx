@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { Input, Select } from "@nextui-org/react";
+import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
+import { IoIosPeople } from "react-icons/io";
 
 const AddEmployeeForm = () => {
   const {
@@ -108,22 +109,19 @@ const AddEmployeeForm = () => {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    const departmentId =
-      departmentsData.find((d) => d.name === data.department)?.id || null;
-    const positionId =
-      positionData.find((p) => p.name === data.position)?.id || null;
-    const roleId =
-      roleData.find((r) => r.roleName === data.roles)?.roleId || null;
+    const sanitizeddepartmentId = data.department.replace(/[^0-9]/g, "");
+    const sanitizedpositionId = data.position.replace(/[^0-9]/g, "");
+    const sanitizedroleId = data.roles.replace(/[^0-9]/g, "");
 
     const newEmployee = {
       data: {
         fullName: data.fullname,
         phone: data.phone,
         email: data.email,
-        departmentId,
-        positionId,
+        departmentId: sanitizeddepartmentId,
+        positionId: sanitizedpositionId,
         password: "Xlsnx$c$wi&3MptW$",
-        roleId,
+        roleId: sanitizedroleId,
         performEkye: data.performEKYC,
         salary: data.salary,
       },
@@ -145,208 +143,191 @@ const AddEmployeeForm = () => {
       if (response.data.responseCode === "200") {
         reset();
         navigate("/Employees");
-        toast.success(response.data.message);
+        toast.success(response?.data?.message);
       } else {
-        toast.error(response.data.message);
+        toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.error("Error adding employee:", error);
-      toast.error("Error adding employee.");
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <ValidationComponent>
-      {isLoading && (
-        <Loader message="Please wait while the work is being done" />
-      )}
-      <div className="max-w-6xl mx-auto bg-white shadow-md rounded px-8 py-6 max-h-[90vh] overflow-auto">
-        <div className="flex flex-col">
+    <div className="pl-4">
+      <ValidationComponent>
+        {isLoading && (
+          <Loader message="Please wait while the work is being done" />
+        )}{" "}
+        <div className="flex flex-col space-y-4 mb-6">
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+          <h1 className=" flex items-center text-2xl font-semibold text-gray-800">
+            <IoIosPeople />
             Add Employee
           </h1>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            <div className="mb-4">
-              <Input
-                {...register("fullname", {
-                  required: "Full Name is required",
-                  minLength: {
-                    value: 3,
-                    message: "Full name must be at least 3 characters",
-                  },
-                })}
-                label="Full Name"
-                variant="bordered"
-                // className={errors.fullname ? "border-red-500" : ""}
-                isInvalid={!!errors.fullname}
-                errorMessage={errors.fullname?.message}
-              />
-              {/* {errors.fullname && (
-              //   <p className="text-red-500 text-sm">
-              //     {errors.fullname.message}
-              //   </p>
-              // )} */}
-            </div>
-            <div className="mb-4">
-              <Input
-                {...register("phone", {
-                  required: "Phone Number is required",
-                  minLength: {
-                    value: 10,
-                    message: "Invalid Phone Number",
-                  },
-                  pattern: {
-                    value: /^[0-9]{10,10}$/,
-                    message: "Phone number must be 10 digits long",
-                  },
-                })}
-                label="Phone"
-                variant="bordered"
-                isInvalid={!!errors.phone}
-                errorMessage={errors.phone?.message}
-              />
-              {/* {errors.phone && (
+        <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              <div className="mb-4">
+                <Input
+                  {...register("fullname", {
+                    required: "Full Name is required",
+                    minLength: {
+                      value: 3,
+                      message: "Full name must be at least 3 characters",
+                    },
+                  })}
+                  label="Full Name"
+                  variant="bordered"
+                  isInvalid={!!errors.fullname}
+                  errorMessage={errors.fullname?.message}
+                />
+              </div>
+              <div className="mb-4">
+                <Input
+                  {...register("phone", {
+                    required: "Phone Number is required",
+                    minLength: {
+                      value: 10,
+                      message: "Invalid Phone Number",
+                    },
+                    pattern: {
+                      value: /^[0-9]{10,10}$/,
+                      message: "Phone number must be 10 digits long",
+                    },
+                  })}
+                  label="Phone"
+                  variant="bordered"
+                  isInvalid={!!errors.phone}
+                  errorMessage={errors.phone?.message}
+                />
+                {/* {errors.phone && (
                 <p className="text-red-500 text-sm">{errors.phone.message}</p>
               )} */}
-            </div>
-            <div className="mb-4">
-              <Input
-                {...register("email", {
-                  required: "Email ID is required",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Please enter a valid email",
-                  },
-                })}
-                label="Email"
-                variant="bordered"
-                isInvalid={!!errors.email}
-                errorMessage={errors.email?.message}
-              />
-              {/* {errors.email && (
+              </div>
+              <div className="mb-4">
+                <Input
+                  {...register("email", {
+                    required: "Email ID is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Please enter a valid email",
+                    },
+                  })}
+                  label="Email"
+                  variant="bordered"
+                  isInvalid={!!errors.email}
+                  errorMessage={errors.email?.message}
+                />
+                {/* {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )} */}
+              </div>
+              <div className="mb-4">
+                <Input
+                  {...register("salary", {
+                    required: "Salary is required",
+                    pattern: {
+                      value: /^\d+(\.\d{1,2})?$/,
+                      message:
+                        "Please enter a valid salary (e.g., 1000 or 1000.50)",
+                    },
+                  })}
+                  label="Salary"
+                  variant="bordered"
+                  isInvalid={!!errors.salary}
+                  errorMessage={errors.salary?.message}
+                />
+              </div>
+              <div className="mb-4">
+                {" "}
+                <DatePicker label="Hire Date" variant="bordered" />
+              </div>
             </div>
-            <div className="mb-4">
-              <Input
-                {...register("salary", {
-                  required: "Salary is required",
-                  pattern: {
-                    value: /^\d+(\.\d{1,2})?$/,
-                    message:
-                      "Please enter a valid salary (e.g., 1000 or 1000.50)",
-                  },
-                })}
-                label="Salary"
-                variant="bordered"
-                isInvalid={!!errors.salary}
-                errorMessage={errors.salary?.message}
-              />
-              {/* {errors.salary && (
-                <p className="text-red-500 text-sm">{errors.salary.message}</p>
-              )} */}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Department
-              </label>
-              <select
-                {...register("department", {
-                  required: "Department is required",
-                })}
-                className={`w-full px-4 py-2 border-2 rounded-lg ${
-                  errors.department ? "border-red-500" : "border-gray-300"
-                }`}
-              >
-                <option value="">Select department</option>
-                {departmentsData.map((dept) => (
-                  <option key={dept.id} value={dept.name}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
-              {errors.department && (
-                <p className="text-red-500 text-sm">
-                  {errors.department.message}
-                </p>
-              )}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+              {/**Select Department NextUI */}
+              <div className="mb-4">
+                <Select
+                  variant="bordered"
+                  label="Select an Department"
+                  color={errors.department ? "danger" : "default"}
+                  className={`border-2  rounded-xl ${
+                    errors.department ? "border-red-500" : "border-gray-300"
+                  }`}
+                  {...register("department", {
+                    required: "Department is required",
+                  })}
+                  errorMessage={errors.department?.message}>
+                  {departmentsData?.map((dept) => (
+                    <SelectItem key={dept.id} textValue={dept.name}>
+                      {dept.name}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Position
-              </label>
-              <select
-                {...register("position", {
-                  required: "Position is required",
-                })}
-                className={`w-full px-4 py-2 border-2 rounded-lg ${
-                  errors.position ? "border-red-500" : "border-gray-300"
-                }`}
-              >
-                <option value="">Select position</option>
-                {positionData.map((pos) => (
-                  <option key={pos.id} value={pos.name}>
-                    {pos.name}
-                  </option>
-                ))}
-              </select>
-              {errors.position && (
-                <p className="text-red-500 text-sm">
-                  {errors.position.message}
-                </p>
-              )}
+              {/**Select Position */}
+              <div className="mb-4">
+                <Select
+                  variant="bordered"
+                  label="Select an Position"
+                  color={errors.position ? "danger" : "default"}
+                  className={`border-2  rounded-xl ${
+                    errors.position ? "border-red-500" : "border-gray-300"
+                  }`}
+                  {...register("position", {
+                    required: "Position is required",
+                  })}>
+                  {positionData.map((pos) => (
+                    <SelectItem key={pos.id} textValue={pos.positionName}>
+                      {pos.positionName}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+              {/**Select Role  */}
+              <div className="mb-4">
+                <Select
+                  variant="bordered"
+                  label="Select an Role"
+                  color={errors.roles ? "danger" : "default"}
+                  className={`border-2  rounded-xl ${
+                    errors.roles ? "border-red-500" : "border-gray-300"
+                  }`}
+                  {...register("roles", {
+                    required: "Role is required",
+                  })}>
+                  {roleData.map((role) => (
+                    <SelectItem key={role.roleId} textValue={role.roleName}>
+                      {role.roleName}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Roles
-              </label>
-              <select
-                {...register("roles", {
-                  required: "Role is required",
-                })}
-                className={`w-full px-4 py-2 border-2 rounded-lg ${
-                  errors.roles ? "border-red-500" : "border-gray-300"
-                }`}
-              >
-                <option value="">Select role</option>
-                {roleData.map((role) => (
-                  <option key={role.roleId} value={role.roleName}>
-                    {role.roleName}
-                  </option>
-                ))}
-              </select>
-              {errors.roles && (
-                <p className="text-red-500 text-sm">{errors.roles.message}</p>
-              )}
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                {...register("performEKYC")}
+                className="mr-2"
+              />
+              <label className="text-gray-700">Perform eKYC</label>
             </div>
-          </div>
-          <div className="mb-4 flex items-center">
-            <input
-              type="checkbox"
-              {...register("performEKYC")}
-              className="mr-2"
-            />
-            <label className="text-gray-700">Perform eKYC</label>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-bgprimary text-white py-2 px-4 rounded-lg"
-          >
-            Submit
-          </button>
-        </form>
-      </div>
-    </ValidationComponent>
+            <button
+              type="submit"
+              className="w-fit bg-bgprimary text-white py-2 px-4 rounded-lg">
+              Submit
+            </button>
+          </form>
+        </div>
+      </ValidationComponent>
+    </div>
   );
 };
 

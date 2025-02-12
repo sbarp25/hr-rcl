@@ -3,9 +3,8 @@ import axiosInstance from "../lib/axios-Instance";
 import { Button, Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
-import Loader from "./Loader";
 import { FaRegEye } from "react-icons/fa";
-import Inputcomp from "./Inputcomp";
+
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -70,7 +69,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     if (!panIssueDate) newErrors.panIssueDate = "pan Issued date is required";
     if (!panIssuePlace)
       newErrors.panIssuePlace = "Pan Issued place is required";
-    // if (!PanPhoto) newErrors.PanPhoto = "pan Photo is required";
+    if (!PanPhoto) newErrors.PanPhoto = "pan Photo is required";
     if (!citizenshipNumber)
       newErrors.citizenshipNumber = "Citizenship Number is required";
     if (citizenshipNumber && !/^[0-9]{0,16}$/.test(citizenshipNumber)) {
@@ -80,10 +79,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       newErrors.citizenshipIssuedPlace = "Citizenship Issued place is required";
     if (!issuedDate)
       newErrors.issuedDate = "Citizenship Issued Date  is required";
-    // if (!citizenshipFront)
-    //   newErrors.citizenshipFront = "Citizenship Front picture is Required";
-    // if (!citizenshipBack)
-    //   newErrors.citizenshipBack = "Citizenship bacK picture is required";
+    if (!citizenshipFront)
+      newErrors.citizenshipFront = "Citizenship Front picture is Required";
+    if (!citizenshipBack)
+      newErrors.citizenshipBack = "Citizenship bacK picture is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -220,16 +219,16 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       {/* {isLoading && <Loader />} */}
       <ValidationComponent>
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-700 py-3">
-            Document Details
-          </h2>
-
           {/* PAN Details Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-600">PAN Details</h3>
-            <div className="grid grid-cols-2 gap-x-4">
+            <h3 className="text-xl font-semibold text-gray-600 pt-4">
+              PAN Details
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-x-4">
+              {/**PAN number */}
               <div>
                 <Input
+                  variant="bordered"
                   id="panNumber"
                   className={`w-full  border-2 rounded-xl ${
                     errors.panNumber ? "border-red-500" : "border-gray-300"
@@ -248,8 +247,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
+              {/**Pan Issue Date */}
               <div className="">
                 <Input
+                  variant="bordered"
                   className={`w-full  border-2 rounded-xl ${
                     errors.panIssueDate ? "border-red-500" : "border-gray-300"
                   }`}
@@ -270,10 +271,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+              {/**Pan Issue Place */}
               <div>
                 <Input
+                  variant="bordered"
                   className={`w-full  border-2 rounded-xl ${
                     errors.panIssuePlace ? "border-red-500" : "border-gray-300"
                   }`}
@@ -294,28 +295,22 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
+              {/**PAN photo */}
               <div>
                 <div>
-                  {/* <Input
-                    isClearable
-                    className="  "
-                    placeholder="Choose a Pan Photo"
-                    type="file"
-                    variant="bordered"
-                    // eslint-disable-next-line no-console
-                    onChange={(e) =>
-                      handleNestedChange(
-                        "documents",
-                        "panCardDocumentFile",
-                        e.target.files[0]
-                      )
-                    }
-                  /> */}
-                  <label className="relative flex items-center justify-left w-full h-14 border-2  border-gray-300 rounded-xl  cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                  <label
+                    className={`relative flex items-center justify-left w-full h-14 border-3  ${
+                      errors.PanPhoto ? "border-red-500" : "border-gray-300"
+                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
                     <span className="text-gray-600 px-4">
-                      {formData?.documents?.panCardDocumentFile?.name
-                        ? formData.documents?.panCardDocumentFile?.name
-                        : "Upload Front photo of Pan Card "}
+                      {formData?.documents?.panCardDocumentFile?.name ? (
+                        <div className="flex gap-2">
+                          <p>Choose a photo</p>
+                          {formData.documents?.panCardDocumentFile?.name}
+                        </div>
+                      ) : (
+                        "Upload Front photo of Pan Card "
+                      )}
                     </span>
                     <input
                       type="file"
@@ -348,8 +343,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData.documents?.panCardDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2"
-                      >
+                        className="block text-sm text-green-600 underline mb-2">
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded PAN Card
@@ -370,9 +364,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <h3 className="text-xl font-semibold text-gray-600">
               Citizenship Details
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/**Citizenship Number */}
               <div>
                 <Input
+                  variant="bordered"
                   className={`w-full  border-2 rounded-xl ${
                     errors.citizenshipNumber
                       ? "border-red-500"
@@ -395,8 +391,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
+              {/**Citizenship Issue Date */}
               <div>
                 <Input
+                  variant="bordered"
                   className={`w-full  border-2 rounded-xl ${
                     errors.issuedDate ? "border-red-500" : "border-gray-300"
                   }`}
@@ -417,10 +415,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
+              {/**Citizenship Issue Place */}
               <div>
                 <Input
+                  variant="bordered"
                   type="text"
                   className={`w-full  border-2 rounded-xl ${
                     errors.citizenshipIssuedPlace
@@ -443,30 +441,31 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   </p>
                 )}
               </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              {/**Citizenship Front Photo */}
               <div>
                 <div>
-                  {/* <Input
-                    isClearable
-                    className=""
-                    placeholder="Citizenship Front Photo"
-                    type="file"
-                    variant="bordered"
-                    // eslint-disable-next-line no-console
-                    onClear={() => console.log("input cleared")}
-                    onChange={(e) => {
-                      handleNestedChange(
-                        "documents",
-                        "citizenshipFrontDocumentFile",
-                        e.target.files[0]
-                      );
-                    }}
-                  /> */}
-                  <label className="relative flex items-center justify-left w-full h-14 border-2  border-gray-300 rounded-xl  cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                  <label
+                    className={`relative flex items-center justify-left w-full h-14 border-2   ${
+                      errors.citizenshipFront
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
                     <span className="text-gray-600 px-4">
                       {/* Upload Front photo of citizenship */}
-                      {formData?.documents?.citizenshipFrontDocumentFile?.name
-                        ? formData.documents?.citizenshipFrontDocumentFile?.name
-                        : "Upload front Photo of citizenship"}
+                      {formData?.documents?.citizenshipFrontDocumentFile
+                        ?.name ? (
+                        <div className="flex gap-2">
+                          <p>Choose a photo</p>
+                          {
+                            formData.documents?.citizenshipFrontDocumentFile
+                              ?.name
+                          }
+                        </div>
+                      ) : (
+                        "Upload front Photo of citizenship"
+                      )}
                     </span>
                     <input
                       type="file"
@@ -502,8 +501,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2"
-                      >
+                        className="block text-sm text-green-600 underline mb-2">
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Front Side
@@ -516,95 +514,86 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     ))}
                 </div>
               </div>
-            </div>
-            <div>
+              {/**Citizenship Back Photo */}
               <div>
-                {" "}
-                {/* <Input
-                  isClearable
-                  className=""
-                  // label="Upload File"
-                  placeholder="Choose a file"
-                  type="file"
-                  variant="bordered"
-                  // eslint-disable-next-line no-console
-                  onClear={() => console.log("input cleared")}
-                  onChange={(e) =>
-                    handleNestedChange(
-                      "documents",
-                      "citizenshipBackDocumentFile",
-                      e.target.files[0]
-                    )
-                  }
-                /> */}
-                <label className="relative flex items-center justify-left w-[49%] h-14 border-2 -mt-5 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
-                  <span className="text-gray-600 px-4 truncate">
-                    {formData?.documents?.citizenshipBackDocumentFile?.name
-                      ? formData.documents.citizenshipBackDocumentFile?.name
-                      : "Upload back Photo of citizenship"}
-                  </span>
-                  <input
-                    type="file"
-                    className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl ${
+                <div>
+                  <label
+                    className={`relative flex items-center justify-left w-full h-14 border-2  ${
                       errors.citizenshipBack
                         ? "border-red-500"
                         : "border-gray-300"
-                    }`}
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        handleNestedChange(
-                          "documents",
-                          "citizenshipBackDocumentFile",
-                          file
-                        );
-                      }
-                    }}
-                  />
-                </label>
-                {errors.citizenshipBack && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.citizenshipBack}
-                  </p>
-                )}
-              </div>
+                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200`}>
+                    <span className="text-gray-600 px-4 truncate">
+                      {formData?.documents?.citizenshipBackDocumentFile
+                        ?.name ? (
+                        <div className="flex gap-2">
+                          <p>Choose a photo</p>
+                          {formData.documents.citizenshipBackDocumentFile?.name}
+                        </div>
+                      ) : (
+                        "Upload back Photo of citizenship"
+                      )}
+                    </span>
+                    <input
+                      type="file"
+                      className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl ${
+                        errors.citizenshipBack
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          handleNestedChange(
+                            "documents",
+                            "citizenshipBackDocumentFile",
+                            file
+                          );
+                        }
+                      }}
+                    />
+                  </label>
+                  {errors.citizenshipBack && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.citizenshipBack}
+                    </p>
+                  )}
+                </div>
 
-              <div className="flex gap-x-4">
-                <lable className="text-xs">
-                  Please upload the image of type either PNG or jpg
-                </lable>
-                {citizenshipBack &&
-                  (formData?.documents?.citizenshipBackDocumentFile ? (
-                    <a
-                      href={formData?.documents?.citizenshipBackDocumentFile}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2"
-                    >
-                      <span className="flex items-center gap-x-2">
-                        <FaRegEye />
-                        View Uploaded Back Side
-                      </span>
-                    </a>
-                  ) : (
-                    <div className="text-xs text-red-500">
-                      No Links Available
-                    </div>
-                  ))}
+                <div className="flex gap-x-4">
+                  <lable className="text-xs">
+                    Please upload the image of type either PNG or jpg
+                  </lable>
+                  {citizenshipBack &&
+                    (formData?.documents?.citizenshipBackDocumentFile ? (
+                      <a
+                        href={formData?.documents?.citizenshipBackDocumentFile}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-green-600 underline mb-2">
+                        <span className="flex items-center gap-x-2">
+                          <FaRegEye />
+                          View Uploaded Back Side
+                        </span>
+                      </a>
+                    ) : (
+                      <div className="text-xs text-red-500">
+                        No Links Available
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
 
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded"
-              >
+                className="px-4 py-2 bg-gray-300 rounded">
                 Back
               </Button>
               <Button
                 onPress={handleNextSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded"
-              >
+                className="px-4 py-2 bg-green-500 text-white rounded">
                 Submit
               </Button>
             </div>

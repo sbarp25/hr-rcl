@@ -20,6 +20,7 @@ const PersonalDetails = ({
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const genderOptions = ["Male", "Female"];
+  const Married = ["Unmarried", "Married"];
   const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   const relationOptions = ["Father", "Mother", "Brother", "Sister"];
 
@@ -63,6 +64,7 @@ const PersonalDetails = ({
           guardianNumber: "",
         });
         toast.success(response.data.data.message);
+        handleNext(); // Move to the next step
       } else {
         toast.error(response.data.data.message);
       }
@@ -124,7 +126,7 @@ const PersonalDetails = ({
   const handlenextsubmit = () => {
     if (validateFormData()) {
       onSubmit(); // Submit the form if valid
-      handleNext(); // Move to the next step
+      // handleNext(); // Move to the next step
     }
   };
   useEffect(() => {
@@ -171,17 +173,19 @@ const PersonalDetails = ({
   }, []);
 
   return (
-    <div className="space-y-8 p-8 bg-white rounded-2xl mx-auto w-[70vw]">
+    <div className="space-y-8 bg-white rounded-2xl mx-auto">
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-700 py-3">
           Personal Information
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/**Personal Detials */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Personal Email */}
           <div>
             <Input
               type="email"
               id="email"
+              variant="bordered"
               label="Personal Email"
               className={`w-full  border-2 rounded-xl ${
                 errors.email ? "border-red-500" : "border-gray-300"
@@ -201,34 +205,11 @@ const PersonalDetails = ({
             )}
           </div>
 
-          {/* Gender Dropdown */}
-          <div>
-            <Select
-              scrollShadowProps={{ isEnabled: true }}
-              className={`w-full  border-2 rounded-xl ${
-                errors.gender ? "border-red-500" : "border-gray-300"
-              }`}
-              label="Gender"
-              selectedKeys={[formData?.personalInfo?.gender]}
-              onSelectionChange={(keys) =>
-                handleNestedChange("personalInfo", null, "gender", [...keys][0])
-              }
-            >
-              {genderOptions.map((g) => (
-                <SelectItem key={g}>{g}</SelectItem>
-              ))}
-            </Select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Date of Birth and Blood Group */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/**DOB */}
           <div>
             <Input
               type="date"
+              variant="bordered"
               label="Date of Birth"
               className={`w-full  border-2 rounded-xl ${
                 errors.dob ? "border-red-500" : "border-gray-300"
@@ -242,9 +223,10 @@ const PersonalDetails = ({
               <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
             )}
           </div>
-
+          {/**Blood type */}
           <div>
             <Select
+              variant="bordered"
               classNames={{ inputWrapper: "shadow-md" }}
               className={`w-full  border-2 rounded-xl ${
                 errors.bloodType ? "border-red-500" : "border-gray-300"
@@ -258,9 +240,55 @@ const PersonalDetails = ({
                   "bloodType",
                   [...keys][0]
                 )
-              }
-            >
+              }>
               {bloodGroupOptions.map((group) => (
+                <SelectItem key={group}>{group}</SelectItem>
+              ))}
+            </Select>
+            {errors.bloodType && (
+              <p className="text-red-500 text-sm mt-1">{errors.bloodType}</p>
+            )}
+          </div>
+          {/* Gender Dropdown */}
+          <div>
+            <Select
+              variant="bordered"
+              scrollShadowProps={{ isEnabled: true }}
+              className={`w-full  border-2 rounded-xl ${
+                errors.gender ? "border-red-500" : "border-gray-300"
+              }`}
+              label="Gender"
+              selectedKeys={[formData?.personalInfo?.gender]}
+              onSelectionChange={(keys) =>
+                handleNestedChange("personalInfo", null, "gender", [...keys][0])
+              }>
+              {genderOptions.map((g) => (
+                <SelectItem key={g}>{g}</SelectItem>
+              ))}
+            </Select>
+            {errors.gender && (
+              <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+            )}
+          </div>
+          {/* Marital status Dropdown */}
+          <div>
+            <Select
+              variant="bordered"
+              classNames={{ inputWrapper: "shadow-md" }}
+              className={`w-full  border-2 rounded-xl ${
+                errors.bloodType ? "border-red-500" : "border-gray-300"
+              }`}
+              label="Marital status"
+              selectedKeys={[formData?.personalInfo?.married]}
+              onSelectionChange={(keys) =>
+                handleNestedChange(
+                  "personalInfo",
+                  null,
+                  "married",
+                  [...keys][0]
+                )
+              }>
+              {Married.map((group) => (
                 <SelectItem key={group}>{group}</SelectItem>
               ))}
             </Select>
@@ -277,9 +305,10 @@ const PersonalDetails = ({
           Guardian Details
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div>
             <Input
+              variant="bordered"
               id="guardianName"
               type="text"
               label="Guardian Name"
@@ -303,6 +332,7 @@ const PersonalDetails = ({
 
           <div>
             <Input
+              variant="bordered"
               type="text"
               id="guardianPhone"
               label="Guardian Phone"
@@ -325,33 +355,32 @@ const PersonalDetails = ({
               </p>
             )}
           </div>
-        </div>
-
-        <div>
-          <Select
-            className={`w-full  border-2 rounded-xl ${
-              errors.guardianRelation ? "border-red-500" : "border-gray-300"
-            }`}
-            label="Guardian Relation"
-            selectedKeys={[formData?.personalInfo?.guardianRelation]}
-            onSelectionChange={(keys) =>
-              handleNestedChange(
-                "personalInfo",
-                null,
-                "guardianRelation",
-                [...keys][0]
-              )
-            }
-          >
-            {relationOptions.map((relation) => (
-              <DropdownItem key={relation}>{relation}</DropdownItem>
-            ))}
-          </Select>
-          {errors.guardianRelation && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.guardianRelation}
-            </p>
-          )}
+          <div>
+            <Select
+              variant="bordered"
+              className={`w-full  border-2 rounded-xl ${
+                errors.guardianRelation ? "border-red-500" : "border-gray-300"
+              }`}
+              label="Guardian Relation"
+              selectedKeys={[formData?.personalInfo?.guardianRelation]}
+              onSelectionChange={(keys) =>
+                handleNestedChange(
+                  "personalInfo",
+                  null,
+                  "guardianRelation",
+                  [...keys][0]
+                )
+              }>
+              {relationOptions.map((relation) => (
+                <DropdownItem key={relation}>{relation}</DropdownItem>
+              ))}
+            </Select>
+            {errors.guardianRelation && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.guardianRelation}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -361,9 +390,10 @@ const PersonalDetails = ({
           Emergency Details
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-8">
           <div>
             <Input
+              variant="bordered"
               id="emergencyName"
               className={`w-full  border-2 rounded-xl ${
                 errors.emergencyName ? "border-red-500" : "border-gray-300"
@@ -390,6 +420,7 @@ const PersonalDetails = ({
           <div>
             <Input
               id="emergencyPhone"
+              variant="bordered"
               type="text"
               className={`w-full  border-2 rounded-xl ${
                 errors.emergencyNumber ? "border-red-500" : "border-gray-300"
@@ -411,30 +442,30 @@ const PersonalDetails = ({
               </p>
             )}
           </div>
-        </div>
-
-        <div>
-          <Input
-            type="text"
-            className={`w-full  border-2 rounded-xl ${
-              errors.emergencyRelation ? "border-red-500" : "border-gray-300"
-            }`}
-            label="Emergency Relation"
-            value={formData?.personalInfo?.emergencyRelation}
-            onChange={(e) =>
-              handleNestedChange(
-                "personalInfo",
-                null,
-                "emergencyRelation",
-                e.target.value
-              )
-            }
-          />
-          {errors.emergencyRelation && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.emergencyRelation}
-            </p>
-          )}
+          <div>
+            <Input
+              variant="bordered"
+              type="text"
+              className={`w-full  border-2 rounded-xl ${
+                errors.emergencyRelation ? "border-red-500" : "border-gray-300"
+              }`}
+              label="Emergency Relation"
+              value={formData?.personalInfo?.emergencyRelation}
+              onChange={(e) =>
+                handleNestedChange(
+                  "personalInfo",
+                  null,
+                  "emergencyRelation",
+                  e.target.value
+                )
+              }
+            />
+            {errors.emergencyRelation && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.emergencyRelation}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -443,14 +474,12 @@ const PersonalDetails = ({
         <Button
           onPress={handleBack}
           isDisabled
-          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
-        >
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg">
           Back
         </Button>
         <Button
           onPress={handlenextsubmit}
-          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
-        >
+          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
           Submit
         </Button>
       </div>

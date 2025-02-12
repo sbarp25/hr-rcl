@@ -5,13 +5,7 @@ import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa";
-import {
-  parseAbsoluteToLocal,
-  Time,
-  ZonedDateTime,
-} from "@internationalized/date";
-import { useDateFormatter } from "@react-aria/i18n";
-// import Inputcomp from "./Inputcomp";
+import { Time } from "@internationalized/date";
 import { Input } from "@nextui-org/input";
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
@@ -157,10 +151,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       if (!edu.startYear) {
         newErrors[`startYear_${index}`] = "Start year is required.";
       }
+      if (!edu.endYear) {
+        newErrors[`endYear_${index}`] = "End year is required.";
+      }
       if (!edu.status) {
         newErrors[`status_${index}`] = "Status is required.";
       }
-      // You can also add other validation rules here if needed.
+      if (!edu.files) {
+        newErrors[`files_${index}`] = "Document is required.";
+      }
     });
 
     setErrors(newErrors);
@@ -189,19 +188,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       )
     );
 
-    // formData?.education?.forEach((edu, index) => {
-    //   const targetIndex = index;
-
-    //   if (targetIndex === 0 && targetIndex < formData.education.length) {
-    //     const eduAtTargetIndex = formData.education[targetIndex];
-
-    //     if (eduAtTargetIndex?.files && eduAtTargetIndex.files.length === 0) {
-    //       eduAtTargetIndex.files.forEach((file) => {
-    //         formDataToSend.append("files", file);
-    //       });
-    //     }
-    //   }
-    // });
     formData?.education?.forEach((edu) => {
       if (edu?.files && edu.files.length > 0) {
         edu.files.forEach((file) => {
@@ -257,13 +243,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           variant="bordered"
           className="w-full rounded-lg shadow-lg shadow-gray-300"
           label="Select A Degree"
-          selectedKeys={[selectedDegree]} // Use selectedKeys to control the selected value
+          selectedKeys={[selectedDegree]}
           onChange={(e) => {
             const selected = e.target.value;
             console.log("Dropdown selection:", selected);
             setSelectedDegree(selected);
-          }}
-        >
+          }}>
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
               {degree}
@@ -279,6 +264,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Input
+                variant="bordered"
                 className={`w-full border-2 rounded-xl ${
                   errors[`institution_${index}`]
                     ? "border-red-500"
@@ -300,6 +286,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
             <div>
               <Input
+                variant="bordered"
                 className={`w-full border-2 rounded-xl ${
                   errors[`faculty_${index}`]
                     ? "border-red-500"
@@ -319,6 +306,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
             <div>
               <Input
+                variant="bordered"
                 className={`w-full border-2 rounded-xl ${
                   errors[`startYear_${index}`]
                     ? "border-red-500"
@@ -339,6 +327,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             </div>
             <div>
               <Input
+                variant="bordered"
                 className={`w-full border-2 rounded-xl ${
                   errors[`endYear_${index}`]
                     ? "border-red-500"
@@ -368,8 +357,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 label="Status"
                 placeholder={formData?.education?.[index]?.status || ""}
                 value={formData?.education?.[index]?.status || ""}
-                onChange={(e) => handleChange(index, "status", e.target.value)}
-              >
+                onChange={(e) => handleChange(index, "status", e.target.value)}>
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status}>
                     {status}
@@ -384,21 +372,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             </div>
             <div>
               <div>
-                {/* <Input
-                  isClearable
-                  className=""
-                  label="Upload your educational certificate"
-                  placeholder="Choose a file"
-                  type="file"
-                  variant="bordered"
-                  // eslint-disable-next-line no-console
-                  onClear={() => console.log("input cleared")}
-                  onChange={(e) =>
-                    handleFileChange(index, Array.from(e.target.files))
-                  }
-                /> */}
-
-                <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200 shadow-lg shadow-gray-300">
+                <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200">
                   <span className="text-gray-600 px-4">
                     {formData?.education?.[index]?.files?.length > 0
                       ? formData?.education?.[index]?.files[0].name
@@ -423,8 +397,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       href={formData.education[index]?.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2"
-                    >
+                      className="block text-sm text-green-600 underline mb-2">
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Document
@@ -478,8 +451,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             handleSubmit();
           }}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}
-        >
+          disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>
