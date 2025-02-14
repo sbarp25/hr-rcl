@@ -8,7 +8,7 @@ import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
-
+import Submit from "../../../assets/svgs/Submit.svg";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -35,7 +35,6 @@ const AddEmployeeForm = () => {
   const navigate = useNavigate();
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
@@ -157,176 +156,170 @@ const AddEmployeeForm = () => {
   };
 
   return (
-    <div className="pl-4">
-      <ValidationComponent>
-        {isLoading && (
-          <Loader message="Please wait while the work is being done" />
-        )}{" "}
-        <div className="flex flex-col space-y-4 mb-6">
-          <div className="text-sm">
-            <BreadcrumbsComponent items={breadcrumbItems} />
-          </div>
-          <h1 className=" flex items-center text-2xl font-semibold text-gray-800">
-            <IoIosPeople />
-            Add Employee
-          </h1>
+    <div className="container space-y-4">
+      {isLoading && (
+        <Loader message="Please wait while the work is being done" />
+      )}{" "}
+      <div className="flex flex-col space-y-8 ">
+        <div className="text-sm">
+          <BreadcrumbsComponent items={breadcrumbItems} />
         </div>
-        <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              <div className="mb-4">
-                <Input
-                  {...register("fullname", {
-                    required: "Full Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Full name must be at least 3 characters",
-                    },
-                  })}
-                  label="Full Name"
-                  variant="bordered"
-                  isInvalid={!!errors.fullname}
-                  errorMessage={errors.fullname?.message}
-                />
-              </div>
-              <div className="mb-4">
-                <Input
-                  {...register("phone", {
-                    required: "Phone Number is required",
-                    minLength: {
-                      value: 10,
-                      message: "Invalid Phone Number",
-                    },
-                    pattern: {
-                      value: /^[0-9]{10,10}$/,
-                      message: "Phone number must be 10 digits long",
-                    },
-                  })}
-                  label="Phone"
-                  variant="bordered"
-                  isInvalid={!!errors.phone}
-                  errorMessage={errors.phone?.message}
-                />
-                {/* {errors.phone && (
+      </div>
+      <h1 className=" flex items-center text-2xl font-semibold text-gray-800">
+        <IoIosPeople />
+        Add Employee
+      </h1>
+      <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            <div className="mb-4">
+              <Input
+                {...register("fullname", {
+                  required: "Full Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Full name must be at least 3 characters",
+                  },
+                })}
+                label="Full Name"
+                variant="bordered"
+                isInvalid={!!errors.fullname}
+                errorMessage={errors.fullname?.message}
+              />
+            </div>
+            <div className="mb-4">
+              <Input
+                {...register("phone", {
+                  required: "Phone Number is required",
+                  minLength: {
+                    value: 10,
+                    message: "Invalid Phone Number",
+                  },
+                  pattern: {
+                    value: /^[0-9]{10,10}$/,
+                    message: "Phone number must be 10 digits long",
+                  },
+                })}
+                label="Phone"
+                variant="bordered"
+                isInvalid={!!errors.phone}
+                errorMessage={errors.phone?.message}
+              />
+              {/* {errors.phone && (
                 <p className="text-red-500 text-sm">{errors.phone.message}</p>
               )} */}
-              </div>
-              <div className="mb-4">
-                <Input
-                  {...register("email", {
-                    required: "Email ID is required",
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Please enter a valid email",
-                    },
-                  })}
-                  label="Email"
-                  variant="bordered"
-                  isInvalid={!!errors.email}
-                  errorMessage={errors.email?.message}
-                />
-                {/* {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )} */}
-              </div>
-              <div className="mb-4">
-                <Input
-                  {...register("salary", {
-                    required: "Salary is required",
-                    pattern: {
-                      value: /^\d+(\.\d{1,2})?$/,
-                      message:
-                        "Please enter a valid salary (e.g., 1000 or 1000.50)",
-                    },
-                  })}
-                  label="Salary"
-                  variant="bordered"
-                  isInvalid={!!errors.salary}
-                  errorMessage={errors.salary?.message}
-                />
-              </div>
-              <div className="mb-4">
-                {" "}
-                <DatePicker label="Hire Date" variant="bordered" />
-              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              {/**Select Department NextUI */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Department"
-                  color={errors.department ? "danger" : "default"}
-                  className={`border-2  rounded-xl ${
-                    errors.department ? "border-red-500" : "border-gray-300"
-                  }`}
-                  {...register("department", {
-                    required: "Department is required",
-                  })}
-                  errorMessage={errors.department?.message}>
-                  {departmentsData?.map((dept) => (
-                    <SelectItem key={dept.id} textValue={dept.name}>
-                      {dept.name}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-
-              {/**Select Position */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Position"
-                  color={errors.position ? "danger" : "default"}
-                  className={`border-2  rounded-xl ${
-                    errors.position ? "border-red-500" : "border-gray-300"
-                  }`}
-                  {...register("position", {
-                    required: "Position is required",
-                  })}>
-                  {positionData.map((pos) => (
-                    <SelectItem key={pos.id} textValue={pos.positionName}>
-                      {pos.positionName}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-              {/**Select Role  */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Role"
-                  color={errors.roles ? "danger" : "default"}
-                  className={`border-2  rounded-xl ${
-                    errors.roles ? "border-red-500" : "border-gray-300"
-                  }`}
-                  {...register("roles", {
-                    required: "Role is required",
-                  })}>
-                  {roleData.map((role) => (
-                    <SelectItem key={role.roleId} textValue={role.roleName}>
-                      {role.roleName}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
-            </div>
-            <div className="mb-4 flex items-center">
-              <input
-                type="checkbox"
-                {...register("performEKYC")}
-                className="mr-2"
+            <div className="mb-4">
+              <Input
+                {...register("email", {
+                  required: "Email ID is required",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Please enter a valid email",
+                  },
+                })}
+                label="Email"
+                variant="bordered"
+                isInvalid={!!errors.email}
+                errorMessage={errors.email?.message}
               />
-              <label className="text-gray-700">Perform eKYC</label>
             </div>
-            <button
-              type="submit"
-              className="w-fit bg-bgprimary text-white py-2 px-4 rounded-lg">
-              Submit
-            </button>
-          </form>
-        </div>
-      </ValidationComponent>
+
+            {/**Select Department */}
+            <div className="mb-4">
+              <Select
+                variant="bordered"
+                label="Select an Department"
+                color={errors.department ? "danger" : "default"}
+                className={`border-2  rounded-xl ${
+                  errors.department ? "border-red-500" : "border-gray-300"
+                }`}
+                {...register("department", {
+                  required: "Department is required",
+                })}
+                errorMessage={errors.department?.message}>
+                {departmentsData?.map((dept) => (
+                  <SelectItem key={dept.id} textValue={dept.name}>
+                    {dept.name}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+
+            {/**Select Position */}
+            <div className="mb-4">
+              <Select
+                variant="bordered"
+                label="Select an Position"
+                color={errors.position ? "danger" : "default"}
+                className={`border-2  rounded-xl ${
+                  errors.position ? "border-red-500" : "border-gray-300"
+                }`}
+                {...register("position", {
+                  required: "Position is required",
+                })}>
+                {positionData.map((pos) => (
+                  <SelectItem key={pos.id} textValue={pos.positionName}>
+                    {pos.positionName}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+            {/**Select Role  */}
+            <div className="mb-4">
+              <Select
+                variant="bordered"
+                label="Select an Role"
+                color={errors.roles ? "danger" : "default"}
+                className={`border-2  rounded-xl ${
+                  errors.roles ? "border-red-500" : "border-gray-300"
+                }`}
+                {...register("roles", {
+                  required: "Role is required",
+                })}>
+                {roleData.map((role) => (
+                  <SelectItem key={role.roleId} textValue={role.roleName}>
+                    {role.roleName}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+            <div className="mb-4">
+              <Input
+                {...register("salary", {
+                  required: "Salary is required",
+                  pattern: {
+                    value: /^\d+(\.\d{1,2})?$/,
+                    message:
+                      "Please enter a valid salary (e.g., 1000 or 1000.50)",
+                  },
+                })}
+                label="Salary"
+                variant="bordered"
+                isInvalid={!!errors.salary}
+                errorMessage={errors.salary?.message}
+              />
+            </div>
+            <div className="mb-4">
+              <DatePicker label="Hire Date" variant="bordered" />
+            </div>
+          </div>
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              {...register("performEKYC")}
+              className="mr-2"
+            />
+            <label className="text-gray-700">Perform eKYC</label>
+          </div>
+          <button
+            type="submit"
+            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-lg">
+            <img src={Submit} alt="Submit" className="h-4 w-4" />
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

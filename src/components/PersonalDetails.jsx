@@ -51,7 +51,7 @@ const PersonalDetails = ({
         }
       );
 
-      if (response.data.responseCode === "201") {
+      if (response?.data?.responseCode === "201") {
         setFormData({
           email: "",
           dob: "",
@@ -63,7 +63,7 @@ const PersonalDetails = ({
           guardianType: "",
           guardianNumber: "",
         });
-        toast.success(response.data.data.message);
+        toast.success(response?.data?.message);
         handleNext(); // Move to the next step
       } else {
         toast.error(response.data.data.message);
@@ -187,8 +187,8 @@ const PersonalDetails = ({
               id="email"
               variant="bordered"
               label="Personal Email"
-              className={`w-full  border-2 rounded-xl ${
-                errors.email ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.email ? "border-2 border-red-500" : ""
               }`}
               value={formData?.personalInfo?.email}
               onChange={(e) =>
@@ -211,8 +211,8 @@ const PersonalDetails = ({
               type="date"
               variant="bordered"
               label="Date of Birth"
-              className={`w-full  border-2 rounded-xl ${
-                errors.dob ? "border-red-500" : "border-gray-300"
+              className={`w-full   rounded-xl ${
+                errors.dob ? "border-2 border-red-500" : ""
               }`}
               value={formData?.personalInfo?.dob}
               onChange={(e) =>
@@ -228,8 +228,8 @@ const PersonalDetails = ({
             <Select
               variant="bordered"
               classNames={{ inputWrapper: "shadow-md" }}
-              className={`w-full  border-2 rounded-xl ${
-                errors.bloodType ? "border-red-500" : "border-gray-300"
+              className={`w-full   rounded-xl ${
+                errors.bloodType ? "border-2 border-red-500" : ""
               }`}
               label="Blood Group"
               selectedKeys={[formData?.personalInfo?.bloodType]}
@@ -254,8 +254,8 @@ const PersonalDetails = ({
             <Select
               variant="bordered"
               scrollShadowProps={{ isEnabled: true }}
-              className={`w-full  border-2 rounded-xl ${
-                errors.gender ? "border-red-500" : "border-gray-300"
+              className={`w-full   rounded-xl ${
+                errors.gender ? "border-2 border-red-500" : ""
               }`}
               label="Gender"
               selectedKeys={[formData?.personalInfo?.gender]}
@@ -275,8 +275,8 @@ const PersonalDetails = ({
             <Select
               variant="bordered"
               classNames={{ inputWrapper: "shadow-md" }}
-              className={`w-full  border-2 rounded-xl ${
-                errors.bloodType ? "border-red-500" : "border-gray-300"
+              className={`w-full   rounded-xl ${
+                errors.bloodType ? "border-2 border-red-500" : ""
               }`}
               label="Marital status"
               selectedKeys={[formData?.personalInfo?.married]}
@@ -306,6 +306,7 @@ const PersonalDetails = ({
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/** Guardian Name */}
           <div>
             <Input
               variant="bordered"
@@ -313,8 +314,8 @@ const PersonalDetails = ({
               type="text"
               label="Guardian Name"
               value={formData?.personalInfo?.guardianName}
-              className={`w-full  border-2 rounded-xl ${
-                errors.guardianName ? "border-red-500" : "border-gray-300"
+              className={`w-full  rounded-xl ${
+                errors.guardianName ? "  border-2 border-red-500" : ""
               }`}
               onChange={(e) =>
                 handleNestedChange(
@@ -329,15 +330,15 @@ const PersonalDetails = ({
               <p className="text-red-500 text-sm mt-1">{errors.guardianName}</p>
             )}
           </div>
-
+          {/**Guardian Phone */}
           <div>
             <Input
               variant="bordered"
               type="text"
               id="guardianPhone"
               label="Guardian Phone"
-              className={`w-full  border-2 rounded-xl ${
-                errors.guardianPhone ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.guardianPhone ? "border-2 border-red-500" : ""
               }`}
               value={formData?.personalInfo?.guardianPhone}
               onChange={(e) =>
@@ -355,11 +356,12 @@ const PersonalDetails = ({
               </p>
             )}
           </div>
+          {/** Guardian Relation */}
           <div>
             <Select
               variant="bordered"
-              className={`w-full  border-2 rounded-xl ${
-                errors.guardianRelation ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.guardianRelation ? "border-2 border-red-500" : ""
               }`}
               label="Guardian Relation"
               selectedKeys={[formData?.personalInfo?.guardianRelation]}
@@ -391,12 +393,13 @@ const PersonalDetails = ({
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-8">
+          {/** Emergency Name */}
           <div>
             <Input
               variant="bordered"
               id="emergencyName"
-              className={`w-full  border-2 rounded-xl ${
-                errors.emergencyName ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.emergencyName ? " border-2 border-red-500" : ""
               }`}
               type="text"
               label="Emergency Name"
@@ -416,14 +419,14 @@ const PersonalDetails = ({
               </p>
             )}
           </div>
-
+          {/** Emergency Phone */}
           <div>
             <Input
               id="emergencyPhone"
               variant="bordered"
               type="text"
-              className={`w-full  border-2 rounded-xl ${
-                errors.emergencyNumber ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.emergencyNumber ? " border-2 border-red-500" : ""
               }`}
               label="Emergency Phone"
               value={formData?.personalInfo?.emergencyNumber}
@@ -442,12 +445,13 @@ const PersonalDetails = ({
               </p>
             )}
           </div>
+          {/** Emergency Relation */}
           <div>
             <Input
               variant="bordered"
               type="text"
-              className={`w-full  border-2 rounded-xl ${
-                errors.emergencyRelation ? "border-red-500" : "border-gray-300"
+              className={`w-full rounded-xl ${
+                errors.emergencyRelation ? "border-2 border-red-500" : ""
               }`}
               label="Emergency Relation"
               value={formData?.personalInfo?.emergencyRelation}

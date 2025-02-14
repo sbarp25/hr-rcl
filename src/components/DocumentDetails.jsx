@@ -23,53 +23,29 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     }));
     setCitizenshipBack(false), setCitizenshipFront(false), setPhotoPAN(false);
   };
-  // const getPanNumberError = (value) => {
-  //   if (!value) {
-  //     return "Province must not be empty";
-  //   }
-  //   return null;
-  // };
-  // const getPanIssuePlaceError = (value) => {
-  //   if (!value) {
-  //     return "Province must not be empty";
-  //   }
-  //   return null;
-  // };
-  // const getCitizenNumberError = (value) => {
-  //   if (!value) {
-  //     return "Province must not be empty";
-  //   }
-  //   return null;
-  // };
-  // const getCitizenIssuePlaceError = (value) => {
-  //   if (!value) {
-  //     return "Province must not be empty";
-  //   }
-  //   return null;
-  // };
-
   const validateFormData = () => {
     const newErrors = {};
     const {
       panNumber,
       panIssuePlace,
       panIssueDate,
-      PanPhoto,
+      panCardDocumentFile,
       citizenshipNumber,
       isIssuedPlaceDistrict,
       issuedDate,
-      citizenshipFront,
-      citizenshipBack,
+      citizenshipFrontDocumentFile,
+      citizenshipBackDocumentFile,
     } = formData.documents;
     if (!panNumber) newErrors.panNumber = "PanNumber is Required";
     if (panNumber && !/^[0-9]{0,16}$/.test(panNumber)) {
       newErrors.panNumber = "Invalid format";
     }
-
     if (!panIssueDate) newErrors.panIssueDate = "pan Issued date is required";
     if (!panIssuePlace)
       newErrors.panIssuePlace = "Pan Issued place is required";
-    if (!PanPhoto) newErrors.PanPhoto = "pan Photo is required";
+    if (!panCardDocumentFile)
+      newErrors.panCardDocumentFile = "Pan photo is required";
+
     if (!citizenshipNumber)
       newErrors.citizenshipNumber = "Citizenship Number is required";
     if (citizenshipNumber && !/^[0-9]{0,16}$/.test(citizenshipNumber)) {
@@ -79,10 +55,12 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       newErrors.citizenshipIssuedPlace = "Citizenship Issued place is required";
     if (!issuedDate)
       newErrors.issuedDate = "Citizenship Issued Date  is required";
-    if (!citizenshipFront)
-      newErrors.citizenshipFront = "Citizenship Front picture is Required";
-    if (!citizenshipBack)
-      newErrors.citizenshipBack = "Citizenship bacK picture is required";
+    if (!citizenshipFrontDocumentFile)
+      newErrors.citizenshipFrontDocumentFile =
+        "Citizenship Front picture is Required";
+    if (!citizenshipBackDocumentFile)
+      newErrors.citizenshipBackDocumentFile =
+        "Citizenship bacK picture is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -145,10 +123,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         }
       );
 
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+      if (response?.data?.responseCode === "200") {
+        toast.success(response?.data?.message);
+        handleNext();
       } else {
-        toast.error(response.data.message);
+        toast.error(response?.data?.message);
       }
     } catch (error) {
       console.error("Error saving document details:", error);
@@ -161,7 +140,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const handleNextSubmit = () => {
     if (validateFormData()) {
       onSubmit();
-      handleNext();
     }
   };
 
@@ -230,8 +208,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <Input
                   variant="bordered"
                   id="panNumber"
-                  className={`w-full  border-2 rounded-xl ${
-                    errors.panNumber ? "border-red-500" : "border-gray-300"
+                  className={`w-full  rounded-xl ${
+                    errors.panNumber ? "  border-2 border-red-500" : ""
                   }`}
                   type="text"
                   value={formData?.documents?.panNumber}
@@ -251,8 +229,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div className="">
                 <Input
                   variant="bordered"
-                  className={`w-full  border-2 rounded-xl ${
-                    errors.panIssueDate ? "border-red-500" : "border-gray-300"
+                  className={`w-full rounded-xl ${
+                    errors.panIssueDate ? "border-2 border-red-500" : ""
                   }`}
                   type="date"
                   label="Pan Issue Date"
@@ -275,8 +253,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full  border-2 rounded-xl ${
-                    errors.panIssuePlace ? "border-red-500" : "border-gray-300"
+                  className={`w-full   rounded-xl ${
+                    errors.panIssuePlace ? "border-2 border-red-500" : ""
                   }`}
                   type="text"
                   value={formData.documents?.panIssuePlace}
@@ -299,8 +277,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <div>
                   <label
-                    className={`relative flex items-center justify-left w-full h-14 border-3  ${
-                      errors.PanPhoto ? "border-red-500" : "border-gray-300"
+                    className={`relative flex items-center justify-left w-full h-14 border-2  ${
+                      errors.panCardDocumentFile
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
                     <span className="text-gray-600 px-4">
                       {formData?.documents?.panCardDocumentFile?.name ? (
@@ -315,7 +295,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     <input
                       type="file"
                       className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl  ${
-                        errors.PanPhoto ? "border-red-500" : "border-gray-300"
+                        errors.panCardDocumentFile
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                       onChange={(e) => {
                         handleNestedChange(
@@ -326,15 +308,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       }}
                     />
                   </label>
-                  {errors.PanPhoto && (
+                  {errors.panCardDocumentFile && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.PanPhoto}
+                      {errors.panCardDocumentFile}
                     </p>
                   )}
                 </div>
 
                 <div className="flex gap-x-4">
-                  <label className="text-xs">
+                  <label className="text-xs pl-2">
                     Please upload the image of type either PNG or jpg
                   </label>
                   {photoPAN &&
@@ -369,10 +351,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full  border-2 rounded-xl ${
-                    errors.citizenshipNumber
-                      ? "border-red-500"
-                      : "border-gray-300"
+                  className={`w-full rounded-xl ${
+                    errors.citizenshipNumber ? "border-2 border-red-500" : ""
                   }`}
                   type="text"
                   value={formData?.documents?.citizenshipNumber}
@@ -395,8 +375,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full  border-2 rounded-xl ${
-                    errors.issuedDate ? "border-red-500" : "border-gray-300"
+                  className={`w-full rounded-xl ${
+                    errors.issuedDate ? "border-2 border-red-500" : ""
                   }`}
                   type="date"
                   label="Citizenship Issue Date"
@@ -420,10 +400,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <Input
                   variant="bordered"
                   type="text"
-                  className={`w-full  border-2 rounded-xl ${
+                  className={`w-full rounded-xl ${
                     errors.citizenshipIssuedPlace
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? "border-2 border-red-500"
+                      : ""
                   }`}
                   value={formData?.documents?.isIssuedPlaceDistrict}
                   onChange={(e) =>
@@ -448,7 +428,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <div>
                   <label
                     className={`relative flex items-center justify-left w-full h-14 border-2   ${
-                      errors.citizenshipFront
+                      errors.citizenshipFrontDocumentFile
                         ? "border-red-500"
                         : "border-gray-300"
                     } rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
@@ -470,7 +450,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     <input
                       type="file"
                       className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl  ${
-                        errors.citizenshipFront
+                        errors.citizenshipFrontDocumentFile
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
@@ -484,15 +464,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     />
                   </label>
 
-                  {errors.citizenshipFront && (
+                  {errors.citizenshipFrontDocumentFile && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.citizenshipFront}
+                      {errors.citizenshipFrontDocumentFile}
                     </p>
                   )}
                 </div>
 
                 <div className="flex gap-x-4">
-                  <label className="text-xs">
+                  <label className="text-xs pl-2">
                     Please upload the image of type either PNG or jpg
                   </label>
                   {citizenshipFront &&
@@ -519,7 +499,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <div>
                   <label
                     className={`relative flex items-center justify-left w-full h-14 border-2  ${
-                      errors.citizenshipBack
+                      errors.citizenshipBackDocumentFile
                         ? "border-red-500"
                         : "border-gray-300"
                     }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200`}>
@@ -537,7 +517,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     <input
                       type="file"
                       className={`absolute inset-0 opacity-0 cursor-pointer w-full border-2 rounded-xl ${
-                        errors.citizenshipBack
+                        errors.citizenshipBackDocumentFile
                           ? "border-red-500"
                           : "border-gray-300"
                       }`}
@@ -553,15 +533,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       }}
                     />
                   </label>
-                  {errors.citizenshipBack && (
+                  {errors.citizenshipBackDocumentFile && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.citizenshipBack}
+                      {errors.citizenshipBackDocumentFile}
                     </p>
                   )}
                 </div>
 
                 <div className="flex gap-x-4">
-                  <lable className="text-xs">
+                  <lable className="text-xs pl-2">
                     Please upload the image of type either PNG or jpg
                   </lable>
                   {citizenshipBack &&

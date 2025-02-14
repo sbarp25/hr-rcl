@@ -84,9 +84,6 @@ const Rstpwd = () => {
       return;
     }
     try {
-      // Hash the password
-      // const hashedPassword = await bcrypt.hash(data.password, 10);
-
       const newData = {
         data: {
           encryptedData: encryptedData,

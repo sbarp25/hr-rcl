@@ -54,7 +54,6 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/rstpwd" element={<ValidateLink />} />
-            <Route path="/resetpwd" element={<Rstpwd />} />
             <Route path="/EKYE" element={<Ekye />} />
           </Routes>
         </AuthLayout>

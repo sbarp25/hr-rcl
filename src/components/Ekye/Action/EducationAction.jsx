@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Divider, Form, Input, Button } from "@nextui-org/react";
 import { FaDiamond } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const EducationAction = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const onApprove = async () => {
     try {
       const response = await axiosInstance.post(
@@ -31,13 +32,31 @@ const EducationAction = () => {
       toast.error(errorMessage);
     }
   };
-  // const onReject= async()=>{
-  //   try{
-  //     const response = await axiosInstance.post(
-
-  //     )
-  //   }
-  // }
+  const onReject = async () => {
+    const data = {
+      rejection: "Your employee has been rejected",
+    };
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axiosInstance.post("/api/v1/auth/register", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response?.data?.responseCode === "2001") {
+        toast.success(response?.data?.response);
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="relative flex flex-col bg-white mt-16 border-2 rounded-md shadow-lg p-8">
       {/* Header Section */}
@@ -107,7 +126,9 @@ const EducationAction = () => {
 
       {/* Buttons Section */}
       <div className="mt-6 flex justify-end gap-4">
-        <Button className="bg-red-700 text-white">Reject</Button>
+        <Button className="bg-red-700 text-white" onPress={onReject}>
+          Reject
+        </Button>
         <Button className="bg-green-700 text-white" onPress={onApprove}>
           Accept
         </Button>

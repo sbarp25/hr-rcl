@@ -129,7 +129,7 @@ const Ekye = () => {
     <>
       {isLoading && <Loader />}
       <div className=" h-screen bg-gray-200 pb-6">
-        <div className="page-title">
+        <div className="page-title justify-center">
           <IoIosPeople className="text-4xl" />
           <p className="mt-1">Perform EKYE</p>
         </div>
@@ -160,7 +160,7 @@ const Ekye = () => {
                               ? "after complete"
                               : "before complete"
                           }
-                          className="w-14 h-10"
+                          className="w-16 h-16"
                         />
                         {/* Index Number */}
                         <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
@@ -170,12 +170,12 @@ const Ekye = () => {
                       {/* Connecting Line */}
                       {stepIndex < 3 && (
                         <div
-                          className={`absolute top-1/2 transform -translate-y-1/2 h-2 rounded-lg ${
+                          className={`absolute top-1/2 transform -translate-y-1/2 h-1 rounded-lg ${
                             step > stepIndex ? "bg-sky-900" : "bg-gray-300"
                           }`}
                           style={{
                             left: "90%", // Start from the end of the current step
-                            width: "550%", // Start from the end of the current step
+                            width: "800%", // Start from the end of the current step
                           }}></div>
                       )}
                     </div>
@@ -192,13 +192,6 @@ const Ekye = () => {
           <ValidationComponent>
             <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto">
               {step === 0 && !isLoading && (
-                // <PersonalDetails
-                //   handleNext={handleNext}
-                //   formData={formData}
-                //   handleBack={handleBack}
-                //   handleNestedChange={handleNestedChange}
-                //   setFormData={setFormData}
-                // />
                 <PersonalDetails
                   handleNext={handleNext}
                   formData={formData}
@@ -239,7 +232,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        <div className="form-navigation flex justify-between mt-6">
+        {/* <div className="form-navigation flex justify-between mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -256,7 +249,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

@@ -17,7 +17,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const navigate = useNavigate();
   const [educationalDocument, setEducationalDocument] = useState(false);
-  let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45)); // Default to 10:30 AM
+  let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45)); // Default to 10:00:45 AM
 
   // const degreeIndex = degrees.indexOf(selectedDegree);
   const [numberOfItems, setNumberOfItems] = useState(1); // Initialize with 1 to show the first degree by default
@@ -65,23 +65,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       education: updatedEducation,
     });
   };
-
-  // const validateFields = () => {
-  //   let isValid = true;
-  //   formData.education.forEach((edu, index) => {
-  //     if (
-  //       !edu.institution ||
-  //       !edu.startYear ||
-  //       !edu.endYear ||
-  //       !edu.status ||
-  //       !edu.faculty
-  //     ) {
-  //       toast.error(`Please fill all required fields for ${degrees[index]}.`);
-  //       isValid = false;
-  //     }
-  //   });
-  //   return isValid;
-  // };
 
   const handleTimeChange = (newTime) => {
     setSelectedTime(newTime);
@@ -140,29 +123,26 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const validateFormData = () => {
     const newErrors = {};
 
-    // Iterate over the education entries
+    if (!formData.education || formData.education.length === 0) {
+      toast.error("Please add at least one education record.");
+      return false;
+    }
+
     formData.education.forEach((edu, index) => {
-      if (!edu.institution) {
+      if (!edu.institution)
         newErrors[`institution_${index}`] = "Institution is required.";
-      }
-      if (!edu.faculty) {
-        newErrors[`faculty_${index}`] = "Faculty is required.";
-      }
-      if (!edu.startYear) {
+      if (!edu.faculty) newErrors[`faculty_${index}`] = "Faculty is required.";
+      if (!edu.startYear)
         newErrors[`startYear_${index}`] = "Start year is required.";
-      }
-      if (!edu.endYear) {
-        newErrors[`endYear_${index}`] = "End year is required.";
-      }
-      if (!edu.status) {
-        newErrors[`status_${index}`] = "Status is required.";
-      }
-      if (!edu.files) {
+      if (!edu.endYear) newErrors[`endYear_${index}`] = "End year is required.";
+      if (!edu.status) newErrors[`status_${index}`] = "Status is required.";
+      if (!edu.files || edu.files.length === 0)
         newErrors[`files_${index}`] = "Document is required.";
-      }
     });
 
     setErrors(newErrors);
+
+    // If there are errors, return false, otherwise return true
     return Object.keys(newErrors).length === 0;
   };
 
@@ -228,12 +208,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    if (!validateFormData()) return;
+    if (!validateFormData()) {
+      console.log("Validation errors:", errors);
+      return;
+    }
     onSubmit();
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 py-6">
       <h2 className="text-2xl font-semibold text-gray-700">
         Educational Details
       </h2>
@@ -242,7 +225,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         <Select
           variant="bordered"
           className="w-full rounded-lg shadow-lg shadow-gray-300"
-          label="Select A Degree"
+          label="Select A Level"
           selectedKeys={[selectedDegree]}
           onChange={(e) => {
             const selected = e.target.value;
@@ -262,13 +245,14 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             {degrees[index]} Details
           </h3>
           <div className="grid grid-cols-2 gap-4">
+            {/**Institution */}
             <div>
               <Input
                 variant="bordered"
-                className={`w-full border-2 rounded-xl ${
+                className={`w-full rounded-xl ${
                   errors[`institution_${index}`]
-                    ? "border-red-500"
-                    : "border-gray-300"
+                    ? "border-2 border-red-500"
+                    : ""
                 }`}
                 type="text"
                 label="Institution"
@@ -283,14 +267,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
-
+            {/**Faculty */}
             <div>
               <Input
                 variant="bordered"
-                className={`w-full border-2 rounded-xl ${
-                  errors[`faculty_${index}`]
-                    ? "border-red-500"
-                    : "border-gray-300"
+                className={`w-full rounded-xl ${
+                  errors[`faculty_${index}`] ? "border-2 border-red-500" : ""
                 }`}
                 type="text"
                 label="Faculty"
@@ -304,13 +286,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               )}
             </div>
 
+            {/**Start Year */}
             <div>
               <Input
                 variant="bordered"
-                className={`w-full border-2 rounded-xl ${
-                  errors[`startYear_${index}`]
-                    ? "border-red-500"
-                    : "border-gray-300"
+                className={`w-full rounded-xl ${
+                  errors[`startYear_${index}`] ? "border-2 border-red-500" : ""
                 }`}
                 type="date"
                 label="Select Start Date"
@@ -325,13 +306,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
+            {/**End Year */}
             <div>
               <Input
                 variant="bordered"
-                className={`w-full border-2 rounded-xl ${
-                  errors[`endYear_${index}`]
-                    ? "border-red-500"
-                    : "border-gray-300"
+                className={`w-full rounded-xl ${
+                  errors[`endYear_${index}`] ? "border-2 border-red-500" : ""
                 }`}
                 type="date"
                 label="Select End Date"
@@ -344,14 +324,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
             <div>
               <Select
                 variant="bordered"
-                className={`w-full border-2 rounded-xl ${
+                className={`w-full  rounded-xl ${
                   errors[`status_${index}`]
-                    ? "border-red-500"
+                    ? "border-2 border-red-500"
                     : "border-gray-300"
                 }`}
                 label="Status"
@@ -374,9 +352,14 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               <div>
                 <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200">
                   <span className="text-gray-600 px-4">
-                    {formData?.education?.[index]?.files?.length > 0
-                      ? formData?.education?.[index]?.files[0].name
-                      : "Upload Education Certificate"}
+                    {formData?.education?.[index]?.files?.length > 0 ? (
+                      <div className="flex gap-2">
+                        <p>Choose a photo</p>
+                        {formData?.education?.[index]?.files.name}
+                      </div>
+                    ) : (
+                      "Upload Education Certificate"
+                    )}
                   </span>
                   <input
                     type="file"
@@ -388,7 +371,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </label>
               </div>
               <div className="flex gap-x-4">
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="block text-xs font-medium text-gray-700 pl-2">
                   Please upload the image of type either PNG or jpg
                 </label>
                 {educationalDocument &&
@@ -413,8 +396,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </div>
         </div>
       ))}
-      <div className="flex flex-col gap-x-4 ">
-        <div>
+      <div className="flex flex-col gap-x-4 pl-1 ">
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             className="border border-gray-300 rounded w-4 h-4"
@@ -436,6 +419,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           {isCurrentlyStudying && (
             <TimeInput
               label="Expected Checking Time"
+              minValue={new Time(10)}
+              maxValue={new Time(16)}
+              errorMessage={(value) => {
+                if (value.isInvalid) {
+                  return "Please enter a valid time";
+                }
+              }}
               value={selectedTime}
               onChange={handleTimeChange}
             />

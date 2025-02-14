@@ -1,7 +1,6 @@
 import {
-  Button,
-  Input,
   Pagination,
+  Spacer,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { BsFilter } from "react-icons/bs";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
@@ -72,9 +70,10 @@ const Page = () => {
           {}
         );
         if (response?.data?.responseCode === "200") {
-          setEkyeData(response?.data?.data?.content);
-          setEkyeData(response?.data?.data);
-          setEkyeDashboardDataPerPage(response?.data?.data?.pageable?.pageSize);
+          // setEkyeData(response?.data?.data?.content);
+          setEkyeData(response?.data?.datalist);
+          toast.success(response?.data?.message);
+          // setEkyeDashboardDataPerPage(response?.data?.data?.pageable?.pageSize);
         } else {
           toast.error(response?.data?.message);
         }
@@ -87,7 +86,6 @@ const Page = () => {
     };
     FetchAllEKYE();
   }, []);
-  console.log(eKyeData);
   const headeritem = [
     { label: "Dashboard", href: "/" },
     { label: "Notice", href: "/notice" },
@@ -142,8 +140,7 @@ const Page = () => {
         <div className="max-h-[90vh] overflow-auto mt-4 rounded-3xl max-w-[100%] ">
           <Table
             bordered
-            aria-label="List of Employees who have Completed into EKYE"
-          >
+            aria-label="List of Employees who have Completed EKYE">
             <TableHeader>
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
@@ -210,8 +207,6 @@ const Page = () => {
               />
             </div>
           </div>
-          {/* <EkyeAction /> */}
-          {/* <Filter /> */}
         </div>
       </div>
     </div>

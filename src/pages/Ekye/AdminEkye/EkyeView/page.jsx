@@ -1,46 +1,42 @@
-import React from "react";
 import { Tabs, Tab } from "@nextui-org/tabs";
-import { Card, CardBody } from "@nextui-org/react";
-
+import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import Personal from "../../../../components/Ekye/View/Personal";
+import EkyeAdreess from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
-
-import EkyeAdreess from "../../../../components/Ekye/View/Address";
-import ViewPage from "../../../../components/Ekye/View/ViewPage";
-
+import SalaryDetails from "../../../Salary/page";
 const Page = () => {
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "EKYE", href: "/EKYE" },
+    { label: "Personal", href: "/AddEmployees" },
+  ];
+
   return (
-    <div className="flex w-full flex-col">
-      <Tabs aria-label="Options" variant="light">
-        <Tab key="PersonalDetail" title="Personal Detail">
-          <Card className="bg-gray-100  shadow-none">
-            <CardBody>
-              <ViewPage />
-            </CardBody>
-          </Card>
-        </Tab>
-        <Tab key="AddressDetail" title="Address Detail">
-          <Card className="bg-gray-100  shadow-none">
-            <CardBody>
+    <div className="container flex flex-col space-y-4">
+      <div className="text-sm">
+        <BreadcrumbsComponent items={breadcrumbItems} />
+      </div>
+      <h1 className="page-title">EKYE</h1>
+      <div className="">
+        <div className="rounded-xl">
+          <Tabs aria-label="EKYE" className="" size="lg">
+            {/* Personal Information Section */}
+            <Tab key="PersonalDetails" title="Basic Information">
+              <Personal />
+            </Tab>
+            <Tab key="AddressDetails" title="Address Details">
               <EkyeAdreess />
-            </CardBody>
-          </Card>
-        </Tab>
-        <Tab key="DocumentDetail" title="Document Detail">
-          <Card className="bg-gray-100  shadow-none">
-            <CardBody>
+            </Tab>
+            <Tab key="DocumentDetails" title="Document Details">
               <EkyeDocumentDetail />
-            </CardBody>
-          </Card>
-        </Tab>
-        <Tab key="EducationDetail" title="Education Detail">
-          <Card className="bg-gray-100  shadow-none">
-            <CardBody>
+            </Tab>
+            <Tab key="EducationDetails" title="Education Details">
               <EkyeEducationDetails />
-            </CardBody>
-          </Card>
-        </Tab>
-      </Tabs>
+            </Tab>
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 };

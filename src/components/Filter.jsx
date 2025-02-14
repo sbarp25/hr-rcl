@@ -129,10 +129,10 @@ const Filter = ({ onApplyFilters }) => {
   );
 
   return (
-    <div className="bg-gray-200">
-      <Button onPress={onOpen}>
-        <BsFilter className="mr-2" />
-        Filters
+    <div className="bg-white rounded-xl">
+      <Button onPress={onOpen} variant="light">
+        <BsFilter className="mr-2 text-2xl" />
+        <p className="">Filters</p>
       </Button>
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
@@ -158,8 +158,7 @@ const Filter = ({ onApplyFilters }) => {
                 label={loadingDepartments ? "Loading..." : "Department"}
                 value={formData.department}
                 onChange={(e) => handleChange("department", e.target.value)}
-                placeholder="Select a department"
-              >
+                placeholder="Select a department">
                 {loadingDepartments ? (
                   <SelectItem key="loading">Loading departments...</SelectItem>
                 ) : (
@@ -175,8 +174,7 @@ const Filter = ({ onApplyFilters }) => {
                 label={loadingPositions ? "Loading..." : "Position"}
                 value={formData.position}
                 onChange={(e) => handleChange("position", e.target.value)}
-                placeholder="Select a position"
-              >
+                placeholder="Select a position">
                 {loadingPositions ? (
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
@@ -192,15 +190,13 @@ const Filter = ({ onApplyFilters }) => {
                 <Button
                   className="bg-black text-white hover:bg-hoverbackground"
                   onPress={onSubmit}
-                  isLoading={isLoading}
-                >
+                  isLoading={isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
                 </Button>
                 <Button
                   className="bg-gray-300 hover:bg-gray-400 text-black"
-                  onPress={resetFilters}
-                >
+                  onPress={resetFilters}>
                   Reset
                 </Button>
               </div>

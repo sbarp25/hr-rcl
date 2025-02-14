@@ -65,7 +65,7 @@ const Position = () => {
 
     try {
       const response = await axiosInstance.post(
-        "/positions/register",
+        "/api/v1/positions/save",
         newPosition,
         {
           headers: {

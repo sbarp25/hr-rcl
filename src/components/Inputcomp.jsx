@@ -7,7 +7,7 @@ const Inputcomp = ({
   label,
   variant,
   type,
-  id,
+  isReadonly,
   startContent,
   placeholder,
   errorMessage,
@@ -16,12 +16,12 @@ const Inputcomp = ({
   return (
     <>
       <Input
-        className="shadow-lg shadow-gray-300 rounded-lg"
+        className=""
         // className={className}
-        id={id}
         variant={variant}
         placeholder={placeholder}
         type={type}
+        isReadonly={isReadonly}
         value={value}
         onChange={onChange}
         startContent={startContent}

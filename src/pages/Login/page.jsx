@@ -7,7 +7,6 @@ import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import bcrypt from "bcryptjs";
 import { Form, Input } from "@nextui-org/react";
 
 const Login = () => {
@@ -24,7 +23,7 @@ const Login = () => {
 
   const handleLogin = async (formState) => {
     setIsLoading(true);
-    const hashedPassword = await bcrypt.hash(formState.password, 10);
+
     const LoginData = {
       data: {
         email: formState.email,
@@ -78,9 +77,11 @@ const Login = () => {
   return (
     <>
       {isLoading && <Loader message="Logging in, please wait..." />}
-      <div className="pl-16 pt-10 pb-32 pr-8 bg-gray-200 h-screen">
-        <div className="grid grid-cols-2 shadow-2xl shadow-gray-400 h-[90vh]">
+      <div className="pt-10  bg-gray-200 h-screen">
+        <div className=" container grid grid-cols-2  h-[90vh]">
+          {/* <div className="grid grid-cols-2 shadow-2xl shadow-gray-400 h-screen"> */}
           <div className="bg-bgprimary rounded-l-2xl">
+            {/* <div className="bg-bgprimary"> */}
             <div className="mt-64 flex flex-col gap-y-16 items-center justify-center">
               <img src={Logo} alt="logo" className="w-96" />
               <p className="text-2xl leading-10 text-white text-center font-normal">

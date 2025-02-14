@@ -230,8 +230,8 @@ const AddressDetails = ({
         }
       );
 
-      if (response.data.responseCode === "201") {
-        toast.success(response.data.message);
+      if (response?.data?.responseCode === "201") {
+        toast.success(response?.data?.message);
         handleNext();
       } else {
         toast.error(response.data.message || "Failed to save address data");
@@ -343,10 +343,10 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full   rounded-xl ${
                       errors.permanentProvinceId
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     label="Select A Province"
                     items={formData.address?.permanent?.provinceId}
@@ -372,10 +372,10 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.permanentDistrictId
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     label="Select A District"
                     selectedKeys={[formData.address?.permanent?.districtId]}
@@ -409,10 +409,10 @@ const AddressDetails = ({
                   <Input
                     variant="bordered"
                     id=""
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.permanentMunicipality
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     type="text"
                     label="Municipality"
@@ -446,10 +446,10 @@ const AddressDetails = ({
                       )
                     }
                     label="Ward No"
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.permanentWardNumber
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     type="text"
                     id="ward"
@@ -474,10 +474,8 @@ const AddressDetails = ({
                       )
                     }
                     label="Pin Code"
-                    className={`w-full  border-2 rounded-xl ${
-                      errors.permanentPinCode
-                        ? "border-red-500"
-                        : "border-gray-300"
+                    className={`w-full rounded-xl ${
+                      errors.permanentPinCode ? "border-2 border-red-500" : ""
                     }`}
                     type="text"
                     id="pincode"
@@ -492,10 +490,8 @@ const AddressDetails = ({
                 <div>
                   <Input
                     variant="bordered"
-                    className={`w-full  border-2 rounded-xl ${
-                      errors.permanentTole
-                        ? "border-red-500"
-                        : "border-gray-300"
+                    className={`w-full rounded-xl ${
+                      errors.permanentTole ? "  border-2 border-red-500" : ""
                     }`}
                     type="text"
                     label="Tole/Area"
@@ -538,10 +534,10 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.temporaryProvinceId
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "  border-2 border-red-500"
+                        : ""
                     }`}
                     label="Select A Province"
                     placeholder={formData.address?.temporary?.provinceName}
@@ -577,10 +573,10 @@ const AddressDetails = ({
                     scrollShadowProps={{
                       isEnabled: true, // Enable the scroll shadow
                     }}
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full  rounded-xl ${
                       errors.temporaryDistrictId
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "  border-2 border-red-500"
+                        : ""
                     }`}
                     label="Select A District"
                     selectedKeys={[formData.address?.temporary?.districtId]}
@@ -613,10 +609,10 @@ const AddressDetails = ({
                 <div>
                   <Input
                     variant="bordered"
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.temporaryMunicipality
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     type="text"
                     label="Municipality"
@@ -641,10 +637,10 @@ const AddressDetails = ({
                   <Input
                     variant="bordered"
                     id="ward"
-                    className={`w-full  border-2 rounded-xl ${
+                    className={`w-full rounded-xl ${
                       errors.temporaryWardNumber
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? "border-2 border-red-500"
+                        : ""
                     }`}
                     type="text"
                     label="Ward No."
@@ -669,10 +665,8 @@ const AddressDetails = ({
                   <Input
                     variant="bordered"
                     id="pincode"
-                    className={`w-full  border-2 rounded-xl ${
-                      errors.temporaryPinCode
-                        ? "border-red-500"
-                        : "border-gray-300"
+                    className={`w-full rounded-xl ${
+                      errors.temporaryPinCode ? "border-2 border-red-500" : ""
                     }`}
                     type="text"
                     label="pinCode"
@@ -696,10 +690,8 @@ const AddressDetails = ({
                 <div>
                   <Input
                     variant="bordered"
-                    className={`w-full  border-2 rounded-xl ${
-                      errors.temporaryTole
-                        ? "border-red-500"
-                        : "border-gray-300"
+                    className={`w-full rounded-xl ${
+                      errors.temporaryTole ? "  border-2 border-red-500" : ""
                     }`}
                     type="text"
                     label="Tole/Area"
