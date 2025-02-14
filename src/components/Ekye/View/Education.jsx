@@ -1,12 +1,19 @@
-import React, { useState } from "react";
-import { Button, Form, Input } from "@nextui-org/react";
-import { IoEyeOutline } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import { Button, Divider, Form } from "@nextui-org/react";
 import { FaDiamond, FaRegEye } from "react-icons/fa6";
-import ReadOnlyInput from "../../ReadOnlyInput";
-const EkyeEducationDetails = () => {
+import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+const EkyeEducationDetails = ({ employeeData }) => {
   const [EducationDocument, setEducationDocument] = useState(false);
+
+  const educationalDetail = employeeData?.educationalDetails?.[0];
+
+  useEffect(() => {
+    if (employeeData?.educationalDetails?.[0].documentUrl) {
+      setEducationDocument(true);
+    }
+  }, []);
   return (
-    <div className="flex flex-col items-center justify-center bg-white py-6 w-full mx-auto rounded-md">
+    <div className="relative flex flex-col items-center bg-white h-[80vh] py-6 w-full mx-auto rounded-md ">
       <div className="bg-white  text-lg w-[85%]  shadow-md rounded-lg p-6 mt-2 ">
         <div className="flex justify-between items-center">
           <h1 className=" flex py-2 text-left text-xl font-semibold underline underline-offset-4 decoration-red-500">
@@ -20,37 +27,63 @@ const EkyeEducationDetails = () => {
           </div>
         </div>
 
-        <Form className="py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ReadOnlyInput label="level" placeholder="Bachlor's" />
-          <ReadOnlyInput label="Institute" placeholder="" />
-          <ReadOnlyInput label="Faculty" placeholder="Bachlor's" />
-          <ReadOnlyInput label="Start Date" placeholder="2072/12/12" />
-          <ReadOnlyInput label="End Date" placeholder="2058/12/12" />
-          <ReadOnlyInput label="Status" placeholder="Completed" />
-          <div>
-            <label className="text-black text-xs">
-              Citizenship Front Photo
-            </label>
-            {EducationDocument ? (
-              <a
-                href=""
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-sm text-green-600 underline mb-2">
-                <span className="flex items-center gap-x-2">
-                  <FaRegEye />
-                  View Uploaded PAN Card
-                </span>
-              </a>
-            ) : (
-              <div className="text-xs text-red-500">No Links Available</div>
-            )}
+        <Form className="py-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+            <EkyeDetailsComponent
+              label="level"
+              placeholder={educationalDetail?.degree}
+            />
+            <EkyeDetailsComponent
+              label="Institute"
+              placeholder={educationalDetail?.institution}
+            />
+            <EkyeDetailsComponent
+              label="Faculty"
+              placeholder={educationalDetail?.faculty}
+            />
+          </div>
+          <Divider />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+            <EkyeDetailsComponent
+              label="Start Date"
+              placeholder={educationalDetail?.startYear}
+            />
+            <EkyeDetailsComponent
+              label="End Date"
+              placeholder={educationalDetail?.endYear}
+            />
+            <EkyeDetailsComponent
+              label="Status"
+              placeholder={educationalDetail?.status}
+            />
+          </div>
+          <Divider />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+            <div>
+              <label className="text-black font-semibold text-sm">
+                Education Certificate
+              </label>
+              {EducationDocument ? (
+                <a
+                  href={employeeData?.educationDetails?.documentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-green-600 underline mb-2">
+                  <span className="flex items-center gap-x-2">
+                    <FaRegEye />
+                    View Uploaded Certificate
+                  </span>
+                </a>
+              ) : (
+                <div className="text-xs text-red-500">No Links Available</div>
+              )}
+            </div>
           </div>
         </Form>
       </div>
 
       {/* Buttons Section */}
-      <div className="mt-6 flex justify-end w-[90%] px-8 mb-3">
+      <div className="absolute bottom-4   mt-6 flex justify-end w-[90%] px-8 mb-3">
         <Button className="bg-red-700 text-white mx-2">Reject</Button>
         <Button className="bg-green-700 text-white mx-2">Accept</Button>
       </div>

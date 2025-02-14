@@ -139,7 +139,7 @@ const PersonalDetails = ({
             Authorization: `Bearer ${authToken}`,
           },
         });
-        if (response.data.responseCode === "200") {
+        if (response?.data?.responseCode === "200") {
           const data = response.data.data;
 
           setFormData((prev) => ({

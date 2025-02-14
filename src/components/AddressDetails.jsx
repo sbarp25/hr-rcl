@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
-import {
-  Button,
-  Input,
-  Select,
-  SelectItem,
-  Checkbox,
-  Form,
-} from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
-import Loader from "./Loader";
-import Inputcomp from "./Inputcomp";
 
 const AddressDetails = ({
   formData,
@@ -179,7 +170,6 @@ const AddressDetails = ({
     // Fetch districts for the selected province
     fetchDistrictsByProvince(provinceId);
   };
-
   const onSubmit = async () => {
     setIsLoading(true);
 

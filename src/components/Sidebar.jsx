@@ -22,7 +22,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
 
   const truncateText = (text, maxLength) =>
-    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+    text.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
@@ -124,8 +124,7 @@ const Sidebar = () => {
         <div
           className={`h-screen bg-black text-white flex flex-col transition-all duration-300 ${
             isSidebarExpanded ? "w-64" : "w-20"
-          }`}
-        >
+          }`}>
           {/* Hamburger menu */}
           <div className="flex items-center gap-4 p-4">
             <GiHamburgerMenu
@@ -150,8 +149,7 @@ const Sidebar = () => {
                       ? "bg-active text-white border-l-4 border-l-red-800"
                       : "hover:bg-gray-700"
                   }`}
-                  onClick={() => service.children && toggleDropdown(index)}
-                >
+                  onClick={() => service.children && toggleDropdown(index)}>
                   {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
                   <service.icon className="text-2xl" />
                   {isSidebarExpanded && (
@@ -169,8 +167,7 @@ const Sidebar = () => {
                           location.pathname === child.to
                             ? "bg-active text-white border-l-4 border-l-red-800"
                             : "hover:bg-gray-600"
-                        }`}
-                      >
+                        }`}>
                         {location.pathname === child.to && (
                           <BsArrowReturnRight className="mt-1 " />
                         )}
