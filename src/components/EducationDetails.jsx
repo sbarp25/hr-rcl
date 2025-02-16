@@ -355,7 +355,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     {formData?.education?.[index]?.files?.length > 0 ? (
                       <div className="flex gap-2">
                         <p>Choose a photo</p>
-                        {formData?.education?.[index]?.files.name}
+                        {formData?.education?.[index]?.files?.name}
                       </div>
                     ) : (
                       "Upload Education Certificate"

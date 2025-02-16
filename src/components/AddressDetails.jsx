@@ -659,7 +659,7 @@ const AddressDetails = ({
                       errors.temporaryPinCode ? "border-2 border-red-500" : ""
                     }`}
                     type="text"
-                    label="pinCode"
+                    label="Pin Code"
                     value={formData.address?.temporary?.pinCode}
                     onChange={(e) =>
                       handleNestedChange(

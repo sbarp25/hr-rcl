@@ -315,7 +315,7 @@ const Department = () => {
                 </TableHeader>
                 <TableBody items={departmentsData}>
                   {(department) => (
-                    <TableRow key={Department.id}>
+                    <TableRow key={department.id}>
                       {(columnKey) => (
                         <TableCell className="justify-between">
                           {columnKey === "actions" ? (

@@ -9,11 +9,18 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { Form, Input, Button } from "@nextui-org/react";
-import { DateInput } from "@nextui-org/date-input";
 import { useState } from "react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-
+import InputComponent from "../../../components/InputComponent";
+import { useForm } from "react-hook-form";
 const LeaveRequest = () => {
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({ defaultValues: { email: "", password: "" } });
+
   const [dropdown, setDropdown] = useState("");
   const [teamLeader, setTeamLeader] = useState("");
   const [leaveType, setLeaveType] = useState("");
@@ -33,69 +40,57 @@ const LeaveRequest = () => {
 
   return (
     <div className="">
-      <div className="flex flex-col">
+      <div className="container flex flex-col">
         <BreadcrumbsComponent items={breadcrumbItems} />
-        <div className="page-title">Leave Request</div>
+        <div className="page-title -pl-2">Leave Request</div>
+        <form>
+          <InputComponent
+            name="email"
+            control={control}
+            variant="bordered"
+            label="Email"
+            rules={{
+              required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Enter a valid email address",
+              },
+            }}
+          />
+          <InputComponent
+            name="email"
+            control={control}
+            variant="bordered"
+            label="Description"
+            rules={{
+              required: "Description is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Enter a valid email address",
+              },
+            }}
+          />
+          <div className="mb-4">
+            <Select
+              variant="bordered"
+              label="Select an Department"
+              color={errors.department ? "danger" : "default"}
+              className={`  rounded-xl ${
+                errors.department ? "border-2 border-red-500" : ""
+              }`}
+              {...register("department", {
+                required: "Department is required",
+              })}
+              errorMessage={errors.department?.message}>
+              {departmentsData?.map((dept) => (
+                <SelectItem key={dept.id} textValue={dept.name}>
+                  {dept.name}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+        </form>
       </div>
-      <Form className="h-fit bg-white rounded-3xl container p-4 w-full">
-        <div className="pt-2 w-full">
-          <label className="">Subject</label>
-          <Input label="Title" id="description" />
-        </div>
-        <div className=" w-full">
-          <label>Desctiption</label>
-          <Input label="Content" id="description" />
-        </div>
-        <div className="flex flex-col justify-center items-center gap-x-10 w-full">
-          <div className="flex w-full gap-10">
-            <div className="w-full">
-              <Select
-                label="Team Leader"
-                selectedKeys={dropdown}
-                selectionMode="single"
-                onSelectionChange={handleDropdownChange}
-                className="w-full mt-4"
-              >
-                <SelectItem key="mother" value="HR">
-                  HR
-                </SelectItem>
-                <SelectItem key="Father" value="District">
-                  District
-                </SelectItem>
-              </Select>
-            </div>
-            <div className="w-full">
-              <Select
-                label="Leave Type"
-                value={Dropdown} // Use 'value' instead of 'selectedKeys' for single selection
-                onChange={handleDropdownChange}
-                className="w-full mt-4"
-              >
-                <SelectItem key="Sick Leave" value="Seasonal Illness">
-                  Seasonal Illness
-                </SelectItem>
-                <SelectItem key="Month Leave" value="Paid Leave">
-                  Paid Leave
-                </SelectItem>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex gap-10 w-full">
-            <div className="w-full">
-              <label>Start Date</label>
-              <DatePicker />
-            </div>
-            <div className="w-full">
-              <label>End Date</label>
-              <DatePicker />
-            </div>
-          </div>
-        </div>
-        <div className="flex mt-6">
-          <Button className="button bg-bgprimary text-white">Submit</Button>
-        </div>
-      </Form>
     </div>
   );
 };

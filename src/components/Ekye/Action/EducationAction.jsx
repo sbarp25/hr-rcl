@@ -1,15 +1,30 @@
 import { useEffect, useState } from "react";
-import { Divider, Form, Button } from "@nextui-org/react";
+import {
+  Divider,
+  Form,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  useDisclosure,
+  ModalBody,
+  Textarea,
+} from "@nextui-org/react";
 import { FaDiamond, FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import ButtonComponent from "../../ButtonComp";
+import { useForm } from "react-hook-form";
 const EducationAction = ({ employeeData }) => {
+  const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [EducationDocument, setEducationDocument] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const educationalDetail = employeeData?.educationalDetails?.[0];
 
@@ -42,20 +57,26 @@ const EducationAction = ({ employeeData }) => {
       toast.error(errorMessage);
     }
   };
-  const onReject = async () => {
-    const data = {
-      rejection: "Your employee has been rejected",
+  const onReject = async (data) => {
+    const rejectData = {
+      rejection: data.reject,
     };
+
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.post("/api/v1/auth/register", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (response?.data?.responseCode === "2001") {
-        toast.success(response?.data?.response);
+      const response = await axiosInstance.post(
+        "/api/v1/rejected/users",
+        rejectData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response?.data?.responseCode === "201") {
+        toast.success(response?.data?.message);
+        navigate("/AdminEkye");
       } else {
         toast.error(response?.data?.message);
       }
@@ -142,13 +163,60 @@ const EducationAction = ({ employeeData }) => {
 
         {/* Buttons Section */}
         <div className="mt-6 flex justify-end gap-4">
-          <Button className="bg-red-700 text-white" onPress={onReject}>
+          <Button className="bg-red-700 text-white" onPress={onOpen}>
             Reject
           </Button>
           <Button className="bg-green-700 text-white" onPress={onApprove}>
-            Accept
+            Approve
           </Button>
         </div>
+        {/**Modal For Reject  */}
+        <form onSubmit={handleSubmit(onReject)}>
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            size="sm"
+            // placement="bottom"
+            //  backdrop="blur">
+            isDismissable={true}
+            isKeyboardDismissDisabled={false}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Rejecting the Ekye for
+                    <p>{employeeData?.personalDetails?.fullName || "N/A"}</p>
+                  </ModalHeader>
+
+                  <ModalBody>
+                    <Textarea
+                      placeholder="Comment :"
+                      rows={5}
+                      {...register("reject", {
+                        required: "Reject reason is required",
+                        maxLength: {
+                          value: 1000,
+                          message:
+                            "Reason to reject cannot exceed 1000 characters",
+                        },
+                      })}
+                    />
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <ButtonComponent
+                      onPress={onClose}
+                      content="No"
+                      variant="light"
+                      color="danger"
+                    />
+                    <ButtonComponent onPress={onReject} content="Yes" />
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </form>
       </div>
     </>
   );

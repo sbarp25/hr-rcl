@@ -1,12 +1,25 @@
 import { Button } from "@nextui-org/react";
-import React from "react";
 
-const ButtonComp = ({ onPress, className }) => {
+const ButtonComponent = ({
+  onPress,
+  variant,
+  className,
+  content,
+  type,
+  disabled,
+  color,
+}) => {
   return (
-    <Button onPress={onPress} className={className}>
-      ButtonComp
+    <Button
+      onPress={onPress}
+      color={color}
+      variant={variant}
+      className={className}
+      disabled={disabled}
+      type={type}>
+      {content}
     </Button>
   );
 };
 
-export default ButtonComp;
+export default ButtonComponent;

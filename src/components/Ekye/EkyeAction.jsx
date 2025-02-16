@@ -30,7 +30,7 @@ const EkyeAction = () => {
       try {
         const response = await axiosInstance.get(
           // `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclid}`
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250441143100002`
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
         );
         if (response.data.responseCode === "200") {
           const data = response?.data?.data;

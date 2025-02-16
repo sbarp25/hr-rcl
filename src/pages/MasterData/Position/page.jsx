@@ -32,7 +32,8 @@ const Position = () => {
           {}
         );
         if (response.data.responseCode === "200") {
-          setPositionData(response?.data?.data?.content);
+          // setPositionData(response?.data?.data?.content);
+          setPositionData(response?.data?.datalist);
         } else {
           toast.error("Failed to fetch positions.");
         }
