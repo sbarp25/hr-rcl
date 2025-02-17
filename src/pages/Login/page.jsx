@@ -50,7 +50,6 @@ const Login = () => {
         localStorage.setItem("ekeyStep", ekeyStep);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("userId", accessToken);
         localStorage.setItem("fullName", FullName);
         localStorage.setItem("email", Email);
         toast.success(response.data.message);

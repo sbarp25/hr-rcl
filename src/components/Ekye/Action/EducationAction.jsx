@@ -19,6 +19,7 @@ import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import ButtonComponent from "../../ButtonComp";
 import { useForm } from "react-hook-form";
+import { GoXCircle } from "react-icons/go";
 const EducationAction = ({ employeeData }) => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
@@ -163,10 +164,13 @@ const EducationAction = ({ employeeData }) => {
 
         {/* Buttons Section */}
         <div className="mt-6 flex justify-end gap-4">
-          <Button className="bg-red-700 text-white" onPress={onOpen}>
+          <Button
+            className="text-red-500 border border-red-500"
+            variant="bordered"
+            onPress={onOpen}>
             Reject
           </Button>
-          <Button className="bg-green-700 text-white" onPress={onApprove}>
+          <Button className="bg-teal-500 text-white" onPress={onApprove}>
             Approve
           </Button>
         </div>
@@ -175,7 +179,7 @@ const EducationAction = ({ employeeData }) => {
           <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
-            size="sm"
+            size="lg"
             // placement="bottom"
             //  backdrop="blur">
             isDismissable={true}
@@ -183,7 +187,7 @@ const EducationAction = ({ employeeData }) => {
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalHeader className="flex flex-col gap-1">
+                  <ModalHeader className="flex gap-1 justify-center items-center">
                     Rejecting the Ekye for
                     <p>{employeeData?.personalDetails?.fullName || "N/A"}</p>
                   </ModalHeader>
@@ -191,7 +195,9 @@ const EducationAction = ({ employeeData }) => {
                   <ModalBody>
                     <Textarea
                       placeholder="Comment :"
-                      rows={5}
+                      minRows={10}
+                      maxRows={10}
+                      variant="bordered"
                       {...register("reject", {
                         required: "Reject reason is required",
                         maxLength: {
@@ -206,11 +212,15 @@ const EducationAction = ({ employeeData }) => {
                   <ModalFooter>
                     <ButtonComponent
                       onPress={onClose}
-                      content="No"
-                      variant="light"
-                      color="danger"
+                      content={"Cancel"}
+                      color="warning"
+                      className="text-white"
                     />
-                    <ButtonComponent onPress={onReject} content="Yes" />
+                    <ButtonComponent
+                      onPress={onReject}
+                      content="Reject"
+                      className={"bg-red-600 text-white"}
+                    />
                   </ModalFooter>
                 </>
               )}
