@@ -13,7 +13,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
     }
   }, []);
   return (
-    <div className="relative flex flex-col items-center bg-white h-[80vh] py-6 w-full mx-auto rounded-md ">
+    <div className="relative flex flex-col items-center bg-white h-[75vh] py-6 w-full mx-auto rounded-md ">
       <div className="bg-white  text-lg w-[85%]  shadow-md rounded-lg p-6 mt-2 ">
         <div className="flex justify-between items-center">
           <h1 className=" flex py-2 text-left text-xl font-semibold underline underline-offset-4 decoration-red-500">
@@ -68,7 +68,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   href={employeeData?.educationDetails?.documentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Certificate

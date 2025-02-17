@@ -10,7 +10,7 @@ const EkyeAdreess = ({ employeeData }) => {
   const temporaryAddress =
     addresses.find((item) => item?.addressType === "TEMPORARY") || {};
   return (
-    <div>
+    <div className="bg-white rounded-lg h-[75vh]">
       <div className="flex flex-col items-center justify-center rounded-md space-y-3 ">
         <div className="bg-white text-lg w-full p-6 rounded-xl">
           <div className="flex justify-between items-center">

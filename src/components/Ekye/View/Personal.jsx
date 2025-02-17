@@ -4,12 +4,12 @@ import { Divider } from "@nextui-org/react";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="">
-      <div className="rounded-xl space-y-2">
+    <div className="bg-white h-[75vh] rounded-xl">
+      <div className="rounded-xl space-y-2 ">
         {/**Basic Information */}
-        <div className="bg-white rounded-xl">
-          <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl">
-            <h1 className="py-2 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500">
+        <div className="bg-white rounded-xl mb-4 ">
+          <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl ">
+            <h1 className="py-4 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500">
               <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3 px-8" />
               Personal Details
             </h1>

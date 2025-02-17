@@ -9,6 +9,8 @@ import {
 } from "@nextui-org/table";
 
 const WorkFromHome = () => {
+  const truncateText = (text, maxLength) =>
+    text.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   const WorkfromHomeDate = [
     {
       Sn: 1,
@@ -73,7 +75,7 @@ const WorkFromHome = () => {
         bordered
         aria-label="Dyanamic Attendance Table"
         isHeaderSticky
-        className="max-h-[25vh] overflow-auto"
+        className="max-h-[25vh] overflow-auto  w-[42vw] "
       >
         <TableHeader className="Capitalize ">
           <TableColumn>S.N</TableColumn>
@@ -89,7 +91,9 @@ const WorkFromHome = () => {
               <TableCell>{data.Sn}</TableCell>
               <TableCell>{data.RCLID}</TableCell>
               <TableCell>{data.Name}</TableCell>
-              <TableCell>{data.Email}</TableCell>
+              <TableCell title={data.Email}>
+                {truncateText(data.Email, 7)}
+              </TableCell>
               <TableCell>{data.Department}</TableCell>
               <TableCell>{data.ApprovedBy}</TableCell>
             </TableRow>

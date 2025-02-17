@@ -96,9 +96,10 @@ const Attendancereport = () => {
   return (
     <div className="p-4 w-full shadow-none">
       <Table
+        isHeaderSticky
         bordered
         aria-label="Dynamic Attendance Table"
-        className="h-auto  "
+        className="h-[33vh]  "
       >
         <TableHeader className="capitalize">
           <TableColumn>S.N</TableColumn>

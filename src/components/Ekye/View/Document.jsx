@@ -21,7 +21,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, []);
 
   return (
-    <div className="flex flex-col bg-white py-6 border-solid mx-auto rounded-md">
+    <div className="flex flex-col bg-white py-6 border-solid mx-auto rounded-md h-[75vh]">
       <div className="grid grid-cols-1 md:grid-cols-2 mt-2 px-8 gap-6 ">
         {/**Citizenship details */}
         <div className="bg-white text-lg p-6 shadow-md rounded-lg">
@@ -70,7 +70,8 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Citizenship
@@ -94,7 +95,8 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Citizenship
@@ -152,7 +154,8 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                     href={employeeData?.userDocument?.panCardDocumentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2">
+                    className="block text-sm text-green-600 underline mb-2"
+                  >
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Uploaded PAN Card

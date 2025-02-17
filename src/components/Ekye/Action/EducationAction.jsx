@@ -19,6 +19,8 @@ import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import ButtonComponent from "../../ButtonComp";
 import { useForm } from "react-hook-form";
+import RejectComp from "../../RejectComp";
+
 const EducationAction = ({ employeeData }) => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
@@ -55,37 +57,6 @@ const EducationAction = ({ employeeData }) => {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
       toast.error(errorMessage);
-    }
-  };
-  const onReject = async (data) => {
-    const rejectData = {
-      rejection: data.reject,
-    };
-
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.post(
-        "/api/v1/rejected/users",
-        rejectData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        navigate("/AdminEkye");
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -147,7 +118,8 @@ const EducationAction = ({ employeeData }) => {
                     href={employeeData?.educationDetails?.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2">
+                    className="block text-sm text-green-600 underline mb-2"
+                  >
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Uploaded Certificate
@@ -163,60 +135,14 @@ const EducationAction = ({ employeeData }) => {
 
         {/* Buttons Section */}
         <div className="mt-6 flex justify-end gap-4">
-          <Button className="bg-red-700 text-white" onPress={onOpen}>
+          {/* <Button className="bg-red-700 text-white" onPress={onOpen}>
             Reject
-          </Button>
+          </Button> */}
+          <RejectComp employeeData={employeeData} />
           <Button className="bg-green-700 text-white" onPress={onApprove}>
             Approve
           </Button>
         </div>
-        {/**Modal For Reject  */}
-        <form onSubmit={handleSubmit(onReject)}>
-          <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            size="sm"
-            // placement="bottom"
-            //  backdrop="blur">
-            isDismissable={true}
-            isKeyboardDismissDisabled={false}>
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Rejecting the Ekye for
-                    <p>{employeeData?.personalDetails?.fullName || "N/A"}</p>
-                  </ModalHeader>
-
-                  <ModalBody>
-                    <Textarea
-                      placeholder="Comment :"
-                      rows={5}
-                      {...register("reject", {
-                        required: "Reject reason is required",
-                        maxLength: {
-                          value: 1000,
-                          message:
-                            "Reason to reject cannot exceed 1000 characters",
-                        },
-                      })}
-                    />
-                  </ModalBody>
-
-                  <ModalFooter>
-                    <ButtonComponent
-                      onPress={onClose}
-                      content="No"
-                      variant="light"
-                      color="danger"
-                    />
-                    <ButtonComponent onPress={onReject} content="Yes" />
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </form>
       </div>
     </>
   );

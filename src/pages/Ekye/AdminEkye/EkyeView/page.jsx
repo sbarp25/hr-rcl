@@ -44,18 +44,39 @@ const Page = () => {
       <h1 className="page-title">EKYE</h1>
       <div className="">
         <div className="rounded-xl">
-          <Tabs aria-label="EKYE" className="" size="lg">
+          <Tabs
+            aria-label="EKYE"
+            className="-mb-3 ml-2  "
+            size="lg"
+            variant="light"
+          >
             {/* Personal Information Section */}
-            <Tab key="PersonalDetails" title="Personal Information">
+            <Tab
+              className="   rounded-t-lg "
+              key="PersonalDetails"
+              title="Personal Information"
+            >
               <Personal employeeData={employeeData} />
             </Tab>
-            <Tab key="AddressDetails" title="Address Details">
+            <Tab
+              className="rounded-t-lg "
+              key="AddressDetails"
+              title="Address Details"
+            >
               <EkyeAdreess employeeData={employeeData} />
             </Tab>
-            <Tab key="DocumentDetails" title="Document Details">
+            <Tab
+              className="rounded-t-lg"
+              key="DocumentDetails"
+              title="Document Details"
+            >
               <EkyeDocumentDetail employeeData={employeeData} />
             </Tab>
-            <Tab key="EducationDetails" title="Education Details">
+            <Tab
+              className="rounded-t-lg"
+              key="EducationDetails"
+              title="Education Details"
+            >
               <EkyeEducationDetails employeeData={employeeData} />
             </Tab>
           </Tabs>

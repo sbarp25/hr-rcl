@@ -31,7 +31,7 @@ const PersonalAction = ({ employeeData }) => {
               placeholder={employeeData?.personalDetails?.gender || "N/A"}
             />
           </div>
-          <Divider className="mt-6" />
+          <Divider className="mb-4 mt-2" />
           {/* Column 2 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24">
             <EkyeDetailsComponent
@@ -49,7 +49,7 @@ const PersonalAction = ({ employeeData }) => {
               placeholder={employeeData?.personalDetails?.phone || "N/A"}
             />
           </div>
-          <Divider className="mt-6" />
+          <Divider className="mb-4 mt-2" />
 
           {/* Column 3 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24">
@@ -71,7 +71,7 @@ const PersonalAction = ({ employeeData }) => {
               }
             />
           </div>
-          <Divider className="mt-6 mb-4" />
+          <Divider className="mt-4 mb-2" />
 
           {/* Column 4 */}
           <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">

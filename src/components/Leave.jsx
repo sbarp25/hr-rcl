@@ -9,6 +9,8 @@ import {
 } from "@nextui-org/table";
 
 const Leave = () => {
+  const truncateText = (text, maxLength) =>
+    text.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   const LeaveList = [
     {
       Sn: 1,
@@ -84,12 +86,12 @@ const Leave = () => {
   return (
     <>
       <div>
-        <div className="max-h-[28vh] overflow-auto ">
+        <div className=" ml-1  ">
           <Table
             bordered
             isHeaderSticky
             aria-label="Dynamic Attendance Table"
-            className="max-h-[25vh] overflow-auto"
+            className="max-h-[25vh] overflow-auto  max-w-[40vw]"
           >
             <TableHeader className="Capitalize  ">
               <TableColumn>S.N</TableColumn>
@@ -106,8 +108,12 @@ const Leave = () => {
                 <TableRow key={data.Sn}>
                   <TableCell>{data.Sn}</TableCell>
                   <TableCell>{data.RCLID}</TableCell>
-                  <TableCell>{data.Name}</TableCell>
-                  <TableCell>{data.Email}</TableCell>
+                  <TableCell title={data.Name}>
+                    {truncateText(data.Name, 7)}
+                  </TableCell>
+                  <TableCell title={data.Email}>
+                    {truncateText(data.Email, 7)}
+                  </TableCell>
                   <TableCell>{data.Department}</TableCell>
                   <TableCell>{data.Fromdate}</TableCell>
                   <TableCell>{data.todate}</TableCell>

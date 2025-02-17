@@ -82,7 +82,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="max-h-[98vh] w-full overflow-y-auto  ">
+      <div className="max-h-[97vh] w-[80vw]  ">
         <div className="flex justify-end mb-4">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
@@ -109,7 +109,7 @@ const Page = () => {
           </Button>
         </div>
         <div>
-          <div className="flex justify-center bg-white h-12 rounded-md">
+          <div className="flex justify-center bg-white h-8 rounded-md">
             <p className="font-medium text-2xl leading-10">
               Welcome, {username}
             </p>
