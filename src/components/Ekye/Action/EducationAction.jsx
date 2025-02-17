@@ -143,6 +143,54 @@ const EducationAction = ({ employeeData }) => {
             Approve
           </Button>
         </div>
+        {/**Modal For Reject  */}
+        <form onSubmit={handleSubmit(onReject)}>
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            size="sm"
+            // placement="bottom"
+            //  backdrop="blur">
+            isDismissable={true}
+            isKeyboardDismissDisabled={false}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Rejecting the Ekye for
+                    <p>{employeeData?.personalDetails?.fullName || "N/A"}</p>
+                  </ModalHeader>
+
+                  <ModalBody>
+                    <Textarea
+                      placeholder="Comment :"
+                      rows={5}
+                      {...register("reject", {
+                        required: "Reject reason is required",
+                        maxLength: {
+                          value: 1000,
+                          message:
+                            "Reason to reject cannot exceed 1000 characters",
+                        },
+                      })}
+                    />
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <ButtonComponent
+                      onPress={onClose}
+                      content="No"
+                      variant="light"
+                      color="danger"
+                    />
+                    <ButtonComponent onPress={onReject} content="Yes" />
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </form>
       </div>
     </>
   );

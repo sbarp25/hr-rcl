@@ -1,94 +1,261 @@
 import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
+  Checkbox,
   DatePicker,
   Select,
-  SelectSection,
   SelectItem,
+  Textarea,
 } from "@nextui-org/react";
-import { Form, Input, Button } from "@nextui-org/react";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import InputComponent from "../../../components/InputComponent";
-import { useForm } from "react-hook-form";
+import ButtonComponent from "../../../components/ButtonComp";
+import axiosInstance from "../../../lib/axios-Instance";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { parseDate, getLocalTimeZone } from "@internationalized/date";
+import { useDateFormatter } from "@react-aria/i18n";
+
 const LeaveRequest = () => {
   const {
-    control,
-    handleSubmit,
     register,
+    control,
+    reset,
+    handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: { email: "", password: "" } });
+  } = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      leaveType: "",
+      teamlead: "",
+      fromDate: null,
+      ToDate: null,
+      isHalfDay: false,
+    },
+  });
 
-  const [dropdown, setDropdown] = useState("");
-  const [teamLeader, setTeamLeader] = useState("");
-  const [leaveType, setLeaveType] = useState("");
+  let formatter = useDateFormatter({ dateStyle: "full" });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Leave", href: "" },
     { label: "Leave Request", href: "/Leave/Request" },
   ];
-  const handleDropdownChange = (key) => {
-    setDropdown(key);
-    setTeamLeader(key);
-  };
 
-  const handleLeaveTypeChange = (e) => {
-    setLeaveType(e.target.value);
+  const LeaveType = [
+    { key: "CASUAL", label: "Casual Leave" },
+    { key: "VACATION", label: "Vacation" },
+    { key: "SICK", label: "Sick Leave" },
+    { key: "EXAM", label: "Exam Leave" },
+    { key: "UNPAID", label: "Unpaid Leave" },
+  ];
+
+  const TeamLeader = [
+    { key: "john", label: "John Doe" },
+    { key: "jane", label: "Jane Smith" },
+    { key: "alex", label: "Alex Johnson" },
+  ];
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const formatDate = (date) =>
+      date ? date.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
+    const applyleave = {
+      data: {
+        leaveType: data.leaveType,
+        leaveSubject: data.description,
+        leaveStatus: "PENDING",
+        isHalfDay: data.isHalfDay,
+        leaveStartDate: formatDate(data.fromDate),
+        leaveEndDate: formatDate(data.ToDate),
+        leaveDate: formatDate(data.fromDate),
+      },
+    };
+
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("Authentication token is missing.");
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await axiosInstance.post(
+        "/api/leave/apply_leave",
+        applyleave,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.data.responseCode === "200") {
+        reset();
+        navigate("/");
+        toast.success(response?.data?.message);
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="">
-      <div className="container flex flex-col">
-        <BreadcrumbsComponent items={breadcrumbItems} />
-        <div className="page-title -pl-2">Leave Request</div>
-        <form>
-          <InputComponent
-            name="email"
-            control={control}
-            variant="bordered"
-            label="Email"
-            rules={{
-              required: "Email is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "Enter a valid email address",
-              },
-            }}
-          />
-          <InputComponent
-            name="email"
-            control={control}
-            variant="bordered"
-            label="Description"
-            rules={{
-              required: "Description is required",
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "Enter a valid email address",
-              },
-            }}
-          />
-          <div className="mb-4">
-            <Select
+    <div className="container flex flex-col space-y-4 ">
+      <BreadcrumbsComponent items={breadcrumbItems} />
+      <div className="page-title -pl-2">Leave Request</div>
+      <div className="bg-white p-4 rounded-xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-12 p-4">
+          {/** Leave Title */}
+          <div>
+            <InputComponent
+              name="title"
+              control={control}
               variant="bordered"
-              label="Select an Department"
-              color={errors.department ? "danger" : "default"}
-              className={`  rounded-xl ${
-                errors.department ? "border-2 border-red-500" : ""
-              }`}
-              {...register("department", {
-                required: "Department is required",
-              })}
-              errorMessage={errors.department?.message}>
-              {departmentsData?.map((dept) => (
-                <SelectItem key={dept.id} textValue={dept.name}>
-                  {dept.name}
-                </SelectItem>
-              ))}
-            </Select>
+              label="Title"
+              rules={{
+                required: "Title is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_ ]{3,300}$/,
+                  message: "Enter a valid title",
+                },
+              }}
+            />
           </div>
+
+          {/** Reason for Leave */}
+          <div>
+            <Textarea
+              label="Description"
+              {...register("description", {
+                required: "Description is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_ ]{3,300}$/,
+                  message: "Description must be 3-300 characters long",
+                },
+              })}
+              variant="bordered"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12">
+            {/** Leave Type */}
+            <div className="mb-4">
+              <Controller
+                name="leaveType"
+                control={control}
+                rules={{ required: "Type of leave is required" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Leave Type"
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) =>
+                      field.onChange(Array.from(keys)[0])
+                    }>
+                    {LeaveType.map((leave) => (
+                      <SelectItem key={leave.key} value={leave.key}>
+                        {leave.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </div>
+
+            {/** Team Leader */}
+            <div className="mb-4">
+              <Controller
+                name="teamlead"
+                control={control}
+                rules={{ required: "Team Lead is required" }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Team Leader"
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) =>
+                      field.onChange(Array.from(keys)[0])
+                    }>
+                    {TeamLeader.map((team) => (
+                      <SelectItem key={team.key} value={team.key}>
+                        {team.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                )}
+              />
+            </div>
+
+            {/** From Date */}
+            <div>
+              <Controller
+                name="fromDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    showMonthAndYearPickers
+                    label="From Date"
+                    value={field.value}
+                    onChange={field.onChange}
+                    variant="bordered"
+                  />
+                )}
+              />
+            </div>
+
+            {/** To Date */}
+            <div>
+              <Controller
+                name="ToDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    showMonthAndYearPickers
+                    label="To Date"
+                    value={field.value}
+                    onChange={field.onChange}
+                    variant="bordered"
+                  />
+                )}
+              />
+            </div>
+
+            {/** Half Day Checkbox */}
+            <div>
+              <Controller
+                name="isHalfDay"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    isSelected={field.value}
+                    onValueChange={field.onChange}>
+                    Is Half Day
+                  </Checkbox>
+                )}
+              />
+            </div>
+          </div>
+
+          {/** Submit Button */}
+          <ButtonComponent
+            type="submit"
+            content={isLoading ? "Submitting..." : "Submit"}
+            className="bg-bgprimary text-white"
+            disabled={isLoading}
+          />
         </form>
       </div>
     </div>
