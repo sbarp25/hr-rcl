@@ -13,8 +13,7 @@ import ButtonComponent from "../../../components/ButtonComp";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { parseDate, getLocalTimeZone } from "@internationalized/date";
-import { useDateFormatter } from "@react-aria/i18n";
+import { getLocalTimeZone } from "@internationalized/date";
 
 const LeaveRequest = () => {
   const {
@@ -35,7 +34,6 @@ const LeaveRequest = () => {
     },
   });
 
-  let formatter = useDateFormatter({ dateStyle: "full" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -62,16 +60,19 @@ const LeaveRequest = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     const formatDate = (date) =>
-      date ? date.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
+      date
+        ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0]
+        : null;
     const applyleave = {
       data: {
-        leaveType: data.leaveType,
-        leaveSubject: data.description,
-        leaveStatus: "PENDING",
+        leaveType: data?.leaveType,
+        leaveSubject: data?.description,
+        leaveStatus: "APPROVED",
         isHalfDay: data.isHalfDay,
         leaveStartDate: formatDate(data.fromDate),
         leaveEndDate: formatDate(data.ToDate),
         leaveDate: formatDate(data.fromDate),
+        teamLeaderName: data?.teamlead,
       },
     };
 
@@ -117,7 +118,7 @@ const LeaveRequest = () => {
       <div className="bg-white p-4 rounded-xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-12 p-4">
           {/** Leave Title */}
-          <div>
+          <div className="">
             <InputComponent
               name="title"
               control={control}
