@@ -114,7 +114,7 @@ const LeaveRequest = () => {
     <div className="container flex flex-col space-y-4 ">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="page-title -pl-2">Leave Request</div>
-      <div className="bg-white p-4 rounded-xl">
+      <div className="bg-white p-4 rounded-xl border border-gray-500 h-[85vh]">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-12 p-4">
           {/** Leave Title */}
           <div>
@@ -163,7 +163,8 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }>
+                    }
+                  >
                     {LeaveType.map((leave) => (
                       <SelectItem key={leave.key} value={leave.key}>
                         {leave.label}
@@ -188,7 +189,8 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }>
+                    }
+                  >
                     {TeamLeader.map((team) => (
                       <SelectItem key={team.key} value={team.key}>
                         {team.label}
@@ -241,7 +243,8 @@ const LeaveRequest = () => {
                 render={({ field }) => (
                   <Checkbox
                     isSelected={field.value}
-                    onValueChange={field.onChange}>
+                    onValueChange={field.onChange}
+                  >
                     Is Half Day
                   </Checkbox>
                 )}

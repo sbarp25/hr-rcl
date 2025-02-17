@@ -27,6 +27,8 @@ import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
 import EkyeAction from "./components/Ekye/EkyeAction.jsx";
 import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
 import LocationComponent from "./components/LocationComponent.jsx";
+import SalaryDetails from "./pages/Salary/page.jsx";
+import SalaryEdit from "./pages/Salary/SalaryDetail/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -76,6 +78,8 @@ function App() {
             <Route path="/AdminEkye" element={<AdminEkye />} />
             <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
             <Route path="/View/:rclId" element={<View />} />
+            <Route path="/Salary" element={<SalaryDetails />} />
+            <Route path="/SalaryEdit" element={<SalaryEdit />} />
           </Routes>
         </Layout>
       )}

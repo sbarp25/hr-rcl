@@ -20,7 +20,7 @@ const DocumentAction = ({ employeeData }) => {
     }
   }, []);
   return (
-    <div className="relative flex flex-col bg-white mt-16 border-2 rounded-md shadow-lg px-8">
+    <div className="relative flex flex-col bg-white mt-16 border border-black rounded-md shadow-lg px-8">
       {/* Header Section */}
       <div className="absolute bg-black w-auto rounded-t-2xl -top-12   left-1  px-6 py-2">
         <h1 className="text-2xl font-bold text-white">Document Detail</h1>
@@ -70,7 +70,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipFrontDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -90,7 +91,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipBackDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -134,7 +136,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.panCardDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded PAN Card

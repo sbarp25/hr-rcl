@@ -148,7 +148,8 @@ const Ekye = () => {
                     key={label}
                     className={`flex-1 flex flex-col items-center relative cursor-pointer ${
                       step >= stepIndex ? "text-white" : "text-bgprimaryhover"
-                    }`}>
+                    }`}
+                  >
                     {/* Step Container */}
                     <div className="relative flex items-center">
                       {/* Step Image */}
@@ -176,7 +177,8 @@ const Ekye = () => {
                           style={{
                             left: "90%", // Start from the end of the current step
                             width: "800%", // Start from the end of the current step
-                          }}></div>
+                          }}
+                        ></div>
                       )}
                     </div>
                     {/* Label */}
@@ -190,7 +192,7 @@ const Ekye = () => {
           </div>
 
           <ValidationComponent>
-            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto">
+            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto border border-gray-500">
               {step === 0 && !isLoading && (
                 <PersonalDetails
                   handleNext={handleNext}
@@ -236,7 +238,8 @@ const Ekye = () => {
           {step > 0 && (
             <Button
               onPress={handleBack}
-              className="px-4 py-2 bg-gray-300 rounded">
+              className="px-4 py-2 bg-gray-300 rounded"
+            >
               Back
             </Button>
           )}
@@ -245,7 +248,8 @@ const Ekye = () => {
               onPress={() => {
                 handleNext();
               }}
-              className="px-4 py-2 bg-bgprimary text-white rounded">
+              className="px-4 py-2 bg-bgprimary text-white rounded"
+            >
               Next
             </Button>
           )}
