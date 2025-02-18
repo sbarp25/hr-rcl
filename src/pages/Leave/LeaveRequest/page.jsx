@@ -59,7 +59,6 @@ const LeaveRequest = () => {
   ];
 
   const fromDate = watch("fromDate");
-  const toDate = watch("ToDate");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -100,7 +99,7 @@ const LeaveRequest = () => {
         }
       );
 
-      if (response.data.responseCode === "200") {
+      if (response?.data?.responseCode === "200") {
         reset();
         navigate("/");
         toast.success(response?.data?.message);

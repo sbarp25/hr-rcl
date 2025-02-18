@@ -128,10 +128,10 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className=" h-screen bg-gray-200 pb-6">
-        <div className="page-title justify-center">
-          <IoIosPeople className="text-4xl" />
-          <p className="mt-1">Perform EKYE</p>
+      <div className=" h-screen bg-gray-200 pb-6 space-y-6">
+        <div className="page-title justify-center items-center p-6">
+          <IoIosPeople className="text-3xl" />
+          <p className="">Perform EKYE</p>
         </div>
         <div>
           <div className="rounded-md p-2 relative">
@@ -231,24 +231,6 @@ const Ekye = () => {
               )}
             </div>
           </ValidationComponent>
-        </div>
-        <div className="form-navigation flex justify-between mt-6">
-          {step > 0 && (
-            <Button
-              onPress={handleBack}
-              className="px-4 py-2 bg-gray-300 rounded">
-              Back
-            </Button>
-          )}
-          {step < 3 && (
-            <Button
-              onPress={() => {
-                handleNext();
-              }}
-              className="px-4 py-2 bg-bgprimary text-white rounded">
-              Next
-            </Button>
-          )}
         </div>
       </div>
     </>

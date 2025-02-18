@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
-import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
@@ -122,7 +121,7 @@ const AddEmployeeForm = () => {
         password: "Xlsnx$c$wi&3MptW$",
         roleId: sanitizedroleId,
         performEkye: data.performEKYC,
-        salary: data.salary,
+        grossSalary: data.salary,
       },
     };
 

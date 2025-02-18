@@ -95,7 +95,7 @@ const Department = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const updatedPosition = {
+    const updatedDepartment = {
       data: {
         departmentName: departmentName,
         description: departmentDescription,
@@ -105,7 +105,7 @@ const Department = () => {
     try {
       const response = await axiosInstance.put(
         `/api/v1/departments/update/${editingDepartmentId}`,
-        updatedPosition,
+        updatedDepartment,
         {
           headers: {
             "Content-Type": "application/json",

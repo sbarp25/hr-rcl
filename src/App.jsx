@@ -27,6 +27,7 @@ import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
 import EkyeAction from "./components/Ekye/EkyeAction.jsx";
 import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
 import LocationComponent from "./components/LocationComponent.jsx";
+import LeaveApprove from "./pages/Leave/LeaveApprove/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -72,6 +73,7 @@ function App() {
             <Route path="/Notice" element={<Notices />} />
             <Route path="/Leave/status" element={<LeaveStatus />} />
             <Route path="/Leave/Request" element={<LeaveRequest />} />
+            <Route path="/Leave/apprej/:id" element={<LeaveApprove />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/AdminEkye" element={<AdminEkye />} />
             <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
