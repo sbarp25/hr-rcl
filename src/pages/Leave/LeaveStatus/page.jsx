@@ -1,7 +1,5 @@
 import {
-  Button,
   Pagination,
-  Spacer,
   Table,
   TableBody,
   TableCell,
@@ -31,11 +29,7 @@ const LeaveStatus = () => {
     { label: "Leave", href: "" },
     { label: "Leave Status", href: "/Leave/Status" },
   ];
-  const statusColors = {
-    Approved: "bg-green-500 text-white",
-    Pending: "bg-yellow-500 text-white",
-    Rejected: "bg-red-500 text-white",
-  };
+
   useEffect(() => {
     const fetchLeave = async () => {
       setIsLoading(true);
@@ -66,7 +60,7 @@ const LeaveStatus = () => {
         <h1 className="page-title">Leave Status</h1>
       </div>
       {/**Table Section */}
-      <div className="max-h-[90vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
+      <div className="max-h-[80vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
         <Table bordered aria-label="List of Employees who have Completed EKYE">
           <TableHeader>
             <TableColumn>S.N</TableColumn>

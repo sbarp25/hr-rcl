@@ -72,7 +72,7 @@ const LeaveRequest = () => {
       data: {
         leaveType: data?.leaveType,
         leaveSubject: data?.description,
-        leaveStatus: "APPROVED",
+        leaveStatus: "PENDING",
         isHalfDay: data.isHalfDay,
         leaveStartDate: formatDate(data.fromDate),
         leaveEndDate: formatDate(data.ToDate),
@@ -121,7 +121,7 @@ const LeaveRequest = () => {
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="page-title -pl-2">Leave Request</div>
       <div className="bg-white p-4 rounded-xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-12 p-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
           {/* Leave Title */}
           <div>
             <InputComponent
@@ -142,6 +142,9 @@ const LeaveRequest = () => {
           {/* Reason for Leave */}
           <div>
             <Textarea
+              className={` rounded-xl ${
+                errors.description ? "border-2 border-red-500" : ""
+              }`}
               label="Description"
               {...register("description", {
                 required: "Description is required",
@@ -171,6 +174,9 @@ const LeaveRequest = () => {
                     {...field}
                     variant="bordered"
                     label="Leave Type"
+                    className={`rounded-xl ${
+                      errors.leaveType ? "border-2 border-red-500 " : ""
+                    }`}
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
@@ -201,6 +207,9 @@ const LeaveRequest = () => {
                     {...field}
                     variant="bordered"
                     label="Team Leader"
+                    className={`rounded-xl ${
+                      errors.teamlead ? "border-2 border-red-500 " : ""
+                    }`}
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
@@ -227,7 +236,14 @@ const LeaveRequest = () => {
                 control={control}
                 rules={{ required: "Start date is required" }}
                 render={({ field }) => (
-                  <DatePicker {...field} label="From Date" variant="bordered" />
+                  <DatePicker
+                    {...field}
+                    className={`rounded-xl ${
+                      errors.fromDate ? "border-2 border-red-500 " : ""
+                    }`}
+                    label="From Date"
+                    variant="bordered"
+                  />
                 )}
               />
               {errors.fromDate && (
@@ -251,7 +267,14 @@ const LeaveRequest = () => {
                     "End date cannot be before start date",
                 }}
                 render={({ field }) => (
-                  <DatePicker {...field} label="To Date" variant="bordered" />
+                  <DatePicker
+                    {...field}
+                    className={`rounded-xl ${
+                      errors.ToDate ? "border-2 border-red-500 " : ""
+                    }`}
+                    label="To Date"
+                    variant="bordered"
+                  />
                 )}
               />
               {errors.ToDate && (
@@ -259,7 +282,19 @@ const LeaveRequest = () => {
               )}
             </div>
           </div>
-
+          <div>
+            <Controller
+              name="isHalfDay"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  isSelected={field.value}
+                  onValueChange={field.onChange}>
+                  Is Half Day?
+                </Checkbox>
+              )}
+            />
+          </div>
           <ButtonComponent
             type="submit"
             content={isLoading ? "Submitting..." : "Submit"}
