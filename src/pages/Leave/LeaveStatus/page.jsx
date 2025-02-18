@@ -37,7 +37,7 @@ const LeaveStatus = () => {
     Rejected: "bg-red-500 text-white",
   };
   useEffect(() => {
-    const fetchEmployees = async () => {
+    const fetchLeave = async () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get("/api/leave/all", {});
@@ -55,7 +55,7 @@ const LeaveStatus = () => {
       }
     };
 
-    fetchEmployees();
+    fetchLeave();
   }, []);
 
   return (
@@ -101,18 +101,20 @@ const LeaveStatus = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 p-2 rounded-lg bg-white shadow-sm">
                     <div
-                      className={`absolute top-2 left-3 flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md ${
+                      className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
                         data?.leaveStatus === "APPROVED"
                           ? "bg-teal-100 text-teal-600"
                           : data?.leaveStatus === "REJECTED"
                           ? "bg-red-100 text-red-600"
                           : "bg-yellow-100 text-yellow-500"
                       }`}>
-                      {data?.teamLeaderName?.charAt(0) || ""}
+                      {data?.teamLeaderName?.charAt(0) || "?"}
                     </div>
-                    <div>{data?.teamLeaderName || "N/A"}</div>
+                    <div className="text-gray-800 font-medium">
+                      {data?.teamLeaderName || "N/A"}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>

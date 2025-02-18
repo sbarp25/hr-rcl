@@ -22,7 +22,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
 
   const truncateText = (text, maxLength) =>
-    text.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
