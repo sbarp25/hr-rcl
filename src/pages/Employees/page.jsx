@@ -42,6 +42,7 @@ const Employees = () => {
   ];
 
   const dropdownItems = [10, 20, 30, 50, 100];
+
   useEffect(() => {
     const fetchEmployees = async () => {
       setIsLoading(true);

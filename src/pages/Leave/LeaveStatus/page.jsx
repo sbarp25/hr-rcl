@@ -1,128 +1,150 @@
+import {
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../../lib/axios-Instance";
+import { toast } from "react-toastify";
+import DropDownComp from "../../../components/Dropdown";
 
 const LeaveStatus = () => {
-  const data = {
-    employee: {
-      id: "EMP12345",
-      name: "Jane Doe",
-      designation: "Frontend Developer",
-      department: "Engineering",
-    },
-    leaveRequests: [
-      {
-        leaveId: "LV20241231",
-        leaveType: "Paid Leave",
-        startDate: "2024-12-20",
-        endDate: "2024-12-25",
-        daysRequested: 5,
-        status: "Approved",
-        remarks: "Enjoy your vacation!",
-        approver: {
-          name: "John Smith",
-          designation: "Engineering Manager",
-        },
-        appliedOn: "2024-12-15",
-        history: [
-          {
-            date: "2024-12-15",
-            action: "Applied",
-            comment: "Submitted for approval",
-          },
-          {
-            date: "2024-12-16",
-            action: "Approved",
-            comment: "Approved by John Smith",
-          },
-        ],
-      },
-      {
-        leaveId: "LV20240105",
-        leaveType: "Sick Leave",
-        startDate: "2024-12-28",
-        endDate: "2024-12-30",
-        daysRequested: 3,
-        status: "Pending",
-        remarks: "",
-        approver: {
-          name: "John Smith",
-          designation: "Engineering Manager",
-        },
-        appliedOn: "2024-12-27",
-        history: [
-          {
-            date: "2024-12-27",
-            action: "Applied",
-            comment: "Submitted for approval",
-          },
-        ],
-      },
-    ],
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eKyeData, setEkyeData] = useState([]);
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
+  const [isLoading, setIsLoading] = useState(false);
+  const [leaveData, setleaveData] = useState([]);
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Leave", href: "" },
     { label: "Leave Status", href: "/Leave/Status" },
   ];
-  const statusColors = {
-    Approved: "bg-green-500 text-white",
-    Pending: "bg-yellow-500 text-white",
-    Rejected: "bg-red-500 text-white",
-  };
+
+  useEffect(() => {
+    const fetchLeave = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get("/api/leave/all", {});
+        if (response.data.responseCode === "200") {
+          setleaveData(response.data.datalist);
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        toast.error("Error fetching employees.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLeave();
+  }, []);
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold text-center mb-4">Leave Status</h1>
-      <BreadcrumbsComponent items={breadcrumbItems} />
-      <h2 className="text-xl font-semibold text-center mb-6">
-        {data.employee.name} ({data.employee.designation})
-      </h2>
-      <div className="overflow-y-auto max-h-96">
-        {data.leaveRequests.map((request) => (
-          <div
-            key={request.leaveId}
-            className="border border-gray-300 rounded-lg mb-4 p-4 bg-gray-50">
-            <h3 className="text-lg font-semibold">{request.leaveType}</h3>
-            <p>
-              <strong>Leave ID:</strong> {request.leaveId}
-            </p>
-            <p>
-              <strong>Dates:</strong> {request.startDate} to {request.endDate}
-            </p>
-            <p>
-              <strong>Days Requested:</strong> {request.daysRequested}
-            </p>
-            <p>
-              <strong>Status:</strong>{" "}
-              <span
-                className={`inline-block px-3 py-1 rounded ${
-                  statusColors[request.status]
-                }`}>
-                {request.status}
-              </span>
-            </p>
-            <p>
-              <strong>Remarks:</strong> {request.remarks || "N/A"}
-            </p>
-            <p>
-              <strong>Approver:</strong> {request.approver.name} (
-              {request.approver.designation})
-            </p>
-            <p>
-              <strong>Applied On:</strong> {request.appliedOn}
-            </p>
-            <div className="mt-4">
-              <strong>History:</strong>
-              {request.history.map((history, index) => (
-                <div
-                  key={index}
-                  className="mt-2 text-sm text-gray-700 border-t pt-2">
-                  <strong>{history.date}:</strong> {history.action} (
-                  {history.comment})
-                </div>
-              ))}
-            </div>
+    <div className="container space-y-4">
+      {/**Page Section */}
+      <div className="space-y-4">
+        <BreadcrumbsComponent items={breadcrumbItems} />
+        <h1 className="page-title">Leave Status</h1>
+      </div>
+      {/**Table Section */}
+      <div className="max-h-[80vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
+        <Table bordered aria-label="List of Employees who have Completed EKYE">
+          <TableHeader>
+            <TableColumn>S.N</TableColumn>
+            <TableColumn>Request Date</TableColumn>
+            <TableColumn>Leave Type</TableColumn>
+            <TableColumn>Leave Start Date</TableColumn>
+            <TableColumn>Leave End Date</TableColumn>
+            <TableColumn>Days</TableColumn>
+            <TableColumn>Status</TableColumn>
+            <TableColumn>Team Leader</TableColumn>
+            <TableColumn>Approver</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {leaveData.map((data, index) => (
+              <TableRow key={data.rclId} className="h-14">
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                <TableCell>{data?.leaveType || "N/A"}</TableCell>
+                <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
+                <TableCell>{data?.Days || "N/A"}</TableCell>
+                <TableCell>
+                  <div
+                    className={`${
+                      data?.leaveStatus === "APPROVED"
+                        ? "bg-teal-100 border border-teal-600 text-teal-600"
+                        : data?.leaveStatus === "REJECTED"
+                        ? "bg-red-100 border border-red-600 text-red-600"
+                        : "bg-yellow-100 border border-yellow-500 text-yellow-500"
+                    } text-center p-2 rounded-md w-fit`}>
+                    {data?.leaveStatus || "N/A"}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-3 p-2 rounded-lg bg-white shadow-sm">
+                    <div
+                      className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
+                        data?.leaveStatus === "APPROVED"
+                          ? "bg-teal-100 text-teal-600"
+                          : data?.leaveStatus === "REJECTED"
+                          ? "bg-red-100 text-red-600"
+                          : "bg-yellow-100 text-yellow-500"
+                      }`}>
+                      {data?.teamLeaderName?.charAt(0) || "?"}
+                    </div>
+                    <div className="text-gray-800 font-medium">
+                      {data?.teamLeaderName || "N/A"}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div>
+                    <div>{data?.Approver || "N/A"}</div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+            {/* <Spacer /> */}
+          </TableBody>
+        </Table>
+      </div>
+      {/**Pagination Section */}
+      <div>
+        {" "}
+        <div className="flex mt-4 justify-between">
+          <div className="flex text-xs">
+            <span>Showing:</span>
+            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
+            <span>of</span>
+            <span>{eKyeData.length}</span>
           </div>
-        ))}
+          <Pagination
+            initialPage={1}
+            total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
+            onChange={handlePageChange}
+          />
+          <div className="flex justify-center items-center">
+            <span className="text-xs">Lines Per Page :</span>
+            <DropDownComp
+              items={dropdownItems}
+              onSelect={setEkyeDashboardDataPerPage}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

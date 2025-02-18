@@ -38,10 +38,15 @@ const EducationAction = ({ employeeData }) => {
   }, []);
 
   const onApprove = async () => {
+    const submitData = {
+      userId: 0,
+      status: "APPROVED",
+      remark: "Congrulations",
+    };
     try {
       const response = await axiosInstance.post(
         "/api/v1/approved/users",
-        {},
+        submitData,
         {
           headers: {
             "Content-Type": "application/json",
