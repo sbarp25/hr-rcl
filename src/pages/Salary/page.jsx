@@ -38,13 +38,14 @@ const SalaryDetails = () => {
     fetchDepartments();
   }, []);
   return (
-    <div className="max-h-[85vh] overflow-y-auto bg-white border-2 border-gray-300 p-2">
+    <div className="max-h-[95vh] overflow-y-auto bg-white border-2 border-gray-300 p-2">
       {/**Top Section With Salary Details  */}
       <div className="rounded-lg border-2 border-gray-300 gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 p-4">
         {SalaryD.map((item, index) => (
           <div
             key={index}
-            className={`text-text ${item.color} p-2 rounded-lg text-center`}>
+            className={`text-text ${item.color} p-2 rounded-lg text-center`}
+          >
             <div className="font-bold">{item.value}</div>
             <div>{item.key}</div>
           </div>
@@ -65,20 +66,31 @@ const SalaryDetails = () => {
         </div>
 
         <div className=" p-2 flex flex-col justify-between items-centerfont-bold">
-          <p>
-            Basic Salary<span>{salary?.basicSalary}</span>
+          <p className=" flex justify-between ">
+            Basic Salary
+            <span className="flex mr-80">
+              {/* {salary?.basicSalary} */}
+              NPR. 5000
+            </span>
+          </p>
+
+          <Divider className="my-4" />
+          <p className=" flex justify-between ">
+            Performance Incentive
+            {/* <span>{salary?.performanceIncentive}</span> */}
+            <span className="flex mr-80">NPR. 5000</span>
           </p>
           <Divider className="my-4" />
-          <p>
-            Performance Incentive<span>{salary?.performanceIncentive}</span>
+          <p className=" flex justify-between ">
+            Dearness Allowance
+            {/* <span>{salary?.dearnessAllowance}</span> */}
+            <span className="flex mr-80">NPR. 5000</span>
           </p>
           <Divider className="my-4" />
-          <p>
-            Dearness Allowance<span>{salary?.dearnessAllowance}</span>
-          </p>
-          <Divider className="my-4" />
-          <p>
-            Gross Salary<span>{salary?.grossSalary}</span>
+          <p className=" flex justify-between ">
+            Gross Salary
+            {/* <span>{salary?.grossSalary}</span> */}
+            <span className="flex mr-80 font-bold">NPR. 5000</span>
           </p>
         </div>
       </div>
@@ -92,45 +104,64 @@ const SalaryDetails = () => {
             </p>
           </div>
         </div>
-        <p className="text-green-300 lex items-center gap-2">
-          <span className="">Gross Salary</span>
-          <span>{salary?.grossSalary}</span>
+        <p className="flex justify-between text-green-300 lex items-center gap-2">
+          <span className="px-2 ">Gross Salary</span>
+          {/* <span>{salary?.grossSalary}</span> */}
+          <span className="flex mr-80">NPR. 5000</span>
+        </p>
+
+        <Divider className="my-4" />
+        <p className="flex justify-between text-green-300  items-center gap-2">
+          <span className=" px-2 flex  items-center gap-2">OverTime</span>
+          <span className="flex mr-80">NPR. 5000</span>
         </p>
         <Divider className="my-4" />
-        <p className="text-green-300 flex items-center gap-2">
-          <span className="flex  items-center gap-2">OverTime</span>
-        </p>
-        <Divider className="my-4" />
-        <p className="flex items-center gap-2">
-          <span className="flex text-green-300 items-center gap-2">
+        <p className="flex justify-between items-center gap-2 text-green-300">
+          <span className="  px-2 flex    items-center gap-2">
             Other Allowance
             <FaRegEye />
           </span>
+          <span className="flex mr-80">NPR. 5000</span>
         </p>
         <Divider className="my-4" />
-        <p>
-          <span className="text-red-500">Entertainment Fee</span>
-          <span>{salary?.entertainmentFee}</span>
+        <p className="flex justify-between items-center gap-2 text-red-500">
+          <span className="flex px-2     items-center gap-2">
+            Entertainment Fee
+          </span>
+          {/* <span>{salary?.entertainmentFee}</span> */}
+          <span className="flex mr-80">NPR. 5000</span>
         </p>
         <Divider className="my-4" />
-        <p className="flex items-center gap-2 text-red-500">
-          Advance
-          <FaRegEye />
-          <span>{salary?.advanceSalaryDeduction}</span>
+        <p className="flex  justify-between items-center gap-2 text-red-500">
+          <span className="flex  px-2   items-center gap-2">
+            Advance
+            <FaRegEye />
+          </span>
+
+          {/* <span>{salary?.advanceSalaryDeduction}</span> */}
+          <span className="flex mr-80">NPR. 5000</span>
         </p>
         <Divider className="my-4" />
-        <p className="flex items-center gap-2 text-red-500">
-          Tax <FaRegEye />
-          <span>{salary?.tax}</span>
+        <p className="flex justify-between items-center gap-2 text-red-500">
+          <span className="flex px-2    items-center gap-2">
+            Tax <FaRegEye />
+          </span>
+          {/* <span>{salary?.tax}</span> */}
+          <span className="flex mr-80">NPR. 5000</span>
         </p>
         <Divider className="my-4" />
-        <p className="flex items-center gap-2 text-red-500">
-          Leave <FaRegEye />
-          <span>{salary?.excessLeaveDeduction}</span>
+        <p className="flex justify-between items-center gap-2 text-red-500">
+          <span className="flex  px-2   items-center gap-2">
+            Leave <FaRegEye />
+          </span>
+          <span className="flex mr-80">NPR. 5000</span>
+          {/* <span>{salary?.excessLeaveDeduction}</span> */}
         </p>
         <Divider className="my-4" />
-        <p>
-          Net Salary<span>{salary?.netSalary}</span>
+        <p className="flex justify-between items-center gap-2">
+          <span className="px-2 ">Net Salary</span>
+          {/* <span>{salary?.netSalary}</span> */}
+          <span className="flex mr-80 font-bold">NPR. 5000</span>
         </p>
       </div>
     </div>

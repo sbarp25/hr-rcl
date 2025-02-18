@@ -190,7 +190,7 @@ const Ekye = () => {
           </div>
 
           <ValidationComponent>
-            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto">
+            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] overflow-x-auto border border-gray-500">
               {step === 0 && !isLoading && (
                 <PersonalDetails
                   handleNext={handleNext}
@@ -231,6 +231,24 @@ const Ekye = () => {
               )}
             </div>
           </ValidationComponent>
+        </div>
+        <div className="form-navigation flex justify-between mt-6">
+          {step > 0 && (
+            <Button
+              onPress={handleBack}
+              className="px-4 py-2 bg-gray-300 rounded">
+              Back
+            </Button>
+          )}
+          {step < 3 && (
+            <Button
+              onPress={() => {
+                handleNext();
+              }}
+              className="px-4 py-2 bg-bgprimary text-white rounded">
+              Next
+            </Button>
+          )}
         </div>
       </div>
     </>

@@ -20,6 +20,7 @@ import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import ButtonComponent from "../../ButtonComp";
 import { useForm } from "react-hook-form";
 import RejectComp from "../../RejectComp";
+import { FaCheck } from "react-icons/fa6";
 
 const EducationAction = ({ employeeData }) => {
   const { register, handleSubmit } = useForm();
@@ -68,7 +69,7 @@ const EducationAction = ({ employeeData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="relative flex flex-col bg-white mt-16 border-2 rounded-md shadow-lg p-8">
+      <div className="relative flex flex-col bg-white mt-16 border border-black rounded-md shadow-lg p-8">
         {/* Header Section */}
         <div className="absolute bg-black w-auto rounded-t-2xl -top-12   left-1 px-6 py-2">
           <h1 className="text-2xl font-bold text-white">Education Detail</h1>
@@ -123,7 +124,8 @@ const EducationAction = ({ employeeData }) => {
                     href={employeeData?.educationDetails?.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2">
+                    className="block text-sm text-green-600 underline mb-2"
+                  >
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Uploaded Certificate
@@ -144,57 +146,11 @@ const EducationAction = ({ employeeData }) => {
           </Button> */}
           <RejectComp employeeData={employeeData} />
           <Button className="bg-green-700 text-white" onPress={onApprove}>
+            <FaCheck />
             Approve
           </Button>
         </div>
         {/**Modal For Reject  */}
-        {/* <form onSubmit={handleSubmit(onReject)}>
-          <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            size="sm"
-            // placement="bottom"
-            //  backdrop="blur">
-            isDismissable={true}
-            isKeyboardDismissDisabled={false}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Rejecting the Ekye for
-                    <p>{employeeData?.personalDetails?.fullName || "N/A"}</p>
-                  </ModalHeader>
-
-                  <ModalBody>
-                    <Textarea
-                      placeholder="Comment :"
-                      rows={5}
-                      {...register("reject", {
-                        required: "Reject reason is required",
-                        maxLength: {
-                          value: 1000,
-                          message:
-                            "Reason to reject cannot exceed 1000 characters",
-                        },
-                      })}
-                    />
-                  </ModalBody>
-
-                  <ModalFooter>
-                    <ButtonComponent
-                      onPress={onClose}
-                      content="No"
-                      variant="light"
-                      color="danger"
-                    />
-                    <ButtonComponent onPress={onReject} content="Yes" />
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </form> */}
       </div>
     </>
   );
