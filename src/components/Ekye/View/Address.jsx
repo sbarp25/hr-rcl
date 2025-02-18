@@ -12,7 +12,7 @@ const EkyeAdreess = ({ employeeData }) => {
   return (
     <div className="bg-white rounded-lg h-[75vh]">
       <div className="flex flex-col items-center justify-center rounded-md space-y-3 ">
-        <div className="bg-white text-lg w-full p-6 rounded-xl">
+        <div className="bg-white text-lg w-full p-6 rounded-xl border border-gray-200 mx-5 ">
           <div className="flex justify-between items-center">
             <h1 className="py-2 text-left text-xl font-semibold font-Poppins flex underline underline-offset-4 decoration-red-500 px-6">
               <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />

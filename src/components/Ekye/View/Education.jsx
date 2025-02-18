@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { Button, Divider, Form } from "@nextui-org/react";
 import { FaDiamond, FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import RejectComp from "../../RejectComp";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../lib/axios-Instance";
+import { FaCheck } from "react-icons/fa6";
+
 const EkyeEducationDetails = ({ employeeData }) => {
+  const navigate = useNavigate();
   const [EducationDocument, setEducationDocument] = useState(false);
 
   const educationalDetail = employeeData?.educationalDetails?.[0];
@@ -12,6 +19,29 @@ const EkyeEducationDetails = ({ employeeData }) => {
       setEducationDocument(true);
     }
   }, []);
+  const onApprove = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/approved/users",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response?.data?.responseCode === "201") {
+        toast.success(response?.data?.message);
+        navigate("/AdminEkye");
+      } else {
+        toast.error(response?.data?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    }
+  };
   return (
     <div className="relative flex flex-col items-center bg-white h-[75vh] py-6 w-full mx-auto rounded-md ">
       <div className="bg-white  text-lg w-[85%]  shadow-md rounded-lg p-6 mt-2 ">
@@ -83,10 +113,12 @@ const EkyeEducationDetails = ({ employeeData }) => {
         </Form>
       </div>
 
-      {/* Buttons Section */}
-      <div className="absolute bottom-4   mt-6 flex justify-end w-[90%] px-8 mb-3">
-        <Button className="bg-red-700 text-white mx-2">Reject</Button>
-        <Button className="bg-green-700 text-white mx-2">Accept</Button>
+      <div className="mt-52 ml-[62vw] flex justify-end items-end gap-4">
+        <RejectComp employeeData={employeeData} />
+        <Button className="bg-green-700 text-white" onPress={onApprove}>
+          <FaCheck />
+          Approve
+        </Button>
       </div>
     </div>
   );

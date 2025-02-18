@@ -58,6 +58,7 @@ const RejectComp = ({ employeeData }) => {
     <div>
       {" "}
       <Button className="bg-red-700 text-white" onPress={onOpen}>
+        <RxCross1 />
         Reject
       </Button>
       <form onSubmit={handleSubmit(onReject)}>

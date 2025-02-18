@@ -20,6 +20,7 @@ import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import ButtonComponent from "../../ButtonComp";
 import { useForm } from "react-hook-form";
 import RejectComp from "../../RejectComp";
+import { FaCheck } from "react-icons/fa6";
 
 const EducationAction = ({ employeeData }) => {
   const { register, handleSubmit } = useForm();
@@ -140,6 +141,7 @@ const EducationAction = ({ employeeData }) => {
           </Button> */}
           <RejectComp employeeData={employeeData} />
           <Button className="bg-green-700 text-white" onPress={onApprove}>
+            <FaCheck />
             Approve
           </Button>
         </div>

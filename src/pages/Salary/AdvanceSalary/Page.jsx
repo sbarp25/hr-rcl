@@ -1,0 +1,81 @@
+import { Button, Input } from "@nextui-org/react";
+import React from "react";
+import InputComponent from "../../../components/InputComponent";
+import { Controller, useForm } from "react-hook-form";
+
+const AdvanceSalary = () => {
+  const {
+    register,
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({});
+  return (
+    <div className="bg-white h-full rounded-lg my-3 mx-3">
+      <form className="py-7 px-7 " action="">
+        <div className="flex flex-row justify-between text-center place-items-center gap-7  h-16 w-[75vw] py-5  ml-9">
+          <InputComponent
+            name="Description"
+            control={control}
+            variant="bordered"
+            label="Description"
+            rules={{
+              required: "Description is required",
+              pattern: {
+                value: /^[a-zA-Z0-9 ]{3,50}$/,
+                message: "Description must be 3-50 characters long.",
+              },
+            }}
+          />
+          <InputComponent
+            name="Year"
+            control={control}
+            variant="bordered"
+            label="Year"
+            rules={{
+              required: "Year is required",
+              pattern: {
+                value: /^\d{4}$/,
+                message: "Title must be 3-300 characters long.",
+              },
+            }}
+          />
+          <InputComponent
+            name="Month"
+            control={control}
+            variant="bordered"
+            label="Month"
+            rules={{
+              required: "Month is required",
+              pattern: {
+                value:
+                  /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\/(1[0-2]|[1-9])$/,
+                message: "Please Add Month ",
+              },
+            }}
+          />
+          <InputComponent
+            name="Add Amount"
+            control={control}
+            variant="bordered"
+            label="Add Amount"
+            rules={{
+              required: "Add Amount is required",
+              pattern: {
+                value: /^(100|[1-9]\d{2,5}|1000000)(\.\d{1,2})?$/,
+                message: "Add advance Salary Please ",
+              },
+            }}
+          />
+        </div>
+        <Button className="justify-start my-12 mx-10 py-6 px-10 text-lg border border-gray-300 font-semibold bg-blue-100">
+          Submit
+        </Button>
+      </form>
+    </div>
+  );
+};
+
+export default AdvanceSalary;

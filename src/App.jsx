@@ -29,6 +29,7 @@ import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
 import LocationComponent from "./components/LocationComponent.jsx";
 import SalaryDetails from "./pages/Salary/page.jsx";
 import SalaryEdit from "./pages/Salary/SalaryDetail/Page.jsx";
+import AdvanceSalary from "./pages/Salary/AdvanceSalary/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -80,6 +81,7 @@ function App() {
             <Route path="/View/:rclId" element={<View />} />
             <Route path="/Salary" element={<SalaryDetails />} />
             <Route path="/SalaryEdit" element={<SalaryEdit />} />
+            <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
           </Routes>
         </Layout>
       )}
