@@ -126,10 +126,10 @@ const Page = () => {
             </div>
           </div>
           <div className="flex justify-between">
-            <div className="bg-white mt-2 w-1/2 text-xl font-bold rounded-lg  ">
+            <div className="bg-white mt-2 w-[38vw] text-xl font-bold rounded-lg  ">
               <h3 className="mt-5 ml-5"> Work from Home</h3>
 
-              <div className="flex w-80 ml-64 ">
+              <div className="flex w-64 ml-64 ">
                 <p className="-mt-7">Search:</p>
 
                 <Input
@@ -142,7 +142,7 @@ const Page = () => {
 
               <WorkFromHome />
             </div>
-            <div className=" flex flex-col bg-white mt-2 pt-4 w-1/2 text-xl font-bold rounded-lg  ">
+            <div className=" flex flex-col bg-white mt-2 pt-4 w-[42vw] text-xl font-bold rounded-lg  ">
               <div className="flex justify-between items-center">
                 {/* Left aligned Leave text */}
                 <div className="flex w-fit ml-5">Leave</div>

@@ -86,14 +86,14 @@ const Leave = () => {
   return (
     <>
       <div>
-        <div className=" ml-1  ">
+        <div className="  ">
           <Table
             bordered
             isHeaderSticky
             aria-label="Dynamic Attendance Table"
-            className="max-h-[25vh] overflow-auto  max-w-[40vw]"
+            className="max-h-[25vh] overflow-auto  w-[42vw]"
           >
-            <TableHeader className="Capitalize  ">
+            <TableHeader className="Capitalize gap-4  ">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
               <TableColumn>Name</TableColumn>

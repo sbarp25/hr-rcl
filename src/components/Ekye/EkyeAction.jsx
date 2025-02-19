@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  ScrollShadow,
 } from "@nextui-org/react";
 
 import PersonalAction from "./Action/PersonalAction";
@@ -58,16 +59,19 @@ const EkyeAction = () => {
           if (!isModalOpen) {
             navigate("/AdminEkye"); // Navigate back when modal is closed
           }
-        }}>
+        }}
+      >
         <ModalContent>
           {() => (
             <>
               <ModalBody>
                 {/* Render child components */}
-                <PersonalAction employeeData={employeeData} />
-                <AddressAction employeeData={employeeData} />
-                <DocumentAction employeeData={employeeData} />
-                <EducationAction employeeData={employeeData} />
+                <ScrollShadow className="w-full h-[900px]" size={50}>
+                  <PersonalAction employeeData={employeeData} />
+                  <AddressAction employeeData={employeeData} />
+                  <DocumentAction employeeData={employeeData} />
+                  <EducationAction employeeData={employeeData} />
+                </ScrollShadow>
               </ModalBody>
               <ModalFooter></ModalFooter>
             </>
