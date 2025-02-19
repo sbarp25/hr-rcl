@@ -131,9 +131,10 @@ const Tabs = ({ activeTab, changeTab }) => (
         }}
         className={` cursor-pointer py-2 px-8 text-center w-40 font-semibold rounded-t-2xl border  transition-all duration-300 ${
           activeTab.name === tab.name
-            ? " bg-white border border-gray-300 shadow-md"
+            ? " bg-gray-50 border border-gray-300 "
             : "hover:border-gray-300 hover:bg-gray-100"
-        }`}>
+        }`}
+      >
         <span>{tab.name}</span>
       </li>
     ))}
@@ -180,7 +181,7 @@ const Page = () => {
   return (
     <div className="container">
       <BreadcrumbsComponent items={breadcrumbItems} />
-      <h1 className="page-title my-8 ml-6">EKYE</h1>
+      <h1 className="page-title my-3 ml-6">EKYE</h1>
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
       <Content activeTab={activeTab} employeeData={employeeData} />

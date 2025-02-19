@@ -66,7 +66,7 @@ const EkyeAction = () => {
             <>
               <ModalBody>
                 {/* Render child components */}
-                <ScrollShadow className="w-full h-[900px]" size={50}>
+                <ScrollShadow className="w-full h-[900px]" size={25}>
                   <PersonalAction employeeData={employeeData} />
                   <AddressAction employeeData={employeeData} />
                   <DocumentAction employeeData={employeeData} />

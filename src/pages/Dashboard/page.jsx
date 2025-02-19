@@ -163,7 +163,6 @@ const Page = () => {
                   </Button>
                 </div>
               </div>
-
               <Leave />
             </div>
           </div>

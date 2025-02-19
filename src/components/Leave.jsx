@@ -108,9 +108,7 @@ const Leave = () => {
                 <TableRow key={data.Sn}>
                   <TableCell>{data.Sn}</TableCell>
                   <TableCell>{data.RCLID}</TableCell>
-                  <TableCell title={data.Name}>
-                    {truncateText(data.Name, 7)}
-                  </TableCell>
+                  <TableCell>{data.Name}</TableCell>
                   <TableCell title={data.Email}>
                     {truncateText(data.Email, 7)}
                   </TableCell>

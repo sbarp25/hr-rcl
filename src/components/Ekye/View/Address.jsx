@@ -10,9 +10,9 @@ const EkyeAdreess = ({ employeeData }) => {
   const temporaryAddress =
     addresses.find((item) => item?.addressType === "TEMPORARY") || {};
   return (
-    <div className="bg-white rounded-lg h-[75vh] px-4 py-10">
+    <div className="bg-gray-50  max-h-[75vh] overflow-auto  rounded-lg  px-4 py-10">
       <div className="flex flex-col items-center justify-center rounded-md space-y-8 ">
-        <div className="bg-white text-lg w-full p-6 rounded-xl border border-gray-200 mx-5 ">
+        <div className="bg-white text-lg w-full p-6 rounded-xl shadow-md mx-5 ">
           <div className="flex justify-between items-center">
             <h1 className="py-2 text-left text-xl font-semibold font-Poppins flex underline underline-offset-4 decoration-red-500 px-6">
               <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
@@ -57,7 +57,7 @@ const EkyeAdreess = ({ employeeData }) => {
             </div>
           </Form>
         </div>
-        <div className="bg-white  text-lg w-full p-6 rounded-xl border border-gray-200">
+        <div className="bg-white  text-lg w-full p-6 rounded-xl shadow-md">
           <div className="flex justify-between items-center">
             <h1 className="py-2 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500 px-8">
               <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
