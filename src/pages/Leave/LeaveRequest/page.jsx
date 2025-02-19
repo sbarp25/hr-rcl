@@ -55,7 +55,7 @@ const LeaveRequest = () => {
   const TeamLeader = [
     { key: "john", label: "John Doe" },
     { key: "jane", label: "Jane Smith" },
-    { key: "alex", label: "Alex Johnson" },
+    { key: "Alex", label: "Alex Johnson" },
   ];
 
   const fromDate = watch("fromDate");
@@ -179,8 +179,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {LeaveType.map((leave) => (
                       <SelectItem key={leave.key} value={leave.key}>
                         {leave.label}
@@ -213,8 +212,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {TeamLeader.map((team) => (
                       <SelectItem key={team.key} value={team.key}>
                         {team.label}
@@ -290,8 +288,7 @@ const LeaveRequest = () => {
               render={({ field }) => (
                 <Checkbox
                   isSelected={field.value}
-                  onValueChange={field.onChange}
-                >
+                  onValueChange={field.onChange}>
                   Is Half Day?
                 </Checkbox>
               )}

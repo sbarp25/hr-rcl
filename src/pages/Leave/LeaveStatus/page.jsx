@@ -105,63 +105,63 @@ const LeaveStatus = () => {
                 <TableColumn>Approver</TableColumn>
               </TableHeader>
               <TableBody>
-                {leaveByIdData.map((data, index) => (
-                  <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
-                    <TableRow
-                      key={data.rclId}
-                      className="h-14 border-b-2 border-black">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveType || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
-                      <TableCell>{data?.Days || "N/A"}</TableCell>
-                      <TableCell>
+                {leaveData.map((data, index) => (
+                  // <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
+                  <TableRow
+                    key={data.rclId}
+                    className="h-14 border-b-2 border-gray-300">
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveType || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
+                    <TableCell>{data?.Days || "N/A"}</TableCell>
+                    <TableCell>
+                      <div
+                        className={`${
+                          data?.leaveStatus === "APPROVED"
+                            ? "bg-teal-100 border border-teal-600 text-teal-600"
+                            : data?.leaveStatus === "REJECTED"
+                            ? "bg-red-100 border border-red-600 text-red-600"
+                            : "bg-yellow-100 border border-yellow-500 text-yellow-500"
+                        } text-center p-2 rounded-md w-fit`}>
+                        {data?.leaveStatus || "N/A"}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3 p-2 rounded-lg">
                         <div
-                          className={`${
+                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
                             data?.leaveStatus === "APPROVED"
-                              ? "bg-teal-100 border border-teal-600 text-teal-600"
+                              ? "bg-teal-100 text-teal-600"
                               : data?.leaveStatus === "REJECTED"
-                              ? "bg-red-100 border border-red-600 text-red-600"
-                              : "bg-yellow-100 border border-yellow-500 text-yellow-500"
-                          } text-center p-2 rounded-md w-fit`}>
-                          {data?.leaveStatus || "N/A"}
+                              ? "bg-red-100 text-red-600"
+                              : "bg-yellow-100 text-yellow-500"
+                          }`}>
+                          {data?.teamLeaderName?.charAt(0) || "?"}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                              data?.leaveStatus === "APPROVED"
-                                ? "bg-teal-100 text-teal-600"
-                                : data?.leaveStatus === "REJECTED"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-yellow-100 text-yellow-500"
-                            }`}>
-                            {data?.teamLeaderName?.charAt(0) || "?"}
-                          </div>
-                          <div className="text-gray-800 font-medium">
-                            {data?.teamLeaderName || "N/A"}
-                          </div>
+                        <div className="text-gray-800 font-medium">
+                          {data?.teamLeaderName || "N/A"}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                              data?.leaveStatus === "APPROVED"
-                                ? "bg-teal-100 text-teal-600"
-                                : data?.leaveStatus === "REJECTED"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-yellow-100 text-yellow-500"
-                            }`}>
-                            {data?.Approver?.charAt(0) || "?"}
-                          </div>
-                          <div>{data?.Approver || "N/A"}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3 p-2 rounded-lg">
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
+                            data?.leaveStatus === "APPROVED"
+                              ? "bg-teal-100 text-teal-600"
+                              : data?.leaveStatus === "REJECTED"
+                              ? "bg-red-100 text-red-600"
+                              : "bg-yellow-100 text-yellow-500"
+                          }`}>
+                          {data?.Approver?.charAt(0) || "?"}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  </Link>
+                        <div>{data?.Approver || "N/A"}</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  // </Link>
                 ))}
                 {/* <Spacer /> */}
               </TableBody>

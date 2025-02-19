@@ -20,10 +20,15 @@ const EkyeEducationDetails = ({ employeeData }) => {
     }
   }, []);
   const onApprove = async () => {
+    const approve = {
+      userId: "44",
+      status: "APPROVED",
+      // remarks: "Congrulations",
+    };
     try {
       const response = await axiosInstance.post(
         "/api/v1/approved/users",
-        {},
+        approve,
         {
           headers: {
             "Content-Type": "application/json",
@@ -98,8 +103,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   href={employeeData?.educationDetails?.documentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-600 underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Certificate

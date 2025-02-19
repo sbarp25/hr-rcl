@@ -133,8 +133,7 @@ const Tabs = ({ activeTab, changeTab }) => (
           activeTab.name === tab.name
             ? "active bg-white border-gray-400 shadow-md"
             : "hover:border-gray-300 hover:bg-gray-100"
-        }`}
-      >
+        }`}>
         <span>{tab.name}</span>
       </li>
     ))}
@@ -159,7 +158,7 @@ const Page = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250441143100002`
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250481618100001`
         );
         if (response.data.responseCode === "200") {
           setEmployeeData(response.data.data);
