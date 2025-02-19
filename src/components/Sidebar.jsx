@@ -22,7 +22,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
 
   const truncateText = (text, maxLength) =>
-    text.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
@@ -63,6 +63,7 @@ const Sidebar = () => {
       children: [
         { label: "Leave Status", to: "/Leave/Status" },
         { label: "Leave Request", to: "/Leave/Request" },
+        { label: "Leave Approver", to: "/Leave/apprej" },
       ],
     },
     {

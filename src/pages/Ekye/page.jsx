@@ -128,10 +128,10 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className=" h-screen bg-gray-200 pb-6">
-        <div className="page-title justify-center">
-          <IoIosPeople className="text-4xl" />
-          <p className="mt-1">Perform EKYE</p>
+      <div className=" h-screen bg-gray-200 pb-6 space-y-6">
+        <div className="page-title justify-center items-center p-6">
+          <IoIosPeople className="text-3xl" />
+          <p className="">Perform EKYE</p>
         </div>
         <div>
           <div className="rounded-md p-2 relative">
@@ -148,8 +148,7 @@ const Ekye = () => {
                     key={label}
                     className={`flex-1 flex flex-col items-center relative cursor-pointer ${
                       step >= stepIndex ? "text-white" : "text-bgprimaryhover"
-                    }`}
-                  >
+                    }`}>
                     {/* Step Container */}
                     <div className="relative flex items-center">
                       {/* Step Image */}
@@ -177,8 +176,7 @@ const Ekye = () => {
                           style={{
                             left: "90%", // Start from the end of the current step
                             width: "800%", // Start from the end of the current step
-                          }}
-                        ></div>
+                          }}></div>
                       )}
                     </div>
                     {/* Label */}
@@ -238,8 +236,7 @@ const Ekye = () => {
           {step > 0 && (
             <Button
               onPress={handleBack}
-              className="px-4 py-2 bg-gray-300 rounded"
-            >
+              className="px-4 py-2 bg-gray-300 rounded">
               Back
             </Button>
           )}
@@ -248,8 +245,7 @@ const Ekye = () => {
               onPress={() => {
                 handleNext();
               }}
-              className="px-4 py-2 bg-bgprimary text-white rounded"
-            >
+              className="px-4 py-2 bg-bgprimary text-white rounded">
               Next
             </Button>
           )}

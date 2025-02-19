@@ -20,9 +20,8 @@ const Position = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingPositionId, setEditingPositionId] = useState(null);
 
-  {
-    /**Start of Get API for Getting the Positions */
-  }
+  /**Start of Get API for Getting the Positions */
+
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
@@ -47,13 +46,10 @@ const Position = () => {
 
     fetchPositions();
   }, []);
-  {
-    /**End of Get API for Getting the Positions */
-  }
+  /**End of Get API for Getting the Positions */
 
-  {
-    /** start of API calls to Add Position */
-  }
+  /** start of API calls to Add Position */
+
   const handleAddPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -89,13 +85,7 @@ const Position = () => {
     }
   };
 
-  {
-    /** end of API calls to Add Position */
-  }
-
-  {
-    /**Start Of handleActions*/
-  }
+  /**Start Of handleActions*/
   const handleAction = async (action, position) => {
     switch (action) {
       // Start Of Edit Operation
@@ -104,9 +94,8 @@ const Position = () => {
         setShowEditForm(true);
         setPositionName(position.name || "");
         setDescription(position.description || "");
-        setEditingPositionId(position.id); // New state for tracking the position being edited
+        setEditingPositionId(position.id);
         break;
-      // End Of Edit Operation
 
       // Start Of Delete Operation
       case "delete":
