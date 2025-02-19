@@ -129,9 +129,9 @@ const Tabs = ({ activeTab, changeTab }) => (
           e.preventDefault();
           changeTab(tab);
         }}
-        className={` cursor-pointer py-2 px-8 text-center w-40 font-semibold rounded-t-2xl border border-transparent transition-all duration-300 ${
+        className={` cursor-pointer py-2 px-8 text-center w-40 font-semibold rounded-t-2xl border  transition-all duration-300 ${
           activeTab.name === tab.name
-            ? "active bg-white border-gray-400 shadow-md"
+            ? " bg-white border border-gray-300 shadow-md"
             : "hover:border-gray-300 hover:bg-gray-100"
         }`}>
         <span>{tab.name}</span>
@@ -144,7 +144,6 @@ const Content = ({ activeTab, employeeData }) => {
   const ActiveComponent = activeTab.component;
   return (
     <section className={`panel ${activeTab.panelClass}`}>
-      {/* <h2 className="panel-heading">{activeTab.name}</h2> */}
       <ActiveComponent employeeData={employeeData} />
     </section>
   );
@@ -158,7 +157,7 @@ const Page = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250491542100001`
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
         );
         if (response.data.responseCode === "200") {
           setEmployeeData(response.data.data);
@@ -175,19 +174,16 @@ const Page = () => {
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "AdminEKYE", href: "/AdminEkye" },
-    { label: "Personal", href: "/AddEmployees" },
+    { label: activeTab.name, href: "" },
   ];
 
   return (
-    <div>
+    <div className="container">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <h1 className="page-title my-8 ml-6">EKYE</h1>
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
-      {employeeData ? (
-        <Content activeTab={activeTab} employeeData={employeeData} />
-      ) : (
-        <p>Loading...</p>
-      )}
+
+      <Content activeTab={activeTab} employeeData={employeeData} />
     </div>
   );
 };

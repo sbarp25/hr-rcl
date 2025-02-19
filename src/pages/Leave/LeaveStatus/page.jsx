@@ -15,6 +15,7 @@ import DropDownComp from "../../../components/Dropdown";
 import Loader from "../../../components/Loader";
 import LeaveApprove from "../LeaveApprove/Page";
 import { Link } from "react-router-dom";
+import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const LeaveStatus = () => {
   const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
@@ -27,7 +28,7 @@ const LeaveStatus = () => {
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
-    { label: "Leave", href: "" },
+    // { label: "Leave", href: "" },
     { label: "Leave Status", href: "/Leave/Status" },
   ];
 
@@ -82,7 +83,6 @@ const LeaveStatus = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
       <div className="container space-y-4">
         {/**Page Section */}
         <div className="space-y-4">
@@ -104,7 +104,10 @@ const LeaveStatus = () => {
                 <TableColumn>Team Leader</TableColumn>
                 <TableColumn>Approver</TableColumn>
               </TableHeader>
-              <TableBody>
+              <TableBody
+                items={isLoading ? [] : leaveData}
+                isLoading={isLoading}
+                loadingContent={<SkeletonLoader />}>
                 {leaveData.map((data, index) => (
                   // <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
                   <TableRow
