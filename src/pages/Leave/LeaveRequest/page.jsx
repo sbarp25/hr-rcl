@@ -5,7 +5,7 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import InputComponent from "../../../components/InputComponent";
@@ -40,7 +40,6 @@ const LeaveRequest = () => {
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
-    { label: "Leave", href: "" },
     { label: "Leave Request", href: "/Leave/Request" },
   ];
 
@@ -55,7 +54,7 @@ const LeaveRequest = () => {
   const TeamLeader = [
     { key: "john", label: "John Doe" },
     { key: "jane", label: "Jane Smith" },
-    { key: "alex", label: "Alex Johnson" },
+    { key: "Alex", label: "Alex Johnson" },
   ];
 
   const fromDate = watch("fromDate");
@@ -114,12 +113,35 @@ const LeaveRequest = () => {
       setIsLoading(false);
     }
   };
+  /**Width checking resizing the rows according to the screen size*/
+  /**To check The screen width */
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
+  const getMaxRows = () => {
+    if (screenWidth >= 1536) return 14; // 2xl
+    if (screenWidth >= 1280) return 12; // xl
+    if (screenWidth >= 1024) return 10; // lg
+    if (screenWidth >= 768) return 8; // md
+    return 6; // default for smaller screens
+  };
+
+  const getRows = () => {
+    if (screenWidth >= 1536) return 12; // 2xl
+    if (screenWidth >= 1280) return 10; // xl
+    if (screenWidth >= 1024) return 8; // lg
+    if (screenWidth >= 768) return 6; // md
+    return 4; // default for smaller screens
+  };
   return (
-    <div className="container flex flex-col space-y-4">
+    <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="page-title -pl-2">Leave Request</div>
-      <div className="bg-white p-4 rounded-xl">
+      <div className="bg-white p-4 rounded-xl h-[85vh] border-2 border-gray-300 ">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
           {/* Leave Title */}
           <div>
@@ -141,6 +163,8 @@ const LeaveRequest = () => {
           {/* Reason for Leave */}
           <div>
             <Textarea
+              minRows={getRows()}
+              maxRows={getMaxRows()}
               className={` rounded-xl ${
                 errors.description ? "border-2 border-red-500" : ""
               }`}
@@ -179,8 +203,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {LeaveType.map((leave) => (
                       <SelectItem key={leave.key} value={leave.key}>
                         {leave.label}
@@ -213,8 +236,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {TeamLeader.map((team) => (
                       <SelectItem key={team.key} value={team.key}>
                         {team.label}
@@ -290,8 +312,7 @@ const LeaveRequest = () => {
               render={({ field }) => (
                 <Checkbox
                   isSelected={field.value}
-                  onValueChange={field.onChange}
-                >
+                  onValueChange={field.onChange}>
                   Is Half Day?
                 </Checkbox>
               )}

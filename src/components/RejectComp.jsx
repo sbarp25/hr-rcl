@@ -22,12 +22,16 @@ const RejectComp = ({ employeeData }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const onReject = async (data) => {
     const rejectData = {
-      rejection: data.reject,
+      userId: 45,
+      status: "REJECTED",
+      remark: "You shall not pass",
     };
 
     try {
+      setIsLoading(true);
       const accessToken = localStorage.getItem("accessToken");
       const response = await axiosInstance.post(
         "/api/v1/rejected/users",
@@ -47,7 +51,8 @@ const RejectComp = ({ employeeData }) => {
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.error || "Something went wrong";
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -69,8 +74,7 @@ const RejectComp = ({ employeeData }) => {
           // placement="bottom"
           //  backdrop="blur">
           isDismissable={true}
-          isKeyboardDismissDisabled={false}
-        >
+          isKeyboardDismissDisabled={false}>
           <ModalContent>
             {(onClose) => (
               <>
