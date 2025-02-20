@@ -7,7 +7,10 @@ import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, Input } from "@nextui-org/react";
+import { Button, Form, Input, Spinner } from "@nextui-org/react";
+import ButtonComponent from "../../components/ButtonComp";
+import InputComponent from "../../components/InputComponent";
+import LocationComponent from "../../components/LocationComponent";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +21,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm();
 
@@ -63,7 +67,9 @@ const Login = () => {
           navigate("/EKYE");
         }
       } else {
-        toast.error(response?.data?.data?.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage;
+        toast.error(errorMessage || "Log In Failed");
       }
     } catch (error) {
       toast.error("Login failed. Try again.");
@@ -75,7 +81,8 @@ const Login = () => {
 
   return (
     <>
-      {isLoading && <Loader message="Logging in, please wait..." />}
+      <LocationComponent />
+      {/* {isLoading && <Loader message="Logging in, please wait..." />} */}
       <div className="pt-10  bg-gray-200 h-screen">
         <div className=" container grid grid-cols-2  h-[90vh]">
           {/* <div className="grid grid-cols-2 shadow-2xl shadow-gray-400 h-screen"> */}
@@ -90,17 +97,70 @@ const Login = () => {
             </div>
           </div>
           <div className="px-16 pt-64 bg-white rounded-r-2xl">
-            <Form
+            <form
+              onSubmit={handleSubmit(handleLogin)}
+              className="flex flex-col gap-6 w-full">
+              <p className="text-lg sm:text-xl font-semibold text-center">
+                Log in
+              </p>
+              <InputComponent
+                name="email"
+                control={control}
+                variant="bordered"
+                label="Email"
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Enter a valid email address",
+                  },
+                }}
+              />
+              <InputComponent
+                name="password"
+                control={control}
+                label="Password"
+                variant="bordered"
+                type="password"
+                rules={{
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                }}
+              />
+              <div className="flex items-center justify-between w-full">
+                <ButtonComponent
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white rounded-md py-2 shadow-lg transition duration-300"
+                  disabled={isLoading}
+                  content={
+                    <>
+                      <span>Log In</span>
+                      {isLoading && <Spinner size="sm" color="danger" />}
+                    </>
+                  }
+                />
+              </div>
+              <a href="/" className="text-sm text-blue-500 text-center">
+                Forgot Password?
+              </a>
+            </form>
+            {/* <Form
               onSubmit={handleSubmit(handleLogin)}
               className="flex flex-col gap-y-8 justify-center items-center">
               <p className="text-xl font-semibold">Log in</p>
               <div className="w-full relative">
-                <label htmlFor="email">Email Address:</label>
                 <div className="relative flex items-center">
                   <Input
                     id="email"
                     type="text"
-                    className="w-full bg-gray-200 rounded-lg h-11 shadow-lg shadow-gray-300"
+                    variant="bordered"
+                    label="Email"
+                    className={`w-full  rounded-xl shadow-lg shadow-gray-300 ${
+                      errors.email ? "border-2 border-red-500" : ""
+                    }`}
                     {...register("email", {
                       required: "Email is required",
                       pattern: {
@@ -119,12 +179,14 @@ const Login = () => {
                 )}
               </div>
               <div className="w-full">
-                <label htmlFor="password">Password:</label>
                 <div className="relative flex items-center">
                   <Input
                     id="password"
+                    label="Password"
                     type={showPassword ? "password" : "text"}
-                    className="w-full bg-gray-200 rounded-lg h-11 shadow-lg shadow-gray-300"
+                    className={`w-full bg-gray-200 rounded-xl h-11 shadow-lg shadow-gray-300 ${
+                      errors.password ? "border-2 border-red-500" : ""
+                    }`}
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
@@ -148,16 +210,18 @@ const Login = () => {
                 )}
               </div>
 
-              <button
+              <Button
+                isDisabled={isLoading}
                 type="submit"
                 className="w-full bg-bgprimary text-white px-5 py-2 rounded-md h-11 shadow-lg shadow-gray-300">
-                Log In
-              </button>
+                <span>Log In</span>
+                {isLoading && <Spinner size="sm" color="danger" />}
+              </Button>
 
               <a href="/forgotpassword" className="text-sm text-blue-500">
                 Forgot Password?
               </a>
-            </Form>
+            </Form> */}
           </div>
         </div>
       </div>

@@ -3,54 +3,53 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
-
 import {
   Button,
-  Input,
-  Pagination,
-  Spacer,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
+  Pagination,
 } from "@nextui-org/react";
-import ValidationComponent from "../../components/ValidationComponent";
-import { BsFilter } from "react-icons/bs";
-import { AiOutlineUserAdd } from "react-icons/ai";
-import DropDownComp from "../../components/Dropdown";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import Loader from "../../components/Loader";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
-import Loader from "../../components/Loader";
+import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [employeesData, setEmployeesData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalEmployees, setTotalEmployees] = useState(0);
   const employeesPerPage = 10;
-  const TotalEmployee = 30;
-  const startIndex = (currentPage - 1) * employeesPerPage;
-  const endIndex = startIndex + employeesPerPage;
-  const paginatedEmployees = employeesData.slice(startIndex, endIndex);
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
   ];
 
-  const dropdownItems = [10, 20, 30, 50, 100];
-
   useEffect(() => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post("/api/v1/auth/get/all", {});
+        const response = await axiosInstance.post("/api/v1/auth/get/all", {
+          pageIndex: currentPage - 1, // API uses zero-based index
+          pageSize: employeesPerPage,
+          searchCriteria: {},
+          filterCriteria: {},
+          sortCriteria: {},
+          sortOrder: "asc",
+          searchFields: [],
+          logicalOperator: "AND",
+        });
+
         if (response.data.responseCode === "200") {
-          setEmployeesData(response.data.datalist);
-          toast.success(response.data.message);
+          setEmployeesData(response.data.dataList || []);
+          setTotalEmployees(response.data.totalRecords || 0);
         } else {
           toast.error(response.data.message);
         }
@@ -63,7 +62,7 @@ const Employees = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [currentPage]);
 
   const handleAction = async (action, employeeId) => {
     switch (action) {
@@ -91,6 +90,7 @@ const Employees = () => {
         console.log("Unknown action");
     }
   };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -99,6 +99,7 @@ const Employees = () => {
     <>
       {isLoading && <Loader message="Loading employees..." />}
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
+        {/* Breadcrumbs and Header */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
@@ -114,7 +115,7 @@ const Employees = () => {
                 <Filter />
               </div>
               <a
-                className="flex gap-2  items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
+                className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
                 href="/AddEmployees">
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
@@ -122,9 +123,11 @@ const Employees = () => {
             </div>
           </div>
         </div>
-        <div className=" shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
-          <Table bordered aria-label="List of Employees" className="">
-            <TableHeader className="Capitalize">
+
+        {/* Employee Table */}
+        <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+          <Table bordered aria-label="List of Employees">
+            <TableHeader>
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
               <TableColumn>Name</TableColumn>
@@ -134,59 +137,49 @@ const Employees = () => {
               <TableColumn>Action</TableColumn>
             </TableHeader>
             <TableBody>
-              {paginatedEmployees.map((employee, index) => (
-                <>
-                  <Spacer x={4} />
-                  <TableRow key={employee.employeeId}>
-                    <TableCell>{startIndex + index + 1}</TableCell>
-                    <TableCell>{employee.rclId}</TableCell>
-                    <TableCell>{employee.fullName}</TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>{employee.departmentName}</TableCell>
-                    <TableCell>{employee.postionName}</TableCell>
-                    <TableCell>
-                      {employee.Action}
-                      <div className="flex justify-center gap-4">
-                        <HiPencilSquare
-                          className="text-green-500 cursor-pointer hover:text-green-700"
-                          title="Edit"
-                          onClick={() => handleAction("edit", employee.id)}
-                        />
-                        <MdDelete
-                          className="text-red-500 cursor-pointer hover:text-red-700"
-                          title="Delete"
-                          onClick={() => handleAction("delete", employee.id)}
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                  <Spacer x={4} />
-                </>
+              {employeesData.map((employee, index) => (
+                <TableRow key={employee.employeeId}>
+                  <TableCell>
+                    {(currentPage - 1) * employeesPerPage + index + 1}
+                  </TableCell>
+                  <TableCell>{employee.rclId}</TableCell>
+                  <TableCell>{employee.fullName}</TableCell>
+                  <TableCell>{employee.email}</TableCell>
+                  <TableCell>{employee.departmentName}</TableCell>
+                  <TableCell>{employee.positionName}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-center gap-4">
+                      <HiPencilSquare
+                        className="text-green-500 cursor-pointer hover:text-green-700"
+                        title="Edit"
+                        onClick={() => handleAction("edit", employee.id)}
+                      />
+                      <MdDelete
+                        className="text-red-500 cursor-pointer hover:text-red-700"
+                        title="Delete"
+                        onClick={() => handleAction("delete", employee.id)}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
 
+        {/* Pagination */}
         <div className="mt-4 flex justify-between">
-          <div className="flex text-xs">
-            <span>Showing:</span>
-            <div className="flex justify-between gap-x-1">
-              <span className="font-bold">{employeesPerPage}</span>
-              <span>of</span>
-              <span>{TotalEmployee}</span>
-            </div>
+          <div className="text-xs">
+            <span>
+              Showing {employeesPerPage} of {totalEmployees}
+            </span>
           </div>
           <Pagination
+            total={Math.ceil(totalEmployees / employeesPerPage)}
             initialPage={1}
-            total={Math.ceil(employeesData.length / employeesPerPage)}
+            page={currentPage}
             onChange={handlePageChange}
           />
-          <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
-            <div>
-              <DropDownComp items={dropdownItems} />
-            </div>
-          </div>
         </div>
       </div>
     </>
@@ -194,14 +187,3 @@ const Employees = () => {
 };
 
 export default Employees;
-{
-  /* <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-<div className="flex flex-col space-y-4">
-  
- 
-</div>
-<div className="">
-  
-</div>
-</div> */
-}

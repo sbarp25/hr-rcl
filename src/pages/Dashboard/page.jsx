@@ -5,24 +5,35 @@ import { Button } from "@nextui-org/react";
 import WorkFromHome from "../../components/WorkFromHome.jsx";
 import Leave from "../../components/Leave.jsx";
 import { MdRadioButtonChecked } from "react-icons/md";
-import { iframe } from "framer-motion/client";
 import axiosInstance from "../../lib/axios-Instance.js";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { toast } from "react-toastify";
+import { getIpAddress } from "../../utils/getIpAddress.js";
 const Page = () => {
-  const [ischeckedin, setIscheckedin] = useState();
+  const [ischeckedin, setIscheckedin] = useState("");
 
+  const latitude = LocalStorageUtil.getItem("latitude");
+  const longitude = LocalStorageUtil.getItem("longitude");
+  // const latitude = localStorage.getItem("latitude");
+  // const longitude = localStorage.getItem("longitude");
+
+  const isStudent = LocalStorageUtil.getItem("isStudent");
   const handleCheckin = async () => {
+    const ipAddress = await getIpAddress();
     if (ischeckedin) {
       const requestData = {
         data: {
-          requestLat: 27.675581079412435,
-          requestLong: 85.31389434151733,
+          requestLat: latitude,
+          requestLong: longitude,
           requestDevice: "Mobile",
           checkInType: "office",
-          requestIp: "192.168.1.1",
+          // requestIp: "192.168.1.1",
+          requestIp: ipAddress,
+          // isStudent: isStudent,
           isStudent: false,
         },
       };
+      console.log("RequestData for checkin", requestData);
       try {
         const response = await axiosInstance.post(
           "/api/attendance/check_in",
@@ -35,21 +46,22 @@ const Page = () => {
         );
         if (response.data.responseCode === "200") {
           toast.success(response?.data?.message);
-          setIscheckedin(true);
-          localStorage.setItems("ischecked", ischeckedin);
+          setIscheckedin(false);
         } else {
-          toast.error(response?.data?.message);
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage;
+          toast.error(errorMessage || "Check In Failed");
         }
       } catch (error) {
-        console.error("error during Check-In", error);
-        toast.error("Check-In Failed");
+        const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
+        toast.error(errorMessage || "Check In Failed");
       }
     } else {
       const requestData = {
         data: {
-          requestLat: 27.675449,
-          requestLong: 85.313975,
-          requestIp: "requestIp_0c180fe165c6",
+          requestLat: latitude,
+          requestLong: longitude,
+          requestIp: ipAddress,
         },
       };
       try {
@@ -62,22 +74,19 @@ const Page = () => {
             },
           }
         );
-        if (response.data.responseCode === "200") {
+        if (response?.data?.responseCode === "200") {
           toast.success("checked out successfully!");
+          setIscheckedin(true);
         } else {
-          toast.error(response.data.message);
+          const error = response?.data?.error?.errorList?.[0]?.errorMessage;
+          toast.error(error || "CheckOut Failed");
         }
       } catch (error) {
         console.error("error during checkOut", error);
         toast.error("checkOut Failed");
       }
     }
-
-    setIscheckedin(!ischeckedin);
   };
-
-  // requestlat:"27.675449"
-  // requestlong:" 85.313975"
   const username = localStorage.getItem("fullName");
 
   return (
@@ -91,8 +100,7 @@ const Page = () => {
           )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal"
-          >
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal">
             {ischeckedin ? (
               <>
                 <span className="text-white font-Poppins text-xl">
@@ -151,14 +159,12 @@ const Page = () => {
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
-                  >
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg">
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg"
-                  >
+                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg">
                     Upcoming Leave
                   </Button>
                 </div>

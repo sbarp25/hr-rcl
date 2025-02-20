@@ -28,15 +28,15 @@ const Page = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [filters, setFilters] = useState({ department: "", position: "" });
   const [eKyeData, setEkyeData] = useState([]);
 
-  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
-  const endIndex = startIndex + ekyeDashboardDataPerPage;
-  const paginatedEkye = eKyeData.length
-    ? eKyeData.slice(startIndex, endIndex)
-    : [];
+  const totalPages = Math.ceil(eKyeData.length / itemsPerPage);
+  const paginatedData = eKyeData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -45,16 +45,11 @@ const Page = () => {
   };
 
   const handleChange = (action, rclId) => {
-    switch (action) {
-      case "view":
-        navigate(`/View/${rclId}`);
-        break;
-      case "action":
-        navigate(`/EkyeAction/${rclId}`);
-        break;
-      default:
-        console.log("Invalid action");
-    }
+    const routes = {
+      view: `/View/${rclId}`,
+      action: `/EkyeAction/${rclId}`,
+    };
+    navigate(routes[action] || "/");
   };
 
   const handleApplySearch = (searchData) => {
@@ -71,7 +66,7 @@ const Page = () => {
             departmentName: filters.department || "",
             positionName: filters.position || "",
           },
-          signal, // Aborts previous request if a new one is made
+          signal,
         }
       );
 
@@ -94,7 +89,7 @@ const Page = () => {
   useEffect(() => {
     const controller = new AbortController();
     fetchData(controller.signal);
-    return () => controller.abort(); // Cleanup function to cancel the request on unmount
+    return () => controller.abort();
   }, [filters]);
 
   return (
@@ -104,7 +99,6 @@ const Page = () => {
           <BreadcrumbsComponent items={breadcrumbItems} />
           <h1 className="page-title">EKYE</h1>
         </div>
-
         <div className="flex items-center space-x-4">
           <Search onApplySearch={handleApplySearch} />
           <Filter onApplyFilters={setFilters} />
@@ -126,19 +120,23 @@ const Page = () => {
               <TableColumn>Action</TableColumn>
             </TableHeader>
             <TableBody
-              items={isLoading ? [] : paginatedEkye}
+              items={isLoading ? [] : paginatedData}
               isLoading={isLoading}
               loadingContent={<SkeletonLoader />}>
-              {paginatedEkye.map((data, index) => (
-                <TableRow key={data.rclId} className="h-14">
-                  <TableCell>{startIndex + index + 1}</TableCell>
+              {paginatedData.map((data, index) => (
+                <TableRow
+                  key={data.rclId}
+                  className="h-20 border-b-2 border-gray-300">
+                  <TableCell>
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>
                   <TableCell>{data.email}</TableCell>
                   <TableCell>{data.departmentName}</TableCell>
                   <TableCell>{data.positionName}</TableCell>
                   <TableCell>
-                    <div className="flex justify-start gap-4">
+                    <div className="flex gap-4">
                       <GrView
                         className="text-green-500 cursor-pointer hover:text-green-700"
                         title="View"
@@ -158,23 +156,18 @@ const Page = () => {
         </div>
 
         <div className="flex mt-4 justify-between">
-          <div className="flex text-xs">
-            <span>Showing:</span>
-            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
-            <span>of</span>
-            <span>{eKyeData.length}</span>
+          <div className="text-xs">
+            Showing: <strong>{itemsPerPage}</strong> of{" "}
+            <strong>{eKyeData.length}</strong>
           </div>
           <Pagination
-            initialPage={1}
-            total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
+            total={totalPages}
+            page={currentPage}
             onChange={handlePageChange}
           />
-          <div className="flex justify-center items-center">
+          <div className="flex items-center">
             <span className="text-xs">Lines Per Page :</span>
-            <DropDownComp
-              items={dropdownItems}
-              onSelect={setEkyeDashboardDataPerPage}
-            />
+            <DropDownComp items={dropdownItems} onSelect={setItemsPerPage} />
           </div>
         </div>
       </div>

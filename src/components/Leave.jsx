@@ -91,8 +91,7 @@ const Leave = () => {
             bordered
             isHeaderSticky
             aria-label="Dynamic Attendance Table"
-            className="max-h-[25vh] overflow-auto  max-w-[40vw]"
-          >
+            className="max-h-[25vh] overflow-auto  max-w-[40vw]">
             <TableHeader className="Capitalize  ">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
