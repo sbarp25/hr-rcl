@@ -1,6 +1,6 @@
 import { Divider, Form } from "@nextui-org/react";
-import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import UnderlineComponent from "../../underlinecomponent";
 const PersonalAction = ({ employeeData }) => {
   return (
     <div className=" relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg px-8  ">
@@ -14,9 +14,11 @@ const PersonalAction = ({ employeeData }) => {
       {/* Form Section */}
       <Form className=" grid grid-cols-1 gap-12">
         <div className="bg-white text-lg p-6 rounded-lg">
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Personal Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Personal Information Details
+              <UnderlineComponent />
+            </span>
           </h1>
           {/* Column 1 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24">
@@ -76,10 +78,13 @@ const PersonalAction = ({ employeeData }) => {
           <Divider className="mt-4 mb-2" />
 
           {/* Column 4 */}
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Guardian Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Guardian Details
+              <UnderlineComponent />
+            </span>
           </h1>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24">
             <EkyeDetailsComponent
               label="Guardian Name"
@@ -98,10 +103,13 @@ const PersonalAction = ({ employeeData }) => {
           </div>
           <Divider className="mt-6 mb-6" />
           {/* Column 5 */}
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Emergency Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Emergency Details
+              <UnderlineComponent />
+            </span>
           </h1>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24">
             <EkyeDetailsComponent
               label="Emergency Relationship"

@@ -1,6 +1,7 @@
 import { Divider, Form } from "@nextui-org/react";
 import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import UnderlineComponent from "../../underlinecomponent";
 
 const EkyeAdreess = ({ employeeData }) => {
   const addresses = employeeData?.addresses || [];
@@ -14,10 +15,13 @@ const EkyeAdreess = ({ employeeData }) => {
       <div className="flex flex-col items-center justify-center rounded-md space-y-8 ">
         <div className="bg-white text-lg w-full p-6 rounded-xl shadow-md mx-5 ">
           <div className="flex justify-between items-center">
-            <h1 className="py-2 text-left text-xl font-semibold font-Poppins flex underline underline-offset-4 decoration-red-500 px-6">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-              Permanent Address Details
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Permanent Address Details
+                <UnderlineComponent />
+              </span>
             </h1>
+
             <div className="flex gap-1 items-end justify-end text-right">
               <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
               <div className="flex w-2 h-2 rounded-full bg-black"></div>
@@ -59,10 +63,13 @@ const EkyeAdreess = ({ employeeData }) => {
         </div>
         <div className="bg-white  text-lg w-full p-6 rounded-xl shadow-md">
           <div className="flex justify-between items-center">
-            <h1 className="py-2 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500 px-8">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-              Temporary Address Details
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Temporary Address Details
+                <UnderlineComponent />
+              </span>
             </h1>
+
             <div className="flex justify-center items-center gap-4">
               <div className="flex gap-1 items-end justify-end text-right">
                 <div className="flex w-2 h-2 rounded-full bg-red-400"></div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Divider, Form } from "@nextui-org/react";
 import { FaDiamond, FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import UnderlineComponent from "../../underlinecomponent";
 
 const EkyeDocumentDetail = ({ employeeData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -27,10 +28,13 @@ const EkyeDocumentDetail = ({ employeeData }) => {
         <div className="bg-white text-lg p-6 shadow-md rounded-lg">
           {/**Header Component */}
           <div className="flex justify-between items-center">
-            <h1 className="text-lg font-semibold mb-4 text-left flex underline underline-offset-4 decoration-red-500">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-              Citizenship Details
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Citizenship Details
+                <UnderlineComponent />
+              </span>
             </h1>
+
             <div className="flex gap-1 items-end justify-end text-right">
               <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
               <div className="flex w-2 h-2 rounded-full bg-black"></div>
@@ -70,8 +74,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2"
-                    >
+                      className="block text-sm text-green-600 underline mb-2">
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Citizenship
@@ -95,8 +98,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2"
-                    >
+                      className="block text-sm text-green-600 underline mb-2">
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Citizenship
@@ -116,9 +118,11 @@ const EkyeDocumentDetail = ({ employeeData }) => {
         {/**Pan Details */}
         <div className="bg-white text-lg  p-6 shadow-md  rounded-lg">
           <div className="flex justify-between items-center">
-            <h1 className="text-lg font-semibold mb-4 text-left flex  underline underline-offset-4 decoration-red-500 ">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-              PAN Details{" "}
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Pan Details
+                <UnderlineComponent />
+              </span>
             </h1>
             <div className="flex gap-1 items-end justify-end text-right">
               <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
@@ -154,8 +158,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                     href={employeeData?.userDocument?.panCardDocumentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2"
-                  >
+                    className="block text-sm text-green-600 underline mb-2">
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Uploaded PAN Card
