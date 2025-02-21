@@ -341,8 +341,7 @@ const AddressDetails = ({
                     label="Select A Province"
                     items={formData.address?.permanent?.provinceId}
                     placeholder={formData.address?.permanent?.provinceName}
-                    onSelectionChange={handleProvinceChange}
-                  >
+                    onSelectionChange={handleProvinceChange}>
                     {provinces.map((province) => (
                       <SelectItem key={province.id} textValue={province.name}>
                         {province.name}
@@ -379,13 +378,11 @@ const AddressDetails = ({
                         "districtId",
                         districtId
                       );
-                    }}
-                  >
+                    }}>
                     {districts.map((district) => (
                       <SelectItem
                         key={district.districtId}
-                        textValue={district.name}
-                      >
+                        textValue={district.name}>
                         {district.name}
                       </SelectItem>
                     ))}
@@ -515,8 +512,7 @@ const AddressDetails = ({
                 </h3>
                 <Checkbox
                   isSelected={formData.address?.sameAsPermanent}
-                  onChange={(e) => handleSameAsPermanent(e)}
-                >
+                  onChange={(e) => handleSameAsPermanent(e)}>
                   Same as Permanent Address
                 </Checkbox>
               </div>
@@ -547,8 +543,7 @@ const AddressDetails = ({
 
                       // Fetch districts for the selected province
                       fetchDistrictsByProvince(provinceId);
-                    }}
-                  >
+                    }}>
                     {provinces.map((province) => (
                       <SelectItem key={province.id} textValue={province.name}>
                         {province.name}
@@ -584,13 +579,11 @@ const AddressDetails = ({
                         "districtId",
                         districtId
                       );
-                    }}
-                  >
+                    }}>
                     {districts.map((district) => (
                       <SelectItem
                         key={district.districtId}
-                        textValue={district.name}
-                      >
+                        textValue={district.name}>
                         {district.name}
                       </SelectItem>
                     ))}
@@ -713,14 +706,12 @@ const AddressDetails = ({
               <div className="form-navigation flex justify-between mt-6">
                 <Button
                   onPress={handleBack}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
+                  className="px-4 py-2 bg-gray-300 rounded">
                   Back
                 </Button>
                 <button
                   onClick={handlesubmit}
-                  className="px-4 py-2 bg-green-500 text-white rounded"
-                >
+                  className="px-4 py-2 bg-green-500 text-white rounded">
                   Submit
                 </button>
               </div>

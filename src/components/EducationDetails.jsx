@@ -162,7 +162,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     setErrors(newErrors); // Properly update state
 
-    // 🚀 Force a re-render by setting an unused state (or use `setFormData`)
     setTimeout(() => setErrors(newErrors), 0);
 
     if (!isValid) {
@@ -260,8 +259,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             const selected = e.target.value;
             console.log("Dropdown selection:", selected);
             setSelectedDegree(selected);
-          }}
-        >
+          }}>
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
               {degree}
@@ -370,8 +368,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 placeholder={formData?.education?.[index]?.status || ""}
                 value={formData?.education?.[index]?.status || ""}
                 onChange={(e) => handleChange(index, "status", e.target.value)}
-                errorMessage={errors[`status_${index}`]}
-              >
+                errorMessage={errors[`status_${index}`]}>
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status}>
                     {status}
@@ -428,8 +425,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       href={formData.education[index]?.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2"
-                    >
+                      className="block text-sm text-green-600 underline mb-2">
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Document
@@ -490,8 +486,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             handleSubmit();
           }}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}
-        >
+          disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>

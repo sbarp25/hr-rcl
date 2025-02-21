@@ -63,7 +63,6 @@ const Sidebar = () => {
       children: [
         { label: "Leave Status", to: "/Leave/Status" },
         { label: "Leave Request", to: "/Leave/Request" },
-        { label: "Leave Approver", to: "/Leave/apprej/:id" },
       ],
     },
     {

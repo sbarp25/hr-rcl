@@ -23,9 +23,13 @@ import { IoIosPeople } from "react-icons/io";
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [employeesData, setEmployeesData] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const employeesPerPage = 10;
+  const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const startIndex = (currentPage - 1) * employeeDataPerPage;
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
@@ -37,19 +41,14 @@ const Employees = () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.post("/api/v1/auth/get/all", {
-          pageIndex: currentPage - 1,
-          pageSize: employeesPerPage,
-          searchCriteria: {},
-          filterCriteria: {},
-          sortCriteria: {},
-          sortOrder: "asc",
-          searchFields: [],
-          logicalOperator: "AND",
+          pageIndex: currentPage,
+          pageSize: employeeDataPerPage,
         });
 
         if (response?.data?.responseCode === "200") {
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
           setEmployeesData(response?.data?.dataList || []);
-          setTotalEmployees(response?.data?.totalRecords || 0);
         } else {
           toast.error(response?.data?.message);
         }
@@ -171,11 +170,11 @@ const Employees = () => {
         <div className="mt-4 flex justify-between">
           <div className="text-xs">
             <span>
-              Showing {employeesPerPage} of {totalEmployees}
+              Showing {employeeDataPerPage} of {totalEmployees}
             </span>
           </div>
           <Pagination
-            total={Math.ceil(totalEmployees / employeesPerPage)}
+            total={Math.ceil(totalEmployees / employeeDataPerPage)}
             initialPage={1}
             page={currentPage}
             onChange={handlePageChange}

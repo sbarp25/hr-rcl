@@ -8,6 +8,7 @@ import { IoMdAdd } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
   Button,
+  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { useNavigate } from "react-router-dom";
+import DropDownComp from "../../../components/Dropdown";
 
 const Position = () => {
   const navigate = useNavigate();
@@ -31,18 +33,31 @@ const Position = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [editingPositionId, setEditingPositionId] = useState(null);
 
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
+  const endIndex = startIndex + ekyeDashboardDataPerPage;
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   /**Start of Get API for Getting the Positions */
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post(
-          "/api/v1/positions/get/all",
-          {}
-        );
+        const response = await axiosInstance.post("/api/v1/positions/list", {
+          pageIndex: currentPage,
+          pageSize: ekyeDashboardDataPerPage, // Page size
+        });
         if (response.data.responseCode === "200") {
-          // setPositionData(response?.data?.data?.content);
-          setPositionData(response?.data?.datalist);
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
+          setPositionData(response.data.datalist);
         } else {
           toast.error("Failed to fetch positions.");
         }
@@ -55,7 +70,7 @@ const Position = () => {
     };
 
     fetchPositions();
-  }, []);
+  }, [currentPage, ekyeDashboardDataPerPage]);
 
   /** start of API calls to Add Position */
   const handleAddPosition = async (e) => {
@@ -80,6 +95,7 @@ const Position = () => {
       );
       if (response.data.responseCode === "201") {
         toast.success("Position added successfully!");
+
         // Reset form fields
         setPositionName("");
         setDescription("");
@@ -201,7 +217,7 @@ const Position = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <div className=" flex justify-between">
-            <div className=" flex flex-col">
+            <div className=" flex flex-col space-y-4">
               <BreadcrumbsComponent items={breadcrumbItems} />
               <h2 className="page-title">Position</h2>
             </div>
@@ -307,14 +323,11 @@ const Position = () => {
           </form>
         ) : (
           /* Table Section */
-          <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-            <Table
-              aria-label="Department Table "
-              isHeaderSticky
-              className="max-h-[75vh] overflow-auto">
+          <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
+            <Table aria-label="Position Table " isHeaderSticky className="">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
-                <TableColumn>Department Name</TableColumn>
+                <TableColumn>Position Name</TableColumn>
                 <TableColumn>Description</TableColumn>
                 <TableColumn>User Action</TableColumn>
               </TableHeader>
@@ -324,7 +337,7 @@ const Position = () => {
                     key={position.rclId}
                     className="h-20 justify-center items-center border-b-2 border-gray-300">
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{position.name}</TableCell>
+                    <TableCell>{position.positionName}</TableCell>
                     <TableCell>
                       <Tooltip content={position.description}>
                         {truncateText(position.description, 30)}
@@ -350,6 +363,30 @@ const Position = () => {
             </Table>
           </div>
         )}
+        <div className="flex mt-4 justify-between">
+          <div className="flex text-xs">
+            <span>Showing:</span>
+            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
+            <span>of</span>
+            <span>{totalRecords}</span>
+          </div>
+          <Pagination
+            total={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+          />
+          <div className="flex justify-center items-center">
+            <span className="text-xs">Lines Per Page :</span>
+            <DropDownComp
+              items={dropdownItems}
+              selectedItem={ekyeDashboardDataPerPage}
+              onChange={(value) => {
+                setEkyeDashboardDataPerPage(value);
+                setCurrentPage(1); // Reset to page 1
+              }}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

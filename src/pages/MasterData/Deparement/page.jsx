@@ -38,26 +38,24 @@ const Department = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
+  const [departmentDataPerPage, setDepartmentDataPerPage] = useState(10);
+  const startIndex = (currentPage - 1) * departmentDataPerPage;
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+
   // Fetch departments data
   useEffect(() => {
     const fetchDepartments = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post(
-          "/api/v1/departments/get/all",
-          {
-            pageIndex: currentPage,
-            pageSize: departmentPerPage,
-            searchCriteria: {},
-            filterCriteria: {},
-            sortCriteria: {},
-            sortOrder: "asc",
-            searchFields: [],
-            logicalOperator: "AND",
-          }
-        );
+        const response = await axiosInstance.post("/api/v1/departments/list", {
+          pageIndex: currentPage,
+          pageSize: departmentDataPerPage,
+        });
         if (response.data.responseCode === "200") {
           setDepartmentsData(response?.data?.datalist || []);
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
         } else {
           toast.error(response?.data?.data?.message);
         }
@@ -70,7 +68,7 @@ const Department = () => {
     };
 
     fetchDepartments();
-  }, [currentPage]);
+  }, [currentPage, departmentDataPerPage]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -318,7 +316,7 @@ const Department = () => {
               </div>
             </form>
           ) : (
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
+            <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
               <Table aria-label="Department Table ">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
@@ -358,12 +356,11 @@ const Department = () => {
         <div className="mt-4 flex justify-between">
           <div className="text-xs">
             <span>
-              Showing {departmentPerPage} of {departmentsData.length}
+              Showing {departmentPerPage} of {totalRecords}
             </span>
           </div>
           <Pagination
-            total={Math.ceil(departmentsData.length / departmentPerPage)}
-            initialPage={1}
+            total={totalPages}
             page={currentPage}
             onChange={handlePageChange}
           />

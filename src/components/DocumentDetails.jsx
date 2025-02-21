@@ -35,7 +35,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       issuedDate,
       citizenshipFrontDocumentFile,
       citizenshipBackDocumentFile,
-    } = formData.documents;
+    } = formData?.documents;
     if (!panNumber) newErrors.panNumber = "PanNumber is Required";
     if (panNumber && !/^[0-9]{0,16}$/.test(panNumber)) {
       newErrors.panNumber = "Invalid format";

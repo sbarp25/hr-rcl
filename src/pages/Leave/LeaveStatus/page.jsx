@@ -26,6 +26,12 @@ const LeaveStatus = () => {
   const [leaveData, setleaveData] = useState([]);
   const [leaveByIdData, setLeaveByIdData] = useState([]);
 
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     // { label: "Leave", href: "" },
@@ -34,9 +40,6 @@ const LeaveStatus = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
   useEffect(() => {
     const fetchLeave = async () => {
       setIsLoading(true);
@@ -63,8 +66,13 @@ const LeaveStatus = () => {
     const fetchLeaveById = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.get("/api/leave/leaveId", {});
+        const response = await axiosInstance.get("/api/leave/leaveId", {
+          pageIndex: currentPage,
+          pageSize: ekyeDashboardDataPerPage, // Page size
+        });
         if (response.data.responseCode === "200") {
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
           setLeaveByIdData(response.data.datalist);
           toast.success(response.data.message);
         } else {
@@ -109,17 +117,17 @@ const LeaveStatus = () => {
                 isLoading={isLoading}
                 loadingContent={<SkeletonLoader />}>
                 {leaveData.map((data, index) => (
-                  <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
-                    <TableRow
-                      key={data.rclId}
-                      className="h-14 border-b-2 border-gray-300">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveType || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
-                      <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
-                      <TableCell>{data?.Days || "N/A"}</TableCell>
-                      <TableCell>
+                  <TableRow
+                    key={data.rclId}
+                    className="h-14 border-b-2 border-gray-300">
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveType || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
+                    <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
+                    <TableCell>{data?.Days || "N/A"}</TableCell>
+                    <TableCell>
+                      <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
                         <div
                           className={`${
                             data?.leaveStatus === "APPROVED"
@@ -130,41 +138,41 @@ const LeaveStatus = () => {
                           } text-center p-2 rounded-md w-fit`}>
                           {data?.leaveStatus || "N/A"}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                              data?.leaveStatus === "APPROVED"
-                                ? "bg-teal-100 text-teal-600"
-                                : data?.leaveStatus === "REJECTED"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-yellow-100 text-yellow-500"
-                            }`}>
-                            {data?.teamLeaderName?.charAt(0) || "?"}
-                          </div>
-                          <div className="text-gray-800 font-medium">
-                            {data?.teamLeaderName || "N/A"}
-                          </div>
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3 p-2 rounded-lg">
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
+                            data?.leaveStatus === "APPROVED"
+                              ? "bg-teal-100 text-teal-600"
+                              : data?.leaveStatus === "REJECTED"
+                              ? "bg-red-100 text-red-600"
+                              : "bg-yellow-100 text-yellow-500"
+                          }`}>
+                          {data?.teamLeaderName?.charAt(0) || "?"}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                              data?.leaveStatus === "APPROVED"
-                                ? "bg-teal-100 text-teal-600"
-                                : data?.leaveStatus === "REJECTED"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-yellow-100 text-yellow-500"
-                            }`}>
-                            {data?.Approver?.charAt(0) || "?"}
-                          </div>
-                          <div>{data?.Approver || "N/A"}</div>
+                        <div className="text-gray-800 font-medium">
+                          {data?.teamLeaderName || "N/A"}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  </Link>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3 p-2 rounded-lg">
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
+                            data?.leaveStatus === "APPROVED"
+                              ? "bg-teal-100 text-teal-600"
+                              : data?.leaveStatus === "REJECTED"
+                              ? "bg-red-100 text-red-600"
+                              : "bg-yellow-100 text-yellow-500"
+                          }`}>
+                          {data?.Approver?.charAt(0) || "?"}
+                        </div>
+                        <div>{data?.Approver || "N/A"}</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
                 {/* <Spacer /> */}
               </TableBody>
@@ -178,11 +186,11 @@ const LeaveStatus = () => {
                 <span>Showing:</span>
                 <span className="font-bold">{ekyeDashboardDataPerPage}</span>
                 <span>of</span>
-                <span>{eKyeData.length}</span>
+                <span>{totalRecords}</span>
               </div>
               <Pagination
-                initialPage={1}
-                total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
+                total={totalPages}
+                page={currentPage}
                 onChange={handlePageChange}
               />
               <div className="flex justify-center items-center">

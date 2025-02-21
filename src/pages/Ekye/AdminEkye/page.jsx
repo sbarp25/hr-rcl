@@ -28,10 +28,12 @@ const Page = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
   const [filters, setFilters] = useState({ department: "", position: "" });
-  const [eKyeData, setEkyeData] = useState([]);
 
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [eKyeData, setEkyeData] = useState([]);
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
   const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
   const endIndex = startIndex + ekyeDashboardDataPerPage;
   const paginatedEkye = eKyeData.length
@@ -67,9 +69,14 @@ const Page = () => {
       try {
         const response = await axiosInstance.get(
           "/api/v1/admin/completed_ekye_users",
-          {}
+          {
+            pageIndex: currentPage,
+            pageSize: ekyeDashboardDataPerPage,
+          }
         );
         if (response.data.responseCode === "200") {
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
           setEkyeData(response?.data?.datalist || []);
         } else {
           toast.error(response?.data?.data?.message);
@@ -83,7 +90,7 @@ const Page = () => {
     };
 
     fetchDepartments();
-  }, [currentPage]);
+  }, [currentPage, ekyeDashboardDataPerPage]);
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">
@@ -156,11 +163,11 @@ const Page = () => {
             <span>Showing:</span>
             <span className="font-bold">{ekyeDashboardDataPerPage}</span>
             <span>of</span>
-            <span>{eKyeData.length}</span>
+            <span>{totalRecords || 0}</span>
           </div>
           <Pagination
-            initialPage={1}
-            total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
+            total={totalPages}
+            page={currentPage}
             onChange={handlePageChange}
           />
           <div className="flex justify-center items-center">
