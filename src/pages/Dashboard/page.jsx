@@ -125,7 +125,7 @@ const Page = () => {
               <p className="text-red-700">Total Delay Time: {".5 hrs"}</p>
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <div className="bg-white mt-2 w-[38vw] text-xl font-bold rounded-lg  ">
               <h3 className="mt-5 ml-5"> Work from Home</h3>
 
