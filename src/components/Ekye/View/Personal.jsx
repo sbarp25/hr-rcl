@@ -1,17 +1,20 @@
 import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import { Divider } from "@nextui-org/react";
+import UnderlineComponent from "../../underlinecomponent";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="bg-gray-50 max-h-[75vh] h-75 overflow-auto rounded-b-xl">
+    <div className="bg-gray-50  h-[75vh] overflow-auto rounded-b-xl border border-gray-300">
       <div className="rounded-xl space-y-6 pt-6 ">
         {/**Basic Information */}
         <div className="bg-white rounded-xl mb-4 border shadow-md mx-4  p-5">
           <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl ">
-            <h1 className="py-4 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-              Personal Details
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Personal Details
+                <UnderlineComponent />
+              </span>
             </h1>
             <div className="flex items-center justify-end gap-4">
               <div className="flex gap-1 items-end justify-end text-right">
@@ -87,9 +90,11 @@ const Personal = ({ employeeData }) => {
           {/**Guardians Information */}
           <div className="bg-white rounded-2xl border shadow-md pb-2 ml-4 p-5">
             <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-2xl">
-              <h1 className="py-2 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500 px-8">
-                <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-                Guardian Details
+              <h1 className="text-xl font-semibold flex mb-6">
+                <span className="relative">
+                  Guardian Details
+                  <UnderlineComponent />
+                </span>
               </h1>
               <div className="flex gap-1 items-end justify-end text-right ">
                 <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
@@ -126,9 +131,11 @@ const Personal = ({ employeeData }) => {
           {/**Emerency Information */}
           <div className="bg-white rounded-2xl  pb-2 border shadow-md mr-4 p-5">
             <div className="flex items-center justify-between bg-white text-lg pr-4 rounded-2xl">
-              <h1 className="py-2 text-left text-xl font-semibold flex underline underline-offset-4 decoration-red-500 px-8">
-                <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />
-                Emergency Details
+              <h1 className="text-xl font-semibold flex mb-6">
+                <span className="relative">
+                  Emergency Details
+                  <UnderlineComponent />
+                </span>
               </h1>
               <div className="flex gap-1 items-end justify-end text-right">
                 <div className="flex w-2 h-2 rounded-full bg-red-400"></div>

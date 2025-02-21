@@ -63,7 +63,10 @@ const RejectComp = ({ employeeData }) => {
   return (
     <div>
       {isLoading && <Loader />}
-      <Button className="bg-red-700 text-white" onPress={onOpen}>
+      <Button
+        className="bg-white text-red-500 border border-red-500"
+        onPress={onOpen}
+      >
         <RxCross1 />
         Reject
       </Button>
@@ -75,7 +78,8 @@ const RejectComp = ({ employeeData }) => {
           // placement="bottom"
           //  backdrop="blur">
           isDismissable={true}
-          isKeyboardDismissDisabled={false}>
+          isKeyboardDismissDisabled={false}
+        >
           <ModalContent>
             {(onClose) => (
               <>

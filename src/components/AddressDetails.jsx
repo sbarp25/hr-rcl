@@ -314,7 +314,7 @@ const AddressDetails = ({
     <>
       {/* {isLoading && <Loader />} */}
       <ValidationComponent>
-        <div className="space-y-4">
+        <div className="space-y-4 bg-white">
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>

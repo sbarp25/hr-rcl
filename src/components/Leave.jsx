@@ -91,7 +91,7 @@ const Leave = () => {
             bordered
             isHeaderSticky
             aria-label="Dynamic Attendance Table"
-            className="max-h-[25vh] overflow-auto  w-[42vw]"
+            className="max-h-[30vh]  overflow-auto  w-[42vw]"
           >
             <TableHeader className="Capitalize gap-4  ">
               <TableColumn>S.N</TableColumn>
@@ -105,7 +105,10 @@ const Leave = () => {
             </TableHeader>
             <TableBody>
               {LeaveList.map((data) => (
-                <TableRow key={data.Sn}>
+                <TableRow
+                  key={data.Sn}
+                  className="h-20 justify-center items-center border-b-2 border-gray-300"
+                >
                   <TableCell>{data.Sn}</TableCell>
                   <TableCell>{data.RCLID}</TableCell>
                   <TableCell>{data.Name}</TableCell>

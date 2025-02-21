@@ -94,14 +94,14 @@ const Attendancereport = () => {
     },
   ];
   return (
-    <div className="p-4 w-full shadow-none">
+    <div className="p-4 w-full ">
       <Table
-        isHeaderSticky
         bordered
+        shadow="none"
         aria-label="Dynamic Attendance Table"
-        className="h-[33vh]  "
+        className="h-[30vh]  "
       >
-        <TableHeader className="capitalize">
+        <TableHeader className="capitalize ">
           <TableColumn>S.N</TableColumn>
           <TableColumn>Week Days </TableColumn>
           <TableColumn>Check In/Out</TableColumn>

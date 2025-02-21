@@ -178,7 +178,10 @@ const PersonalDetails = ({
   }, []);
 
   return (
-    <div className="space-y-8 bg-white rounded-2xl mx-auto">
+    <div
+      className="space-y-8 bg-white rounded-2xl mx-auto 
+    "
+    >
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold text-gray-700 py-3">
           Personal Information
@@ -245,7 +248,8 @@ const PersonalDetails = ({
                   "bloodType",
                   [...keys][0]
                 )
-              }>
+              }
+            >
               {bloodGroupOptions.map((group) => (
                 <SelectItem key={group}>{group}</SelectItem>
               ))}
@@ -266,7 +270,8 @@ const PersonalDetails = ({
               selectedKeys={[formData?.personalInfo?.gender]}
               onSelectionChange={(keys) =>
                 handleNestedChange("personalInfo", null, "gender", [...keys][0])
-              }>
+              }
+            >
               {genderOptions.map((g) => (
                 <SelectItem key={g}>{g}</SelectItem>
               ))}
@@ -292,7 +297,8 @@ const PersonalDetails = ({
                   "married",
                   [...keys][0]
                 )
-              }>
+              }
+            >
               {Married.map((group) => (
                 <SelectItem key={group.key} textValue={group.label}>
                   {group.label}
@@ -379,7 +385,8 @@ const PersonalDetails = ({
                   "guardianRelation",
                   [...keys][0]
                 )
-              }>
+              }
+            >
               {relationOptions.map((relation) => (
                 <DropdownItem key={relation}>{relation}</DropdownItem>
               ))}
@@ -485,12 +492,14 @@ const PersonalDetails = ({
         <Button
           onPress={handleBack}
           isDisabled
-          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg">
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
+        >
           Back
         </Button>
         <Button
           onPress={handlenextsubmit}
-          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
+          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
+        >
           Submit
         </Button>
       </div>
