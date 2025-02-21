@@ -15,6 +15,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const statusOptions = ["COMPLETED", "IN_PROGRESS"];
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
+
   const navigate = useNavigate();
   const [educationalDocument, setEducationalDocument] = useState(false);
   let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45)); // Default to 10:00:45 AM
@@ -38,20 +39,23 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   }, [selectedDegree]);
 
   const handleFileChange = (index, files) => {
-    setFormData((prev) => {
-      const updatedEducation = [...prev.education];
+    if (files.length > 0) {
+      setFormData((prev) => {
+        const updatedEducation = [...prev.education];
 
-      // Ensure index is valid (within bounds)
-      if (index >= 0 && index < updatedEducation.length) {
+        if (!updatedEducation[index]) {
+          updatedEducation[index] = {}; // Ensure the object exists
+        }
+
         updatedEducation[index] = {
           ...updatedEducation[index],
-          files,
+          files, // Store the file array
+          fileName: files[0].name, // Store only the first file name
         };
-      }
 
-      return { ...prev, education: updatedEducation };
-    });
-    setEducationalDocument(false);
+        return { ...prev, education: updatedEducation };
+      });
+    }
   };
 
   const handleChange = (index, field, value) => {
@@ -122,6 +126,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
   const validateFormData = () => {
     const newErrors = {};
+    let isValid = true;
 
     if (!formData.education || formData.education.length === 0) {
       toast.error("Please add at least one education record.");
@@ -129,21 +134,42 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
 
     formData.education.forEach((edu, index) => {
-      if (!edu.institution)
+      if (!edu.institution) {
         newErrors[`institution_${index}`] = "Institution is required.";
-      if (!edu.faculty) newErrors[`faculty_${index}`] = "Faculty is required.";
-      if (!edu.startYear)
+        isValid = false;
+      }
+      if (!edu.faculty) {
+        newErrors[`faculty_${index}`] = "Faculty is required.";
+        isValid = false;
+      }
+      if (!edu.startYear) {
         newErrors[`startYear_${index}`] = "Start year is required.";
-      if (!edu.endYear) newErrors[`endYear_${index}`] = "End year is required.";
-      if (!edu.status) newErrors[`status_${index}`] = "Status is required.";
-      if (!edu.files || edu.files.length === 0)
+        isValid = false;
+      }
+      if (!edu.endYear && edu.status !== "IN_PROGRESS") {
+        newErrors[`endYear_${index}`] = "End year is required.";
+        isValid = false;
+      }
+      if (!edu.status) {
+        newErrors[`status_${index}`] = "Status is required.";
+        isValid = false;
+      }
+      if (!edu.files || edu.files.length === 0) {
         newErrors[`files_${index}`] = "Document is required.";
+        isValid = false;
+      }
     });
 
-    setErrors(newErrors);
+    setErrors(newErrors); // Properly update state
 
-    // If there are errors, return false, otherwise return true
-    return Object.keys(newErrors).length === 0;
+    // 🚀 Force a re-render by setting an unused state (or use `setFormData`)
+    setTimeout(() => setErrors(newErrors), 0);
+
+    if (!isValid) {
+      toast.error("Please fill all required fields.");
+    }
+
+    return isValid;
   };
 
   const onSubmit = async () => {
@@ -208,10 +234,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    if (!validateFormData()) {
-      console.log("Validation errors:", errors);
+    const isValid = validateFormData();
+
+    if (!isValid) {
+      console.log("Validation failed, errors:", errors);
       return;
     }
+
     onSubmit();
   };
 
@@ -231,7 +260,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             const selected = e.target.value;
             console.log("Dropdown selection:", selected);
             setSelectedDegree(selected);
-          }}>
+          }}
+        >
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
               {degree}
@@ -260,6 +290,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 onChange={(e) =>
                   handleChange(index, "institution", e.target.value)
                 }
+                errorMessage={errors[`institution_${index}`]}
               />
               {errors[`institution_${index}`] && (
                 <p className="text-red-500 text-sm mt-1">
@@ -278,6 +309,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 label="Faculty"
                 value={formData?.education?.[index]?.faculty || ""}
                 onChange={(e) => handleChange(index, "faculty", e.target.value)}
+                errorMessage={errors[`faculty_${index}`]}
               />
               {errors[`faculty_${index}`] && (
                 <p className="text-red-500 text-sm mt-1">
@@ -299,6 +331,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 onChange={(e) =>
                   handleChange(index, "startYear", e.target.value)
                 }
+                errorMessage={errors[`startYear_${index}`]}
               />
               {errors[`startYear_${index}`] && (
                 <p className="text-red-500 text-sm mt-1">
@@ -317,6 +350,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 label="Select End Date"
                 value={formData?.education?.[index]?.endYear || ""}
                 onChange={(e) => handleChange(index, "endYear", e.target.value)}
+                errorMessage={errors[`endYear_${index}`]}
               />
               {errors[`endYear_${index}`] && (
                 <p className="text-red-500 text-sm mt-1">
@@ -335,7 +369,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 label="Status"
                 placeholder={formData?.education?.[index]?.status || ""}
                 value={formData?.education?.[index]?.status || ""}
-                onChange={(e) => handleChange(index, "status", e.target.value)}>
+                onChange={(e) => handleChange(index, "status", e.target.value)}
+                errorMessage={errors[`status_${index}`]}
+              >
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status}>
                     {status}
@@ -351,16 +387,28 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <div>
                 <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200">
+                  {/* <span className="text-gray-600 px-4">
+                    {formData?.education?.[index]?.fileName ? (
+                      <div className="flex gap-2">
+                        <p>{formData.education[index].fileName}</p>
+                      </div>
+                    ) : (
+                      "Upload Education Certificate"
+                    )}
+                  </span> */}
                   <span className="text-gray-600 px-4">
                     {formData?.education?.[index]?.files?.length > 0 ? (
                       <div className="flex gap-2">
-                        <p>Choose a photo</p>
-                        {formData?.education?.[index]?.files?.name}
+                        <p>
+                          Choose a Photo{" "}
+                          {formData.education[index].files[0].name}
+                        </p>{" "}
                       </div>
                     ) : (
                       "Upload Education Certificate"
                     )}
                   </span>
+
                   <input
                     type="file"
                     className="absolute inset-0 opacity-0 cursor-pointer"
@@ -380,7 +428,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       href={formData.education[index]?.file}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded Document
@@ -441,7 +490,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             handleSubmit();
           }}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
+          disabled={isLoading}
+        >
           {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>

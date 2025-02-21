@@ -86,13 +86,14 @@ const Leave = () => {
   return (
     <>
       <div>
-        <div className=" ml-1  ">
+        <div className="  ">
           <Table
             bordered
             isHeaderSticky
             aria-label="Dynamic Attendance Table"
-            className="max-h-[25vh] overflow-auto  max-w-[40vw]">
-            <TableHeader className="Capitalize  ">
+            className="max-h-[25vh] overflow-auto  w-[42vw]"
+          >
+            <TableHeader className="Capitalize gap-4  ">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
               <TableColumn>Name</TableColumn>
@@ -107,9 +108,7 @@ const Leave = () => {
                 <TableRow key={data.Sn}>
                   <TableCell>{data.Sn}</TableCell>
                   <TableCell>{data.RCLID}</TableCell>
-                  <TableCell title={data.Name}>
-                    {truncateText(data.Name, 7)}
-                  </TableCell>
+                  <TableCell>{data.Name}</TableCell>
                   <TableCell title={data.Email}>
                     {truncateText(data.Email, 7)}
                   </TableCell>

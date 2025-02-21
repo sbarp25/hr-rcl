@@ -3,7 +3,7 @@ import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 const PersonalAction = ({ employeeData }) => {
   return (
-    <div className="relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg px-8  ">
+    <div className=" relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg px-8  ">
       {/* Header Section */}
       <div className="absolute bg-black w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
         <h1 className="text-2xl font-semibold text-white">

@@ -70,12 +70,12 @@ const WorkFromHome = () => {
     },
   ];
   return (
-    <div className="">
+    <div className="w-[35vw]">
       <Table
         bordered
         aria-label="Dyanamic Attendance Table"
         isHeaderSticky
-        className="max-h-[25vh] overflow-auto  w-[42vw] "
+        className="max-h-[25vh] overflow-auto  w-[37vw] "
       >
         <TableHeader className="Capitalize ">
           <TableColumn>S.N</TableColumn>
