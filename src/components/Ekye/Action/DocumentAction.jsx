@@ -19,7 +19,7 @@ const DocumentAction = ({ employeeData }) => {
     if (employeeData?.userDocument?.panCardDocumentUrl) {
       setPhotoPAN(true);
     }
-  }, []);
+  }, [employeeData]);
   return (
     <div className="relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg px-8">
       {/* Header Section */}
@@ -63,9 +63,9 @@ const DocumentAction = ({ employeeData }) => {
             />
           </div>
           <Divider className="mb-6" />
-          <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {/**Citizenship Front Photo */}
-            <div>
+          <div className="flex flex-row w-full mr-6 gap-16">
+            {/* Citizenship Front Photo */}
+            <div className="">
               <label className="text-black font-semibold text-sm">
                 Citizenship Front Photo
               </label>
@@ -74,7 +74,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipFrontDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -94,7 +95,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipBackDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -140,7 +142,8 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.panCardDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2">
+                  className="block text-sm text-green-600 underline mb-2"
+                >
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded PAN Card

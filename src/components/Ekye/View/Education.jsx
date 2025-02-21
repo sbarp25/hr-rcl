@@ -51,7 +51,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center bg-gray-50 h-[75vh] py-6 w-full mx-auto rounded-md">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
         <div className="bg-white text-lg w-[75vw] shadow-md rounded-lg px-6 mt-2 mx-1">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
@@ -104,7 +104,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
                           href={education.documentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-sm text-green-600 underline mb-2">
+                          className="block text-sm text-green-600 underline mb-2"
+                        >
                           <span className="flex items-center gap-x-2">
                             <FaRegEye />
                             View Uploaded Certificate
@@ -127,13 +128,20 @@ const EkyeEducationDetails = ({ employeeData }) => {
           )}
         </div>
 
-        <div className="mt-10 flex justify-end items-end gap-4">
+        {/* <div className=" right-3 mt-10 flex items-end justify-end  gap-4">
           <RejectComp employeeData={employeeData} />
-          <Button className="bg-green-700 text-white" onPress={onApprove}>
+          <Button className="bg-teal-500 text-white" onPress={onApprove}>
             <FaCheck />
             Approve
           </Button>
-        </div>
+        </div> */}
+      </div>
+      <div className="absolute right-28 -mt-20 flex items-end justify-end  gap-4">
+        <RejectComp employeeData={employeeData} />
+        <Button className="bg-teal-500 text-white" onPress={onApprove}>
+          <FaCheck />
+          Approve
+        </Button>
       </div>
     </>
   );

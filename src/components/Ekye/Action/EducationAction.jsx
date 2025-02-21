@@ -13,7 +13,7 @@ import UnderlineComponent from "../../underlinecomponent";
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [EducationDocument, setEducationDocument] = useState(false);
+  const [educationDocument, setEducationDocument] = useState(false);
   const { rclId } = useParams();
   const educationalDetail = employeeData?.educationalDetails?.[0];
 
@@ -64,69 +64,81 @@ const EducationAction = ({ employeeData }) => {
         </div>
 
         {/* Single Form Section */}
-        <Form className="mt-8 grid grid-cols-1 gap-12">
-          {/* Education Details Section */}
-          <div className="bg-white text-lg p-6 rounded-lg">
-            <h1 className="text-xl font-semibold flex mb-6">
-              <span className="relative">
-                Education Details
-                <UnderlineComponent />
-              </span>
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <EkyeDetailsComponent
-                label="level"
-                placeholder={educationalDetail?.degree || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="Institute"
-                placeholder={educationalDetail?.institution || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="Faculty"
-                placeholder={educationalDetail?.faculty || "N/A"}
-              />
-            </div>
-            <Divider className="mb-6" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EkyeDetailsComponent
-                label="Start Date"
-                placeholder={educationalDetail?.startYear || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="End Date"
-                placeholder={educationalDetail?.endYear || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="Status"
-                placeholder={educationalDetail?.status || "N/A"}
-              />
-            </div>
-            <Divider className="mt-6 mb-6" />
+        <div className="bg-white text-lg w-[45vw] rounded-lg px-6 mt-2 mx-1">
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Education Details
+              <UnderlineComponent />
+            </span>
+          </h1>
 
-            <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div>
-                <label className="text-black font-semibold text-sm">
-                  Education Certificate
-                </label>
-                {EducationDocument ? (
-                  <a
-                    href={employeeData?.educationDetails?.documentUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2">
-                    <span className="flex items-center gap-x-2">
-                      <FaRegEye />
-                      View Uploaded Certificate
-                    </span>
-                  </a>
-                ) : (
-                  <div className="text-xs text-red-500">No Links Available</div>
-                )}
+          {employeeData?.educationalDetails?.length > 0 ? (
+            employeeData.educationalDetails.map((education, index) => (
+              <div key={index} className="mb-6 p-4 rounded-md ">
+                <Form className="py-6 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <EkyeDetailsComponent
+                      label="Level"
+                      placeholder={education.degree}
+                    />
+                    <EkyeDetailsComponent
+                      label="Institute"
+                      placeholder={education.institution}
+                    />
+                    <EkyeDetailsComponent
+                      label="Faculty"
+                      placeholder={education.faculty}
+                    />
+                  </div>
+                  <Divider />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <EkyeDetailsComponent
+                      label="Start Date"
+                      placeholder={education.startYear}
+                    />
+                    <EkyeDetailsComponent
+                      label="End Date"
+                      placeholder={education.endYear}
+                    />
+                    <EkyeDetailsComponent
+                      label="Status"
+                      placeholder={education.status}
+                    />
+                  </div>
+                  <Divider />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <div>
+                      <label className="text-black font-semibold text-sm">
+                        Education Certificate
+                      </label>
+                      {educationDocument[index] ? (
+                        <a
+                          href={education.documentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-sm text-green-600 underline mb-2"
+                        >
+                          <span className="flex items-center gap-x-2">
+                            <FaRegEye />
+                            View Uploaded Certificate
+                          </span>
+                        </a>
+                      ) : (
+                        <div className="text-xs text-red-500">
+                          No Links Available
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Form>
               </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500">
+              No Education Details Available
             </div>
-          </div>
-        </Form>
+          )}
+        </div>
 
         {/* Buttons Section */}
         <div className="mt-6 flex justify-end gap-4">

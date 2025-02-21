@@ -38,6 +38,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
   }, [selectedDegree]);
 
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log("Errors updated:", errors);
+    }
+  }, [errors]);
+
   const handleFileChange = (index, files) => {
     if (files.length > 0) {
       setFormData((prev) => {
@@ -130,7 +136,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     if (!formData.education || formData.education.length === 0) {
       toast.error("Please add at least one education record.");
-      return false;
+      return { isValid: false, newErrors };
     }
 
     formData.education.forEach((edu, index) => {
@@ -160,16 +166,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       }
     });
 
-    setErrors(newErrors); // Properly update state
-
-    // 🚀 Force a re-render by setting an unused state (or use `setFormData`)
-    setTimeout(() => setErrors(newErrors), 0);
-
-    if (!isValid) {
-      toast.error("Please fill all required fields.");
-    }
-
-    return isValid;
+    return { isValid, newErrors };
   };
 
   const onSubmit = async () => {
@@ -234,10 +231,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    const isValid = validateFormData();
-
+    const { isValid, newErrors } = validateFormData();
     if (!isValid) {
-      console.log("Validation failed, errors:", errors);
+      setErrors(newErrors);
       return;
     }
 
