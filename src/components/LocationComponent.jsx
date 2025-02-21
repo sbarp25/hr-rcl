@@ -17,16 +17,20 @@ const LocationComponent = () => {
 
     // Get the current position and store it
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(storeLocationData, handleError);
+      navigator.geolocation.getCurrentPosition(storeLocationData, handleError, {
+        enableHighAccuracy: true, // Get the most precise location possible
+        timeout: 10000, // Timeout after 10 seconds
+        maximumAge: 0, // Always fetch the latest location data
+      });
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
 
     // Cleanup function to remove location data on component unmount
-    return () => {
-      LocalStorageUtil.removeItem("latitude"); // Use utility to remove data
-      LocalStorageUtil.removeItem("longitude");
-    };
+    // return () => {
+    //   LocalStorageUtil.removeItem("latitude"); // Use utility to remove data
+    //   LocalStorageUtil.removeItem("longitude");
+    // };
   }, []);
 
   return <div></div>;
