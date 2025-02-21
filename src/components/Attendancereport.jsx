@@ -99,8 +99,7 @@ const Attendancereport = () => {
         bordered
         shadow="none"
         aria-label="Dynamic Attendance Table"
-        className="h-[30vh]  "
-      >
+        className="h-[30vh]  ">
         <TableHeader className="capitalize ">
           <TableColumn>S.N</TableColumn>
           <TableColumn>Week Days </TableColumn>
@@ -115,7 +114,7 @@ const Attendancereport = () => {
         </TableHeader>
         <TableBody>
           {attendanceData.map((data) => (
-            <TableRow key={data.sn}>
+            <TableRow key={data.sn} className="border-b border-gray-200">
               <TableCell>{data.sn}</TableCell>
               <TableCell>{data.weekDay}</TableCell>
               <TableCell>{data.checkInOut}</TableCell>

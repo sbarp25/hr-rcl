@@ -346,7 +346,7 @@ const Position = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <HiPencilSquare
-                          className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                          className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                           title="Edit"
                           onClick={() => handleAction("edit", position)}
                         />

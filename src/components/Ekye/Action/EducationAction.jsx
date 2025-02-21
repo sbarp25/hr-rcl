@@ -116,8 +116,7 @@ const EducationAction = ({ employeeData }) => {
                           href={education.documentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-sm text-green-600 underline mb-2"
-                        >
+                          className="block text-sm text-green-600 underline mb-2">
                           <span className="flex items-center gap-x-2">
                             <FaRegEye />
                             View Uploaded Certificate
@@ -146,7 +145,7 @@ const EducationAction = ({ employeeData }) => {
             Reject
           </Button> */}
           <RejectComp employeeData={employeeData} />
-          <Button className="bg-green-700 text-white" onPress={onApprove}>
+          <Button className="bg-emerald-500 text-white" onPress={onApprove}>
             <FaCheck />
             Approve
           </Button>

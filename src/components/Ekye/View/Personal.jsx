@@ -12,7 +12,7 @@ const Personal = ({ employeeData }) => {
           <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl ">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
-                Personal Details
+                Personal Information Details
                 <UnderlineComponent />
               </span>
             </h1>

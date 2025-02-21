@@ -335,7 +335,7 @@ const Department = () => {
                       <TableCell>
                         <div className="flex">
                           <HiPencilSquare
-                            className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                            className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                             title="Edit"
                             onClick={() => handleAction("edit", department)}
                           />
@@ -360,6 +360,7 @@ const Department = () => {
             </span>
           </div>
           <Pagination
+            showControls
             total={totalPages}
             page={currentPage}
             onChange={handlePageChange}

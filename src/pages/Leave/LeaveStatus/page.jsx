@@ -189,6 +189,7 @@ const LeaveStatus = () => {
                 <span>{totalRecords}</span>
               </div>
               <Pagination
+                showControls
                 total={totalPages}
                 page={currentPage}
                 onChange={handlePageChange}

@@ -146,7 +146,7 @@ const Page = () => {
                         onClick={() => handleChange("view", data.rclId)}
                       />
                       <FaEdit
-                        className="text-red-500 cursor-pointer hover:text-red-700"
+                        className="text-yellow-500 cursor-pointer hover:text-red-700"
                         title="Edit"
                         onClick={() => handleChange("action", data.rclId)}
                       />
@@ -166,6 +166,7 @@ const Page = () => {
             <span>{totalRecords || 0}</span>
           </div>
           <Pagination
+            showControls
             total={totalPages}
             page={currentPage}
             onChange={handlePageChange}

@@ -259,8 +259,8 @@ const AddEmployeeForm = () => {
                     required: "Position is required",
                   })}>
                   {positionData.map((pos) => (
-                    <SelectItem key={pos.id} textValue={pos.name}>
-                      {pos.name}
+                    <SelectItem key={pos.id} textValue={pos.positionName}>
+                      {pos.positionName}
                     </SelectItem>
                   ))}
                 </Select>
