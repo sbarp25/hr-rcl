@@ -4,7 +4,7 @@ import { Divider } from "@nextui-org/react";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="bg-gray-50 max-h-[75vh] overflow-auto rounded-b-xl">
+    <div className="bg-gray-50 max-h-[75vh] h-75 overflow-auto rounded-b-xl">
       <div className="rounded-xl space-y-6 pt-6 ">
         {/**Basic Information */}
         <div className="bg-white rounded-xl mb-4 border shadow-md mx-4  p-5">

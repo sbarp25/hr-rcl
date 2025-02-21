@@ -1,7 +1,8 @@
 import { Divider, Form } from "@nextui-org/react";
-import { FaDiamond, FaRegEye } from "react-icons/fa6";
+import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import { useEffect, useState } from "react";
+import UnderlineComponent from "../../underlinecomponent";
 
 const DocumentAction = ({ employeeData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -30,10 +31,13 @@ const DocumentAction = ({ employeeData }) => {
       <Form className="grid grid-cols-1 gap-12">
         {/* Citizenship Details Section */}
         <div className="bg-white text-lg p-6 rounded-lg">
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Citizenship Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Citizenship Details
+              <UnderlineComponent />
+            </span>
           </h1>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/**Citizenship Number */}
             <EkyeDetailsComponent
@@ -70,8 +74,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipFrontDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-600 underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -91,8 +94,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipBackDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-600 underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -109,9 +111,11 @@ const DocumentAction = ({ employeeData }) => {
 
         {/* PAN Details Section */}
         <div className="bg-white text-lg px-6 rounded-lg">
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            PAN Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              PAN Details
+              <UnderlineComponent />
+            </span>
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <EkyeDetailsComponent
@@ -136,8 +140,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.panCardDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-600 underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded PAN Card

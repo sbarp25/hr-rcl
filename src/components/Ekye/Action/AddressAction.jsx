@@ -1,6 +1,6 @@
 import { Divider, Form } from "@nextui-org/react";
-import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import Underlinecomponent from "../../underlinecomponent";
 
 const AddressAction = ({ employeeData }) => {
   const addresses = employeeData?.addresses || [];
@@ -21,10 +21,13 @@ const AddressAction = ({ employeeData }) => {
       <Form className="grid grid-cols-1 gap-12">
         {/* Permanent Address Section */}
         <div className="bg-white text-lg px-6 rounded-lg ">
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Permanent Address Details
+          <h1 className="relative text-xl font-semibold flex items-center mb-6 pb-2">
+            <span className="relative">
+              Permanent Address Details
+              <Underlinecomponent />
+            </span>
           </h1>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24 mb-6">
             <EkyeDetailsComponent
               label="Province"
@@ -59,9 +62,11 @@ const AddressAction = ({ employeeData }) => {
 
         {/* Temporary Address Section */}
         <div className="bg-white text-lg px-6 rounded-lg ">
-          <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-            <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-            Temporary Address Details
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Temporary Address Details
+              <Underlinecomponent />
+            </span>
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24 mb-6">
             <EkyeDetailsComponent

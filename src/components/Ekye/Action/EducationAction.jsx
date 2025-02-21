@@ -1,33 +1,19 @@
 import { useEffect, useState } from "react";
-import {
-  Divider,
-  Form,
-  Button,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  useDisclosure,
-  ModalBody,
-  Textarea,
-} from "@nextui-org/react";
-import { FaDiamond, FaRegEye } from "react-icons/fa6";
+import { Divider, Form, Button } from "@nextui-org/react";
+import { FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
-import ButtonComponent from "../../ButtonComp";
-import { useForm } from "react-hook-form";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
+import UnderlineComponent from "../../underlinecomponent";
 
 const EducationAction = ({ employeeData }) => {
-  const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [EducationDocument, setEducationDocument] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
   const educationalDetail = employeeData?.educationalDetails?.[0];
 
@@ -81,9 +67,11 @@ const EducationAction = ({ employeeData }) => {
         <Form className="mt-8 grid grid-cols-1 gap-12">
           {/* Education Details Section */}
           <div className="bg-white text-lg p-6 rounded-lg">
-            <h1 className="text-xl font-semibold flex underline underline-offset-4 decoration-red-500 mb-6">
-              <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-2" />
-              Education Details
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Education Details
+                <UnderlineComponent />
+              </span>
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <EkyeDetailsComponent
