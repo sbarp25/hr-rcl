@@ -116,7 +116,7 @@ const SalaryDetails = () => {
           </div>
 
           <div className=" p-2 flex flex-col justify-between items-centerfont-bold">
-            <p className=" flex justify-between ">
+            <p className=" flex justify-between text-blue-300">
               Basic Salary
               <span className="flex mr-80 gap-4">
                 <span>NRs</span>
@@ -125,7 +125,7 @@ const SalaryDetails = () => {
             </p>
 
             <Divider className="my-4" />
-            <p className=" flex justify-between ">
+            <p className=" flex justify-between text-blue-300">
               Performance Incentive
               <span className="flex mr-80 gap-4">
                 <span>NRs</span>
@@ -133,7 +133,7 @@ const SalaryDetails = () => {
               </span>
             </p>
             <Divider className="my-4" />
-            <p className=" flex justify-between ">
+            <p className=" flex justify-between text-blue-300">
               Dearness Allowance
               <span className="flex mr-80 gap-4">
                 <span>NRs</span>
@@ -141,7 +141,7 @@ const SalaryDetails = () => {
               </span>
             </p>
             <Divider className="my-4" />
-            <p className=" flex justify-between ">
+            <p className=" flex justify-between font-bold">
               Gross Salary
               <span className="flex mr-80 gap-4">
                 <span>NRs</span>
@@ -159,7 +159,7 @@ const SalaryDetails = () => {
               </p>
             </div>
           </div>
-          <p className="flex justify-between text-green-300 lex items-center gap-2">
+          <p className="flex justify-between text-teal-500 lex items-center gap-2">
             <span className="px-2 ">Gross Salary</span>
             <span className="flex mr-80 gap-4">
               <span>NRs</span>
@@ -168,7 +168,7 @@ const SalaryDetails = () => {
           </p>
 
           <Divider className="my-4" />
-          <p className="flex justify-between text-green-300  items-center gap-2">
+          <p className="flex justify-between text-teal-500  items-center gap-2">
             <span className=" px-2 flex  items-center gap-2">OverTime</span>
             <span className="flex mr-80 gap-4">
               <span>NRs</span>
@@ -176,7 +176,7 @@ const SalaryDetails = () => {
             </span>
           </p>
           <Divider className="my-4" />
-          <p className="flex justify-between items-center gap-2 text-green-300">
+          <p className="flex justify-between items-center gap-2 text-teal-500">
             <span className="  px-2 flex    items-center gap-2">
               Other Allowance
               <FaRegEye />

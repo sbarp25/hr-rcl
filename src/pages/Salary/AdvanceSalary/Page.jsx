@@ -24,9 +24,9 @@ const AdvanceSalary = () => {
   return (
     <div className="flex flex-col space-y-10">
       <BreadcrumbsComponent items={breadcrumbItems} />
-      <div className="bg-white rounded-lg my-3 mx-3">
-        <form className="py-7 px-7">
-          <div className="flex flex-row justify-between text-center place-items-center gap-7 h-16 w-[75vw] py-5 ml-9">
+      <div className="bg-white rounded-lg h-[85vh] m-3">
+        <form className="p-7">
+          <div className="flex  justify-between text-center place-items-center gap-7 h-16  py-5">
             <InputComponent
               name="Description"
               control={control}
@@ -61,12 +61,12 @@ const AdvanceSalary = () => {
               rules={{
                 required: "Month is required",
                 pattern: {
-                  value:
-                    /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-(1[0-2]|[1-9])$/i,
-                  message: "Please enter a valid month (e.g., jan-1, dec-12).",
+                  value: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i,
+                  message: "Please enter a valid month (e.g., jan, dec).",
                 },
               }}
             />
+            {/* -(1[0-2]|[1-9]) */}
             <InputComponent
               name="AddAmount"
               control={control}
@@ -83,7 +83,7 @@ const AdvanceSalary = () => {
           </div>
           <ButtonComp
             onPress={handleSubmit(onSubmit)}
-            className="justify-start my-12 mx-10 py-6 px-10 text-lg border border-gray-300 font-semibold bg-blue-100"
+            className="justify-start my-12 py-6  text-lg border border-gray-300 font-semibold bg-blue-100"
             content="Submit"
           />
         </form>

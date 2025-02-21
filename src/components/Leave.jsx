@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableHeader,
@@ -7,6 +6,7 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
+import { Link, useParams } from "react-router-dom";
 
 const Leave = () => {
   const truncateText = (text, maxLength) =>

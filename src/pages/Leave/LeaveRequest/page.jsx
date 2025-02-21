@@ -123,25 +123,25 @@ const LeaveRequest = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   const getMaxRows = () => {
-    if (screenWidth >= 1536) return 14; // 2xl
-    if (screenWidth >= 1280) return 12; // xl
-    if (screenWidth >= 1024) return 10; // lg
-    if (screenWidth >= 768) return 8; // md
-    return 6; // default for smaller screens
-  };
-
-  const getRows = () => {
     if (screenWidth >= 1536) return 12; // 2xl
     if (screenWidth >= 1280) return 10; // xl
     if (screenWidth >= 1024) return 8; // lg
     if (screenWidth >= 768) return 6; // md
     return 4; // default for smaller screens
   };
+
+  const getRows = () => {
+    if (screenWidth >= 1536) return 10; // 2xl
+    if (screenWidth >= 1280) return 8; // xl
+    if (screenWidth >= 1024) return 6; // lg
+    if (screenWidth >= 768) return 4; // md
+    return 4; // default for smaller screens
+  };
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="page-title -pl-2">Leave Request</div>
-      <div className="bg-white p-4 rounded-xl h-[85vh] border-2 border-gray-300 ">
+      <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
           {/* Leave Title */}
           <div>
@@ -320,6 +320,7 @@ const LeaveRequest = () => {
           </div>
           <ButtonComponent
             type="submit"
+            className="bg-black text-white"
             content={isLoading ? "Submitting..." : "Submit"}
             disabled={isLoading}
           />

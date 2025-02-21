@@ -42,7 +42,7 @@ const SalaryEdit = () => {
     fetchDepartments();
   }, []);
   return (
-    <div className="flex flex-col space-y-10">
+    <div className="flex flex-col space-y-8">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-300 p-2 rounded-lg">
         <div className="bg-white rounded-lg border-2 mt-2 pb-2">
@@ -55,7 +55,7 @@ const SalaryEdit = () => {
 
           <div className=" p-2 flex flex-col justify-between items-centerfont-bold gap-3">
             <div className=" flex justify-between ">
-              <span className="text-blue-300 px-3  ">Basic Salary</span>
+              <span className="text-blue-400 px-3  ">Basic Salary</span>
               <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
                 {salary?.basicSalary || "N/A"}
               </div>
@@ -77,7 +77,7 @@ const SalaryEdit = () => {
             </div>
 
             <div className=" flex justify-between ">
-              <span className="text-blue-300 px-3 ">Performance Incentive</span>
+              <span className="text-blue-400 px-3 ">Performance Incentive</span>
               <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
                 {salary?.performanceIncentive || "N/A"}
               </div>
@@ -99,7 +99,7 @@ const SalaryEdit = () => {
             </div>
 
             <div className=" flex justify-between ">
-              <span className="text-blue-300 px-3 ">Dearness Allowance</span>
+              <span className="text-blue-400 px-3 ">Dearness Allowance</span>
               <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
                 {salary?.dearnessAllowance || "N/A"}
               </div>
@@ -149,7 +149,7 @@ const SalaryEdit = () => {
               <p>Payable Salary of {month}</p>
             </div>
           </div>
-          <div className="flex justify-between text-green-300 lex items-center gap-2">
+          <div className="flex justify-between text-teal-500 lex items-center gap-2">
             <span className="  px-3  font-semibold ">Gross Salary</span>
             <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
               {salary?.grossSalary || "N/A"}
@@ -170,7 +170,7 @@ const SalaryEdit = () => {
               }}
             /> */}
           </div>
-          <div className="flex justify-between text-green-300  items-center gap-2">
+          <div className="flex justify-between text-teal-500  items-center gap-2">
             <span className=" px-3  font-semibold">OverTime</span>
             <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
               {salary?.OverTime || "N/A"}
@@ -190,8 +190,8 @@ const SalaryEdit = () => {
               }}
             /> */}
           </div>
-          <div className="flex justify-between text-green-300 items-center gap-2 ">
-            <span className="   px-3  font-semibold text-green-300 ">
+          <div className="flex justify-between text-teal-500 items-center gap-2 ">
+            <span className="   px-3  font-semibold text-teal-500 ">
               Other Allowance
             </span>
             <div className="w-96 bg-white mr-16 border border-gray-300 p-4 rounded-xl">
