@@ -245,7 +245,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   return (
-    <div className="space-y-4 py-6">
+    <div className="space-y-4 py-6 ">
       <h2 className="text-2xl font-semibold text-gray-700">
         Educational Details
       </h2>

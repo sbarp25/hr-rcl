@@ -75,7 +75,7 @@ const WorkFromHome = () => {
         bordered
         aria-label="Dyanamic Attendance Table"
         isHeaderSticky
-        className="max-h-[25vh] overflow-auto  w-[37vw] "
+        className="max-h-[30vh] overflow-auto  w-[40vw] "
       >
         <TableHeader className="Capitalize ">
           <TableColumn>S.N</TableColumn>
@@ -87,7 +87,10 @@ const WorkFromHome = () => {
         </TableHeader>
         <TableBody>
           {WorkfromHomeDate.map((data) => (
-            <TableRow key={data.Sn}>
+            <TableRow
+              key={data.Sn}
+              className="h-20 justify-center items-center border-b-2 border-gray-300"
+            >
               <TableCell>{data.Sn}</TableCell>
               <TableCell>{data.RCLID}</TableCell>
               <TableCell>{data.Name}</TableCell>

@@ -128,7 +128,7 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className=" max-h-screen overflow-auto bg-gray-200 pb-1">
+      <div className=" h-screen overflow-auto bg-gray-200 pb-1">
         <div className="page-title justify-center items-center p-3">
           <IoIosPeople className="text-3xl" />
           <p className="">Perform EKYE</p>
@@ -176,7 +176,7 @@ const Ekye = () => {
                           }`}
                           style={{
                             left: "90%", // Start from the end of the current step
-                            width: "800%", // Start from the end of the current step
+                            width: "700%", // Start from the end of the current step
                           }}
                         ></div>
                       )}
@@ -234,7 +234,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        {/* <div className="form-navigation flex justify-between mt-6">
+        <div className="form-navigation flex justify-between mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -253,7 +253,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div> */}
+        </div>
       </div>
     </>
   );

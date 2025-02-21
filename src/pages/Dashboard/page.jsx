@@ -89,8 +89,8 @@ const Page = () => {
 
   return (
     <>
-      <div className="max-h-[97vh] w-[80vw]  ">
-        <div className="flex justify-end mb-4">
+      <div className="max-h-[97vh] max-w-[80vw]  ">
+        <div className="flex justify-end mb-4 -mr-24">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
           ) : (
@@ -98,7 +98,8 @@ const Page = () => {
           )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white px-4 py-2 tracking-normal">
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white py-2 tracking-normal"
+          >
             {ischeckedin ? (
               <>
                 <span className="text-white font-Poppins text-xl">
@@ -115,12 +116,12 @@ const Page = () => {
           </Button>
         </div>
         <div>
-          <div className="flex justify-center bg-white h-8 rounded-md">
+          <div className="flex justify-center bg-white h-8 rounded-md w-[85vw] ">
             <p className="font-medium text-2xl leading-10">
               Welcome, {username}
             </p>
           </div>
-          <div className="flex flex-col mt-6 bg-white h-auto rounded-lg ">
+          <div className="flex flex-col mt-6 bg-white h-auto rounded-lg  w-[85vw] ">
             <div className="flex flex-col justify-center items-center">
               <h1 className="page-title mt-2">Weekly Attendance Report</h1>
               <Attendancereport />
@@ -131,8 +132,8 @@ const Page = () => {
               <p className="text-red-700">Total Delay Time: {".5 hrs"}</p>
             </div>
           </div>
-          <div className="flex justify-between gap-2">
-            <div className="bg-white mt-2 w-[38vw] text-xl font-bold rounded-lg  ">
+          <div className="flex justify-around   w-[85vw]">
+            <div className="bg-white mt-2 w-[40vw] text-xl font-bold rounded-lg  ">
               <h3 className="mt-5 ml-5"> Work from Home</h3>
 
               <div className="flex w-64 ml-64 ">
@@ -148,7 +149,7 @@ const Page = () => {
 
               <WorkFromHome />
             </div>
-            <div className=" flex flex-col bg-white mt-2 pt-4 w-[42vw] text-xl font-bold rounded-lg  ">
+            <div className=" flex flex-col bg-white mt-2 pt-4 w-[43vw] text-xl font-bold rounded-lg  ">
               <div className="flex justify-between items-center">
                 {/* Left aligned Leave text */}
                 <div className="flex w-fit ml-5">Leave</div>
@@ -157,12 +158,14 @@ const Page = () => {
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg">
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
+                  >
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg">
+                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg"
+                  >
                     Upcoming Leave
                   </Button>
                 </div>
