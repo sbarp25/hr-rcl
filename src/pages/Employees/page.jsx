@@ -37,7 +37,7 @@ const Employees = () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.post("/api/v1/auth/get/all", {
-          pageIndex: currentPage - 1, // API uses zero-based index
+          pageIndex: currentPage - 1,
           pageSize: employeesPerPage,
           searchCriteria: {},
           filterCriteria: {},
@@ -47,11 +47,11 @@ const Employees = () => {
           logicalOperator: "AND",
         });
 
-        if (response.data.responseCode === "200") {
-          setEmployeesData(response.data.dataList || []);
-          setTotalEmployees(response.data.totalRecords || 0);
+        if (response?.data?.responseCode === "200") {
+          setEmployeesData(response?.data?.dataList || []);
+          setTotalEmployees(response?.data?.totalRecords || 0);
         } else {
-          toast.error(response.data.message);
+          toast.error(response?.data?.message);
         }
       } catch (error) {
         console.error("Error fetching employees:", error);

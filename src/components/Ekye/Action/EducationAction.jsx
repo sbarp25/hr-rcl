@@ -14,7 +14,7 @@ import {
 import { FaDiamond, FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import ButtonComponent from "../../ButtonComp";
@@ -28,7 +28,7 @@ const EducationAction = ({ employeeData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [EducationDocument, setEducationDocument] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+  const { rclId } = useParams();
   const educationalDetail = employeeData?.educationalDetails?.[0];
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const EducationAction = ({ employeeData }) => {
 
   const onApprove = async () => {
     const submitData = {
-      userId: 0,
+      userId: rclId,
       status: "APPROVED",
       remark: "Congrulations",
     };
@@ -126,8 +126,7 @@ const EducationAction = ({ employeeData }) => {
                     href={employeeData?.educationDetails?.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-green-600 underline mb-2"
-                  >
+                    className="block text-sm text-green-600 underline mb-2">
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Uploaded Certificate

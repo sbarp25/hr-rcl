@@ -20,7 +20,10 @@ const PersonalDetails = ({
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const genderOptions = ["Male", "Female"];
-  const Married = ["Unmarried", "Married"];
+  const Married = [
+    { key: false, label: "Unmarried" },
+    { key: true, label: "Married" },
+  ];
   const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   const relationOptions = ["Father", "Mother", "Brother", "Sister"];
 
@@ -30,6 +33,7 @@ const PersonalDetails = ({
         email: formData.personalInfo.email,
         dateOfBirthAd: formData.personalInfo.dob,
         gender: formData.personalInfo.gender,
+        married: formData.personalInfo.married,
         bloodGroup: formData.personalInfo.bloodType,
         emergencyNumber: formData.personalInfo.emergencyNumber,
         emergencyName: formData.personalInfo.emergencyName,
@@ -56,6 +60,7 @@ const PersonalDetails = ({
           email: "",
           dob: "",
           bloodType: "",
+          married: "",
           emergencyNumber: "",
           emergencyName: "",
           emergencyType: "",
@@ -289,7 +294,9 @@ const PersonalDetails = ({
                 )
               }>
               {Married.map((group) => (
-                <SelectItem key={group}>{group}</SelectItem>
+                <SelectItem key={group.key} textValue={group.label}>
+                  {group.label}
+                </SelectItem>
               ))}
             </Select>
             {errors.bloodType && (

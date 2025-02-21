@@ -6,10 +6,21 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { IoMdAdd } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
+} from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import { useNavigate } from "react-router-dom";
 
 const Position = () => {
+  const navigate = useNavigate();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
 
@@ -21,7 +32,6 @@ const Position = () => {
   const [editingPositionId, setEditingPositionId] = useState(null);
 
   /**Start of Get API for Getting the Positions */
-
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
@@ -46,10 +56,8 @@ const Position = () => {
 
     fetchPositions();
   }, []);
-  /**End of Get API for Getting the Positions */
 
   /** start of API calls to Add Position */
-
   const handleAddPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -66,17 +74,18 @@ const Position = () => {
         newPosition,
         {
           headers: {
-            // accessToken: accessToken,
-            // refreshToken: refreshToken,
             "Content-Type": "application/json",
           },
         }
       );
-      console.log("Position added successfully:", response.data);
-      toast.success("Position added successfully!");
-      // Reset form fields
-      setPositionName("");
-      setDescription("");
+      if (response.data.responseCode === "201") {
+        toast.success("Position added successfully!");
+        // Reset form fields
+        setPositionName("");
+        setDescription("");
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error("Error adding position:", error);
       toast.error("Error adding position.");
@@ -103,13 +112,6 @@ const Position = () => {
           console.log(`Deleting position ID: ${position.id}`);
           const response = await axiosInstance.delete(
             `/positions/delete/${position.id}`
-            // {
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //     accessToken: accessToken,
-            //     refreshToken: refreshToken,
-            //   },
-            // }
           );
           if (response.data.responseCode === "204") {
             toast.success("Position deleted successfully!");
@@ -126,10 +128,6 @@ const Position = () => {
         console.log("Unknown action");
     }
   };
-
-  {
-    /**End of Handleaction */
-  }
   {
     /**Start of Edit */
   }
@@ -187,6 +185,12 @@ const Position = () => {
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
+
+  {
+    /**Trancate Text */
+  }
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
     <>
       {isLoading && (
@@ -199,7 +203,7 @@ const Position = () => {
           <div className=" flex justify-between">
             <div className=" flex flex-col">
               <BreadcrumbsComponent items={breadcrumbItems} />
-              <h2 className="page-title">Departments</h2>
+              <h2 className="page-title">Position</h2>
             </div>
           </div>
 
@@ -304,64 +308,46 @@ const Position = () => {
         ) : (
           /* Table Section */
           <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-            <table className="table-auto w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700 text-left">
-                  <th className="border border-gray-300 px-4 py-2">
-                    Position Name
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2">
-                    Description
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {positionData?.length > 0 ? (
-                  positionData
-                    .filter((position) => !position.isDeleted)
-                    .map((position, index) => (
-                      <tr
-                        key={position.id}
-                        className={`${
-                          index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        } hover:bg-gray-100`}>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {position.name || "N/A"}
-                          {position.id}
-                        </td>
-                        <td className="border max-w-96 border-gray-300 px-4 py-2 sm:overflow-y-hidden">
-                          <div className="max-h-32 max-w-96 overflow-y-auto">
-                            {position.description}
-                          </div>
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2 text-center">
-                          <div className="flex justify-center gap-4">
-                            <HiPencilSquare
-                              className="text-green-500 cursor-pointer hover:text-green-700"
-                              title="Edit"
-                              onClick={() => handleAction("edit", position)}
-                            />
-                            <MdDelete
-                              className="text-red-500 cursor-pointer hover:text-red-700"
-                              title="Delete"
-                              onClick={() => handleAction("delete", position)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center text-gray-500 py-4">
-                      No Positions found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <Table
+              aria-label="Department Table "
+              isHeaderSticky
+              className="max-h-[75vh] overflow-auto">
+              <TableHeader>
+                <TableColumn>S.N</TableColumn>
+                <TableColumn>Department Name</TableColumn>
+                <TableColumn>Description</TableColumn>
+                <TableColumn>User Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {positionData.map((position, index) => (
+                  <TableRow
+                    key={position.rclId}
+                    className="h-20 justify-center items-center border-b-2 border-gray-300">
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{position.name}</TableCell>
+                    <TableCell>
+                      <Tooltip content={position.description}>
+                        {truncateText(position.description, 30)}
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <HiPencilSquare
+                          className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                          title="Edit"
+                          onClick={() => handleAction("edit", position)}
+                        />
+                        <MdDelete
+                          className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                          title="Delete"
+                          onClick={() => handleAction("delete", position)}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>

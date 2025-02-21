@@ -66,11 +66,16 @@ const Sidebar = () => {
         { label: "Leave Approver", to: "/Leave/apprej/:id" },
       ],
     },
-    // {
-    //   icon: IoIosPeople,
-    //   label: "EKYE",
-    //   to: "/EKYE",
-    // },
+    {
+      icon: FcLeave,
+      label: "Salary",
+      children: [
+        { label: "Salary Details", to: "/Salary" },
+        { label: "Salary Breakdown", to: "/salaryEdit" },
+        { label: "Advance", to: "/AdvanceSalary" },
+      ],
+    },
+
     {
       icon: IoIosPeople,
       label: "Ekye",

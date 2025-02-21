@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Modal,
   ModalContent,
@@ -16,6 +16,7 @@ import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 
 const EkyeAction = () => {
+  const { rclId } = useParams();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate(); // Hook for navigation
   const [employeeData, setEmployeeData] = useState();
@@ -29,8 +30,8 @@ const EkyeAction = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axiosInstance.get(
-          // `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclid}`
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+          // `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
         );
         if (response.data.responseCode === "200") {
           const data = response?.data?.data;

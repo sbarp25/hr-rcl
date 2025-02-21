@@ -10,24 +10,25 @@ import {
 } from "@nextui-org/react";
 import { ImCancelCircle } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import React, { useState } from "react";
+import { useState } from "react";
 import ButtonComponent from "./ButtonComp";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import Loader from "./Loader";
 
 const RejectComp = ({ employeeData }) => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+  const { rclId } = useParams();
   const onReject = async (data) => {
     const rejectData = {
-      userId: 45,
+      userId: rclId,
       status: "REJECTED",
-      remark: "You shall not pass",
+      remark: data.reject,
     };
 
     try {
@@ -61,7 +62,7 @@ const RejectComp = ({ employeeData }) => {
 
   return (
     <div>
-      {" "}
+      {isLoading && <Loader />}
       <Button className="bg-red-700 text-white" onPress={onOpen}>
         <RxCross1 />
         Reject
@@ -113,7 +114,7 @@ const RejectComp = ({ employeeData }) => {
                     className="text-white "
                   />
                   <ButtonComponent
-                    onPress={onReject}
+                    onPress={handleSubmit(onReject)}
                     content={
                       <div className="flex items-center justify-center gap-2 ">
                         <RxCross1 />

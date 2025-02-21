@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
 
-const Filter = ({ onApplyFilters }) => {
+const Filter = ({ onApplyFilters, url }) => {
   const [formData, setFormData] = useState({
     department: "",
     position: "",
@@ -34,17 +34,19 @@ const Filter = ({ onApplyFilters }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  /**Department Fetch */
   useEffect(() => {
     const fetchDepartments = async () => {
       setLoadingDepartments(true);
       try {
         const response = await axiosInstance.post(
-          "/api/v1/departments/get/all"
+          "/api/v1/departments/get/all",
+          {}
         );
         if (response.data.responseCode === "200") {
           setDepartmentsData(response?.data?.datalist);
         } else {
-          toast.error(response.data?.data?.message);
+          toast.error(response?.data?.message);
         }
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -55,6 +57,8 @@ const Filter = ({ onApplyFilters }) => {
     };
     fetchDepartments();
   }, []);
+
+  /**Position Fetch */
 
   useEffect(() => {
     const fetchPositions = async () => {
@@ -85,29 +89,23 @@ const Filter = ({ onApplyFilters }) => {
 
     const requestBody = {
       pageIndex: 0,
-      pageSize: 10, // Set the page size as needed
+      pageSize: 10,
       filterCriteria: {
-        // fromDate: "2025-01-16",
-        // toDate: "2025-01-25",
         departmentName: formData.department || "",
         positionName: formData.position || "",
       },
     };
 
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/admin/completedEkyeUsers",
-        requestBody,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axiosInstance.get(`${url}`, requestBody, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if (response.data.responseCode === "201") {
+      if (response.data.responseCode === "200") {
         resetFilters();
-        toast.success(response.data.data.message);
+        toast.success(response?.data?.message);
       } else {
-        toast.error(response.data.data.message);
+        toast.error(response?.data?.message);
       }
     } catch (error) {
       console.error("Error fetching data", error);

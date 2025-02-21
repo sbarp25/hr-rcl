@@ -4,7 +4,7 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input, Pagination } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/input";
 import { IoMdAdd } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
@@ -17,8 +17,8 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import ValidationComponent from "../../../components/ValidationComponent";
-import { BsFilter } from "react-icons/bs";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import DropDownComp from "../../../components/Dropdown";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -29,9 +29,14 @@ const Department = () => {
   const [departmentDescription, setDepartmentDescription] = useState("");
 
   const [editingDepartmentId, setEditingDepartmentId] = useState(null);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const accessToken = localStorage.getItem("accessToken");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [departmentPerPage, setDepartmentPerPage] = useState(10);
+
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
 
   // Fetch departments data
   useEffect(() => {
@@ -40,10 +45,19 @@ const Department = () => {
       try {
         const response = await axiosInstance.post(
           "/api/v1/departments/get/all",
-          {}
+          {
+            pageIndex: currentPage,
+            pageSize: departmentPerPage,
+            searchCriteria: {},
+            filterCriteria: {},
+            sortCriteria: {},
+            sortOrder: "asc",
+            searchFields: [],
+            logicalOperator: "AND",
+          }
         );
         if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.datalist);
+          setDepartmentsData(response?.data?.datalist || []);
         } else {
           toast.error(response?.data?.data?.message);
         }
@@ -56,7 +70,11 @@ const Department = () => {
     };
 
     fetchDepartments();
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   // Add Department code
   const handleAddDepartment = async (e) => {
@@ -180,12 +198,6 @@ const Department = () => {
         console.log("Unknown action");
     }
   };
-  const columns = [
-    { key: "name", label: "Department Name" },
-    { key: "description", label: "Description" },
-    { key: "actions", label: "Actions" },
-  ];
-  const getKeyValue = (obj, key) => (key in obj ? obj[key] : null);
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
@@ -201,15 +213,14 @@ const Department = () => {
         <div className="p-4 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div className=" flex justify-between">
-              <div className=" flex flex-col">
+              <div className=" flex flex-col space-y-4">
                 <BreadcrumbsComponent items={breadcrumbItems} />
                 <h2 className="page-title">Departments</h2>
               </div>
             </div>
 
             <Button
-              className="button bg-green-700 tracking-normal
-  hover:bg-green-900"
+              className="button bg-black font-md tracking-normal hover:bg-green-900"
               onPress={() => setShowAddForm(!showAddForm)}>
               {showAddForm ? (
                 <>
@@ -221,7 +232,9 @@ const Department = () => {
               ) : (
                 <>
                   <IoMdAdd className="text-white h-24 w-24" />
-                  <span className="text-white font-Poppins text-xl">Add</span>
+                  <span className="text-white font-Poppins text-xl">
+                    Add Department
+                  </span>
                 </>
               )}
             </Button>
@@ -268,6 +281,7 @@ const Department = () => {
               </div>
             </form>
           )}
+
           {showAddForm ? (
             <form
               className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
@@ -305,49 +319,61 @@ const Department = () => {
             </form>
           ) : (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <Table aria-label="Department Table">
-                <TableHeader columns={columns}>
-                  {(column) => (
-                    <TableColumn key={column.key} className="">
-                      {column.label}
-                    </TableColumn>
-                  )}
+              <Table aria-label="Department Table ">
+                <TableHeader>
+                  <TableColumn>S.N</TableColumn>
+                  <TableColumn>Department Name</TableColumn>
+                  <TableColumn>Description</TableColumn>
+                  <TableColumn>User Action</TableColumn>
                 </TableHeader>
-                <TableBody items={departmentsData}>
-                  {(department) => (
-                    <TableRow key={department.id}>
-                      {(columnKey) => (
-                        <TableCell className="justify-between">
-                          {columnKey === "actions" ? (
-                            <div className="flex justify-center mr-8">
-                              <HiPencilSquare
-                                className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                title="Edit"
-                                onClick={() => handleAction("edit", department)}
-                              />
-                              <MdDelete
-                                className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("delete", department)
-                                }
-                              />
-                            </div>
-                          ) : columnKey === "description" ? (
-                            <div className="max-w-[60vw]">
-                              {getKeyValue(department, columnKey)}
-                            </div>
-                          ) : (
-                            getKeyValue(department, columnKey)
-                          )}
-                        </TableCell>
-                      )}
+                <TableBody>
+                  {departmentsData.map((department, index) => (
+                    <TableRow
+                      key={department.rclId}
+                      className="h-20 justify-center items-center border-b-2 border-gray-300">
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{department.name}</TableCell>
+                      <TableCell>{department.description}</TableCell>
+                      <TableCell>
+                        <div className="flex">
+                          <HiPencilSquare
+                            className="text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                            title="Edit"
+                            onClick={() => handleAction("edit", department)}
+                          />
+                          <MdDelete
+                            className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                            title="Delete"
+                            onClick={() => handleAction("delete", department)}
+                          />
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  )}
+                  ))}
                 </TableBody>
               </Table>
             </div>
           )}
+        </div>
+        <div className="mt-4 flex justify-between">
+          <div className="text-xs">
+            <span>
+              Showing {departmentPerPage} of {departmentsData.length}
+            </span>
+          </div>
+          <Pagination
+            total={Math.ceil(departmentsData.length / departmentPerPage)}
+            initialPage={1}
+            page={currentPage}
+            onChange={handlePageChange}
+          />
+          <div className="flex justify-center items-center">
+            <span className="text-xs">Lines Per Page :</span>
+            <DropDownComp
+              items={dropdownItems}
+              onSelect={setDepartmentPerPage}
+            />
+          </div>
         </div>
       </ValidationComponent>
     </>

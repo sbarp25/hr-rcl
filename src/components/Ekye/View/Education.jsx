@@ -4,7 +4,7 @@ import { FaDiamond, FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import RejectComp from "../../RejectComp";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
 
@@ -13,7 +13,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
   const [EducationDocument, setEducationDocument] = useState(false);
 
   const educationalDetail = employeeData?.educationalDetails?.[0];
-
+  const { rclId } = useParams();
   useEffect(() => {
     if (employeeData?.educationalDetails?.[0].documentUrl) {
       setEducationDocument(true);
@@ -21,7 +21,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
   }, []);
   const onApprove = async () => {
     const approve = {
-      userId: "44",
+      userId: rclId,
       status: "APPROVED",
       // remarks: "Congrulations",
     };
@@ -48,8 +48,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
     }
   };
   return (
-    <div className="relative flex flex-col items-center bg-white h-[75vh] py-6 w-full mx-auto rounded-md ">
-      <div className="bg-white  text-lg w-[80vw]  shadow-md rounded-lg p-6 mt-2 ">
+    <div className="relative flex flex-col items-center bg-white h-[75vh] py-6 w-full mx-auto rounded-md p-8">
+      <div className="bg-white  text-lg w-full  shadow-md rounded-lg p-6 mt-2 ">
         <div className="flex justify-between items-center">
           <h1 className=" flex py-2 text-left text-xl font-semibold underline underline-offset-4 decoration-red-500">
             <FaDiamond className="h-3 w-2 text-red-700 mt-5 ml-3" />

@@ -96,6 +96,7 @@ import Personal from "../../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
+import { useParams } from "react-router-dom";
 
 const tabData = [
   {
@@ -152,12 +153,12 @@ const Content = ({ activeTab, employeeData }) => {
 const Page = () => {
   const [employeeData, setEmployeeData] = useState(null);
   const [activeTab, setActiveTab] = useState(tabData[0]);
-
+  const { rclId } = useParams();
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
         );
         if (response.data.responseCode === "200") {
           setEmployeeData(response.data.data);

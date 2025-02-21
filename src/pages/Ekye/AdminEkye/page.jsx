@@ -28,15 +28,15 @@ const Page = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
   const [filters, setFilters] = useState({ department: "", position: "" });
   const [eKyeData, setEkyeData] = useState([]);
 
-  const totalPages = Math.ceil(eKyeData.length / itemsPerPage);
-  const paginatedData = eKyeData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
+  const endIndex = startIndex + ekyeDashboardDataPerPage;
+  const paginatedEkye = eKyeData.length
+    ? eKyeData.slice(startIndex, endIndex)
+    : [];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -45,53 +45,45 @@ const Page = () => {
   };
 
   const handleChange = (action, rclId) => {
-    const routes = {
-      view: `/View/${rclId}`,
-      action: `/EkyeAction/${rclId}`,
-    };
-    navigate(routes[action] || "/");
+    switch (action) {
+      case "view":
+        navigate(`/View/${rclId}`);
+        break;
+      case "action":
+        navigate(`/EkyeAction/${rclId}`);
+        break;
+      default:
+        console.log("Invalid action");
+    }
   };
 
   const handleApplySearch = (searchData) => {
     console.log("Search applied with:", searchData);
   };
 
-  const fetchData = async (signal) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "/api/v1/admin/completed_ekye_users",
-        {
-          params: {
-            departmentName: filters.department || "",
-            positionName: filters.position || "",
-          },
-          signal,
-        }
-      );
-
-      if (response?.data?.responseCode === "200") {
-        setEkyeData(
-          response?.data?.datalist || response?.data?.data?.content || []
-        );
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        toast.error("Error fetching data");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const controller = new AbortController();
-    fetchData(controller.signal);
-    return () => controller.abort();
-  }, [filters]);
+    const fetchDepartments = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axiosInstance.get(
+          "/api/v1/admin/completed_ekye_users",
+          {}
+        );
+        if (response.data.responseCode === "200") {
+          setEkyeData(response?.data?.datalist || []);
+        } else {
+          toast.error(response?.data?.data?.message);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        toast.error("Error fetching departments.", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchDepartments();
+  }, [currentPage]);
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">
@@ -99,9 +91,13 @@ const Page = () => {
           <BreadcrumbsComponent items={breadcrumbItems} />
           <h1 className="page-title">EKYE</h1>
         </div>
+
         <div className="flex items-center space-x-4">
           <Search onApplySearch={handleApplySearch} />
-          <Filter onApplyFilters={setFilters} />
+          <Filter
+            onApplyFilters={setFilters}
+            url="/api/v1/admin/completed_ekye_users"
+          />
         </div>
       </div>
 
@@ -109,7 +105,9 @@ const Page = () => {
         <div className="max-h-[90vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
           <Table
             bordered
-            aria-label="List of Employees who have Completed EKYE">
+            aria-label="List of Employees who have Completed EKYE"
+            className="max-h-[75vh]"
+            isHeaderSticky>
             <TableHeader>
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
@@ -120,23 +118,21 @@ const Page = () => {
               <TableColumn>Action</TableColumn>
             </TableHeader>
             <TableBody
-              items={isLoading ? [] : paginatedData}
+              items={isLoading ? [] : paginatedEkye}
               isLoading={isLoading}
               loadingContent={<SkeletonLoader />}>
-              {paginatedData.map((data, index) => (
+              {paginatedEkye.map((data, index) => (
                 <TableRow
                   key={data.rclId}
-                  className="h-20 border-b-2 border-gray-300">
-                  <TableCell>
-                    {(currentPage - 1) * itemsPerPage + index + 1}
-                  </TableCell>
+                  className="h-20 justify-center items-center border-b-2 border-gray-300">
+                  <TableCell>{startIndex + index + 1}</TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>
                   <TableCell>{data.email}</TableCell>
                   <TableCell>{data.departmentName}</TableCell>
                   <TableCell>{data.positionName}</TableCell>
                   <TableCell>
-                    <div className="flex gap-4">
+                    <div className="flex justify-start gap-4">
                       <GrView
                         className="text-green-500 cursor-pointer hover:text-green-700"
                         title="View"
@@ -156,18 +152,23 @@ const Page = () => {
         </div>
 
         <div className="flex mt-4 justify-between">
-          <div className="text-xs">
-            Showing: <strong>{itemsPerPage}</strong> of{" "}
-            <strong>{eKyeData.length}</strong>
+          <div className="flex text-xs">
+            <span>Showing:</span>
+            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
+            <span>of</span>
+            <span>{eKyeData.length}</span>
           </div>
           <Pagination
-            total={totalPages}
-            page={currentPage}
+            initialPage={1}
+            total={Math.ceil(eKyeData.length / ekyeDashboardDataPerPage)}
             onChange={handlePageChange}
           />
-          <div className="flex items-center">
+          <div className="flex justify-center items-center">
             <span className="text-xs">Lines Per Page :</span>
-            <DropDownComp items={dropdownItems} onSelect={setItemsPerPage} />
+            <DropDownComp
+              items={dropdownItems}
+              onSelect={setEkyeDashboardDataPerPage}
+            />
           </div>
         </div>
       </div>

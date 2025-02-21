@@ -10,14 +10,12 @@ import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { toast } from "react-toastify";
 import { getIpAddress } from "../../utils/getIpAddress.js";
 const Page = () => {
-  const [ischeckedin, setIscheckedin] = useState("");
+  const [ischeckedin, setIscheckedin] = useState(true);
 
   const latitude = LocalStorageUtil.getItem("latitude");
   const longitude = LocalStorageUtil.getItem("longitude");
-  // const latitude = localStorage.getItem("latitude");
-  // const longitude = localStorage.getItem("longitude");
 
-  const isStudent = LocalStorageUtil.getItem("isStudent");
+  // const isStudent = LocalStorageUtil.getItem("isStudent");
   const handleCheckin = async () => {
     const ipAddress = await getIpAddress();
     if (ischeckedin) {
