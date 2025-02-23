@@ -4,7 +4,7 @@ import { MdDelete } from "react-icons/md";
 import Loader from "../../../components/Loader";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { IoMdAdd } from "react-icons/io";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
   Button,
@@ -18,11 +18,12 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { useNavigate } from "react-router-dom";
 import DropDownComp from "../../../components/Dropdown";
+import Filter from "../../../components/Filter";
+import Search from "../../../components/Search";
+import { BiData } from "react-icons/bi";
 
 const Position = () => {
-  const navigate = useNavigate();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
 
@@ -36,11 +37,9 @@ const Position = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
-  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
-  const endIndex = startIndex + ekyeDashboardDataPerPage;
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-
+  const [originalPositionsData, setOriginalPositionsData] = useState([]);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -55,9 +54,10 @@ const Position = () => {
           pageSize: ekyeDashboardDataPerPage, // Page size
         });
         if (response.data.responseCode === "200") {
+          setOriginalPositionsData(response?.data?.datalist || []);
+          setPositionData(response.data.datalist);
           setTotalPages(response.data.totalPages);
           setTotalRecords(response.data.totalRecords);
-          setPositionData(response.data.datalist);
         } else {
           toast.error("Failed to fetch positions.");
         }
@@ -72,6 +72,21 @@ const Position = () => {
     fetchPositions();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
+  const handleApplyFilters = (filters) => {
+    // If no filters, show all original data
+    if (!filters.department && !filters.position) {
+      setPositionData(originalPositionsData);
+      return;
+    }
+    const filteredData = originalPositionsData.filter((dept) => {
+      return (
+        (!filters.department || dept.name === filters.department) &&
+        (!filters.position || dept.positionName === filters.position)
+      );
+    });
+
+    setPositionData(filteredData);
+  };
   /** start of API calls to Add Position */
   const handleAddPosition = async (e) => {
     e.preventDefault();
@@ -219,26 +234,38 @@ const Position = () => {
           <div className=" flex justify-between">
             <div className=" flex flex-col space-y-4">
               <BreadcrumbsComponent items={breadcrumbItems} />
-              <h2 className="page-title">Position</h2>
+              <h2 className="page-title ">
+                <div className="flex items-center gap-2 ">
+                  <BiData />
+                  Position
+                </div>
+              </h2>
             </div>
           </div>
-
-          <Button
-            className="button bg-green-700 tracking-normal
-  hover:bg-green-900"
-            onPress={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? (
-              <>
-                <IoReturnDownBack className="text-white h-24 w-24" />
-                <span className="text-white font-Poppins text-xl">Return</span>
-              </>
-            ) : (
-              <>
-                <IoMdAdd className="text-white h-24 w-24" />
-                <span className="text-white font-Poppins text-xl">Add</span>
-              </>
-            )}
-          </Button>
+          <div className="flex justify-center gap-4">
+            <Search />
+            <Filter
+              onApplyFilters={handleApplyFilters}
+              url="/api/v1/positions/list"
+            />
+            <Button
+              className="button bg-black tracking-normal"
+              onPress={() => setShowAddForm(!showAddForm)}>
+              {showAddForm ? (
+                <>
+                  <IoReturnDownBack className="text-white text-base" />
+                  <span className="text-white font-normal text-xs">Return</span>
+                </>
+              ) : (
+                <>
+                  <IoIosAddCircleOutline className="text-white text-base" />
+                  <span className="text-white font-normal text-xs">
+                    Add Position
+                  </span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
         {/**  Edit Postion form */}
         {showEditForm && (
@@ -371,6 +398,7 @@ const Position = () => {
             <span>{totalRecords}</span>
           </div>
           <Pagination
+            showControls
             total={totalPages}
             page={currentPage}
             onChange={handlePageChange}

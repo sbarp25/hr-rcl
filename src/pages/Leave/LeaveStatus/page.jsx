@@ -12,20 +12,16 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import DropDownComp from "../../../components/Dropdown";
-import Loader from "../../../components/Loader";
-import LeaveApprove from "../LeaveApprove/Page";
 import { Link } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const LeaveStatus = () => {
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [eKyeData, setEkyeData] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [leaveData, setleaveData] = useState([]);
-  const [leaveByIdData, setLeaveByIdData] = useState([]);
 
+  const [leaveDataperpage, setLeaveDataPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -34,8 +30,7 @@ const LeaveStatus = () => {
   };
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
-    // { label: "Leave", href: "" },
-    { label: "Leave Status", href: "/Leave/Status" },
+    { label: "Leave Status", href: "" },
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
@@ -47,46 +42,21 @@ const LeaveStatus = () => {
         const response = await axiosInstance.get("/api/leave/all", {});
         if (response.data.responseCode === "200") {
           setleaveData(response.data.datalist);
-          toast.success(response.data.message);
+          setTotalPages(response.data.totalPages);
+          setTotalRecords(response.data.totalRecords);
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching Leave:", error);
-        toast.error("Error fetching Leave.");
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchLeave();
-  }, []);
-
-  useEffect(() => {
-    const fetchLeaveById = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/leave/leaveId", {
-          pageIndex: currentPage,
-          pageSize: ekyeDashboardDataPerPage, // Page size
-        });
-        if (response.data.responseCode === "200") {
-          setTotalPages(response.data.totalPages);
-          setTotalRecords(response.data.totalRecords);
-          setLeaveByIdData(response.data.datalist);
-          toast.success(response.data.message);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching Leave:", error);
-        toast.error("Error fetching Leave.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchLeaveById();
   }, []);
 
   return (
@@ -97,6 +67,7 @@ const LeaveStatus = () => {
           <BreadcrumbsComponent items={breadcrumbItems} />
           <h1 className="page-title">Leave Status</h1>
         </div>
+
         {/**Table Section */}
         <div className="bg-white rounded-lg p-2">
           <div className="max-h-[78vh] overflow-auto mt-4 rounded-3xl max-w-[100%] ">
@@ -127,7 +98,9 @@ const LeaveStatus = () => {
                     <TableCell>{data?.leaveEndDate || "N/A"}</TableCell>
                     <TableCell>{data?.Days || "N/A"}</TableCell>
                     <TableCell>
-                      <Link key={data.rclId} to={`/Leave/apprej/${data.rclId}`}>
+                      <Link
+                        key={data.leaveId}
+                        to={`/Leave/apprej/${data.leaveId}`}>
                         <div
                           className={`${
                             data?.leaveStatus === "APPROVED"
@@ -184,7 +157,7 @@ const LeaveStatus = () => {
             <div className="flex mt-4 justify-between items-center">
               <div className="flex text-xs">
                 <span>Showing:</span>
-                <span className="font-bold">{ekyeDashboardDataPerPage}</span>
+                <span className="font-bold">{leaveDataperpage}</span>
                 <span>of</span>
                 <span>{totalRecords}</span>
               </div>
@@ -198,7 +171,7 @@ const LeaveStatus = () => {
                 <span className="text-xs">Lines Per Page :</span>
                 <DropDownComp
                   items={dropdownItems}
-                  onSelect={setEkyeDashboardDataPerPage}
+                  onSelect={setLeaveDataPerPage}
                 />
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -28,7 +28,7 @@ const Filter = ({ onApplyFilters, url }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -71,7 +71,6 @@ const Filter = ({ onApplyFilters, url }) => {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching positions:", error);
         toast.error("Error fetching positions.");
       } finally {
         setLoadingPositions(false);
@@ -81,29 +80,30 @@ const Filter = ({ onApplyFilters, url }) => {
   }, []);
 
   const resetFilters = () => {
-    setFormData({ department: "", position: "" });
+    onApplyFilters({ department: "", position: "" });
   };
 
   const onSubmit = async () => {
     setIsLoading(true);
 
     const requestBody = {
-      pageIndex: 0,
+      pageIndex: 1,
       pageSize: 10,
       filterCriteria: {
-        departmentName: formData.department || "",
+        name: formData.department || "",
         positionName: formData.position || "",
       },
     };
 
     try {
-      const response = await axiosInstance.get(`${url}`, requestBody, {
+      const response = await axiosInstance.post(`${url}`, requestBody, {
         headers: { "Content-Type": "application/json" },
       });
 
       if (response.data.responseCode === "200") {
+        onClose();
         resetFilters();
-        toast.success(response?.data?.message);
+        // toast.success(response?.data?.message);
       } else {
         toast.error(response?.data?.message);
       }
@@ -113,6 +113,8 @@ const Filter = ({ onApplyFilters, url }) => {
     } finally {
       setIsLoading(false);
     }
+
+    // Pass the filters to the parent component
     onApplyFilters(formData);
   };
 
@@ -128,7 +130,7 @@ const Filter = ({ onApplyFilters, url }) => {
 
   return (
     <div className="bg-white rounded-xl">
-      <Button onPress={onOpen} variant="light">
+      <Button onPress={onOpen} variant="light" className="text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
         <p className="">Filters</p>
       </Button>
@@ -177,8 +179,10 @@ const Filter = ({ onApplyFilters, url }) => {
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
                   filteredPositions?.map((position) => (
-                    <SelectItem key={position.name} value={position.name}>
-                      {position.name}
+                    <SelectItem
+                      key={position.positionName}
+                      value={position.positionName}>
+                      {position.positionName}
                     </SelectItem>
                   ))
                 )}

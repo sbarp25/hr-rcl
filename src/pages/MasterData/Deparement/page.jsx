@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
 import { Button, Input, Pagination } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/input";
-import { IoMdAdd } from "react-icons/io";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { BiData } from "react-icons/bi";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
   Table,
@@ -19,30 +20,48 @@ import {
 import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import DropDownComp from "../../../components/Dropdown";
+import Filter from "../../../components/Filter";
+import Search from "../../../components/Search";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-
   const [departmentsData, setDepartmentsData] = useState([]);
   const [departmentName, setDepartmentName] = useState("");
   const [departmentDescription, setDepartmentDescription] = useState("");
-
   const [editingDepartmentId, setEditingDepartmentId] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const accessToken = localStorage.getItem("accessToken");
   const [currentPage, setCurrentPage] = useState(1);
   const [departmentPerPage, setDepartmentPerPage] = useState(10);
 
-  const dropdownItems = [5, 10, 20, 30, 50, 100];
-
   const [departmentDataPerPage, setDepartmentDataPerPage] = useState(10);
-  const startIndex = (currentPage - 1) * departmentDataPerPage;
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
 
+  const accessToken = localStorage.getItem("accessToken");
+
+  const [originalDepartmentsData, setOriginalDepartmentsData] = useState([]);
+
+  const handleApplyFilters = (filters) => {
+    // If no filters, show all original data
+    if (!filters.department && !filters.position) {
+      setDepartmentsData(originalDepartmentsData);
+      return;
+    }
+
+    // Apply filtering
+    const filteredData = originalDepartmentsData.filter((dept) => {
+      return (
+        (!filters.department || dept.name === filters.department) &&
+        (!filters.position || dept.positionName === filters.position)
+      );
+    });
+
+    setDepartmentsData(filteredData);
+  };
   // Fetch departments data
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -53,7 +72,8 @@ const Department = () => {
           pageSize: departmentDataPerPage,
         });
         if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.datalist || []);
+          setOriginalDepartmentsData(response?.data?.datalist || []); // Store original data
+          setDepartmentsData(response?.data?.datalist || []); // Initially set filtered data to original data
           setTotalPages(response.data.totalPages);
           setTotalRecords(response.data.totalRecords);
         } else {
@@ -61,7 +81,7 @@ const Department = () => {
         }
       } catch (error) {
         console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.", error);
+        toast.error("Error fetching departments.");
       } finally {
         setIsLoading(false);
       }
@@ -213,29 +233,41 @@ const Department = () => {
             <div className=" flex justify-between">
               <div className=" flex flex-col space-y-4">
                 <BreadcrumbsComponent items={breadcrumbItems} />
-                <h2 className="page-title">Departments</h2>
+
+                <h2 className="page-title ">
+                  <div className="flex items-center gap-2">
+                    <BiData />
+                    Department
+                  </div>
+                </h2>
               </div>
             </div>
-
-            <Button
-              className="button bg-black font-md tracking-normal hover:bg-green-900"
-              onPress={() => setShowAddForm(!showAddForm)}>
-              {showAddForm ? (
-                <>
-                  <IoReturnDownBack className="text-white h-24 w-24" />
-                  <span className="text-white font-Poppins text-xl">
-                    Return
-                  </span>
-                </>
-              ) : (
-                <>
-                  <IoMdAdd className="text-white h-24 w-24" />
-                  <span className="text-white font-Poppins text-xl">
-                    Add Department
-                  </span>
-                </>
-              )}
-            </Button>
+            <div className="flex justify-center gap-4">
+              <Search />
+              <Filter
+                onApplyFilters={handleApplyFilters}
+                url="/api/v1/departments/list"
+              />
+              <Button
+                className="button bg-black font-md tracking-normal"
+                onPress={() => setShowAddForm(!showAddForm)}>
+                {showAddForm ? (
+                  <>
+                    <IoReturnDownBack className="text-white text-base" />
+                    <span className="text-white font-normal text-xs">
+                      Return
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <IoIosAddCircleOutline className="text-white text-base" />
+                    <span className="text-white font-normal text-xs">
+                      Add Department
+                    </span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
           {showEditForm && (
             <form
@@ -279,98 +311,99 @@ const Department = () => {
               </div>
             </form>
           )}
-
-          {showAddForm ? (
-            <form
-              className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
-              onSubmit={handleAddDepartment}>
-              <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-                Add New Department
-              </h2>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col flex-1 gap-4">
-                  <Input
-                    id="name"
-                    type="text"
-                    label="Department Name"
-                    value={departmentName}
-                    onChange={(e) => setDepartmentName(e.target.value)}
-                    className="rounded-xl shadow-md  focus:outline-none w-full"
-                    required
-                  />
-                  <Textarea
-                    id="description"
-                    label="Description"
-                    value={departmentDescription}
-                    onChange={(e) => setDepartmentDescription(e.target.value)}
-                    className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
-                    required></Textarea>
+          <div className="bg-white rounded-lg p-2">
+            {showAddForm ? (
+              <form
+                className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
+                onSubmit={handleAddDepartment}>
+                <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
+                  Add New Department
+                </h2>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex flex-col flex-1 gap-4">
+                    <Input
+                      id="name"
+                      type="text"
+                      label="Department Name"
+                      value={departmentName}
+                      onChange={(e) => setDepartmentName(e.target.value)}
+                      className="rounded-xl shadow-md  focus:outline-none w-full"
+                      required
+                    />
+                    <Textarea
+                      id="description"
+                      label="Description"
+                      value={departmentDescription}
+                      onChange={(e) => setDepartmentDescription(e.target.value)}
+                      className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
+                      required></Textarea>
+                  </div>
                 </div>
+                <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
+                  <button
+                    type="submit"
+                    className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
+                    Submit
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
+                <Table aria-label="Department Table ">
+                  <TableHeader>
+                    <TableColumn>S.N</TableColumn>
+                    <TableColumn>Department Name</TableColumn>
+                    <TableColumn>Description</TableColumn>
+                    <TableColumn>User Action</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {departmentsData.map((department, index) => (
+                      <TableRow
+                        key={department.rclId}
+                        className="h-20 justify-center items-center border-b-2 border-gray-300">
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{department.name}</TableCell>
+                        <TableCell>{department.description}</TableCell>
+                        <TableCell>
+                          <div className="flex">
+                            <HiPencilSquare
+                              className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                              title="Edit"
+                              onClick={() => handleAction("edit", department)}
+                            />
+                            <MdDelete
+                              className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                              title="Delete"
+                              onClick={() => handleAction("delete", department)}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
-              <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
-                  type="submit"
-                  className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
-                  Submit
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
-              <Table aria-label="Department Table ">
-                <TableHeader>
-                  <TableColumn>S.N</TableColumn>
-                  <TableColumn>Department Name</TableColumn>
-                  <TableColumn>Description</TableColumn>
-                  <TableColumn>User Action</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {departmentsData.map((department, index) => (
-                    <TableRow
-                      key={department.rclId}
-                      className="h-20 justify-center items-center border-b-2 border-gray-300">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{department.name}</TableCell>
-                      <TableCell>{department.description}</TableCell>
-                      <TableCell>
-                        <div className="flex">
-                          <HiPencilSquare
-                            className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                            title="Edit"
-                            onClick={() => handleAction("edit", department)}
-                          />
-                          <MdDelete
-                            className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                            title="Delete"
-                            onClick={() => handleAction("delete", department)}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </div>
-        <div className="mt-4 flex justify-between">
-          <div className="text-xs">
-            <span>
-              Showing {departmentPerPage} of {totalRecords}
-            </span>
+            )}
           </div>
-          <Pagination
-            showControls
-            total={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-          />
-          <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
-            <DropDownComp
-              items={dropdownItems}
-              onSelect={setDepartmentPerPage}
+          <div className="mt-4 flex justify-between">
+            <div className="text-xs">
+              <span>
+                Showing {departmentPerPage} of {totalRecords}
+              </span>
+            </div>
+            <Pagination
+              showControls
+              total={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
             />
+            <div className="flex justify-center items-center">
+              <span className="text-xs">Lines Per Page :</span>
+              <DropDownComp
+                items={dropdownItems}
+                onSelect={setDepartmentPerPage}
+              />
+            </div>
           </div>
         </div>
       </ValidationComponent>

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Inputcomp from "./Inputcomp";
+import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Input } from "@nextui-org/react";
 import axiosInstance from "../lib/axios-Instance";

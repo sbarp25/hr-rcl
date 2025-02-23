@@ -56,7 +56,6 @@ const Login = () => {
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("fullName", FullName);
         localStorage.setItem("email", Email);
-        toast.success(response.data.message);
 
         if (
           response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||

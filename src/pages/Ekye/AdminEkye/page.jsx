@@ -33,7 +33,7 @@ const Page = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [eKyeData, setEkyeData] = useState([]);
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(30);
   const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
   const endIndex = startIndex + ekyeDashboardDataPerPage;
   const paginatedEkye = eKyeData.length

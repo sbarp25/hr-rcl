@@ -104,8 +104,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                           href={education.documentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-sm text-green-600 underline mb-2"
-                        >
+                          className="block text-sm text-green-600 underline mb-2">
                           <span className="flex items-center gap-x-2">
                             <FaRegEye />
                             View Uploaded Certificate
@@ -127,14 +126,6 @@ const EkyeEducationDetails = ({ employeeData }) => {
             </div>
           )}
         </div>
-
-        {/* <div className=" right-3 mt-10 flex items-end justify-end  gap-4">
-          <RejectComp employeeData={employeeData} />
-          <Button className="bg-teal-500 text-white" onPress={onApprove}>
-            <FaCheck />
-            Approve
-          </Button>
-        </div> */}
       </div>
       <div className="absolute right-28 -mt-20 flex items-end justify-end  gap-4">
         <RejectComp employeeData={employeeData} />

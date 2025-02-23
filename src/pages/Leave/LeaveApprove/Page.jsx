@@ -16,9 +16,12 @@ import { Controller, useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import ButtonComponent from "../../../components/ButtonComp";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LeaveApprove = ({ leaveId }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [leaveByIdData, setLeaveByIdData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -45,9 +48,11 @@ const LeaveApprove = ({ leaveId }) => {
     setIsLoading(true);
 
     const updateLeave = {
-      leaveId: id,
-      leaveStatus: data.leaveStatus,
-      remarks: data.remarks,
+      data: {
+        leaveId: id,
+        leaveStatus: data.leaveStatus,
+        remarks: data.remarks,
+      },
     };
 
     try {
@@ -70,6 +75,7 @@ const LeaveApprove = ({ leaveId }) => {
 
       if (response?.data?.responseCode === "200") {
         toast.success(response?.data?.message);
+        navigate("/Leave/Status");
         reset();
       } else {
         toast.error(response?.data?.error || "Something went wrong");

@@ -19,11 +19,16 @@ import { useForm } from "react-hook-form";
 import Loader from "./Loader";
 
 const RejectComp = ({ employeeData }) => {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
+
   const onReject = async (data) => {
     const rejectData = {
       userId: rclId,
@@ -65,8 +70,7 @@ const RejectComp = ({ employeeData }) => {
       {isLoading && <Loader />}
       <Button
         className="bg-white text-red-500 border border-red-500"
-        onPress={onOpen}
-      >
+        onPress={onOpen}>
         <RxCross1 />
         Reject
       </Button>
@@ -75,11 +79,8 @@ const RejectComp = ({ employeeData }) => {
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           size="lg"
-          // placement="bottom"
-          //  backdrop="blur">
           isDismissable={true}
-          isKeyboardDismissDisabled={false}
-        >
+          isKeyboardDismissDisabled={false}>
           <ModalContent>
             {(onClose) => (
               <>
@@ -93,6 +94,7 @@ const RejectComp = ({ employeeData }) => {
                     placeholder="Comment :"
                     minRows={10}
                     maxRows={10}
+                    className={`${errors.reject ? "border-red-900" : ""}`}
                     variant="bordered"
                     {...register("reject", {
                       required: "Reject reason is required",

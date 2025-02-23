@@ -18,10 +18,14 @@ const EducationAction = ({ employeeData }) => {
   const educationalDetail = employeeData?.educationalDetails?.[0];
 
   useEffect(() => {
-    if (employeeData?.educationalDetails?.[0].documentUrl) {
-      setEducationDocument(true);
+    if (employeeData?.educationalDetails) {
+      const docStatus = {};
+      employeeData.educationalDetails.forEach((edu, index) => {
+        docStatus[index] = !!edu.documentUrl;
+      });
+      setEducationDocument(docStatus);
     }
-  }, []);
+  }, [employeeData]);
 
   const onApprove = async () => {
     const submitData = {

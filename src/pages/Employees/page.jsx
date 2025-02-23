@@ -4,7 +4,6 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -19,22 +18,26 @@ import Filter from "../../components/Filter";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
+import DropDownComp from "../../components/Dropdown";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [employeesData, setEmployeesData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalEmployees, setTotalEmployees] = useState(0);
+
   const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const startIndex = (currentPage - 1) * employeeDataPerPage;
+  const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
 
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
   ];
+
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -46,9 +49,10 @@ const Employees = () => {
         });
 
         if (response?.data?.responseCode === "200") {
+          setOriginalEmployeeData(response?.data?.datalist || []);
+          setEmployeesData(response?.data?.datalist || []);
           setTotalPages(response.data.totalPages);
           setTotalRecords(response.data.totalRecords);
-          setEmployeesData(response?.data?.dataList || []);
         } else {
           toast.error(response?.data?.message);
         }
@@ -94,6 +98,21 @@ const Employees = () => {
     setCurrentPage(page);
   };
 
+  const handleApplyFilters = (filters) => {
+    // If no filters, show all original data
+    if (!filters.department && !filters.position) {
+      employeesData(originalEmployeeData);
+      return;
+    }
+    const filteredData = originalEmployeeData.filter((dept) => {
+      return (
+        (!filters.department || dept.name === filters.department) &&
+        (!filters.position || dept.positionName === filters.position)
+      );
+    });
+
+    employeesData(filteredData);
+  };
   return (
     <>
       {isLoading && <Loader message="Loading employees..." />}
@@ -111,7 +130,10 @@ const Employees = () => {
             <div className="flex gap-x-4">
               <div className="flex items-center space-x-4">
                 <Search />
-                <Filter />
+                <Filter
+                  onApplyFilters={handleApplyFilters}
+                  url="/api/v1/auth/get/all"
+                />
               </div>
               <a
                 className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
@@ -124,61 +146,72 @@ const Employees = () => {
         </div>
 
         {/* Employee Table */}
-        <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
-          <Table bordered aria-label="List of Employees">
-            <TableHeader>
-              <TableColumn>S.N</TableColumn>
-              <TableColumn>RCL-ID</TableColumn>
-              <TableColumn>Name</TableColumn>
-              <TableColumn>Email</TableColumn>
-              <TableColumn>Department</TableColumn>
-              <TableColumn>Position</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {employeesData.map((employee, index) => (
-                <TableRow key={employee.employeeId}>
-                  <TableCell>
-                    {(currentPage - 1) * employeesPerPage + index + 1}
-                  </TableCell>
-                  <TableCell>{employee.rclId}</TableCell>
-                  <TableCell>{employee.fullName}</TableCell>
-                  <TableCell>{employee.email}</TableCell>
-                  <TableCell>{employee.departmentName}</TableCell>
-                  <TableCell>{employee.positionName}</TableCell>
-                  <TableCell>
-                    <div className="flex justify-center gap-4">
-                      <HiPencilSquare
-                        className="text-green-500 cursor-pointer hover:text-green-700"
-                        title="Edit"
-                        onClick={() => handleAction("edit", employee.id)}
-                      />
-                      <MdDelete
-                        className="text-red-500 cursor-pointer hover:text-red-700"
-                        title="Delete"
-                        onClick={() => handleAction("delete", employee.id)}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        <div className="mt-4 flex justify-between">
-          <div className="text-xs">
-            <span>
-              Showing {employeeDataPerPage} of {totalEmployees}
-            </span>
+        <div className="bg-white rounded-lg p-2">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <Table bordered aria-label="List of Employees">
+              <TableHeader>
+                <TableColumn>S.N</TableColumn>
+                <TableColumn>RCL-ID</TableColumn>
+                <TableColumn>Name</TableColumn>
+                <TableColumn>Email</TableColumn>
+                <TableColumn>Department</TableColumn>
+                <TableColumn>Position</TableColumn>
+                <TableColumn>Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {employeesData.map((employee, index) => (
+                  <TableRow
+                    key={employee.employeeId}
+                    className="h-14 border-b-2 border-gray-300">
+                    <TableCell>
+                      {(currentPage - 1) * employeeDataPerPage + index + 1}
+                    </TableCell>
+                    <TableCell>{employee.rclId}</TableCell>
+                    <TableCell>{employee.fullName}</TableCell>
+                    <TableCell>{employee.email}</TableCell>
+                    <TableCell>{employee.departmentName}</TableCell>
+                    <TableCell>{employee.postionName}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-center gap-4">
+                        <HiPencilSquare
+                          className="text-green-500 cursor-pointer hover:text-green-700"
+                          title="Edit"
+                          onClick={() => handleAction("edit", employee.id)}
+                        />
+                        <MdDelete
+                          className="text-red-500 cursor-pointer hover:text-red-700"
+                          title="Delete"
+                          onClick={() => handleAction("delete", employee.id)}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-          <Pagination
-            total={Math.ceil(totalEmployees / employeeDataPerPage)}
-            initialPage={1}
-            page={currentPage}
-            onChange={handlePageChange}
-          />
+
+          {/* Pagination */}
+          <div className="mt-4 flex justify-between">
+            <div className="text-xs">
+              <span>
+                Showing {employeeDataPerPage} of {totalRecords}
+              </span>
+            </div>
+            <Pagination
+              showControls
+              total={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+            />
+            <div className="flex justify-center items-center">
+              <span className="text-xs">Lines Per Page :</span>
+              <DropDownComp
+                items={dropdownItems}
+                onSelect={setEmployeeDataPerPage}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>
