@@ -5,49 +5,62 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import Inputcomp from "./Inputcomp";
 
-const PersonalDetails = ({
-  formData,
-  handleNestedChange,
-  handleNext,
-  setFormData,
-  handleBack,
-}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+const PersonalDetails = ({ handleNext, handleBack }) => {
   const genderOptions = ["Male", "Female"];
-  const Married = [
+  const maritalOptions = [
     { key: false, label: "Unmarried" },
     { key: true, label: "Married" },
   ];
   const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   const relationOptions = ["Father", "Mother", "Brother", "Sister"];
 
-  const onSubmit = async () => {
-    const newData = {
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      dob: "",
+      gender: "",
+      married: "",
+      bloodType: "",
+      emergencyNumber: "",
+      emergencyName: "",
+      emergencyRelation: "",
+      guardianName: "",
+      guardianRelation: "",
+      guardianPhone: "",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    const formattedData = {
       data: {
-        email: formData.personalInfo.email,
-        dateOfBirthAd: formData.personalInfo.dob,
-        gender: formData.personalInfo.gender,
-        married: formData.personalInfo.married,
-        bloodGroup: formData.personalInfo.bloodType,
-        emergencyNumber: formData.personalInfo.emergencyNumber,
-        emergencyName: formData.personalInfo.emergencyName,
-        emergencyType: formData.personalInfo.emergencyRelation,
-        guardianName: formData.personalInfo.guardianName,
-        guardianType: formData.personalInfo.guardianRelation,
-        guardianNumber: formData.personalInfo.guardianPhone,
+        email: data.email,
+        dateOfBirthAd: data.dob,
+        gender: data.gender,
+        married: data.married,
+        bloodGroup: data.bloodType,
+        emergencyNumber: data.emergencyNumber,
+        emergencyName: data.emergencyName,
+        emergencyType: data.emergencyRelation,
+        guardianName: data.guardianName,
+        guardianType: data.guardianRelation,
+        guardianNumber: data.guardianPhone,
       },
     };
 
     try {
       const response = await axiosInstance.post(
         "/api/v1/personal/save",
-        newData,
+        formattedData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -56,86 +69,19 @@ const PersonalDetails = ({
       );
 
       if (response?.data?.responseCode === "201") {
-        setFormData({
-          email: "",
-          dob: "",
-          bloodType: "",
-          married: "",
-          emergencyNumber: "",
-          emergencyName: "",
-          emergencyType: "",
-          guardianName: "",
-          guardianType: "",
-          guardianNumber: "",
-        });
+        reset();
         toast.success(response?.data?.message);
-        handleNext(); // Move to the next step
+        handleNext();
       } else {
         toast.error(response.data.data.message);
       }
     } catch (error) {
       console.error("Error adding Personal Data", error);
-      toast.error("Error add personal Data", error);
-    } finally {
-      setIsLoading(false);
+      toast.error("Error adding personal Data");
     }
   };
 
-  const validateFormData = () => {
-    const newErrors = {};
-    const {
-      email,
-      dob,
-      gender,
-      bloodType,
-      emergencyNumber,
-      emergencyName,
-      emergencyRelation,
-      guardianName,
-      guardianPhone,
-      guardianRelation,
-    } = formData.personalInfo;
-
-    if (!email) newErrors.email = "Email is required.";
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Invalid email format.";
-    }
-    if (!dob) newErrors.dob = "Date of Birth is required.";
-    if (!gender) newErrors.gender = "Gender is required.";
-    if (!bloodType) newErrors.bloodType = "Blood Type is required.";
-    if (!emergencyNumber)
-      newErrors.emergencyNumber = "Emergency Phone is required.";
-    if (emergencyNumber && emergencyNumber.length !== 10) {
-      newErrors.emergencyNumber = "Emergency Phone must be 10 digits.";
-    }
-    if (emergencyNumber && !/^[0-9]{10,10}$/.test(emergencyNumber)) {
-      newErrors.emergencyNumber = "Invalid emergencyNumber format.";
-    }
-    if (!emergencyRelation)
-      newErrors.emergencyRelation = "Emergency Relation is Required ";
-    if (!emergencyName) newErrors.emergencyName = "Emergency Name is required.";
-    if (!guardianName) newErrors.guardianName = "Guardian Name is required.";
-    if (!guardianPhone) newErrors.guardianPhone = "Guardian Phone is required.";
-
-    if (guardianPhone && !/^[0-9]{10,10}$/.test(guardianPhone)) {
-      newErrors.guardianPhone = "Invalid guardianPhone format.";
-    }
-    if (!guardianRelation)
-      newErrors.guardianRelation = "Guardain Relation is Required ";
-
-    setErrors(newErrors); // Update errors state
-
-    return Object.keys(newErrors).length === 0; // Return true if no errors
-  };
-
-  const handlenextsubmit = () => {
-    if (validateFormData()) {
-      onSubmit(); // Submit the form if valid
-      // handleNext(); // Move to the next step
-    }
-  };
   useEffect(() => {
-    setIsLoading(true);
     const authToken = localStorage.getItem("authToken");
     const fetchPersonalDetails = async () => {
       try {
@@ -144,365 +90,397 @@ const PersonalDetails = ({
             Authorization: `Bearer ${authToken}`,
           },
         });
+
         if (response?.data?.responseCode === "200") {
           const data = response.data.data;
-
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              email: data.email || "",
-              dob: data.dateOfBirthAd || "",
-              gender: data.gender || "",
-              bloodType: data.bloodGroup || "",
-              emergencyNumber: data.emergencyNumber || "",
-              emergencyName: data.emergencyName || "",
-              emergencyRelation: data.emergencyType || "",
-              guardianName: data.guardianName || "",
-              guardianRelation: data.guardianType || "",
-              guardianPhone: data.guardianNumber || "",
-            },
-            // Update other sections if needed (address, education, documents)
-          }));
-        } else {
-          // toast.error("Failed to fetch data.");
+          reset({
+            email: data.email || "",
+            dob: data.dateOfBirthAd || "",
+            gender: data.gender || "",
+            bloodType: data.bloodGroup || "",
+            emergencyNumber: data.emergencyNumber || "",
+            emergencyName: data.emergencyName || "",
+            emergencyRelation: data.emergencyType || "",
+            guardianName: data.guardianName || "",
+            guardianRelation: data.guardianType || "",
+            guardianPhone: data.guardianNumber || "",
+          });
         }
       } catch (error) {
         console.error("Error fetching personal details:", error);
-        // toast.error("Error fetching data.");
-      } finally {
-        setIsLoading(false);
       }
     };
 
     fetchPersonalDetails();
-  }, []);
+  }, [reset]);
 
   return (
-    <div
-      className="space-y-8 bg-white rounded-2xl mx-auto 
-    "
-    >
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-700 py-3">
-          Personal Information
-        </h2>
-        {/**Personal Detials */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Personal Email */}
-          <div>
-            <Input
-              type="email"
-              id="email"
-              variant="bordered"
-              label="Personal Email"
-              className={`w-full rounded-xl ${
-                errors.email ? "border-2 border-red-500" : ""
-              }`}
-              value={formData?.personalInfo?.email}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "email",
-                  e.target.value
-                )
-              }
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
+    <div className="space-y-8 bg-white rounded-2xl mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold text-gray-700 py-3">
+            Personal Information
+          </h2>
 
-          {/**DOB */}
-          <div>
-            <Input
-              type="date"
-              variant="bordered"
-              label="Date of Birth"
-              className={`w-full   rounded-xl ${
-                errors.dob ? "border-2 border-red-500" : ""
-              }`}
-              value={formData?.personalInfo?.dob}
-              onChange={(e) =>
-                handleNestedChange("personalInfo", null, "dob", e.target.value)
-              }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Email */}
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    type="email"
+                    variant="bordered"
+                    label="Personal Email"
+                    className={`w-full rounded-xl ${
+                      errors.email ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.dob && (
-              <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
-            )}
-          </div>
-          {/**Blood type */}
-          <div>
-            <Select
-              variant="bordered"
-              classNames={{ inputWrapper: "shadow-md" }}
-              className={`w-full   rounded-xl ${
-                errors.bloodType ? "border-2 border-red-500" : ""
-              }`}
-              label="Blood Group"
-              selectedKeys={[formData?.personalInfo?.bloodType]}
-              onSelectionChange={(keys) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "bloodType",
-                  [...keys][0]
-                )
-              }
-            >
-              {bloodGroupOptions.map((group) => (
-                <SelectItem key={group}>{group}</SelectItem>
-              ))}
-            </Select>
-            {errors.bloodType && (
-              <p className="text-red-500 text-sm mt-1">{errors.bloodType}</p>
-            )}
-          </div>
-          {/* Gender Dropdown */}
-          <div>
-            <Select
-              variant="bordered"
-              scrollShadowProps={{ isEnabled: true }}
-              className={`w-full   rounded-xl ${
-                errors.gender ? "border-2 border-red-500" : ""
-              }`}
-              label="Gender"
-              selectedKeys={[formData?.personalInfo?.gender]}
-              onSelectionChange={(keys) =>
-                handleNestedChange("personalInfo", null, "gender", [...keys][0])
-              }
-            >
-              {genderOptions.map((g) => (
-                <SelectItem key={g}>{g}</SelectItem>
-              ))}
-            </Select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
-            )}
-          </div>
-          {/* Marital status Dropdown */}
-          <div>
-            <Select
-              variant="bordered"
-              classNames={{ inputWrapper: "shadow-md" }}
-              className={`w-full   rounded-xl ${
-                errors.bloodType ? "border-2 border-red-500" : ""
-              }`}
-              label="Marital status"
-              selectedKeys={[formData?.personalInfo?.married]}
-              onSelectionChange={(keys) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "married",
-                  [...keys][0]
-                )
-              }
-            >
-              {Married.map((group) => (
-                <SelectItem key={group.key} textValue={group.label}>
-                  {group.label}
-                </SelectItem>
-              ))}
-            </Select>
-            {errors.bloodType && (
-              <p className="text-red-500 text-sm mt-1">{errors.bloodType}</p>
-            )}
+
+            {/* Date of Birth */}
+            <Controller
+              name="dob"
+              control={control}
+              rules={{ required: "Date of Birth is required" }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    type="date"
+                    variant="bordered"
+                    label="Date of Birth"
+                    className={`w-full rounded-xl ${
+                      errors.dob ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.dob && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.dob.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Blood Type */}
+            <Controller
+              name="bloodType"
+              control={control}
+              rules={{ required: "Blood Type is required" }}
+              render={({ field }) => (
+                <div>
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Blood Group"
+                    className={`w-full rounded-xl ${
+                      errors.bloodType ? "border-2 border-red-500" : ""
+                    }`}
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) => field.onChange([...keys][0])}
+                  >
+                    {bloodGroupOptions.map((group) => (
+                      <SelectItem key={group}>{group}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.bloodType && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.bloodType.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Gender */}
+            <Controller
+              name="gender"
+              control={control}
+              rules={{ required: "Gender is required" }}
+              render={({ field }) => (
+                <div>
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Gender"
+                    className={`w-full rounded-xl ${
+                      errors.gender ? "border-2 border-red-500" : ""
+                    }`}
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) => field.onChange([...keys][0])}
+                  >
+                    {genderOptions.map((gender) => (
+                      <SelectItem key={gender}>{gender}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.gender && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.gender.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Marital Status */}
+            <Controller
+              name="married"
+              control={control}
+              rules={{ required: "Marital Status is required" }}
+              render={({ field }) => (
+                <div>
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Marital Status"
+                    className={`w-full rounded-xl ${
+                      errors.married ? "border-2 border-red-500" : ""
+                    }
+                    }`}
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) => field.onChange([...keys][0])}
+                  >
+                    {maritalOptions.map((status) => (
+                      <SelectItem key={status.key} textValue={status.label}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  {errors.married && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.married?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
           </div>
         </div>
-      </div>
 
-      {/* Guardian Details */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800">
-          Guardian Details
-        </h3>
+        {/* Guardian Details */}
+        <div className="space-y-6">
+          <h3 className="text-xl font-semibold text-gray-800">
+            Guardian Details
+          </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/** Guardian Name */}
-          <div>
-            <Input
-              variant="bordered"
-              id="guardianName"
-              type="text"
-              label="Guardian Name"
-              value={formData?.personalInfo?.guardianName}
-              className={`w-full  rounded-xl ${
-                errors.guardianName ? "  border-2 border-red-500" : ""
-              }`}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "guardianName",
-                  e.target.value
-                )
-              }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Guardian Name */}
+            <Controller
+              name="guardianName"
+              control={control}
+              rules={{ required: "Guardian Name is required" }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    variant="bordered"
+                    type="text"
+                    label="Guardian Name"
+                    className={`w-full rounded-xl ${
+                      errors.guardianName ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.guardianName && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.guardianName.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.guardianName && (
-              <p className="text-red-500 text-sm mt-1">{errors.guardianName}</p>
-            )}
-          </div>
-          {/**Guardian Phone */}
-          <div>
-            <Input
-              variant="bordered"
-              type="text"
-              id="guardianPhone"
-              label="Guardian Phone"
-              className={`w-full rounded-xl ${
-                errors.guardianPhone ? "border-2 border-red-500" : ""
-              }`}
-              value={formData?.personalInfo?.guardianPhone}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "guardianPhone",
-                  e.target.value
-                )
-              }
+
+            {/* Guardian Phone */}
+            <Controller
+              name="guardianPhone"
+              control={control}
+              rules={{
+                required: "Guardian Phone is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Phone must be 10 digits",
+                },
+              }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    variant="bordered"
+                    type="text"
+                    label="Guardian Phone"
+                    className={`w-full rounded-xl ${
+                      errors.guardianPhone ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.guardianPhone && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.guardianPhone.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.guardianPhone && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.guardianPhone}
-              </p>
-            )}
-          </div>
-          {/** Guardian Relation */}
-          <div>
-            <Select
-              variant="bordered"
-              className={`w-full rounded-xl ${
-                errors.guardianRelation ? "border-2 border-red-500" : ""
-              }`}
-              label="Guardian Relation"
-              selectedKeys={[formData?.personalInfo?.guardianRelation]}
-              onSelectionChange={(keys) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "guardianRelation",
-                  [...keys][0]
-                )
-              }
-            >
-              {relationOptions.map((relation) => (
-                <DropdownItem key={relation}>{relation}</DropdownItem>
-              ))}
-            </Select>
-            {errors.guardianRelation && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.guardianRelation}
-              </p>
-            )}
+
+            {/* Guardian Relation */}
+            <Controller
+              name="guardianRelation"
+              control={control}
+              rules={{ required: "Guardian Relation is required" }}
+              render={({ field }) => (
+                <div>
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Guardian Relation"
+                    className={`w-full rounded-xl ${
+                      errors.guardianRelation ? "border-2 border-red-500" : ""
+                    }`}
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) => field.onChange([...keys][0])}
+                  >
+                    {relationOptions.map((relation) => (
+                      <SelectItem key={relation}>{relation}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.guardianRelation && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.guardianRelation.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
           </div>
         </div>
-      </div>
 
-      {/* Emergency Details */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800">
-          Emergency Details
-        </h3>
+        {/* Emergency Details */}
+        <div className="space-y-6">
+          <h3 className="text-xl font-semibold text-gray-800">
+            Emergency Details
+          </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-8">
-          {/** Emergency Name */}
-          <div>
-            <Input
-              variant="bordered"
-              id="emergencyName"
-              className={`w-full rounded-xl ${
-                errors.emergencyName ? " border-2 border-red-500" : ""
-              }`}
-              type="text"
-              label="Emergency Name"
-              value={formData?.personalInfo?.emergencyName}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "emergencyName",
-                  e.target.value
-                )
-              }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Emergency Name */}
+            <Controller
+              name="emergencyName"
+              control={control}
+              rules={{ required: "Emergency Name is required" }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    variant="bordered"
+                    type="text"
+                    label="Emergency Name"
+                    className={`w-full rounded-xl ${
+                      errors.emergencyName ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.emergencyName && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.emergencyName.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.emergencyName && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.emergencyName}
-              </p>
-            )}
-          </div>
-          {/** Emergency Phone */}
-          <div>
-            <Input
-              id="emergencyPhone"
-              variant="bordered"
-              type="text"
-              className={`w-full rounded-xl ${
-                errors.emergencyNumber ? " border-2 border-red-500" : ""
-              }`}
-              label="Emergency Phone"
-              value={formData?.personalInfo?.emergencyNumber}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "emergencyNumber",
-                  e.target.value
-                )
-              }
+
+            {/* Emergency Number */}
+            <Controller
+              name="emergencyNumber"
+              control={control}
+              rules={{
+                required: "Emergency Number is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Phone must be 10 digits",
+                },
+              }}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    {...field}
+                    variant="bordered"
+                    type="text"
+                    label="Emergency Phone"
+                    className={`w-full rounded-xl ${
+                      errors.emergencyNumber ? "border-2 border-red-500" : ""
+                    }`}
+                  />
+                  {errors.emergencyNumber && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.emergencyNumber.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.emergencyNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.emergencyNumber}
-              </p>
-            )}
-          </div>
-          {/** Emergency Relation */}
-          <div>
-            <Input
-              variant="bordered"
-              type="text"
-              className={`w-full rounded-xl ${
-                errors.emergencyRelation ? "border-2 border-red-500" : ""
-              }`}
-              label="Emergency Relation"
-              value={formData?.personalInfo?.emergencyRelation}
-              onChange={(e) =>
-                handleNestedChange(
-                  "personalInfo",
-                  null,
-                  "emergencyRelation",
-                  e.target.value
-                )
-              }
+
+            {/* Emergency Relation */}
+            <Controller
+              name="emergencyRelation"
+              control={control}
+              rules={{ required: "Emergency Relation is required" }}
+              render={({ field }) => (
+                <div>
+                  <Select
+                    {...field}
+                    variant="bordered"
+                    label="Emergency Relation"
+                    className={`w-full rounded-xl ${
+                      errors.emergencyRelation ? "border-2 border-red-500" : ""
+                    }`}
+                    selectedKeys={field.value ? [field.value] : []}
+                    onSelectionChange={(keys) => field.onChange([...keys][0])}
+                  >
+                    {relationOptions.map((relation) => (
+                      <SelectItem key={relation}>{relation}</SelectItem>
+                    ))}
+                  </Select>
+                  {errors.emergencyRelation && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.emergencyRelation.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
-            {errors.emergencyRelation && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.emergencyRelation}
-              </p>
-            )}
           </div>
         </div>
-      </div>
 
-      {/* Actions */}
-      <div className="flex justify-between mt-8">
-        <Button
-          onPress={handleBack}
-          isDisabled
-          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
-        >
-          Back
-        </Button>
-        <Button
-          onPress={handlenextsubmit}
-          className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
-        >
-          Submit
-        </Button>
-      </div>
+        {/* Actions */}
+        <div className="flex justify-between mt-8">
+          <Button
+            onPress={handleBack}
+            isDisabled
+            className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
+          >
+            Back
+          </Button>
+          <Button
+            type="submit"
+            className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
+          >
+            Submit
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };
