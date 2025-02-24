@@ -238,7 +238,8 @@ const AddEmployeeForm = () => {
                   {...register("department", {
                     required: "Department is required",
                   })}
-                  errorMessage={errors.department?.message}>
+                  errorMessage={errors.department?.message}
+                >
                   {departmentsData?.map((dept) => (
                     <SelectItem key={dept.id} textValue={dept.name}>
                       {dept.name}
@@ -257,7 +258,8 @@ const AddEmployeeForm = () => {
                   }`}
                   {...register("position", {
                     required: "Position is required",
-                  })}>
+                  })}
+                >
                   {positionData.map((pos) => (
                     <SelectItem key={pos.id} textValue={pos.positionName}>
                       {pos.positionName}
@@ -276,7 +278,8 @@ const AddEmployeeForm = () => {
                   }`}
                   {...register("roles", {
                     required: "Role is required",
-                  })}>
+                  })}
+                >
                   {roleData.map((role) => (
                     <SelectItem key={role.roleId} textValue={role.roleName}>
                       {role.roleName}
@@ -317,7 +320,8 @@ const AddEmployeeForm = () => {
           </div>
           <button
             type="submit"
-            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-lg">
+            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-lg"
+          >
             <img src={Submit} alt="Submit" className="h-4 w-4" />
             Submit
           </button>

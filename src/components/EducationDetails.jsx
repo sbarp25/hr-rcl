@@ -130,6 +130,29 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     setErrors(newErrors);
   };
+  const validateField = (index, field, value) => {
+    const newErrors = { ...errors };
+
+    if (field === "institution" && !value) {
+      newErrors[`institution_${index}`] = "Institution is required.";
+    } else if (field === "faculty" && !value) {
+      newErrors[`faculty_${index}`] = "Faculty is required.";
+    } else if (field === "startYear" && !value) {
+      newErrors[`startYear_${index}`] = "Start year is required.";
+    } else if (
+      field === "endYear" &&
+      !value &&
+      formData.education[index]?.status !== "IN_PROGRESS"
+    ) {
+      newErrors[`endYear_${index}`] = "End year is required.";
+    } else if (field === "status" && !value) {
+      newErrors[`status_${index}`] = "Status is required.";
+    } else {
+      delete newErrors[`${field}_${index}`]; // Remove error if valid
+    }
+
+    setErrors(newErrors);
+  };
 
   const handleChange = (index, field, value) => {
     const updatedEducation = [...(formData.education || [])];
@@ -142,6 +165,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       education: updatedEducation,
     });
 
+    validateField(index, field, value);
+
+    // Validate on change
     validateField(index, field, value);
   };
 
@@ -302,6 +328,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const handleSubmit = () => {
     const isValid = validateFormData();
     if (!isValid) {
+      console.log("Validation failed, errors:", errors);
       console.log("Validation failed, errors:", errors);
       return;
     }
