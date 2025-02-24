@@ -8,64 +8,131 @@ import { FaRegEye } from "react-icons/fa";
 import { Time } from "@internationalized/date";
 import { Input } from "@nextui-org/input";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [errors, setErrors] = useState({});
   const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
-  const [selectedDegree, setSelectedDegree] = useState(degrees[0]); // Initialize with the first degree
+  const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const statusOptions = ["COMPLETED", "IN_PROGRESS"];
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
-
   const navigate = useNavigate();
   const [educationalDocument, setEducationalDocument] = useState(false);
-  let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45)); // Default to 10:00:45 AM
+  let [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45));
+  const [numberOfItems, setNumberOfItems] = useState(1);
 
-  // const degreeIndex = degrees.indexOf(selectedDegree);
-  const [numberOfItems, setNumberOfItems] = useState(1); // Initialize with 1 to show the first degree by default
+  const validateFileType = (file) => {
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    return allowedTypes.includes(file.type);
+  };
+
+  const validateFile = (file) => {
+    const errors = [];
+
+    if (!validateFileType(file)) {
+      errors.push("Only PNG, JPEG, or JPG files are allowed.");
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push("File size must be less than 5MB.");
+    }
+
+    return errors;
+  };
+
+  const handleDegreeSelection = (selected) => {
+    console.log("Selected degree:", selected);
+
+    setFormData((prev) => {
+      const firstDegreeData = prev.education?.[0] || {};
+      return {
+        ...prev,
+        education: [
+          firstDegreeData,
+          ...degrees
+            .slice(1, degrees.indexOf(selected) + 1)
+            .map((_, i) => prev.education?.[i + 1] || {}),
+        ],
+      };
+    });
+
+    setSelectedDegree(selected);
+  };
 
   useEffect(() => {
     if (degrees.includes(selectedDegree)) {
       const index = degrees.indexOf(selectedDegree);
       setFormData((prev) => {
-        console.log("Previous formData:", prev); // Debugging
+        const existingEducation = prev.education || [];
         return {
           ...prev,
-          education: degrees
-            .slice(0, index)
-            .map((_, i) => (prev.education ? prev.education[i] || {} : {})),
+          education: degrees.slice(0, index + 1).map((degree, i) => ({
+            ...existingEducation[i],
+            degree: degrees[i],
+          })),
         };
       });
     }
   }, [selectedDegree]);
 
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      console.log("Errors updated:", errors);
-    }
-  }, [errors]);
-
   const handleFileChange = (index, files) => {
+    const newErrors = { ...errors };
+
     if (files.length > 0) {
+      const file = files[0];
+      const fileErrors = validateFile(file);
+
+      if (fileErrors.length > 0) {
+        newErrors[`files_${index}`] = fileErrors.join(" ");
+        setErrors(newErrors);
+        return;
+      }
+
       setFormData((prev) => {
         const updatedEducation = [...prev.education];
-
         if (!updatedEducation[index]) {
-          updatedEducation[index] = {}; // Ensure the object exists
+          updatedEducation[index] = {};
         }
-
         updatedEducation[index] = {
           ...updatedEducation[index],
-          files, // Store the file array
-          fileName: files[0].name, // Store only the first file name
+          files,
+          fileName: files[0].name,
         };
-
         return { ...prev, education: updatedEducation };
       });
+
+      delete newErrors[`files_${index}`];
+      setErrors(newErrors);
     }
   };
 
+  const validateField = (index, field, value) => {
+    const newErrors = { ...errors };
+
+    if (field === "institution" && !value) {
+      newErrors[`institution_${index}`] = "Institution is required.";
+    } else if (field === "faculty" && !value) {
+      newErrors[`faculty_${index}`] = "Faculty is required.";
+    } else if (field === "startYear" && !value) {
+      newErrors[`startYear_${index}`] = "Start year is required.";
+    } else if (
+      field === "endYear" &&
+      !value &&
+      formData.education[index]?.status !== "IN_PROGRESS"
+    ) {
+      newErrors[`endYear_${index}`] = "End year is required.";
+    } else if (field === "status" && !value) {
+      newErrors[`status_${index}`] = "Status is required.";
+    } else {
+      delete newErrors[`${field}_${index}`];
+    }
+
+    setErrors(newErrors);
+  };
+
   const handleChange = (index, field, value) => {
-    const updatedEducation = [...(formData.education || [])]; // Ensure it's an array
+    const updatedEducation = [...(formData.education || [])];
     updatedEducation[index] = {
       ...updatedEducation[index],
       [field]: value,
@@ -74,6 +141,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ...formData,
       education: updatedEducation,
     });
+
+    validateField(index, field, value);
   };
 
   const handleTimeChange = (newTime) => {
@@ -116,7 +185,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   file: edu.documentUrl || "",
                   files: [],
                 }))
-              : degrees.map(() => ({})), // Ensure there's an empty object for each degree
+              : degrees.map(() => ({})),
           }));
         }
         setEducationalDocument(true);
@@ -134,39 +203,34 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     const newErrors = {};
     let isValid = true;
 
-    if (!formData.education || formData.education.length === 0) {
-      toast.error("Please add at least one education record.");
-      return { isValid: false, newErrors };
-    }
-
     formData.education.forEach((edu, index) => {
-      if (!edu.institution) {
-        newErrors[`institution_${index}`] = "Institution is required.";
-        isValid = false;
-      }
-      if (!edu.faculty) {
-        newErrors[`faculty_${index}`] = "Faculty is required.";
-        isValid = false;
-      }
-      if (!edu.startYear) {
-        newErrors[`startYear_${index}`] = "Start year is required.";
-        isValid = false;
-      }
-      if (!edu.endYear && edu.status !== "IN_PROGRESS") {
-        newErrors[`endYear_${index}`] = "End year is required.";
-        isValid = false;
-      }
-      if (!edu.status) {
-        newErrors[`status_${index}`] = "Status is required.";
-        isValid = false;
-      }
+      ["institution", "faculty", "startYear", "endYear", "status"].forEach(
+        (field) => {
+          validateField(index, field, edu[field] || "");
+          if (!edu[field] && field !== "endYear") {
+            newErrors[`${field}_${index}`] = `${field} is required.`;
+            isValid = false;
+          }
+        }
+      );
+
       if (!edu.files || edu.files.length === 0) {
-        newErrors[`files_${index}`] = "Document is required.";
-        isValid = false;
+        if (!edu.file) {
+          newErrors[`files_${index}`] = "Document is required.";
+          isValid = false;
+        }
+      } else {
+        const file = edu.files[0];
+        const fileErrors = validateFile(file);
+        if (fileErrors.length > 0) {
+          newErrors[`files_${index}`] = fileErrors.join(" ");
+          isValid = false;
+        }
       }
     });
 
-    return { isValid, newErrors };
+    setErrors(newErrors);
+    return isValid;
   };
 
   const onSubmit = async () => {
@@ -176,30 +240,33 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     const formDataToSend = new FormData();
 
-    formDataToSend.append(
-      "educationData",
-      JSON.stringify(
-        formData?.education?.map((edu, index) => ({
-          level: degrees[index] || "",
-          institution: edu.institution || "",
-          faculty: edu.faculty || "",
-          startYear: edu.startYear || "",
-          endYear: edu.endYear || "",
-          status: edu.status || "",
-          imageIndex: index,
-        }))
-      )
-    );
+    console.log("Education data being sent:", formData.education);
 
-    formData?.education?.forEach((edu) => {
+    const educationData = formData?.education?.map((edu, index) => ({
+      level: degrees[index] || "",
+      institution: edu.institution || "",
+      faculty: edu.faculty || "",
+      startYear: edu.startYear || "",
+      endYear: edu.endYear || "",
+      status: edu.status || "",
+      imageIndex: index,
+    }));
+
+    console.log("Mapped education data:", educationData);
+
+    formDataToSend.append("educationData", JSON.stringify(educationData));
+
+    formData?.education?.forEach((edu, index) => {
+      console.log(`Processing files for degree ${index}:`, edu.files);
       if (edu?.files && edu.files.length > 0) {
         edu.files.forEach((file) => {
+          console.log(`Appending file for degree ${index}:`, file.name);
           formDataToSend.append("files", file);
         });
       }
     });
 
-    console.log([...formDataToSend.entries()]);
+    console.log("FormData entries:", [...formDataToSend.entries()]);
 
     formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
     if (isCurrentlyStudying) {
@@ -212,7 +279,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         "/api/v1/education/save",
         formDataToSend,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
@@ -231,17 +300,16 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    const { isValid, newErrors } = validateFormData();
+    const isValid = validateFormData();
     if (!isValid) {
-      setErrors(newErrors);
+      console.log("Validation failed, errors:", errors);
       return;
     }
-
     onSubmit();
   };
 
   return (
-    <div className="space-y-4 py-6 ">
+    <div className="space-y-4 py-6">
       <h2 className="text-2xl font-semibold text-gray-700">
         Educational Details
       </h2>
@@ -252,11 +320,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           className="w-full rounded-lg shadow-lg shadow-gray-300"
           label="Select A Level"
           selectedKeys={[selectedDegree]}
-          onChange={(e) => {
-            const selected = e.target.value;
-            console.log("Dropdown selection:", selected);
-            setSelectedDegree(selected);
-          }}>
+          onChange={(e) => handleDegreeSelection(e.target.value)}>
           {degrees.map((degree) => (
             <SelectItem key={degree} value={degree}>
               {degree}
@@ -270,7 +334,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             {degrees[index]} Details
           </h3>
           <div className="grid grid-cols-2 gap-4">
-            {/**Institution */}
             <div>
               <Input
                 variant="bordered"
@@ -293,7 +356,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
-            {/**Faculty */}
             <div>
               <Input
                 variant="bordered"
@@ -312,8 +374,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
-
-            {/**Start Year */}
             <div>
               <Input
                 variant="bordered"
@@ -334,7 +394,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 </p>
               )}
             </div>
-            {/**End Year */}
             <div>
               <Input
                 variant="bordered"
@@ -356,7 +415,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <Select
                 variant="bordered"
-                className={`w-full  rounded-xl ${
+                className={`w-full rounded-xl ${
                   errors[`status_${index}`]
                     ? "border-2 border-red-500"
                     : "border-gray-300"
@@ -380,37 +439,39 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             </div>
             <div>
               <div>
-                <label className="relative flex items-center justify-left w-full h-14 border-2 border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-200">
-                  {/* <span className="text-gray-600 px-4">
-                    {formData?.education?.[index]?.fileName ? (
-                      <div className="flex gap-2">
-                        <p>{formData.education[index].fileName}</p>
-                      </div>
-                    ) : (
-                      "Upload Education Certificate"
-                    )}
-                  </span> */}
+                <label
+                  className={`relative flex items-center justify-left w-full h-14 border-2 
+                  ${
+                    errors[`files_${index}`]
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } 
+                  rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
                   <span className="text-gray-600 px-4">
                     {formData?.education?.[index]?.files?.length > 0 ? (
                       <div className="flex gap-2">
                         <p>
-                          Choose a Photo{" "}
-                          {formData.education[index].files[0].name}
-                        </p>{" "}
+                          Selected: {formData.education[index].files[0].name}
+                        </p>
                       </div>
                     ) : (
                       "Upload Education Certificate"
                     )}
                   </span>
-
                   <input
                     type="file"
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     onChange={(e) =>
                       handleFileChange(index, Array.from(e.target.files))
                     }
+                    accept=".png,.jpg,.jpeg"
                   />
                 </label>
+                {errors[`files_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`files_${index}`]}
+                  </p>
+                )}
               </div>
               <div className="flex gap-x-4">
                 <label className="block text-xs font-medium text-gray-700 pl-2">
@@ -438,7 +499,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </div>
         </div>
       ))}
-      <div className="flex flex-col gap-x-4 pl-1 ">
+      <div className="flex flex-col gap-x-4 pl-1">
         <div className="flex items-center gap-2">
           <input
             type="checkbox"

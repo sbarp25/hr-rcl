@@ -35,7 +35,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       issuedDate,
       citizenshipFrontDocumentFile,
       citizenshipBackDocumentFile,
-    } = formData?.documents;
+    } = formData.documents;
     if (!panNumber) newErrors.panNumber = "PanNumber is Required";
     if (panNumber && !/^[0-9]{0,16}$/.test(panNumber)) {
       newErrors.panNumber = "Invalid format";
@@ -281,8 +281,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       errors.panCardDocumentFile
                         ? "border-red-500"
                         : "border-gray-300"
-                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}
-                  >
+                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
                     <span className="text-gray-600 px-4">
                       {formData?.documents?.panCardDocumentFile?.name ? (
                         <div className="flex gap-2">
@@ -326,8 +325,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData.documents?.panCardDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2"
-                      >
+                        className="block text-sm text-green-600 underline mb-2">
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded PAN Card
@@ -433,8 +431,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       errors.citizenshipFrontDocumentFile
                         ? "border-red-500"
                         : "border-gray-300"
-                    } rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}
-                  >
+                    } rounded-xl  cursor-pointer bg-white hover:bg-gray-200 `}>
                     <span className="text-gray-600 px-4">
                       {/* Upload Front photo of citizenship */}
                       {formData?.documents?.citizenshipFrontDocumentFile
@@ -484,8 +481,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2"
-                      >
+                        className="block text-sm text-green-600 underline mb-2">
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Front Side
@@ -506,8 +502,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       errors.citizenshipBackDocumentFile
                         ? "border-red-500"
                         : "border-gray-300"
-                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200`}
-                  >
+                    }  rounded-xl  cursor-pointer bg-white hover:bg-gray-200`}>
                     <span className="text-gray-600 px-4 truncate">
                       {formData?.documents?.citizenshipBackDocumentFile
                         ?.name ? (
@@ -555,8 +550,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipBackDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2"
-                      >
+                        className="block text-sm text-green-600 underline mb-2">
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Back Side
@@ -574,14 +568,12 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded"
-              >
+                className="px-4 py-2 bg-gray-300 rounded">
                 Back
               </Button>
               <Button
                 onPress={handleNextSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded"
-              >
+                className="px-4 py-2 bg-green-500 text-white rounded">
                 Submit
               </Button>
             </div>
