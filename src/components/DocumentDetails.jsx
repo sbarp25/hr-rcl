@@ -4,6 +4,7 @@ import { Button, Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
+import Loader from "./Loader";
 
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -244,6 +245,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
   return (
     <>
+      {isLoading && <Loader />}
       <ValidationComponent>
         <div className="space-y-4">
           {/* PAN Details Section */}

@@ -89,7 +89,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="max-h-[97vh] max-w-[80vw]  ">
+      <div className="max-h-[97vh] max-w-[79vw]  ">
         <div className="flex justify-end mb-4 -mr-24">
           {ischeckedin ? (
             <MdRadioButtonChecked className="text-red-700 h-10 w-10 mr-2 " />
@@ -98,8 +98,7 @@ const Page = () => {
           )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white py-2 tracking-normal"
-          >
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white py-2 tracking-normal">
             {ischeckedin ? (
               <>
                 <span className="text-white font-Poppins text-xl">
@@ -116,20 +115,20 @@ const Page = () => {
           </Button>
         </div>
         <div>
-          <div className="flex justify-center bg-white h-8 rounded-md w-[85vw] ">
-            <p className="font-medium text-2xl leading-10">
+          <div className="flex justify-center bg-white h-12 items-center rounded-md w-[85vw] ">
+            <p className="font-light text-lg leading-10 ">
               Welcome, {username}
             </p>
           </div>
-          <div className="flex flex-col mt-6 bg-white h-auto rounded-lg  w-[85vw] ">
+          <div className="flex flex-col mt-6 bg-white h-auto rounded-lg  w-[85vw] border-2 border-gray-300 ">
             <div className="flex flex-col justify-center items-center">
               <h1 className="page-title mt-2">Weekly Attendance Report</h1>
               <Attendancereport />
             </div>
 
             <div className="text-md font-bold text-right mr-16">
-              <p className="text-green-700 mr-2">Total Early Time: {"1 hrs"}</p>
-              <p className="text-red-700">Total Delay Time: {".5 hrs"}</p>
+              <p className="text-teal-500 mr-2">Total Early Time: {"1 hrs"}</p>
+              <p className="text-red-500">Total Delay Time: {".5 hrs"}</p>
             </div>
           </div>
           <div className="flex justify-around   w-[85vw]">
@@ -158,14 +157,12 @@ const Page = () => {
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
-                  >
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg">
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg"
-                  >
+                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg">
                     Upcoming Leave
                   </Button>
                 </div>

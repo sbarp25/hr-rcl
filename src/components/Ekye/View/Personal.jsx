@@ -5,10 +5,10 @@ import UnderlineComponent from "../../underlinecomponent";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="bg-gray-50  h-[75vh] overflow-auto rounded-b-xl border border-gray-300">
+    <div className="bg-gray-50  h-[75vh] pt-4 overflow-auto rounded-b-xl border border-gray-300">
       <div className="rounded-xl space-y-6 pt-6 ">
         {/**Basic Information */}
-        <div className="bg-white rounded-xl mb-4 border shadow-md mx-4  p-5">
+        <div className="bg-white rounded-xl mb-4 mx-4  p-5">
           <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl ">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
@@ -88,7 +88,7 @@ const Personal = ({ employeeData }) => {
         {/**Guardians && Emergency Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           {/**Guardians Information */}
-          <div className="bg-white rounded-2xl border shadow-md pb-2 ml-4 p-5">
+          <div className="bg-white rounded-2xl pb-2 ml-4 p-5">
             <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-2xl">
               <h1 className="text-xl font-semibold flex mb-6">
                 <span className="relative">
@@ -129,7 +129,7 @@ const Personal = ({ employeeData }) => {
             </form>
           </div>
           {/**Emerency Information */}
-          <div className="bg-white rounded-2xl  pb-2 border shadow-md mr-4 p-5">
+          <div className="bg-white rounded-2xl  pb-2  mr-4 p-5">
             <div className="flex items-center justify-between bg-white text-lg pr-4 rounded-2xl">
               <h1 className="text-xl font-semibold flex mb-6">
                 <span className="relative">

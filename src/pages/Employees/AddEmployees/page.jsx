@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
+import {
+  Checkbox,
+  DatePicker,
+  Input,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 const AddEmployeeForm = () => {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm({
@@ -156,9 +163,6 @@ const AddEmployeeForm = () => {
 
   return (
     <div className="container space-y-4">
-      {isLoading && (
-        <Loader message="Please wait while the work is being done" />
-      )}{" "}
       <div className="flex flex-col space-y-8 ">
         <div className="text-sm">
           <BreadcrumbsComponent items={breadcrumbItems} />
@@ -227,65 +231,100 @@ const AddEmployeeForm = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
               {/**Select Department */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Department"
-                  color={errors.department ? "danger" : "default"}
-                  className={`  rounded-xl ${
-                    errors.department ? "border-2 border-red-500" : ""
-                  }`}
-                  {...register("department", {
-                    required: "Department is required",
-                  })}
-                  errorMessage={errors.department?.message}
-                >
-                  {departmentsData?.map((dept) => (
-                    <SelectItem key={dept.id} textValue={dept.name}>
-                      {dept.name}
-                    </SelectItem>
-                  ))}
-                </Select>
+              <div>
+                <Controller
+                  name="department"
+                  control={control}
+                  rules={{ required: "Department is required" }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      variant="bordered"
+                      label="Department"
+                      className={`rounded-xl ${
+                        errors.department ? "border-2 border-red-500 " : ""
+                      }`}
+                      selectedKeys={field.value ? [field.value] : []}
+                      onSelectionChange={(keys) =>
+                        field.onChange(Array.from(keys)[0])
+                      }>
+                      {departmentsData?.map((dept) => (
+                        <SelectItem key={dept.id} textValue={dept.name}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.department && (
+                  <p className="text-red-500 text-sm">
+                    {errors.department.message}
+                  </p>
+                )}
               </div>
               {/**Select Position */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Position"
-                  color={errors.position ? "danger" : "default"}
-                  className={`  rounded-xl ${
-                    errors.position ? "border-2 border-red-500" : ""
-                  }`}
-                  {...register("position", {
-                    required: "Position is required",
-                  })}
-                >
-                  {positionData.map((pos) => (
-                    <SelectItem key={pos.id} textValue={pos.positionName}>
-                      {pos.positionName}
-                    </SelectItem>
-                  ))}
-                </Select>
+              <div>
+                <Controller
+                  name="position"
+                  control={control}
+                  rules={{ required: "Position is required" }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      variant="bordered"
+                      label="Position"
+                      className={`rounded-xl ${
+                        errors.position ? "border-2 border-red-500 " : ""
+                      }`}
+                      selectedKeys={field.value ? [field.value] : []}
+                      onSelectionChange={(keys) =>
+                        field.onChange(Array.from(keys)[0])
+                      }>
+                      {positionData.map((pos) => (
+                        <SelectItem key={pos.id} textValue={pos.positionName}>
+                          {pos.positionName}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.position && (
+                  <p className="text-red-500 text-sm">
+                    {errors.position.message}
+                  </p>
+                )}
               </div>
+
               {/**Select Role  */}
-              <div className="mb-4">
-                <Select
-                  variant="bordered"
-                  label="Select an Role"
-                  color={errors.roles ? "danger" : "default"}
-                  className={`rounded-xl ${
-                    errors.roles ? "border-2 border-red-500" : ""
-                  }`}
-                  {...register("roles", {
-                    required: "Role is required",
-                  })}
-                >
-                  {roleData.map((role) => (
-                    <SelectItem key={role.roleId} textValue={role.roleName}>
-                      {role.roleName}
-                    </SelectItem>
-                  ))}
-                </Select>
+              <div>
+                <Controller
+                  name="roles"
+                  control={control}
+                  rules={{ required: "Role is required" }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      variant="bordered"
+                      label="Roles"
+                      color={errors.roles ? "danger" : ""}
+                      className={`rounded-xl ${
+                        errors.roles ? "border-2 border-danger " : ""
+                      }`}
+                      selectedKeys={field.value ? [field.value] : []}
+                      onSelectionChange={(keys) =>
+                        field.onChange(Array.from(keys)[0])
+                      }>
+                      {roleData.map((role) => (
+                        <SelectItem key={role.roleId} textValue={role.roleName}>
+                          {role.roleName}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.roles && (
+                  <p className="text-red-500 text-sm">{errors.roles.message}</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
@@ -310,6 +349,18 @@ const AddEmployeeForm = () => {
               </div>
             </div>
             <div className="mb-4 -mt-16 flex items-center">
+              {/* <div>
+                <Controller
+                  name="checkbox"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox isSelected onValueChange={field.onChange}>
+                      Perform eKYE
+                    </Checkbox>
+                  )}
+                />
+              </div> */}
+
               <input
                 type="checkbox"
                 {...register("performEKYC")}
@@ -320,8 +371,7 @@ const AddEmployeeForm = () => {
           </div>
           <button
             type="submit"
-            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-lg"
-          >
+            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
             <img src={Submit} alt="Submit" className="h-4 w-4" />
             Submit
           </button>

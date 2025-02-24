@@ -4,7 +4,7 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { Button, Input, Pagination } from "@nextui-org/react";
+import { Button, Input, Pagination, Tooltip } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/input";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BiData } from "react-icons/bi";
@@ -222,6 +222,8 @@ const Department = () => {
     { label: "MasterData", href: "" },
     { label: "Department", href: "/master-data/Department" },
   ];
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
     <>
       <ValidationComponent>
@@ -351,10 +353,12 @@ const Department = () => {
               <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
                 <Table aria-label="Department Table ">
                   <TableHeader>
-                    <TableColumn>S.N</TableColumn>
-                    <TableColumn>Department Name</TableColumn>
-                    <TableColumn>Description</TableColumn>
-                    <TableColumn>User Action</TableColumn>
+                    <TableColumn className="text-lg">S.N</TableColumn>
+                    <TableColumn className="text-lg">
+                      Department Name
+                    </TableColumn>
+                    <TableColumn className="text-lg">Description</TableColumn>
+                    <TableColumn className="text-lg">User Action</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {departmentsData.map((department, index) => (
@@ -363,7 +367,12 @@ const Department = () => {
                         className="h-20 justify-center items-center border-b-2 border-gray-300">
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{department.name}</TableCell>
-                        <TableCell>{department.description}</TableCell>
+                        <TableCell>
+                          {" "}
+                          <Tooltip content={department.description}>
+                            {truncateText(department.description, 30)}
+                          </Tooltip>
+                        </TableCell>
                         <TableCell>
                           <div className="flex">
                             <HiPencilSquare

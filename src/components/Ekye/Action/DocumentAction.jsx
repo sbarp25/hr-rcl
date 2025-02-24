@@ -74,8 +74,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipFrontDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-300 font-medium underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -95,8 +94,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.citizenshipBackDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-300 font-medium underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded Citizenship
@@ -142,8 +140,7 @@ const DocumentAction = ({ employeeData }) => {
                   href={employeeData?.userDocument?.panCardDocumentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm text-green-600 underline mb-2"
-                >
+                  className="block text-sm text-green-300 font-medium underline mb-2">
                   <span className="flex items-center gap-x-2">
                     <FaRegEye />
                     View Uploaded PAN Card

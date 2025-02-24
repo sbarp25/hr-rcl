@@ -108,14 +108,13 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="px-8">
+      <div className="px-1 bg-white rounded-xl">
         <div className="max-h-[90vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
-            className="max-h-[75vh]"
-            isHeaderSticky>
-            <TableHeader>
+            className="max-h-[75vh]">
+            <TableHeader className="">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
               <TableColumn>Name</TableColumn>
@@ -131,7 +130,7 @@ const Page = () => {
               {paginatedEkye.map((data, index) => (
                 <TableRow
                   key={data.rclId}
-                  className="h-20 justify-center items-center border-b-2 border-gray-300">
+                  className="h-16 justify-center items-center border-b-2 border-gray-300">
                   <TableCell>{startIndex + index + 1}</TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>
@@ -158,7 +157,7 @@ const Page = () => {
           </Table>
         </div>
 
-        <div className="flex mt-4 justify-between">
+        <div className="flex justify-between items-center">
           <div className="flex text-xs">
             <span>Showing:</span>
             <span className="font-bold">{ekyeDashboardDataPerPage}</span>

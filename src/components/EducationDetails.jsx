@@ -7,6 +7,7 @@ import { TimeInput } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa";
 import { Time } from "@internationalized/date";
 import { Input } from "@nextui-org/input";
+import Loader from "./Loader";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -75,37 +76,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       });
     }
   }, [selectedDegree]);
-
-  const handleFileChange = (index, files) => {
-    const newErrors = { ...errors };
-
-    if (files.length > 0) {
-      const file = files[0];
-      const fileErrors = validateFile(file);
-
-      if (fileErrors.length > 0) {
-        newErrors[`files_${index}`] = fileErrors.join(" ");
-        setErrors(newErrors);
-        return;
-      }
-
-      setFormData((prev) => {
-        const updatedEducation = [...prev.education];
-        if (!updatedEducation[index]) {
-          updatedEducation[index] = {};
-        }
-        updatedEducation[index] = {
-          ...updatedEducation[index],
-          files,
-          fileName: files[0].name,
-        };
-        return { ...prev, education: updatedEducation };
-      });
-
-      delete newErrors[`files_${index}`];
-      setErrors(newErrors);
-    }
-  };
 
   const validateField = (index, field, value) => {
     const newErrors = { ...errors };
@@ -236,6 +206,36 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     return isValid;
   };
 
+  const handleFileChange = (index, files) => {
+    const newErrors = { ...errors };
+
+    if (files.length > 0) {
+      const file = files[0];
+      const fileErrors = validateFile(file);
+
+      if (fileErrors.length > 0) {
+        newErrors[`files_${index}`] = fileErrors.join(" ");
+        setErrors(newErrors);
+        return;
+      }
+
+      setFormData((prev) => {
+        const updatedEducation = [...prev.education];
+        if (!updatedEducation[index]) {
+          updatedEducation[index] = {};
+        }
+        updatedEducation[index] = {
+          ...updatedEducation[index],
+          files,
+          fileName: files[0].name,
+        };
+        return { ...prev, education: updatedEducation };
+      });
+
+      delete newErrors[`files_${index}`];
+      setErrors(newErrors);
+    }
+  };
   const onSubmit = async () => {
     if (!validateFormData()) return;
 
@@ -311,246 +311,261 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   return (
-    <div className="space-y-4 py-6">
-      <h2 className="text-2xl font-semibold text-gray-700">
-        Educational Details
-      </h2>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Level</label>
-        <Select
-          variant="bordered"
-          className="w-full rounded-lg shadow-lg shadow-gray-300"
-          label="Select A Level"
-          selectedKeys={[selectedDegree]}
-          onChange={(e) => handleDegreeSelection(e.target.value)}>
-          {degrees.map((degree) => (
-            <SelectItem key={degree} value={degree}>
-              {degree}
-            </SelectItem>
-          ))}
-        </Select>
-      </div>
-      {Array.from({ length: numberOfItems }).map((_, index) => (
-        <div key={index} className="space-y-4 border p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-gray-600">
-            {degrees[index]} Details
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Input
-                variant="bordered"
-                className={`w-full rounded-xl ${
-                  errors[`institution_${index}`]
-                    ? "border-2 border-red-500"
-                    : ""
-                }`}
-                type="text"
-                label="Institution"
-                value={formData?.education?.[index]?.institution || ""}
-                onChange={(e) =>
-                  handleChange(index, "institution", e.target.value)
-                }
-                errorMessage={errors[`institution_${index}`]}
-              />
-              {errors[`institution_${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[`institution_${index}`]}
-                </p>
-              )}
-            </div>
-            <div>
-              <Input
-                variant="bordered"
-                className={`w-full rounded-xl ${
-                  errors[`faculty_${index}`] ? "border-2 border-red-500" : ""
-                }`}
-                type="text"
-                label="Faculty"
-                value={formData?.education?.[index]?.faculty || ""}
-                onChange={(e) => handleChange(index, "faculty", e.target.value)}
-                errorMessage={errors[`faculty_${index}`]}
-              />
-              {errors[`faculty_${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[`faculty_${index}`]}
-                </p>
-              )}
-            </div>
-            <div>
-              <Input
-                variant="bordered"
-                className={`w-full rounded-xl ${
-                  errors[`startYear_${index}`] ? "border-2 border-red-500" : ""
-                }`}
-                type="date"
-                label="Select Start Date"
-                value={formData?.education?.[index]?.startYear || ""}
-                onChange={(e) =>
-                  handleChange(index, "startYear", e.target.value)
-                }
-                errorMessage={errors[`startYear_${index}`]}
-              />
-              {errors[`startYear_${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[`startYear_${index}`]}
-                </p>
-              )}
-            </div>
-            <div>
-              <Input
-                variant="bordered"
-                className={`w-full rounded-xl ${
-                  errors[`endYear_${index}`] ? "border-2 border-red-500" : ""
-                }`}
-                type="date"
-                label="Select End Date"
-                value={formData?.education?.[index]?.endYear || ""}
-                onChange={(e) => handleChange(index, "endYear", e.target.value)}
-                errorMessage={errors[`endYear_${index}`]}
-              />
-              {errors[`endYear_${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[`endYear_${index}`]}
-                </p>
-              )}
-            </div>
-            <div>
-              <Select
-                variant="bordered"
-                className={`w-full rounded-xl ${
-                  errors[`status_${index}`]
-                    ? "border-2 border-red-500"
-                    : "border-gray-300"
-                }`}
-                label="Status"
-                placeholder={formData?.education?.[index]?.status || ""}
-                value={formData?.education?.[index]?.status || ""}
-                onChange={(e) => handleChange(index, "status", e.target.value)}
-                errorMessage={errors[`status_${index}`]}>
-                {statusOptions.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {status}
-                  </SelectItem>
-                ))}
-              </Select>
-              {errors[`status_${index}`] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[`status_${index}`]}
-                </p>
-              )}
-            </div>
-            <div>
+    <>
+      {isLoading && <Loader />}
+      <div className="space-y-4 py-6">
+        <h2 className="text-2xl font-semibold text-gray-700">
+          Educational Details
+        </h2>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Level
+          </label>
+          <Select
+            variant="bordered"
+            className="w-full rounded-lg shadow-lg shadow-gray-300"
+            label="Select A Level"
+            selectedKeys={[selectedDegree]}
+            onChange={(e) => handleDegreeSelection(e.target.value)}>
+            {degrees.map((degree) => (
+              <SelectItem key={degree} value={degree}>
+                {degree}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+        {Array.from({ length: numberOfItems }).map((_, index) => (
+          <div key={index} className="space-y-4 border p-4 rounded-md">
+            <h3 className="text-lg font-semibold text-gray-600">
+              {degrees[index]} Details
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label
-                  className={`relative flex items-center justify-left w-full h-14 border-2 
+                <Input
+                  variant="bordered"
+                  className={`w-full rounded-xl ${
+                    errors[`institution_${index}`]
+                      ? "border-2 border-red-500"
+                      : ""
+                  }`}
+                  type="text"
+                  label="Institution"
+                  value={formData?.education?.[index]?.institution || ""}
+                  onChange={(e) =>
+                    handleChange(index, "institution", e.target.value)
+                  }
+                  errorMessage={errors[`institution_${index}`]}
+                />
+                {errors[`institution_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`institution_${index}`]}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Input
+                  variant="bordered"
+                  className={`w-full rounded-xl ${
+                    errors[`faculty_${index}`] ? "border-2 border-red-500" : ""
+                  }`}
+                  type="text"
+                  label="Faculty"
+                  value={formData?.education?.[index]?.faculty || ""}
+                  onChange={(e) =>
+                    handleChange(index, "faculty", e.target.value)
+                  }
+                  errorMessage={errors[`faculty_${index}`]}
+                />
+                {errors[`faculty_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`faculty_${index}`]}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Input
+                  variant="bordered"
+                  className={`w-full rounded-xl ${
+                    errors[`startYear_${index}`]
+                      ? "border-2 border-red-500"
+                      : ""
+                  }`}
+                  type="date"
+                  label="Select Start Date"
+                  value={formData?.education?.[index]?.startYear || ""}
+                  onChange={(e) =>
+                    handleChange(index, "startYear", e.target.value)
+                  }
+                  errorMessage={errors[`startYear_${index}`]}
+                />
+                {errors[`startYear_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`startYear_${index}`]}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Input
+                  variant="bordered"
+                  className={`w-full rounded-xl ${
+                    errors[`endYear_${index}`] ? "border-2 border-red-500" : ""
+                  }`}
+                  type="date"
+                  label="Select End Date"
+                  value={formData?.education?.[index]?.endYear || ""}
+                  onChange={(e) =>
+                    handleChange(index, "endYear", e.target.value)
+                  }
+                  errorMessage={errors[`endYear_${index}`]}
+                />
+                {errors[`endYear_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`endYear_${index}`]}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Select
+                  variant="bordered"
+                  className={`w-full rounded-xl ${
+                    errors[`status_${index}`]
+                      ? "border-2 border-red-500"
+                      : "border-gray-300"
+                  }`}
+                  label="Status"
+                  placeholder={formData?.education?.[index]?.status || ""}
+                  value={formData?.education?.[index]?.status || ""}
+                  onChange={(e) =>
+                    handleChange(index, "status", e.target.value)
+                  }
+                  errorMessage={errors[`status_${index}`]}>
+                  {statusOptions.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </Select>
+                {errors[`status_${index}`] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[`status_${index}`]}
+                  </p>
+                )}
+              </div>
+              <div>
+                <div>
+                  <label
+                    className={`relative flex items-center justify-left w-full h-14 border-2 
                   ${
                     errors[`files_${index}`]
                       ? "border-red-500"
                       : "border-gray-300"
                   } 
                   rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
-                  <span className="text-gray-600 px-4">
-                    {formData?.education?.[index]?.files?.length > 0 ? (
-                      <div className="flex gap-2">
-                        <p>
-                          Selected: {formData.education[index].files[0].name}
-                        </p>
-                      </div>
+                    <span className="text-gray-600 px-4">
+                      {formData?.education?.[index]?.files?.length > 0 ? (
+                        <div className="flex gap-2">
+                          <p>
+                            Selected: {formData.education[index].files[0].name}
+                          </p>
+                        </div>
+                      ) : (
+                        "Upload Education Certificate"
+                      )}
+                    </span>
+                    <input
+                      type="file"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      onChange={(e) =>
+                        handleFileChange(index, Array.from(e.target.files))
+                      }
+                      accept=".png,.jpg,.jpeg"
+                    />
+                  </label>
+                  {errors[`files_${index}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors[`files_${index}`]}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-x-4">
+                  <label className="block text-xs font-medium text-gray-700 pl-2">
+                    Please upload the image of type either PNG or jpg
+                  </label>
+                  {educationalDocument &&
+                    (formData.education[index]?.file ? (
+                      <a
+                        href={formData.education[index]?.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm text-green-600 underline mb-2">
+                        <span className="flex items-center gap-x-2">
+                          <FaRegEye />
+                          View Uploaded Document
+                        </span>
+                      </a>
                     ) : (
-                      "Upload Education Certificate"
-                    )}
-                  </span>
-                  <input
-                    type="file"
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    onChange={(e) =>
-                      handleFileChange(index, Array.from(e.target.files))
-                    }
-                    accept=".png,.jpg,.jpeg"
-                  />
-                </label>
-                {errors[`files_${index}`] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[`files_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-x-4">
-                <label className="block text-xs font-medium text-gray-700 pl-2">
-                  Please upload the image of type either PNG or jpg
-                </label>
-                {educationalDocument &&
-                  (formData.education[index]?.file ? (
-                    <a
-                      href={formData.education[index]?.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
-                      <span className="flex items-center gap-x-2">
-                        <FaRegEye />
-                        View Uploaded Document
-                      </span>
-                    </a>
-                  ) : (
-                    <div className="text-xs text-red-500">
-                      No Links Available
-                    </div>
-                  ))}
+                      <div className="text-xs text-red-500">
+                        No Links Available
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
-      <div className="flex flex-col gap-x-4 pl-1">
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="border border-gray-300 rounded w-4 h-4"
-            checked={isCurrentlyStudying}
-            onChange={(e) => {
-              const isChecked = e.target.checked;
-              setIsCurrentlyStudying(isChecked);
-              setFormData((prev) => ({
-                ...prev,
-                currentlyStudying: isChecked,
-              }));
-            }}
-          />
-          <label className="text-sm font-medium text-gray-700">
-            Are you currently a student?
-          </label>
-        </div>
-        <div>
-          {isCurrentlyStudying && (
-            <TimeInput
-              label="Expected Checking Time"
-              minValue={new Time(10)}
-              maxValue={new Time(16)}
-              errorMessage={(value) => {
-                if (value.isInvalid) {
-                  return "Please enter a valid time";
-                }
+        ))}
+        <div className="flex flex-col gap-x-4 pl-1">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              className="border border-gray-300 rounded w-4 h-4"
+              checked={isCurrentlyStudying}
+              onChange={(e) => {
+                const isChecked = e.target.checked;
+                setIsCurrentlyStudying(isChecked);
+                setFormData((prev) => ({
+                  ...prev,
+                  currentlyStudying: isChecked,
+                }));
               }}
-              value={selectedTime}
-              onChange={handleTimeChange}
             />
-          )}
+            <label className="text-sm font-medium text-gray-700">
+              Are you currently a student?
+            </label>
+          </div>
+          <div>
+            {isCurrentlyStudying && (
+              <TimeInput
+                label="Expected Checking Time"
+                minValue={new Time(10)}
+                maxValue={new Time(16)}
+                errorMessage={(value) => {
+                  if (value.isInvalid) {
+                    return "Please enter a valid time";
+                  }
+                }}
+                value={selectedTime}
+                onChange={handleTimeChange}
+              />
+            )}
+          </div>
+        </div>
+        <div className="form-navigation flex justify-between mt-6">
+          <Button
+            onPress={handleBack}
+            className="px-4 py-2 bg-gray-300 rounded">
+            Back
+          </Button>
+          <button
+            onClick={() => {
+              handleSubmit();
+            }}
+            className="px-4 py-2 bg-green-500 text-white rounded"
+            disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit"}
+          </button>
         </div>
       </div>
-      <div className="form-navigation flex justify-between mt-6">
-        <Button onPress={handleBack} className="px-4 py-2 bg-gray-300 rounded">
-          Back
-        </Button>
-        <button
-          onClick={() => {
-            handleSubmit();
-          }}
-          className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
-        </button>
-      </div>
-    </div>
+    </>
   );
 };
 

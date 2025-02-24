@@ -60,14 +60,13 @@ const EkyeAction = () => {
           if (!isModalOpen) {
             navigate("/AdminEkye"); // Navigate back when modal is closed
           }
-        }}
-      >
+        }}>
         <ModalContent>
           {() => (
             <>
               <ModalBody>
                 {/* Render child components */}
-                <ScrollShadow className="w-full h-[900px]" size={25}>
+                <ScrollShadow className="w-full h-[900px] px-4" size={25}>
                   <PersonalAction employeeData={employeeData} />
                   <AddressAction employeeData={employeeData} />
                   <DocumentAction employeeData={employeeData} />

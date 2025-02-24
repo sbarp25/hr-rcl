@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { HiPencilSquare } from "react-icons/hi2";
+import { FaRegEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
@@ -173,7 +173,7 @@ const Employees = () => {
                     <TableCell>{employee.postionName}</TableCell>
                     <TableCell>
                       <div className="flex justify-center gap-4">
-                        <HiPencilSquare
+                        <FaRegEye
                           className="text-green-500 cursor-pointer hover:text-green-700"
                           title="Edit"
                           onClick={() => handleAction("edit", employee.id)}

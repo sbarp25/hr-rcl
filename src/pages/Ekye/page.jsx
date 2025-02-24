@@ -190,7 +190,7 @@ const Ekye = () => {
           </div>
 
           <ValidationComponent>
-            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] w-[85vw] overflow-x-auto border border-gray-500">
+            <div className="bg-white pb-4 container rounded-3xl max-h-[80vh] w-[85vw] overflow-x-auto border border-gray-300">
               {step === 0 && !isLoading && (
                 <PersonalDetails
                   handleNext={handleNext}

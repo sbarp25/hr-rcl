@@ -52,13 +52,20 @@ const EkyeEducationDetails = ({ employeeData }) => {
   return (
     <>
       <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white text-lg w-[75vw] shadow-md rounded-lg px-6 mt-2 mx-1">
-          <h1 className="text-xl font-semibold flex mb-6">
-            <span className="relative">
-              Education Details
-              <UnderlineComponent />
-            </span>
-          </h1>
+        <div className="bg-white text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-semibold flex mb-6">
+              <span className="relative">
+                Education Details
+                <UnderlineComponent />
+              </span>
+            </h1>
+            <div className="flex gap-1 items-end justify-end text-right">
+              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
+              <div className="flex w-2 h-2 rounded-full bg-black"></div>
+              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+            </div>
+          </div>
 
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
@@ -107,7 +114,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                           className="block text-sm text-green-600 underline mb-2">
                           <span className="flex items-center gap-x-2">
                             <FaRegEye />
-                            View Uploaded Certificate
+                            View Certificate
                           </span>
                         </a>
                       ) : (

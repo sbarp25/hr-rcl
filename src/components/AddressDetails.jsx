@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
 import { Button, Input, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
+import Loader from "./Loader";
 
 const AddressDetails = ({
   formData,
@@ -107,7 +108,7 @@ const AddressDetails = ({
 
     fetchAddressDetails();
   }, []);
-
+  //Works if the same as permanent checkbox is selected
   const handleSameAsPermanent = (e) => {
     const isChecked = e.target.checked;
 
@@ -376,6 +377,7 @@ const AddressDetails = ({
 
   return (
     <>
+      {isLoading && <Loader message="Loading please wait" />}
       <ValidationComponent>
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
