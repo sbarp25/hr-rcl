@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useForm, Controller } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
 import { Button, Input, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
-import InputComponent from "./InputComponent";
 
-const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
+const AddressDetails = ({
+  formData,
+  handleChange,
+  handleNestedChange,
+  handleNext,
+  handleBack,
+  setFormData,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
+  const [errors, setErrors] = useState({});
   const [districts, setDistricts] = useState([]);
   const [touched, setTouched] = useState({});
 
@@ -23,7 +29,6 @@ const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
         }
       } catch (error) {
         console.error("Failed to fetch Province Data.", error);
-        toast.error("Failed to fetch provinces");
       } finally {
         setIsLoading(false);
       }
@@ -185,15 +190,9 @@ const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
         `/api/v1/district/districts/${sanitizedProvinceId}`
       );
       if (response.data.responseCode === "200") {
-        if (addressType === "permanent") {
-          setDistricts(response.data.datalist);
-          // If same as permanent is checked, update temporary districts too
-          if (watchSameAsPermanent) {
-            setTemporaryDistricts(response.data.datalist);
-          }
-        } else {
-          setTemporaryDistricts(response.data.datalist);
-        }
+        setDistricts(response.data.datalist);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Failed to fetch District Data.", error);
@@ -282,6 +281,7 @@ const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
+
     try {
       const sanitizedProvinceId = formData.address.permanent.provinceId.replace(
         /[^0-9]/g,
@@ -299,51 +299,37 @@ const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
       const newData = {
         data: [
           {
-            provinceId: data.address.permanent.provinceId.replace(
-              /[^0-9]/g,
-              ""
-            ),
-            districtId: data.address.permanent.districtId.replace(
-              /[^0-9]/g,
-              ""
-            ),
-            municipality: data.address.permanent.municipality,
-            wardNumber: data.address.permanent.wardNumber,
-            pinCode: data.address.permanent.pinCode,
-            tole: data.address.permanent.tole,
+            provinceId: sanitizedProvinceId,
+            districtId: sanitizedDistrictId,
+            municipality: formData.address.permanent.municipality,
+            wardNumber: formData.address.permanent.wardNumber,
+            pinCode: formData.address.permanent.pinCode,
+            tole: formData.address.permanent.tole,
             addressType: "PERMANENT",
           },
           {
-            provinceId: data.address.temporary.provinceId.replace(
-              /[^0-9]/g,
-              ""
-            ),
-            districtId: data.address.temporary.districtId.replace(
-              /[^0-9]/g,
-              ""
-            ),
-            municipality: data.address.temporary.municipality,
-            wardNumber: data.address.temporary.wardNumber,
-            pinCode: data.address.temporary.pinCode,
-            tole: data.address.temporary.tole,
+            provinceId: sanitizedTemporaryProvinceId,
+            districtId: sanitizedtemporaryDistrictId,
+            municipality: formData.address.temporary.municipality,
+            wardNumber: formData.address.temporary.wardNumber,
+            pinCode: formData.address.temporary.pinCode,
+            tole: formData.address.temporary.tole,
             addressType: "TEMPORARY",
-            isSameAsPermanent: data.address.sameAsPermanent,
+            isSameAsPermanent: formData.address.sameAsPermanent,
           },
         ],
       };
 
       const response = await axiosInstance.post(
         "/api/v1/address/save",
-        sanitizedData,
-        { headers: { "Content-Type": "application/json" } }
+        newData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
       if (response?.data?.responseCode === "201") {
         toast.success(response?.data?.message);
-        setFormData((prev) => ({
-          ...prev,
-          address: data.address,
-        }));
         handleNext();
       } else {
         toast.error(response.data.message || "Failed to save address data");

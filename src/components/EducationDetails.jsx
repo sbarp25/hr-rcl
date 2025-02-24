@@ -125,29 +125,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     } else if (field === "status" && !value) {
       newErrors[`status_${index}`] = "Status is required.";
     } else {
-      delete newErrors[`${field}_${index}`];
-    }
-
-    setErrors(newErrors);
-  };
-  const validateField = (index, field, value) => {
-    const newErrors = { ...errors };
-
-    if (field === "institution" && !value) {
-      newErrors[`institution_${index}`] = "Institution is required.";
-    } else if (field === "faculty" && !value) {
-      newErrors[`faculty_${index}`] = "Faculty is required.";
-    } else if (field === "startYear" && !value) {
-      newErrors[`startYear_${index}`] = "Start year is required.";
-    } else if (
-      field === "endYear" &&
-      !value &&
-      formData.education[index]?.status !== "IN_PROGRESS"
-    ) {
-      newErrors[`endYear_${index}`] = "End year is required.";
-    } else if (field === "status" && !value) {
-      newErrors[`status_${index}`] = "Status is required.";
-    } else {
       delete newErrors[`${field}_${index}`]; // Remove error if valid
     }
 
@@ -277,8 +254,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       status: edu.status || "",
       imageIndex: index,
     }));
-
-    console.log("Mapped education data:", educationData);
 
     formDataToSend.append("educationData", JSON.stringify(educationData));
 
