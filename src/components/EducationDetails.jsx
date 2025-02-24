@@ -38,12 +38,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
   }, [selectedDegree]);
 
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      console.log("Errors updated:", errors);
-    }
-  }, [errors]);
-
   const handleFileChange = (index, files) => {
     if (files.length > 0) {
       setFormData((prev) => {
@@ -63,6 +57,29 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       });
     }
   };
+  const validateField = (index, field, value) => {
+    const newErrors = { ...errors };
+
+    if (field === "institution" && !value) {
+      newErrors[`institution_${index}`] = "Institution is required.";
+    } else if (field === "faculty" && !value) {
+      newErrors[`faculty_${index}`] = "Faculty is required.";
+    } else if (field === "startYear" && !value) {
+      newErrors[`startYear_${index}`] = "Start year is required.";
+    } else if (
+      field === "endYear" &&
+      !value &&
+      formData.education[index]?.status !== "IN_PROGRESS"
+    ) {
+      newErrors[`endYear_${index}`] = "End year is required.";
+    } else if (field === "status" && !value) {
+      newErrors[`status_${index}`] = "Status is required.";
+    } else {
+      delete newErrors[`${field}_${index}`]; // Remove error if valid
+    }
+
+    setErrors(newErrors);
+  };
 
   const handleChange = (index, field, value) => {
     const updatedEducation = [...(formData.education || [])]; // Ensure it's an array
@@ -74,6 +91,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ...formData,
       education: updatedEducation,
     });
+
+    // Validate on change
+    validateField(index, field, value);
   };
 
   const handleTimeChange = (newTime) => {
@@ -134,39 +154,25 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     const newErrors = {};
     let isValid = true;
 
-    if (!formData.education || formData.education.length === 0) {
-      toast.error("Please add at least one education record.");
-      return { isValid: false, newErrors };
-    }
-
     formData.education.forEach((edu, index) => {
-      if (!edu.institution) {
-        newErrors[`institution_${index}`] = "Institution is required.";
-        isValid = false;
-      }
-      if (!edu.faculty) {
-        newErrors[`faculty_${index}`] = "Faculty is required.";
-        isValid = false;
-      }
-      if (!edu.startYear) {
-        newErrors[`startYear_${index}`] = "Start year is required.";
-        isValid = false;
-      }
-      if (!edu.endYear && edu.status !== "IN_PROGRESS") {
-        newErrors[`endYear_${index}`] = "End year is required.";
-        isValid = false;
-      }
-      if (!edu.status) {
-        newErrors[`status_${index}`] = "Status is required.";
-        isValid = false;
-      }
+      ["institution", "faculty", "startYear", "endYear", "status"].forEach(
+        (field) => {
+          validateField(index, field, edu[field] || ""); // Validate all fields
+          if (!edu[field] && field !== "endYear") {
+            newErrors[`${field}_${index}`] = `${field} is required.`;
+            isValid = false;
+          }
+        }
+      );
+
       if (!edu.files || edu.files.length === 0) {
         newErrors[`files_${index}`] = "Document is required.";
         isValid = false;
       }
     });
 
-    return { isValid, newErrors };
+    setErrors(newErrors);
+    return isValid;
   };
 
   const onSubmit = async () => {
@@ -231,9 +237,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const handleSubmit = () => {
-    const { isValid, newErrors } = validateFormData();
+    const isValid = validateFormData();
+
     if (!isValid) {
-      setErrors(newErrors);
+      console.log("Validation failed, errors:", errors);
       return;
     }
 
@@ -241,7 +248,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   return (
-    <div className="space-y-4 py-6 ">
+    <div className="space-y-4 py-6">
       <h2 className="text-2xl font-semibold text-gray-700">
         Educational Details
       </h2>

@@ -48,7 +48,7 @@ const Employees = () => {
         });
 
         if (response?.data?.responseCode === "200") {
-          setEmployeesData(response?.data?.dataList || []);
+          setEmployeesData(response?.data?.datalist || []);
           setTotalEmployees(response?.data?.totalRecords || 0);
         } else {
           toast.error(response?.data?.message);
@@ -116,7 +116,8 @@ const Employees = () => {
               </div>
               <a
                 className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
-                href="/AddEmployees">
+                href="/AddEmployees"
+              >
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
               </a>

@@ -437,9 +437,9 @@ const AddressDetails = ({ handleNext, handleBack, setFormData }) => {
                 name="temporarymunicipality"
                 control={control}
                 variant="bordered"
-                value={
-                  watchSameAsPermanent ? municipality : temporarymunicipality
-                }
+                // value={
+                // watchSameAsPermanent ? municipality : temporarymunicipality
+                // }
                 label="Municipality"
                 disabled={watchSameAsPermanent}
                 rules={{
