@@ -239,7 +239,7 @@ const Department = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/");
     }
   }, []);
   const truncateText = (text, maxLength) =>
@@ -273,8 +273,7 @@ const Department = () => {
               />
               <Button
                 className="button bg-black font-md tracking-normal"
-                onPress={() => setShowAddForm(!showAddForm)}
-              >
+                onPress={() => setShowAddForm(!showAddForm)}>
                 {showAddForm ? (
                   <>
                     <IoReturnDownBack className="text-white text-base" />
@@ -296,8 +295,7 @@ const Department = () => {
           {showEditForm && (
             <form
               className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-              onSubmit={handleEditdepartment}
-            >
+              onSubmit={handleEditdepartment}>
               <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
                 Edit Department
               </h2>
@@ -317,22 +315,19 @@ const Department = () => {
                     value={departmentDescription}
                     onChange={(e) => setDepartmentDescription(e.target.value)}
                     className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                    required
-                  ></textarea>
+                    required></textarea>
                 </div>
                 {/* Submit and Cancel Buttons */}
                 <div className="flex flex-col md:w-1/4 justify-end md:justify-start gap-y-4">
                   <Button
                     type="submit"
-                    className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto"
-                  >
+                    className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
                     Save Changes
                   </Button>
                   <Button
                     type="button"
                     className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                    onPress={() => setShowEditForm(false)}
-                  >
+                    onPress={() => setShowEditForm(false)}>
                     Cancel
                   </Button>
                 </div>
@@ -343,8 +338,7 @@ const Department = () => {
             {showAddForm ? (
               <form
                 className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
-                onSubmit={handleAddDepartment}
-              >
+                onSubmit={handleAddDepartment}>
                 <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
                   Add New Department
                 </h2>
@@ -365,15 +359,13 @@ const Department = () => {
                       value={departmentDescription}
                       onChange={(e) => setDepartmentDescription(e.target.value)}
                       className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
-                      required
-                    ></Textarea>
+                      required></Textarea>
                   </div>
                 </div>
                 <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                   <button
                     type="submit"
-                    className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6"
-                  >
+                    className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
                     Submit
                   </button>
                 </div>
@@ -393,8 +385,7 @@ const Department = () => {
                     {departmentsData.map((department, index) => (
                       <TableRow
                         key={department.rclId}
-                        className="h-20 justify-center items-center border-b-2 border-gray-300"
-                      >
+                        className="h-20 justify-center items-center border-b-2 border-gray-300">
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{department.name}</TableCell>
                         <TableCell>

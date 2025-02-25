@@ -21,7 +21,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/Dropdown";
 import { useNavigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,8 +70,33 @@ const Employees = () => {
     fetchEmployees();
   }, [currentPage]);
 
-  const hasEmployeeEditAccess = false;
-  const hasEmployeeDeleteAccess = false;
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check create status */
+  const hasemployeecreateaccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 1)
+  );
+  /**To read the Data */
+  const hasaccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 2)
+  );
+  /**To check edit status */
+  const hasEmployeeEditAccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 3)
+  );
+  /**To check Delete Access */
+  const hasEmployeeDeleteAccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 4)
+  );
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/");
+    }
+  }, []);
+  const handleRedirect = () => {
+    navigate("/AddEmployees");
+  };
 
   const handleAction = async (action, employeeId) => {
     switch (action) {
@@ -134,18 +159,7 @@ const Employees = () => {
 
     employeesData(filteredData);
   };
-  // const navigate = useNavigate();
-  // const hasaccess = false;
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/login");
-  //   }
-  // }, []);
-  const handleRedirect = () => {
-    navigate("/AddEmployees");
-  };
-  const hasemployeecreateaccess = true;
   return (
     <>
       {isLoading && <Loader message="Loading employees..." />}
@@ -169,7 +183,7 @@ const Employees = () => {
                 />
               </div>
               <Button
-                isDisabled={hasemployeecreateaccess}
+                isDisabled={!hasemployeecreateaccess}
                 className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
                 onPress={handleRedirect}>
                 <AiOutlineUserAdd className="text-xl" />

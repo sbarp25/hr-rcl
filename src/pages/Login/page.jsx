@@ -11,6 +11,7 @@ import { Button, Form, Input, Spinner } from "@nextui-org/react";
 import ButtonComponent from "../../components/ButtonComp";
 import InputComponent from "../../components/InputComponent";
 import LocationComponent from "../../components/LocationComponent";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +52,13 @@ const Login = () => {
         const FullName = response?.data?.data?.fullName;
         const Email = response?.data?.data?.email;
         const ekeyStep = response?.data?.data?.ekeyStep;
+        const Menu = response?.data?.data?.menuActionsAndPermissions;
         localStorage.setItem("ekeyStep", ekeyStep);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("fullName", FullName);
         localStorage.setItem("email", Email);
+        LocalStorageUtil.setItem("menu", Menu);
 
         if (
           response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
@@ -78,14 +81,6 @@ const Login = () => {
     }
   };
 
-  // const hasaccess = false;
-
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/login");
-  //   }
-  // }, []);
-
   return (
     <>
       <LocationComponent />
@@ -106,8 +101,7 @@ const Login = () => {
           <div className="px-16 pt-64 bg-white rounded-r-3xl">
             <form
               onSubmit={handleSubmit(handleLogin)}
-              className="flex flex-col space-y-4 gap-6 w-full"
-            >
+              className="flex flex-col space-y-4 gap-6 w-full">
               <p className="text-2xl sm:text-xl font-bold text-center">
                 Log in
               </p>
@@ -153,8 +147,7 @@ const Login = () => {
               </div>
               <a
                 href="/"
-                className="text-xl text-black font-medium text-center"
-              >
+                className="text-xl text-black font-medium text-center">
                 Forgot Password?
               </a>
             </form>
