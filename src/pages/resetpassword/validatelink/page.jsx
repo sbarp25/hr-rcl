@@ -9,12 +9,14 @@ import { Form } from "@nextui-org/react";
 import { Input } from "@nextui-org/input";
 import Logo from "../../../assets/Images/Logo.png";
 import { Button } from "@nextui-org/button";
+import InputComponent from "../../../components/InputComponent";
 const ValidateLink = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -146,6 +148,14 @@ const ValidateLink = () => {
     fetchData();
   }, [navigate]); // Dependency array to include navigate so it doesn't trigger on every render
 
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
   return (
     <>
       {isLoading && (
@@ -191,6 +201,23 @@ const ValidateLink = () => {
                     </p>
                   )}
                 </div>
+                {/* <div>
+                  <InputComponent
+                    type="password"
+                    name="password"
+                    control={control}
+                    variant="bordered"
+                    className={`w-[45vh] p-3 `}
+                    label="New Password"
+                    rules={{
+                      required: "Title is required",
+                      pattern: {
+                        value: /^[a-zA-Z0-9 ]{6,300}$/,
+                        message: "password must be 6 characters long.",
+                      },
+                    }}
+                  />
+                </div> */}
 
                 {/* Confirm Password Input */}
                 <div>
@@ -217,6 +244,25 @@ const ValidateLink = () => {
                     </p>
                   )}
                 </div>
+                {/* <div>
+                  <InputComponent
+                    type="password"
+                    name="confirmPassword"
+                    control={control}
+                    variant="bordered"
+                    className={`w-[45vh] p-3 `}
+                    label="Confirm Password"
+                    rules={{
+                      required: "Title is required",
+                      pattern: {
+                        value: /^[a-zA-Z0-9 ]{6,300}$/,
+                        message: "password must be 6 characters long.",
+                        validate: (value) =>
+                          value === password || "Passwords do not match",
+                      },
+                    }}
+                  />
+                </div> */}
 
                 {/* Submit Button */}
                 <Button
@@ -226,7 +272,8 @@ const ValidateLink = () => {
                     errors.password || errors.confirmPassword
                       ? " cursor-not-allowed"
                       : ""
-                  }`}>
+                  }`}
+                >
                   {isLoading ? "Loading..." : "Submit"}
                 </Button>
               </Form>

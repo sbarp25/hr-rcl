@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import DropDownComp from "../../../components/Dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const LeaveStatus = () => {
@@ -58,7 +58,14 @@ const LeaveStatus = () => {
 
     fetchLeave();
   }, []);
+  const navigate = useNavigate();
+  const hasaccess = false;
 
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <>
       <div className="container space-y-4">
@@ -86,11 +93,13 @@ const LeaveStatus = () => {
               <TableBody
                 items={isLoading ? [] : leaveData}
                 isLoading={isLoading}
-                loadingContent={<SkeletonLoader />}>
+                loadingContent={<SkeletonLoader />}
+              >
                 {leaveData.map((data, index) => (
                   <TableRow
                     key={data.rclId}
-                    className="h-14 border-b-2 border-gray-300">
+                    className="h-14 border-b-2 border-gray-300"
+                  >
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{data?.leaveStartDate || "N/A"}</TableCell>
                     <TableCell>{data?.leaveType || "N/A"}</TableCell>
@@ -100,7 +109,8 @@ const LeaveStatus = () => {
                     <TableCell>
                       <Link
                         key={data.leaveId}
-                        to={`/Leave/apprej/${data.leaveId}`}>
+                        to={`/Leave/apprej/${data.leaveId}`}
+                      >
                         <div
                           className={`${
                             data?.leaveStatus === "APPROVED"
@@ -108,7 +118,8 @@ const LeaveStatus = () => {
                               : data?.leaveStatus === "REJECTED"
                               ? "bg-red-100 border border-red-600 text-red-600"
                               : "bg-yellow-100 border border-yellow-500 text-yellow-500"
-                          } text-center p-2 rounded-md w-fit`}>
+                          } text-center p-2 rounded-md w-fit`}
+                        >
                           {data?.leaveStatus || "N/A"}
                         </div>
                       </Link>
@@ -122,7 +133,8 @@ const LeaveStatus = () => {
                               : data?.leaveStatus === "REJECTED"
                               ? "bg-red-100 text-red-600"
                               : "bg-yellow-100 text-yellow-500"
-                          }`}>
+                          }`}
+                        >
                           {data?.teamLeaderName?.charAt(0) || "?"}
                         </div>
                         <div className="text-gray-800 font-medium">
@@ -139,7 +151,8 @@ const LeaveStatus = () => {
                               : data?.leaveStatus === "REJECTED"
                               ? "bg-red-100 text-red-600"
                               : "bg-yellow-100 text-yellow-500"
-                          }`}>
+                          }`}
+                        >
                           {data?.Approver?.charAt(0) || "?"}
                         </div>
                         <div>{data?.Approver || "N/A"}</div>

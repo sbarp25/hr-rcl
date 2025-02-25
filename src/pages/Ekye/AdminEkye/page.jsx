@@ -91,6 +91,13 @@ const Page = () => {
 
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">
@@ -113,7 +120,8 @@ const Page = () => {
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
-            className="max-h-[75vh]">
+            className="max-h-[75vh]"
+          >
             <TableHeader className="">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
@@ -126,11 +134,13 @@ const Page = () => {
             <TableBody
               items={isLoading ? [] : paginatedEkye}
               isLoading={isLoading}
-              loadingContent={<SkeletonLoader />}>
+              loadingContent={<SkeletonLoader />}
+            >
               {paginatedEkye.map((data, index) => (
                 <TableRow
                   key={data.rclId}
-                  className="h-16 justify-center items-center border-b-2 border-gray-300">
+                  className="h-16 justify-center items-center border-b-2 border-gray-300"
+                >
                   <TableCell>{startIndex + index + 1}</TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>

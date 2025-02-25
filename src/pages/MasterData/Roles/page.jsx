@@ -10,6 +10,7 @@ import { IoReturnDownBack } from "react-icons/io5";
 import { Checkbox } from "@nextui-org/checkbox";
 import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import { useNavigate } from "react-router-dom";
 const Roles = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [addRole, setAddRole] = useState(false);
@@ -202,6 +203,14 @@ const Roles = () => {
         console.log("Unknown action");
     }
   };
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -221,7 +230,8 @@ const Roles = () => {
             <Button
               className="button bg-green-700 tracking-normal
   hover:bg-green-900"
-              onPress={() => setAddRole(!addRole)}>
+              onPress={() => setAddRole(!addRole)}
+            >
               {addRole ? (
                 <>
                   <IoReturnDownBack className="text-white h-24 w-24" />
@@ -242,7 +252,8 @@ const Roles = () => {
             <div>
               <Form
                 onSubmit={handleEditRole}
-                className="mb-6 p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+                className="mb-6 p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
+              >
                 <h2 className="text-xl font-semibold mb-6 text-center md:text-left text-gray-800">
                   Edit Role
                 </h2>
@@ -251,7 +262,8 @@ const Roles = () => {
                     <div>
                       <label
                         htmlFor="roleName"
-                        className="text-sm font-medium text-gray-700 mb-2 block">
+                        className="text-sm font-medium text-gray-700 mb-2 block"
+                      >
                         Role Name
                       </label>
                       <Input
@@ -267,7 +279,8 @@ const Roles = () => {
                     <div>
                       <label
                         htmlFor="roleDescription"
-                        className="text-sm font-medium text-gray-700 mb-2 block">
+                        className="text-sm font-medium text-gray-700 mb-2 block"
+                      >
                         Description
                       </label>
                       <textarea
@@ -276,7 +289,8 @@ const Roles = () => {
                         value={roleDescription}
                         onChange={(e) => setRoleDescription(e.target.value)}
                         className="input border border-gray-300 rounded-lg px-4 py-3 h-32 focus:outline-none resize-none w-full"
-                        required></textarea>
+                        required
+                      ></textarea>
                     </div>
                   </div>
 
@@ -326,13 +340,15 @@ const Roles = () => {
                 <div className="flex justify-center items-center gap-x-4">
                   <Button
                     type="submit"
-                    className="button bg-bgprimary text-white rounded-lg px-6 py-3 hover:bg-bgprimaryhover transition w-full md:w-auto ">
+                    className="button bg-bgprimary text-white rounded-lg px-6 py-3 hover:bg-bgprimaryhover transition w-full md:w-auto "
+                  >
                     Update Role
                   </Button>
                   <Button
                     type="button"
                     className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                    onPress={() => setShowEditForm(false)}>
+                    onPress={() => setShowEditForm(false)}
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -344,7 +360,8 @@ const Roles = () => {
           {addRole ? (
             <Form
               onSubmit={handleAddRole}
-              className="mb-6 p-6 bg-white shadow-md rounded-lg  mx-auto max-h-[80vh] overflow-y-auto">
+              className="mb-6 p-6 bg-white shadow-md rounded-lg  mx-auto max-h-[80vh] overflow-y-auto"
+            >
               <h2 className="text-xl font-semibold mb-6 text-center md:text-left text-gray-800">
                 Add New Role
               </h2>
@@ -368,7 +385,8 @@ const Roles = () => {
                       value={roleDescription}
                       onChange={(e) => setRoleDescription(e.target.value)}
                       className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
-                      required></Textarea>
+                      required
+                    ></Textarea>
                   </div>
                 </div>
 
@@ -416,7 +434,8 @@ const Roles = () => {
               </div>
               <b
                 type="submit"
-                className="button bg-bgprimary text-white rounded-lg px-6  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
+                className="button bg-bgprimary text-white rounded-lg px-6  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6"
+              >
                 Submit
               </b>
             </Form>
@@ -466,7 +485,8 @@ const Roles = () => {
                     <tr>
                       <td
                         colSpan="3"
-                        className="border border-gray-300 px-4 py-2 text-center">
+                        className="border border-gray-300 px-4 py-2 text-center"
+                      >
                         No roles found.
                       </td>
                     </tr>

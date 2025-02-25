@@ -19,6 +19,7 @@ import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/Dropdown";
+import { useNavigate } from "react-router-dom";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -113,6 +114,14 @@ const Employees = () => {
 
     employeesData(filteredData);
   };
+  // const navigate = useNavigate();
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
   return (
     <>
       {isLoading && <Loader message="Loading employees..." />}
@@ -137,7 +146,8 @@ const Employees = () => {
               </div>
               <a
                 className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
-                href="/AddEmployees">
+                href="/AddEmployees"
+              >
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
               </a>
@@ -162,7 +172,8 @@ const Employees = () => {
                 {employeesData.map((employee, index) => (
                   <TableRow
                     key={employee.employeeId}
-                    className="h-14 border-b-2 border-gray-300">
+                    className="h-14 border-b-2 border-gray-300"
+                  >
                     <TableCell>
                       {(currentPage - 1) * employeeDataPerPage + index + 1}
                     </TableCell>

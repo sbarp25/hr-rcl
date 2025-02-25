@@ -313,7 +313,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="space-y-4 py-6">
+      <div className="space-y-4 py-4  ">
         <h2 className="text-2xl font-semibold text-gray-700">
           Educational Details
         </h2>
@@ -326,7 +326,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             className="w-full rounded-lg shadow-lg shadow-gray-300"
             label="Select A Level"
             selectedKeys={[selectedDegree]}
-            onChange={(e) => handleDegreeSelection(e.target.value)}>
+            onChange={(e) => handleDegreeSelection(e.target.value)}
+          >
             {degrees.map((degree) => (
               <SelectItem key={degree} value={degree}>
                 {degree}
@@ -335,7 +336,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </Select>
         </div>
         {Array.from({ length: numberOfItems }).map((_, index) => (
-          <div key={index} className="space-y-4 border p-4 rounded-md">
+          <div
+            key={index}
+            className="space-y-4 border border-gray-400 p-4 rounded-md"
+          >
             <h3 className="text-lg font-semibold text-gray-600">
               {degrees[index]} Details
             </h3>
@@ -438,7 +442,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   onChange={(e) =>
                     handleChange(index, "status", e.target.value)
                   }
-                  errorMessage={errors[`status_${index}`]}>
+                  errorMessage={errors[`status_${index}`]}
+                >
                   {statusOptions.map((status) => (
                     <SelectItem key={status} value={status}>
                       {status}
@@ -460,7 +465,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       ? "border-red-500"
                       : "border-gray-300"
                   } 
-                  rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
+                  rounded-xl cursor-pointer bg-white hover:bg-gray-200`}
+                  >
                     <span className="text-gray-600 px-4">
                       {formData?.education?.[index]?.files?.length > 0 ? (
                         <div className="flex gap-2">
@@ -497,7 +503,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         href={formData.education[index]?.file}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2">
+                        className="block text-sm text-green-600 underline mb-2"
+                      >
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Document
@@ -552,7 +559,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         <div className="form-navigation flex justify-between mt-6">
           <Button
             onPress={handleBack}
-            className="px-4 py-2 bg-gray-300 rounded">
+            className="px-4 py-2 bg-gray-300 rounded"
+          >
             Back
           </Button>
           <button
@@ -560,7 +568,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               handleSubmit();
             }}
             className="px-4 py-2 bg-green-500 text-white rounded"
-            disabled={isLoading}>
+            disabled={isLoading}
+          >
             {isLoading ? "Submitting..." : "Submit"}
           </button>
         </div>

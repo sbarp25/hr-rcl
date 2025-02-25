@@ -10,6 +10,7 @@ import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 // import PersonalDetails from "../../components/Personal.jsx";
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -125,6 +126,15 @@ const Ekye = () => {
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
 
+  // const navigate = useNavigate();
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
   return (
     <>
       {isLoading && <Loader />}
@@ -148,7 +158,8 @@ const Ekye = () => {
                     key={label}
                     className={`flex-1 flex flex-col items-center relative cursor-pointer ${
                       step >= stepIndex ? "text-white" : "text-bgprimaryhover"
-                    }`}>
+                    }`}
+                  >
                     {/* Step Container */}
                     <div className="relative flex items-center">
                       {/* Step Image */}
@@ -176,7 +187,8 @@ const Ekye = () => {
                           style={{
                             left: "90%", // Start from the end of the current step
                             width: "700%", // Start from the end of the current step
-                          }}></div>
+                          }}
+                        ></div>
                       )}
                     </div>
                     {/* Label */}
@@ -232,7 +244,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        <div className="form-navigation flex justify-between mt-6">
+        {/* <div className="form-navigation flex justify-between mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -249,7 +261,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

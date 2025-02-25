@@ -22,6 +22,7 @@ import DropDownComp from "../../../components/Dropdown";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { BiData } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -220,6 +221,14 @@ const Position = () => {
   {
     /**Trancate Text */
   }
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
@@ -250,7 +259,8 @@ const Position = () => {
             />
             <Button
               className="button bg-black tracking-normal"
-              onPress={() => setShowAddForm(!showAddForm)}>
+              onPress={() => setShowAddForm(!showAddForm)}
+            >
               {showAddForm ? (
                 <>
                   <IoReturnDownBack className="text-white text-base" />
@@ -271,7 +281,8 @@ const Position = () => {
         {showEditForm && (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleEditPosition}>
+            onSubmit={handleEditPosition}
+          >
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Edit Position
             </h2>
@@ -291,20 +302,23 @@ const Position = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                  required></textarea>
+                  required
+                ></textarea>
               </div>
 
               {/* Submit and Cancel Buttons */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4">
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4"
+                >
                   Save Changes
                 </button>
                 <button
                   type="button"
                   className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onClick={() => setShowEditForm(false)}>
+                  onClick={() => setShowEditForm(false)}
+                >
                   Cancel
                 </button>
               </div>
@@ -315,7 +329,8 @@ const Position = () => {
         {showAddForm ? (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleAddPosition}>
+            onSubmit={handleAddPosition}
+          >
             <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
               Add New Position
             </h2>
@@ -335,14 +350,16 @@ const Position = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="input border rounded-lg px-4 py-2 h-24 focus:outline-none  resize-none w-full"
-                  required></textarea>
+                  required
+                ></textarea>
               </div>
 
               {/* Submit Button */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
+                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto"
+                >
                   Add Position
                 </button>
               </div>
@@ -362,7 +379,8 @@ const Position = () => {
                 {positionData.map((position, index) => (
                   <TableRow
                     key={position.rclId}
-                    className="h-20 justify-center items-center border-b-2 border-gray-300">
+                    className="h-20 justify-center items-center border-b-2 border-gray-300"
+                  >
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{position.positionName}</TableCell>
                     <TableCell>

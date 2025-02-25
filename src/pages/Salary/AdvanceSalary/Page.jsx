@@ -2,6 +2,8 @@ import InputComponent from "../../../components/InputComponent";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import ButtonComp from "../../../components/ButtonComp";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const AdvanceSalary = () => {
   const { control, handleSubmit } = useForm({});
@@ -20,6 +22,14 @@ const AdvanceSalary = () => {
   const onSubmit = (data) => {
     console.log("Submitted Data", data);
   };
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col space-y-10">
