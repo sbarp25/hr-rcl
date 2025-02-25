@@ -42,14 +42,7 @@ const SalaryEdit = () => {
 
     fetchDepartments();
   }, []);
-  const navigate = useNavigate();
-  const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/login");
-    }
-  }, []);
   return (
     <div className="flex flex-col space-y-8">
       <BreadcrumbsComponent items={breadcrumbItems} />

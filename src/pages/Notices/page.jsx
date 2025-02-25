@@ -182,14 +182,7 @@ const Page = () => {
     { label: "Dashboard", href: "/" },
     { label: "Notice", href: "/notice" },
   ];
-  const navigate = useNavigate();
-  const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/login");
-    }
-  }, []);
   return (
     <div className="container">
       {/* Notice Heading section */}
