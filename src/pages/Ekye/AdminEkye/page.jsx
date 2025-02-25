@@ -101,7 +101,13 @@ const Page = () => {
 
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
+  const hasaccess = false;
 
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">

@@ -10,6 +10,7 @@ import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
 // import PersonalDetails from "../../components/Personal.jsx";
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -124,6 +125,15 @@ const Ekye = () => {
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
+
+  // const navigate = useNavigate();
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   return (
     <>

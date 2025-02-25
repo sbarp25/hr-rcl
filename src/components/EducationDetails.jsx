@@ -313,7 +313,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="space-y-4 py-6">
+      <div className="space-y-4 py-4  ">
         <h2 className="text-2xl font-semibold text-gray-700">
           Educational Details
         </h2>
@@ -337,7 +337,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         {Array.from({ length: numberOfItems }).map((_, index) => (
           <div
             key={index}
-            className="space-y-4 border border-gray-400 p-4 rounded-md">
+            className="space-y-4 border border-gray-400 border-gray-400 p-4 rounded-md">
             <h3 className="text-lg font-semibold text-gray-600">
               {degrees[index]} Details
             </h3>

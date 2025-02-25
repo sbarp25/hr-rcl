@@ -146,6 +146,13 @@ const LeaveApprove = ({ leaveId }) => {
       setIsLoading(false);
     }
   };
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -193,7 +200,8 @@ const LeaveApprove = ({ leaveId }) => {
                   selectedKeys={field.value ? [field.value] : []}
                   onSelectionChange={(keys) =>
                     field.onChange(Array.from(keys)[0])
-                  }>
+                  }
+                >
                   {leaveStatus.map((leave) => (
                     <SelectItem key={leave.key} textValue={leave.label}>
                       {leave.label}

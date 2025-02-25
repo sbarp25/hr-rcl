@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const SalaryEdit = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +41,14 @@ const SalaryEdit = () => {
     };
 
     fetchDepartments();
+  }, []);
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
   }, []);
   return (
     <div className="flex flex-col space-y-8">

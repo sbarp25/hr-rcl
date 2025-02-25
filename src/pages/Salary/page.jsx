@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { FaRegEye } from "react-icons/fa";
 import { Divider } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import { useNavigate } from "react-router-dom";
 const SalaryDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [salary, setSalary] = useState([]);
@@ -81,6 +82,14 @@ const SalaryDetails = () => {
     { label: "Salary Details", href: "/salary" },
   ];
   const handleClick = () => {};
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col space-y-10">
@@ -95,7 +104,8 @@ const SalaryDetails = () => {
           {SalaryD.map((item, index) => (
             <div
               key={index}
-              className={`text-text ${item.color} p-2 rounded-lg text-center`}>
+              className={`text-text ${item.color} p-2 rounded-lg text-center`}
+            >
               <div className="font-bold">{item.value}</div>
               <div>{item.key}</div>
             </div>

@@ -131,6 +131,14 @@ const Rstpwd = () => {
     }
   };
 
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="grid grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
@@ -201,7 +209,8 @@ const Rstpwd = () => {
                 errors.password || errors.confirmPassword
                   ? " cursor-not-allowed"
                   : ""
-              }`}>
+              }`}
+            >
               {isLoading ? "Loading..." : "Submit"}
             </Button>
           </Form>

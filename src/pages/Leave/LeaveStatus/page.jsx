@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import DropDownComp from "../../../components/Dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const LeaveStatus = () => {
@@ -58,8 +58,15 @@ const LeaveStatus = () => {
 
     fetchLeave();
   }, []);
+  const navigate = useNavigate();
+  const hasaccess = false;
 
   const hasEditAccess = true;
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <>
       <div className="container space-y-4">

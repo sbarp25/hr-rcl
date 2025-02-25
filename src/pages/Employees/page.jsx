@@ -21,6 +21,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/Dropdown";
 import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -133,6 +134,14 @@ const Employees = () => {
 
     employeesData(filteredData);
   };
+  // const navigate = useNavigate();
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
   const handleRedirect = () => {
     navigate("/AddEmployees");
   };

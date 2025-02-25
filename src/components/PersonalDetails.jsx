@@ -200,9 +200,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                         errors.bloodType ? "border-2 border-red-500" : ""
                       }`}
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange([...keys][0])
-                      }>
+                      onSelectionChange={(keys) => field.onChange([...keys][0])}
+                    >
                       {bloodGroupOptions.map((group) => (
                         <SelectItem key={group}>{group}</SelectItem>
                       ))}
@@ -231,9 +230,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                         errors.gender ? "border-2 border-red-500" : ""
                       }`}
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange([...keys][0])
-                      }>
+                      onSelectionChange={(keys) => field.onChange([...keys][0])}
+                    >
                       {genderOptions.map((gender) => (
                         <SelectItem key={gender}>{gender}</SelectItem>
                       ))}
@@ -263,9 +261,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       }
                     }`}
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange([...keys][0])
-                      }>
+                      onSelectionChange={(keys) => field.onChange([...keys][0])}
+                    >
                       {maritalOptions.map((status) => (
                         <SelectItem key={status.key} textValue={status.label}>
                           {status.label}
@@ -322,8 +319,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                 rules={{
                   required: "Guardian Phone is required",
                   pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: "Phone must be 10 digits",
+                    value: /^9[0-9]{9}$/,
+                    message: "Phone must start with 9 and be 10 digits long",
                   },
                 }}
                 render={({ field }) => (
@@ -361,9 +358,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                         errors.guardianRelation ? "border-2 border-red-500" : ""
                       }`}
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange([...keys][0])
-                      }>
+                      onSelectionChange={(keys) => field.onChange([...keys][0])}
+                    >
                       {relationOptions.map((relation) => (
                         <SelectItem key={relation}>{relation}</SelectItem>
                       ))}
@@ -418,8 +414,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                 rules={{
                   required: "Emergency Number is required",
                   pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: "Phone must be 10 digits",
+                    value: /^9[0-9]{9}$/,
+                    message: "Phone must start with 9 and be 10 digits long",
                   },
                 }}
                 render={({ field }) => (
@@ -476,12 +472,14 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             <Button
               onPress={handleBack}
               isDisabled
-              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg">
+              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
+            >
               Back
             </Button>
             <Button
               type="submit"
-              className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
+              className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
+            >
               Submit
             </Button>
           </div>

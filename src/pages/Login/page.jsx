@@ -2,7 +2,7 @@ import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
 import { CiMail } from "react-icons/ci";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -78,6 +78,14 @@ const Login = () => {
     }
   };
 
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
   return (
     <>
       <LocationComponent />
@@ -98,7 +106,8 @@ const Login = () => {
           <div className="px-16 pt-64 bg-white rounded-r-3xl">
             <form
               onSubmit={handleSubmit(handleLogin)}
-              className="flex flex-col space-y-4 gap-6 w-full">
+              className="flex flex-col space-y-4 gap-6 w-full"
+            >
               <p className="text-2xl sm:text-xl font-bold text-center">
                 Log in
               </p>
@@ -144,7 +153,8 @@ const Login = () => {
               </div>
               <a
                 href="/"
-                className="text-xl text-black font-medium text-center">
+                className="text-xl text-black font-medium text-center"
+              >
                 Forgot Password?
               </a>
             </form>

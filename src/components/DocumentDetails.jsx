@@ -259,10 +259,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <Input
                   variant="bordered"
                   id="panNumber"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.panNumber && errors.panNumber
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? " border-2 border-red-500"
+                      : ""
                   }`}
                   type="text"
                   value={formData?.documents?.panNumber}
@@ -283,10 +283,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.panIssueDate && errors.panIssueDate
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? " border-2 border-red-500"
+                      : ""
                   }`}
                   type="date"
                   label="Pan Issue Date"
@@ -311,10 +311,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.panIssuePlace && errors.panIssuePlace
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? "border-2 border-red-500"
+                      : ""
                   }`}
                   type="text"
                   value={formData.documents?.panIssuePlace}
@@ -339,11 +339,12 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <div>
                   <label
-                    className={`relative flex items-center justify-left w-full h-14 border-2 ${
+                    className={`relative flex items-center justify-left w-full h-14 border-2  ${
                       touched.panCardDocumentFile && errors.panCardDocumentFile
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
+                        ? "border-2 border-red-500"
+                        : ""
+                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}
+                  >
                     <span className="text-gray-600 px-4">
                       {formData?.documents?.panCardDocumentFile?.name ? (
                         <div className="flex gap-2">
@@ -356,7 +357,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     </span>
                     <input
                       type="file"
-                      className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                      className="absolute inset-0 opacity-0 cursor-pointer  w-full"
                       onChange={(e) => {
                         handleNestedChange(
                           "documents",
@@ -384,7 +385,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       href={formData.documents?.panCardDocumentFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-sm text-green-600 underline mb-2">
+                      className="block text-sm text-green-600 underline mb-2"
+                    >
                       <span className="flex items-center gap-x-2">
                         <FaRegEye />
                         View Uploaded PAN Card
@@ -406,10 +408,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.citizenshipNumber && errors.citizenshipNumber
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? "border-2 border-red-500"
+                      : ""
                   }`}
                   type="text"
                   value={formData?.documents?.citizenshipNumber}
@@ -434,10 +436,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <Input
                   variant="bordered"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.issuedDate && errors.issuedDate
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? "border-2 border-red-500"
+                      : ""
                   }`}
                   type="date"
                   label="Citizenship Issue Date"
@@ -463,11 +465,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <Input
                   variant="bordered"
                   type="text"
-                  className={`w-full border-2 rounded-xl ${
+                  className={`w-full  rounded-xl ${
                     touched.isIssuedPlaceDistrict &&
                     errors.isIssuedPlaceDistrict
-                      ? "border-red-500"
-                      : "border-gray-300"
+                      ? "border-2 border-red-500"
+                      : ""
                   }`}
                   value={formData.documents?.isIssuedPlaceDistrict}
                   onChange={(e) =>
@@ -497,9 +499,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     className={`relative flex items-center justify-left w-full h-14 border-2 ${
                       touched.citizenshipFrontDocumentFile &&
                       errors.citizenshipFrontDocumentFile
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
+                        ? "border-2 border-red-500"
+                        : ""
+                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}
+                  >
                     <span className="text-gray-600 px-4">
                       {formData?.documents?.citizenshipFrontDocumentFile
                         ?.name ? (
@@ -545,7 +548,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipFrontDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2">
+                        className="block text-sm text-green-600 underline mb-2"
+                      >
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Front Side
@@ -562,9 +566,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     className={`relative flex items-center justify-left w-full h-14 border-2 ${
                       touched.citizenshipBackDocumentFile &&
                       errors.citizenshipBackDocumentFile
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
+                        ? "border-2 border-red-500"
+                        : ""
+                    } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}
+                  >
                     <span className="text-gray-600 px-4 truncate">
                       {formData?.documents?.citizenshipBackDocumentFile
                         ?.name ? (
@@ -610,7 +615,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         href={formData?.documents?.citizenshipBackDocumentFile}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-green-600 underline mb-2">
+                        className="block text-sm text-green-600 underline mb-2"
+                      >
                         <span className="flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Back Side
@@ -624,12 +630,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded">
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
                 Back
               </Button>
               <Button
                 onPress={handleNextSubmit}
-                className="px-4 py-2 bg-green-500 text-white rounded">
+                className="px-4 py-2 bg-green-500 text-white rounded"
+              >
                 Submit
               </Button>
             </div>

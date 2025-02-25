@@ -1,7 +1,8 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import { useNavigate } from "react-router-dom";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -181,6 +182,14 @@ const Page = () => {
     { label: "Dashboard", href: "/" },
     { label: "Notice", href: "/notice" },
   ];
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="container">
       {/* Notice Heading section */}
@@ -198,7 +207,8 @@ const Page = () => {
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
-              className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
+              className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4"
+            >
               <div className="flex-shrink-0 w-32 h-64 border-r-2 border-red-600 flex items-center justify-center">
                 <p className="text-xl font-bold text-gray-900 mb-1 leading-10">
                   {notice.date}
@@ -217,7 +227,8 @@ const Page = () => {
                             href={attachment.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline">
+                            className="text-blue-500 hover:underline"
+                          >
                             {attachment.name}
                           </a>
                         </li>
@@ -231,7 +242,8 @@ const Page = () => {
                     {notice.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
+                        className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs"
+                      >
                         {tag}
                       </span>
                     ))}
@@ -245,7 +257,8 @@ const Page = () => {
                         : notice.priority === "Medium"
                         ? "bg-yellow-500 text-white"
                         : "bg-green-500 text-white"
-                    }`}>
+                    }`}
+                  >
                     {notice.priority} Priority
                   </span>
                 </div>

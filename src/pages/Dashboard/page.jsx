@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Attendancereport from "../../components/Attendancereport.jsx";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
@@ -9,6 +9,7 @@ import axiosInstance from "../../lib/axios-Instance.js";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { toast } from "react-toastify";
 import { getIpAddress } from "../../utils/getIpAddress.js";
+import { useNavigate } from "react-router-dom";
 const Page = () => {
   const [ischeckedin, setIscheckedin] = useState(true);
 
@@ -86,6 +87,14 @@ const Page = () => {
     }
   };
   const username = localStorage.getItem("fullName");
+  const navigate = useNavigate();
+  const hasaccess = true;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <>
@@ -98,7 +107,8 @@ const Page = () => {
           )}
           <Button
             onPress={handleCheckin}
-            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white py-2 tracking-normal">
+            className="button bg-bgprimary hover:bg-hoverbackground mb-1  text-white py-2 tracking-normal"
+          >
             {ischeckedin ? (
               <>
                 <span className="text-white font-Poppins text-xl">
@@ -157,12 +167,14 @@ const Page = () => {
                 <div className="flex h-10 font-normal text-right w-fit">
                   <Button
                     type="button"
-                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg">
+                    className="bg-blue-900 px-4 py-2 rounded-lg text-white mr-2 shadow-lg"
+                  >
                     Today Leave
                   </Button>
                   <Button
                     type="button"
-                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg">
+                    className="bg-red-700  py-2 rounded-lg text-white mr-5 shadow-lg"
+                  >
                     Upcoming Leave
                   </Button>
                 </div>

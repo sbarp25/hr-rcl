@@ -161,6 +161,14 @@ const AddEmployeeForm = () => {
     }
   };
 
+  // const hasaccess = false;
+
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+
   return (
     <div className="container space-y-4">
       <div className="flex flex-col space-y-8 ">
@@ -200,8 +208,8 @@ const AddEmployeeForm = () => {
                       message: "Invalid Phone Number",
                     },
                     pattern: {
-                      value: /^[0-9]{10,10}$/,
-                      message: "Phone number must be 10 digits long",
+                      value: /^9[0-9]{9}$/,
+                      message: "Phone must start with 9 and be 10 digits long",
                     },
                   })}
                   label="Phone"
@@ -247,7 +255,8 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }>
+                      }
+                    >
                       {departmentsData?.map((dept) => (
                         <SelectItem key={dept.id} textValue={dept.name}>
                           {dept.name}
@@ -279,7 +288,8 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }>
+                      }
+                    >
                       {positionData.map((pos) => (
                         <SelectItem key={pos.id} textValue={pos.positionName}>
                           {pos.positionName}
@@ -313,7 +323,8 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }>
+                      }
+                    >
                       {roleData.map((role) => (
                         <SelectItem key={role.roleId} textValue={role.roleName}>
                           {role.roleName}
@@ -371,7 +382,8 @@ const AddEmployeeForm = () => {
           </div>
           <button
             type="submit"
-            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
+            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl"
+          >
             <img src={Submit} alt="Submit" className="h-4 w-4" />
             Submit
           </button>

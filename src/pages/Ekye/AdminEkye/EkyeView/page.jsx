@@ -96,7 +96,7 @@ import Personal from "../../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const tabData = [
   {
@@ -178,6 +178,14 @@ const Page = () => {
     { label: "AdminEKYE", href: "/AdminEkye" },
     { label: activeTab.name, href: "" },
   ];
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div className="container">
