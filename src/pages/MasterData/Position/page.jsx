@@ -253,7 +253,17 @@ const Position = () => {
     { label: "Position", href: "/master-data/Position" },
   ];
 
-  /**Trancate Text */
+  {
+    /**Trancate Text */
+  }
+  const navigate = useNavigate();
+  const hasaccess = false;
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/");
+    }
+  }, []);
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
