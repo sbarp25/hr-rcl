@@ -42,6 +42,8 @@ const Page = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
+  const hasViewAccess = false;
+  const hasActionAccess = false;
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -49,10 +51,18 @@ const Page = () => {
   const handleChange = (action, rclId) => {
     switch (action) {
       case "view":
-        navigate(`/View/${rclId}`);
+        if (hasViewAccess) {
+          navigate(`/View/${rclId}`);
+        } else {
+          ("Access denied");
+        }
         break;
       case "action":
-        navigate(`/EkyeAction/${rclId}`);
+        if (hasActionAccess) {
+          navigate(`/EkyeAction/${rclId}`);
+        } else {
+          ("Access denied");
+        }
         break;
       default:
         console.log("Invalid action");
@@ -91,6 +101,7 @@ const Page = () => {
 
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
+
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">
@@ -140,12 +151,20 @@ const Page = () => {
                   <TableCell>
                     <div className="flex justify-start gap-4">
                       <GrView
-                        className="text-green-500 cursor-pointer hover:text-green-700"
+                        className={`${
+                          hasViewAccess
+                            ? "text-green-500 cursor-pointer hover:text-green-700"
+                            : ""
+                        }`}
                         title="View"
                         onClick={() => handleChange("view", data.rclId)}
                       />
                       <FaEdit
-                        className="text-yellow-500 cursor-pointer hover:text-red-700"
+                        className={`${
+                          hasActionAccess
+                            ? "text-yellow-500 cursor-pointer hover:text-yellow-700"
+                            : ""
+                        }`}
                         title="Edit"
                         onClick={() => handleChange("action", data.rclId)}
                       />

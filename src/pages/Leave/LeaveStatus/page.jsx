@@ -59,6 +59,7 @@ const LeaveStatus = () => {
     fetchLeave();
   }, []);
 
+  const hasEditAccess = true;
   return (
     <>
       <div className="container space-y-4">
@@ -100,7 +101,10 @@ const LeaveStatus = () => {
                     <TableCell>
                       <Link
                         key={data.leaveId}
-                        to={`/Leave/apprej/${data.leaveId}`}>
+                        to={`/Leave/apprej/${data.leaveId}`}
+                        // {hasEditAccess ?{``}}
+                        // style={{ pointerEvents: {`${none}`} }}
+                      >
                         <div
                           className={`${
                             data?.leaveStatus === "APPROVED"

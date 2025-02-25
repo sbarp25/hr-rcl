@@ -32,7 +32,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const navbarElements = [
-    { icon: MdDashboard, label: "Dashboard", to: "/" },
+    { icon: MdDashboard, label: "Dashboard", to: "/", role: "1" },
     {
       icon: IoAlarm,
       label: "Attendance",

@@ -177,40 +177,51 @@ const Department = () => {
       setIsLoading(false);
     }
   };
-
+  const hasDepartmentEditAccess = false;
+  const hasDepartmentDeleteAccess = false;
   const handleAction = async (action, department) => {
     switch (action) {
       // Start Of Edit Operation
       case "edit":
-        console.log(`Editing position ID: ${department.id}`);
-        setShowEditForm(true);
-        setDepartmentName(department.name || "");
-        setDepartmentDescription(department.description || "");
-        setEditingDepartmentId(department.id);
+        if (hasDepartmentEditAccess) {
+          console.log(`Editing Department ID: ${department.id}`);
+          setShowEditForm(true);
+          setDepartmentName(department.name || "");
+          setDepartmentDescription(department.description || "");
+          setEditingDepartmentId(department.id);
+        } else {
+          toast.error("Access denied");
+        }
         break;
       // End Of Edit Operation
       case "delete":
         console.log(`Deleting position ID: ${department.id}`);
         try {
-          const response = await axiosInstance.delete(
-            `/api/v1/departments/delete/${department.id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
+          if (hasDepartmentDeleteAccess) {
+            const response = await axiosInstance.delete(
+              `/api/v1/departments/delete/${department.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.data.responseCode === "204") {
+              toast.success(response.data.message);
+            } else {
+              toast.error(response.data.message);
             }
-          );
-          if (response.data.responseCode === "204") {
-            toast.success(response.data.message);
           } else {
-            toast.error(response.data.message);
+            toast.error("Access denied");
           }
         } catch (error) {
           console.error("Error deleting position:", error);
           setShowEditForm(true);
           toast.error(error.response?.data?.message);
         }
+
         break;
       default:
         console.log("Unknown action");
@@ -224,6 +235,7 @@ const Department = () => {
   ];
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
+
   return (
     <>
       <ValidationComponent>
@@ -376,12 +388,20 @@ const Department = () => {
                         <TableCell>
                           <div className="flex">
                             <HiPencilSquare
-                              className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                              className={`${
+                                hasDepartmentEditAccess
+                                  ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                  : "text-xl mr-2"
+                              }`}
                               title="Edit"
                               onClick={() => handleAction("edit", department)}
                             />
                             <MdDelete
-                              className="text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                              className={`${
+                                hasDepartmentDeleteAccess
+                                  ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                  : "text-xl ml-2"
+                              }`}
                               title="Delete"
                               onClick={() => handleAction("delete", department)}
                             />

@@ -8,6 +8,7 @@ const Attendance = () => {
     { label: "Dashboard", href: "/" },
     { label: "Attendance", href: "/Attendance" },
   ];
+
   return (
     <>
       <BreadcrumbsComponent items={breadcrumbItems} />

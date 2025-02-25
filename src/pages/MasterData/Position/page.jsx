@@ -125,29 +125,39 @@ const Position = () => {
     }
   };
 
+  const hasPositionEditAccess = false;
+  const hasPositionDeleteAccess = false;
   /**Start Of handleActions*/
   const handleAction = async (action, position) => {
     switch (action) {
       // Start Of Edit Operation
       case "edit":
-        console.log(`Editing position ID: ${position.id}`);
-        setShowEditForm(true);
-        setPositionName(position.name || "");
-        setDescription(position.description || "");
-        setEditingPositionId(position.id);
+        if (hasPositionEditAccess) {
+          console.log(`Editing position ID: ${position.id}`);
+          setShowEditForm(true);
+          setPositionName(position.name || "");
+          setDescription(position.description || "");
+          setEditingPositionId(position.id);
+        } else {
+          toast.error("Access denied");
+        }
         break;
 
       // Start Of Delete Operation
       case "delete":
         try {
-          console.log(`Deleting position ID: ${position.id}`);
-          const response = await axiosInstance.delete(
-            `/positions/delete/${position.id}`
-          );
-          if (response.data.responseCode === "204") {
-            toast.success("Position deleted successfully!");
+          if (hasPositionDeleteAccess) {
+            console.log(`Deleting position ID: ${position.id}`);
+            const response = await axiosInstance.delete(
+              `/positions/delete/${position.id}`
+            );
+            if (response.data.responseCode === "204") {
+              toast.success("Position deleted successfully!");
+            } else {
+              toast.error("Failed to delete the position.");
+            }
           } else {
-            toast.error("Failed to delete the position.");
+            ("Access Denied");
           }
         } catch (error) {
           console.error("Error deleting position:", error);

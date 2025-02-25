@@ -5,13 +5,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import {
-  Checkbox,
-  DatePicker,
-  Input,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 const AddEmployeeForm = () => {
@@ -44,8 +38,14 @@ const AddEmployeeForm = () => {
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
+  const hasemployeecreateaccess = true;
 
-  // Fetch departments, positions, and roles data (same as before)
+  useEffect(() => {
+    if (!hasemployeecreateaccess) {
+      navigate("/Employees");
+    }
+  }, []);
+  //Fetc Department
   useEffect(() => {
     const fetchDepartments = async () => {
       setIsLoading(true);
@@ -69,7 +69,7 @@ const AddEmployeeForm = () => {
 
     fetchDepartments();
   }, []);
-
+  //Fetch Position
   useEffect(() => {
     const fetchPositions = async () => {
       setIsLoading(true);
@@ -90,7 +90,7 @@ const AddEmployeeForm = () => {
 
     fetchPositions();
   }, []);
-
+  //Fetch Role
   useEffect(() => {
     const fetchRoles = async () => {
       setIsLoading(true);

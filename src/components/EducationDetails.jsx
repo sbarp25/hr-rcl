@@ -335,7 +335,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           </Select>
         </div>
         {Array.from({ length: numberOfItems }).map((_, index) => (
-          <div key={index} className="space-y-4 border p-4 rounded-md">
+          <div
+            key={index}
+            className="space-y-4 border border-gray-400 p-4 rounded-md">
             <h3 className="text-lg font-semibold text-gray-600">
               {degrees[index]} Details
             </h3>

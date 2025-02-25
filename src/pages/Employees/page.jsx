@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
   Pagination,
+  Button,
 } from "@nextui-org/react";
 import Loader from "../../components/Loader";
 import Search from "../../components/Search";
@@ -19,6 +20,7 @@ import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/Dropdown";
+import { useNavigate } from "react-router-dom";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +33,7 @@ const Employees = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const startIndex = (currentPage - 1) * employeeDataPerPage;
   const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
-
+  const navigate = useNavigate();
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
@@ -67,22 +69,40 @@ const Employees = () => {
     fetchEmployees();
   }, [currentPage]);
 
+  const hasEmployeeEditAccess = false;
+  const hasEmployeeDeleteAccess = false;
+
   const handleAction = async (action, employeeId) => {
     switch (action) {
       case "edit":
+        try {
+          if (hasEmployeeEditAccess) {
+            toast.success("You have edit access");
+          } else {
+            toast.error("Access Denied");
+            return;
+          }
+        } catch (error) {
+          toast.error("");
+          return;
+        }
         console.log(`Editing employee ID: ${employeeId}`);
         break;
       case "delete":
         try {
-          console.log(`Deleting employee ID: ${employeeId}`);
-          const response = await axiosInstance.delete(
-            `/api/v1/employee/delete/${employeeId}`
-          );
-          if (response.data.responseCode === "204") {
-            toast.success(response.data.message);
-            setEmployeesData(employeesData.filter((e) => e.id !== employeeId));
-          } else {
-            toast.error(response.data.message);
+          if (hasEmployeeDeleteAccess) {
+            console.log(`Deleting employee ID: ${employeeId}`);
+            const response = await axiosInstance.delete(
+              `/api/v1/employee/delete/${employeeId}`
+            );
+            if (response.data.responseCode === "204") {
+              toast.success(response.data.message);
+              setEmployeesData(
+                employeesData.filter((e) => e.id !== employeeId)
+              );
+            } else {
+              toast.error(response.data.message);
+            }
           }
         } catch (error) {
           console.error("Error deleting employee:", error);
@@ -113,6 +133,10 @@ const Employees = () => {
 
     employeesData(filteredData);
   };
+  const handleRedirect = () => {
+    navigate("/AddEmployees");
+  };
+  const hasemployeecreateaccess = true;
   return (
     <>
       {isLoading && <Loader message="Loading employees..." />}
@@ -135,12 +159,13 @@ const Employees = () => {
                   url="/api/v1/auth/get/all"
                 />
               </div>
-              <a
+              <Button
+                isDisabled={hasemployeecreateaccess}
                 className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4"
-                href="/AddEmployees">
+                onPress={handleRedirect}>
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
-              </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -161,7 +186,7 @@ const Employees = () => {
               <TableBody>
                 {employeesData.map((employee, index) => (
                   <TableRow
-                    key={employee.employeeId}
+                    key={employee.rclId}
                     className="h-14 border-b-2 border-gray-300">
                     <TableCell>
                       {(currentPage - 1) * employeeDataPerPage + index + 1}
@@ -174,14 +199,22 @@ const Employees = () => {
                     <TableCell>
                       <div className="flex justify-center gap-4">
                         <FaRegEye
-                          className="text-green-500 cursor-pointer hover:text-green-700"
+                          className={`  ${
+                            hasEmployeeEditAccess
+                              ? "text-green-500 hover:text-green-700 cursor-pointer "
+                              : ""
+                          }`}
                           title="Edit"
-                          onClick={() => handleAction("edit", employee.id)}
+                          onClick={() => handleAction("edit", employee.rclId)}
                         />
                         <MdDelete
-                          className="text-red-500 cursor-pointer hover:text-red-700"
+                          className={`${
+                            hasEmployeeDeleteAccess
+                              ? "text-red-500 cursor-pointer hover:text-red-700"
+                              : ""
+                          }`}
                           title="Delete"
-                          onClick={() => handleAction("delete", employee.id)}
+                          onClick={() => handleAction("delete", employee.rclId)}
                         />
                       </div>
                     </TableCell>

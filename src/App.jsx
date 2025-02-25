@@ -66,7 +66,6 @@ function App() {
           <Routes>
             <Route element={<PrivateRoutes />}>
               <Route path="/" element={<Dashboard />} />
-
               <Route path="/Attendance" element={<Attendance />} />
               <Route
                 path="/Attendance/Request"
