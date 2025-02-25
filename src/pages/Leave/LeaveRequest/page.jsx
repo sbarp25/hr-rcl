@@ -137,13 +137,13 @@ const LeaveRequest = () => {
     if (screenWidth >= 768) return 4; // md
     return 4; // default for smaller screens
   };
-  const hasaccess = false;
+  // const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -210,8 +210,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {LeaveType.map((leave) => (
                       <SelectItem key={leave.key} value={leave.key}>
                         {leave.label}
@@ -244,8 +243,7 @@ const LeaveRequest = () => {
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
-                    }
-                  >
+                    }>
                     {TeamLeader.map((team) => (
                       <SelectItem key={team.key} value={team.key}>
                         {team.label}
@@ -321,8 +319,7 @@ const LeaveRequest = () => {
               render={({ field }) => (
                 <Checkbox
                   isSelected={field.value}
-                  onValueChange={field.onChange}
-                >
+                  onValueChange={field.onChange}>
                   Is Half Day?
                 </Checkbox>
               )}

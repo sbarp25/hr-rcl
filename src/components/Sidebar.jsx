@@ -39,6 +39,10 @@ const Sidebar = () => {
   const seeEmployee = menu.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+  /**To check Dashboard see status */
+  const seeDashboard = menu.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 6)
+  );
   /**To check Department see status */
   const seeDepartment = menu.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 10)
@@ -48,6 +52,7 @@ const Sidebar = () => {
     menu.actionList.some((action) => action.actionId === 14)
   );
   const navbarElements = [
+    // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     { icon: MdDashboard, label: "Dashboard", to: "/", view: true },
     {
       icon: IoAlarm,
@@ -64,6 +69,12 @@ const Sidebar = () => {
       to: "/Employees",
       view: seeEmployee,
     },
+    // {
+    //   icon: IoIosPeople,
+    //   label: "Department",
+    //   to: "/master-data/Department",
+    //   view: seeDepartment,
+    // },
     {
       icon: BiData,
       label: "Master Data",

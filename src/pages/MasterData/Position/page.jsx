@@ -127,8 +127,6 @@ const Position = () => {
     }
   };
 
-  const navigate = useNavigate();
-
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check create status */
@@ -252,18 +250,17 @@ const Position = () => {
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
-
-  {
-    /**Trancate Text */
-  }
   const navigate = useNavigate();
-  const hasaccess = false;
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/");
     }
   }, []);
+  {
+    /**Trancate Text */
+  }
+
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
