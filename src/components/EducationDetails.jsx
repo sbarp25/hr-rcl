@@ -252,7 +252,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       startYear: edu.startYear || "",
       endYear: edu.endYear || "",
       status: edu.status || "",
-      imageIndex: index,
+      imageIndex: index + 1,
     }));
 
     formDataToSend.append("educationData", JSON.stringify(educationData));
@@ -261,7 +261,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       console.log(`Processing files for degree ${index}:`, edu.files);
       if (edu?.files && edu.files.length > 0) {
         edu.files.forEach((file) => {
-          console.log(`Appending file for degree ${index}:`, file.name);
+          console.log(`Appending file for degree ${index}:`);
           formDataToSend.append("files", file);
         });
       }

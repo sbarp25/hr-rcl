@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../underlinecomponent";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EkyeEducationDetails = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -24,25 +25,33 @@ const EkyeEducationDetails = ({ employeeData }) => {
       setEducationDocuments(docStatus);
     }
   }, [employeeData]);
+  const menu = LocalStorageUtil.getItem("menu");
 
+  const hasApproveAccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 17)
+  );
   const onApprove = async () => {
     const approve = {
       userId: rclId,
       status: "APPROVED",
     };
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/approved/users",
-        approve,
-        {
-          headers: { "Content-Type": "application/json" },
+      if (hasApproveAccess) {
+        const response = await axiosInstance.post(
+          "/api/v1/approved/users",
+          approve,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (response?.data?.responseCode === "201") {
+          toast.success(response?.data?.message);
+          navigate("/AdminEkye");
+        } else {
+          toast.error(response?.data?.data?.message);
         }
-      );
-      if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        navigate("/AdminEkye");
       } else {
-        toast.error(response?.data?.data?.message);
+        toast.error("Access denied");
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong");

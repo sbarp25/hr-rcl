@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Loader from "./Loader";
+import LocalStorageUtil from "../utils/LocalStorageUtil";
 
 const RejectComp = ({ employeeData }) => {
   const {
@@ -29,6 +30,10 @@ const RejectComp = ({ employeeData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
 
+  const menu = LocalStorageUtil.getItem("menu");
+  const hasApproveAccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 18)
+  );
   const onReject = async (data) => {
     const rejectData = {
       userId: rclId,
@@ -38,22 +43,27 @@ const RejectComp = ({ employeeData }) => {
 
     try {
       setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.post(
-        "/api/v1/rejected/users",
-        rejectData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+      if (hasApproveAccess) {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axiosInstance.post(
+          "/api/v1/rejected/users",
+          rejectData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response?.data?.responseCode === "201") {
+          toast.success(response?.data?.message);
+          navigate("/AdminEkye");
+        } else {
+          toast.error(response?.data?.message);
         }
-      );
-      if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        navigate("/AdminEkye");
       } else {
-        toast.error(response?.data?.message);
+        toast.reject("Access Denied");
       }
     } catch (error) {
       const errorMessage =

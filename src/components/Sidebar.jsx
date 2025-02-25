@@ -17,6 +17,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import LocalStorageUtil from "../utils/LocalStorageUtil";
+
 const Sidebar = () => {
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
@@ -31,13 +33,28 @@ const Sidebar = () => {
 
   const navigate = useNavigate();
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+  /**To check Department see status */
+  const seeDepartment = menu.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 10)
+  );
+  /**To check Position see status */
+  const seePosition = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
   const navbarElements = [
-    { icon: MdDashboard, label: "Dashboard", to: "/", role: "1" },
+    { icon: MdDashboard, label: "Dashboard", to: "/", view: true },
     {
       icon: IoAlarm,
       label: "Attendance",
+      view: true,
       children: [
-        { label: "My Attendence", to: "/Attendance" },
+        { label: "My Attendence", to: "/Attendance", view: true },
         // { label: "Request Attendence", to: "/Attendance/Request" },
       ],
     },
@@ -45,33 +62,41 @@ const Sidebar = () => {
       icon: IoIosPeople,
       label: "Employees",
       to: "/Employees",
+      view: seeEmployee,
     },
     {
       icon: BiData,
       label: "Master Data",
+      view: true,
       children: [
-        { label: "Department", to: "/master-data/Department" },
-        { label: "Position", to: "/master-data/Position" },
-        { label: "Roles", to: "/master-data/Roles" },
+        {
+          label: "Department",
+          to: "/master-data/Department",
+          view: seeDepartment,
+        },
+        { label: "Position", to: "/master-data/Position", view: seePosition },
+        { label: "Roles", to: "/master-data/Roles", view: true },
       ],
     },
-    { icon: FaBookBookmark, label: "HandBook", to: "/handbook" },
-    { icon: FaNewspaper, label: "Notice", to: "/notice" },
+    { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
+    { icon: FaNewspaper, label: "Notice", to: "/notice", view: true },
     {
       icon: FcLeave,
       label: "Leave",
+      view: true,
       children: [
-        { label: "Leave Status", to: "/Leave/Status" },
-        { label: "Leave Request", to: "/Leave/Request" },
+        { label: "Leave Status", to: "/Leave/Status", view: true },
+        { label: "Leave Request", to: "/Leave/Request", view: true },
       ],
     },
     {
       icon: FcLeave,
       label: "Salary",
+      view: true,
       children: [
-        { label: "Salary Details", to: "/Salary" },
-        { label: "Salary Breakdown", to: "/salaryEdit" },
-        { label: "Advance", to: "/AdvanceSalary" },
+        { label: "Salary Details", to: "/Salary", view: true },
+        { label: "Salary Breakdown", to: "/salaryEdit", view: true },
+        { label: "Advance", to: "/AdvanceSalary", view: true },
       ],
     },
 
@@ -79,6 +104,7 @@ const Sidebar = () => {
       icon: IoIosPeople,
       label: "Ekye",
       to: "/AdminEkye",
+      view: true,
     },
   ];
 
@@ -145,44 +171,50 @@ const Sidebar = () => {
 
           {/* Navigation items */}
           <div className="flex-grow">
-            {navbarElements.map((service, index) => (
-              <div key={index} className="relative">
-                <Link
-                  to={service.to}
-                  className={`flex items-center gap-4 p-3 transition-colors rounded-lg cursor-pointer ${
-                    location.pathname === service.to
-                      ? "bg-active text-white border-l-4 border-l-red-800"
-                      : "hover:bg-gray-700"
-                  }`}
-                  onClick={() => service.children && toggleDropdown(index)}>
-                  {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
-                  <service.icon className="text-2xl" />
-                  {isSidebarExpanded && (
-                    <span className="text-base">{service.label}</span>
+            {navbarElements.map((service, index) => {
+              if (!service.view) return null;
+              return (
+                <div key={index} className="relative">
+                  <Link
+                    to={service.to}
+                    className={`flex items-center gap-4 p-3 transition-colors rounded-lg cursor-pointer ${
+                      location.pathname === service.to
+                        ? "bg-active text-white border-l-4 border-l-red-800"
+                        : "hover:bg-gray-700"
+                    }`}
+                    onClick={() => service.children && toggleDropdown(index)}>
+                    {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
+                    <service.icon className="text-2xl" />
+                    {isSidebarExpanded && (
+                      <span className="text-base">{service.label}</span>
+                    )}
+                  </Link>
+                  {/* Dropdown items */}
+                  {service.children && expandedDropdown === index && (
+                    <div className="pl-8 mt-2 space-y-2">
+                      {service.children.map((child, childIndex) => {
+                        if (service?.children?.view) return null;
+                        return (
+                          <Link
+                            key={childIndex}
+                            to={child.to}
+                            className={`flex p-2 rounded-lg transition-colors gap-4 ${
+                              location.pathname === child.to
+                                ? "bg-active text-white border-l-4 border-l-red-800"
+                                : "hover:bg-gray-600"
+                            }`}>
+                            {location.pathname === child.to && (
+                              <BsArrowReturnRight className="mt-1 " />
+                            )}
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   )}
-                </Link>
-                {/* Dropdown items */}
-                {service.children && expandedDropdown === index && (
-                  <div className="pl-8 mt-2 space-y-2">
-                    {service.children.map((child, childIndex) => (
-                      <Link
-                        key={childIndex}
-                        to={child.to}
-                        className={`flex p-2 rounded-lg transition-colors gap-4 ${
-                          location.pathname === child.to
-                            ? "bg-active text-white border-l-4 border-l-red-800"
-                            : "hover:bg-gray-600"
-                        }`}>
-                        {location.pathname === child.to && (
-                          <BsArrowReturnRight className="mt-1 " />
-                        )}
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           {/* Profile section */}

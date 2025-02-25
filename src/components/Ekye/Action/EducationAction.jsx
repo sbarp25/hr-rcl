@@ -9,6 +9,7 @@ import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../underlinecomponent";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -26,7 +27,11 @@ const EducationAction = ({ employeeData }) => {
       setEducationDocument(docStatus);
     }
   }, [employeeData]);
+  const menu = LocalStorageUtil.getItem("menu");
 
+  const hasApproveAccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 17)
+  );
   const onApprove = async () => {
     const submitData = {
       userId: rclId,
@@ -34,20 +39,24 @@ const EducationAction = ({ employeeData }) => {
       remark: "Congrulations",
     };
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/approved/users",
-        submitData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      if (hasApproveAccess) {
+        const response = await axiosInstance.post(
+          "/api/v1/approved/users",
+          submitData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response?.data?.responseCode === "201") {
+          toast.success(response?.data?.message);
+          navigate("/AdminEkye");
+        } else {
+          toast.error(response?.data?.data?.message);
         }
-      );
-      if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        navigate("/AdminEkye");
       } else {
-        toast.error(response?.data?.data?.message);
+        toast.error("Access Denied");
       }
     } catch (error) {
       const errorMessage =

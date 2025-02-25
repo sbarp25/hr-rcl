@@ -8,6 +8,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -34,17 +35,21 @@ const AddEmployeeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const menu = LocalStorageUtil.getItem("menu");
   const breadcrumbItems = [
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
-  const hasemployeecreateaccess = true;
+  const hasemployeecreateaccess = menu.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 1)
+  );
 
   useEffect(() => {
     if (!hasemployeecreateaccess) {
       navigate("/Employees");
     }
   }, []);
+
   //Fetc Department
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -255,8 +260,7 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }
-                    >
+                      }>
                       {departmentsData?.map((dept) => (
                         <SelectItem key={dept.id} textValue={dept.name}>
                           {dept.name}
@@ -288,8 +292,7 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }
-                    >
+                      }>
                       {positionData.map((pos) => (
                         <SelectItem key={pos.id} textValue={pos.positionName}>
                           {pos.positionName}
@@ -323,8 +326,7 @@ const AddEmployeeForm = () => {
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
-                      }
-                    >
+                      }>
                       {roleData.map((role) => (
                         <SelectItem key={role.roleId} textValue={role.roleName}>
                           {role.roleName}
@@ -382,8 +384,7 @@ const AddEmployeeForm = () => {
           </div>
           <button
             type="submit"
-            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl"
-          >
+            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
             <img src={Submit} alt="Submit" className="h-4 w-4" />
             Submit
           </button>

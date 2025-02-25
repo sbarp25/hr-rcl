@@ -134,8 +134,7 @@ const Tabs = ({ activeTab, changeTab }) => (
           activeTab.name === tab.name
             ? " bg-gray-50 border border-gray-300 "
             : "hover:border-gray-300 hover:bg-gray-100"
-        }`}
-      >
+        }`}>
         <span>{tab.name}</span>
       </li>
     ))}
@@ -181,11 +180,11 @@ const Page = () => {
   const navigate = useNavigate();
   const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   return (
     <div className="container">

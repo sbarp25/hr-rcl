@@ -42,8 +42,8 @@ const Page = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const hasViewAccess = false;
-  const hasActionAccess = false;
+  const hasViewAccess = true;
+  const hasActionAccess = true;
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -103,11 +103,11 @@ const Page = () => {
   }, [currentPage, ekyeDashboardDataPerPage]);
   const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/login");
+  //   }
+  // }, []);
   return (
     <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
       <div className="flex justify-between items-center px-8">
