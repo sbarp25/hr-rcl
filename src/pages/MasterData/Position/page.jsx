@@ -236,7 +236,7 @@ const Position = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/");
     }
   }, []);
   const truncateText = (text, maxLength) =>
