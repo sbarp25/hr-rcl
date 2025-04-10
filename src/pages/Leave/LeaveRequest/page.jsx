@@ -137,13 +137,13 @@ const LeaveRequest = () => {
     if (screenWidth >= 768) return 4; // md
     return 4; // default for smaller screens
   };
-  // const hasaccess = false;
+  const hasaccess = true;
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/login");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -172,9 +172,8 @@ const LeaveRequest = () => {
             <Textarea
               minRows={getRows()}
               maxRows={getMaxRows()}
-              className={` rounded-xl ${
-                errors.description ? "border-2 border-red-500" : ""
-              }`}
+              isInvalid={!!errors.description}
+              className={` rounded-xl `}
               label="Description"
               {...register("description", {
                 required: "Description is required",
@@ -186,7 +185,7 @@ const LeaveRequest = () => {
               variant="bordered"
             />
             {errors.description && (
-              <p className="text-red-500 text-sm">
+              <p className="text-danger text-sm">
                 {errors.description.message}
               </p>
             )}
@@ -204,9 +203,8 @@ const LeaveRequest = () => {
                     {...field}
                     variant="bordered"
                     label="Leave Type"
-                    className={`rounded-xl ${
-                      errors.leaveType ? "border-2 border-red-500 " : ""
-                    }`}
+                    isInvalid={!!errors.leaveType}
+                    className={`rounded-xl`}
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
@@ -220,7 +218,7 @@ const LeaveRequest = () => {
                 )}
               />
               {errors.leaveType && (
-                <p className="text-red-500 text-sm">
+                <p className="text-danger text-sm">
                   {errors.leaveType.message}
                 </p>
               )}
@@ -237,9 +235,8 @@ const LeaveRequest = () => {
                     {...field}
                     variant="bordered"
                     label="Team Leader"
-                    className={`rounded-xl ${
-                      errors.teamlead ? "border-2 border-red-500 " : ""
-                    }`}
+                    isInvalid={!!errors.teamlead}
+                    className={`rounded-xl`}
                     selectedKeys={field.value ? [field.value] : []}
                     onSelectionChange={(keys) =>
                       field.onChange(Array.from(keys)[0])
@@ -253,9 +250,7 @@ const LeaveRequest = () => {
                 )}
               />
               {errors.teamlead && (
-                <p className="text-red-500 text-sm">
-                  {errors.teamlead.message}
-                </p>
+                <p className="text-danger text-sm">{errors.teamlead.message}</p>
               )}
             </div>
 
@@ -268,18 +263,15 @@ const LeaveRequest = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    className={`rounded-xl ${
-                      errors.fromDate ? "border-2 border-red-500 " : ""
-                    }`}
+                    isInvalid={!!errors.fromDate}
+                    className={`rounded-xl `}
                     label="From Date"
                     variant="bordered"
                   />
                 )}
               />
               {errors.fromDate && (
-                <p className="text-red-500 text-sm">
-                  {errors.fromDate.message}
-                </p>
+                <p className="text-danger text-sm">{errors.fromDate.message}</p>
               )}
             </div>
 
@@ -299,9 +291,8 @@ const LeaveRequest = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    className={`rounded-xl ${
-                      errors.ToDate ? "border-2 border-red-500 " : ""
-                    }`}
+                    isInvalid={!!errors.ToDate}
+                    className={`rounded-xl `}
                     label="To Date"
                     variant="bordered"
                   />

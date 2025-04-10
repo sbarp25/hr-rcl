@@ -194,8 +194,7 @@ const LeaveApprove = ({ leaveId }) => {
                   selectedKeys={field.value ? [field.value] : []}
                   onSelectionChange={(keys) =>
                     field.onChange(Array.from(keys)[0])
-                  }
-                >
+                  }>
                   {leaveStatus.map((leave) => (
                     <SelectItem key={leave.key} textValue={leave.label}>
                       {leave.label}
@@ -217,9 +216,8 @@ const LeaveApprove = ({ leaveId }) => {
               placeholder="Comment:"
               minRows={5}
               maxRows={10}
-              className={`rounded-xl ${
-                errors.remarks ? "border-2 border-red-500" : ""
-              }`}
+              isInvalid={!!errors.remarks}
+              className={`rounded-xl`}
               variant="bordered"
               {...register("remarks", {
                 required: "Reject reason is required",

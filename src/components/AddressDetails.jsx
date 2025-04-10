@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Input, Select, SelectItem, Checkbox } from "@nextui-org/react";
+import { Button, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
 import Loader from "./Loader";
+import { useForm, Controller } from "react-hook-form";
+import InputComponent from "./InputComponent";
 
 const AddressDetails = ({
   formData,
@@ -15,9 +17,41 @@ const AddressDetails = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
-  const [errors, setErrors] = useState({});
   const [districts, setDistricts] = useState([]);
-  const [touched, setTouched] = useState({});
+  const [sameAsPermanent, setSameAsPermanent] = useState(false);
+
+  const {
+    control,
+    handleSubmit: handleReactHookFormSubmit,
+    setValue,
+    formState: { errors },
+    watch,
+    trigger,
+    reset,
+  } = useForm({
+    defaultValues: {
+      permanent: {
+        provinceId: "",
+        districtId: "",
+        municipality: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
+      },
+      temporary: {
+        provinceId: "",
+        districtId: "",
+        municipality: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
+      },
+      sameAsPermanent: false,
+    },
+  });
+
+  const watchedPermanent = watch("permanent");
+  const watchedSameAsPermanent = watch("sameAsPermanent");
 
   // Fetch Province Data
   useEffect(() => {
@@ -74,6 +108,35 @@ const AddressDetails = ({
             tole: "",
           };
 
+          // Set values in the form
+          setValue("permanent.provinceId", permanentAddress.provinceId || "");
+          setValue("permanent.districtId", permanentAddress.districtName || "");
+          setValue(
+            "permanent.municipality",
+            permanentAddress.municipality || ""
+          );
+          setValue("permanent.wardNumber", permanentAddress.wardNumber || "");
+          setValue("permanent.pinCode", permanentAddress.pinCode || "");
+          setValue("permanent.tole", permanentAddress.tole || "");
+
+          setValue("temporary.provinceId", temporaryAddress.provinceId || "");
+          setValue("temporary.districtId", temporaryAddress.districtName || "");
+          setValue(
+            "temporary.municipality",
+            temporaryAddress.municipality || ""
+          );
+          setValue("temporary.wardNumber", temporaryAddress.wardNumber || "");
+          setValue("temporary.pinCode", temporaryAddress.pinCode || "");
+          setValue("temporary.tole", temporaryAddress.tole || "");
+
+          const isSameAsPermanent = dataList.some(
+            (item) => item.addressType === "TEMPORARY" && item.isSameAsPermanent
+          );
+
+          setValue("sameAsPermanent", isSameAsPermanent);
+          setSameAsPermanent(isSameAsPermanent);
+
+          // Also update the parent state to keep it in sync
           setFormData((prev) => ({
             ...prev,
             address: {
@@ -95,7 +158,7 @@ const AddressDetails = ({
                 pinCode: temporaryAddress.pinCode || "",
                 tole: temporaryAddress.tole || "",
               },
-              sameAsPermanent: false,
+              sameAsPermanent: isSameAsPermanent,
             },
           }));
         }
@@ -107,79 +170,29 @@ const AddressDetails = ({
     };
 
     fetchAddressDetails();
-  }, []);
-  //Works if the same as permanent checkbox is selected
-  const handleSameAsPermanent = (e) => {
-    const isChecked = e.target.checked;
+  }, [setValue, setFormData]);
 
-    // First update the form data
-    if (isChecked) {
-      // Update temporary address with permanent address data
-      setFormData((prev) => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          temporary: { ...prev.address.permanent },
-          sameAsPermanent: true,
-        },
-      }));
-    } else {
-      // Reset temporary address
-      setFormData((prev) => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          temporary: {
-            provinceId: "",
-            districtId: "",
-            municipality: "",
-            wardNumber: "",
-            pinCode: "",
-            tole: "",
-          },
-          sameAsPermanent: false,
-        },
-      }));
+  // Sync form data changes to parent component
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      address: {
+        permanent: watchedPermanent,
+        temporary: watchedSameAsPermanent
+          ? watchedPermanent
+          : watch("temporary"),
+        sameAsPermanent: watchedSameAsPermanent,
+      },
+    }));
+  }, [watch, setFormData, watchedPermanent, watchedSameAsPermanent]);
+
+  // Handle Same As Permanent checkbox
+  useEffect(() => {
+    if (watchedSameAsPermanent) {
+      // Copy permanent address values to temporary
+      setValue("temporary", { ...watchedPermanent });
     }
-
-    // Clear any existing errors for temporary address fields
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      const temporaryFields = [
-        "temporaryProvinceId",
-        "temporaryDistrictId",
-        "temporaryMunicipality",
-        "temporaryWardNumber",
-        "temporaryPinCode",
-        "temporaryTole",
-      ];
-
-      temporaryFields.forEach((field) => {
-        delete newErrors[field];
-      });
-
-      return newErrors;
-    });
-
-    // Reset touched state for temporary fields
-    setTouched((prev) => {
-      const newTouched = { ...prev };
-      const temporaryFields = [
-        "temporaryProvinceId",
-        "temporaryDistrictId",
-        "temporaryMunicipality",
-        "temporaryWardNumber",
-        "temporaryPinCode",
-        "temporaryTole",
-      ];
-
-      temporaryFields.forEach((field) => {
-        delete newTouched[field];
-      });
-
-      return newTouched;
-    });
-  };
+  }, [watchedSameAsPermanent, watchedPermanent, setValue]);
 
   const fetchDistrictsByProvince = async (provinceId) => {
     if (!provinceId) return;
@@ -203,120 +216,47 @@ const AddressDetails = ({
     }
   };
 
-  const validateField = (field, value, addressType = "permanent") => {
-    if (
-      !value &&
-      (!formData.address.sameAsPermanent || addressType === "permanent")
-    ) {
-      return `${addressType.charAt(0).toUpperCase() + addressType.slice(1)} ${
-        field.charAt(0).toUpperCase() + field.slice(1)
-      } is Required`;
-    }
-    return "";
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    const permanentFields = {
-      provinceId: formData.address.permanent.provinceId,
-      districtId: formData.address.permanent.districtId,
-      municipality: formData.address.permanent.municipality,
-      wardNumber: formData.address.permanent.wardNumber,
-      pinCode: formData.address.permanent.pinCode,
-      tole: formData.address.permanent.tole,
-    };
-
-    Object.entries(permanentFields).forEach(([field, value]) => {
-      const error = validateField(field, value, "permanent");
-      if (error)
-        newErrors[
-          `permanent${field.charAt(0).toUpperCase() + field.slice(1)}`
-        ] = error;
-    });
-
-    if (!formData.address.sameAsPermanent) {
-      const temporaryFields = {
-        provinceId: formData.address.temporary.provinceId,
-        districtId: formData.address.temporary.districtId,
-        municipality: formData.address.temporary.municipality,
-        wardNumber: formData.address.temporary.wardNumber,
-        pinCode: formData.address.temporary.pinCode,
-        tole: formData.address.temporary.tole,
-      };
-
-      Object.entries(temporaryFields).forEach(([field, value]) => {
-        const error = validateField(field, value, "temporary");
-        if (error)
-          newErrors[
-            `temporary${field.charAt(0).toUpperCase() + field.slice(1)}`
-          ] = error;
-      });
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleFieldBlur = (field, addressType) => {
-    setTouched((prev) => ({
-      ...prev,
-      [`${addressType}${field.charAt(0).toUpperCase() + field.slice(1)}`]: true,
-    }));
-    validateForm();
-  };
-
-  const handleNestedChangeWithValidation = (
-    section,
-    subsection,
-    field,
-    value
-  ) => {
-    handleNestedChange(section, subsection, field, value);
-    if (
-      touched[`${subsection}${field.charAt(0).toUpperCase() + field.slice(1)}`]
-    ) {
-      setTimeout(() => validateForm(), 0);
-    }
-  };
-
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     setIsLoading(true);
 
     try {
-      const sanitizedProvinceId = formData.address.permanent.provinceId.replace(
+      const sanitizedProvinceId = data.permanent.provinceId.replace(
         /[^0-9]/g,
         ""
       );
-      const sanitizedTemporaryProvinceId =
-        formData.address.temporary.provinceId.replace(/[^0-9]/g, "");
-      const sanitizedDistrictId = formData.address.permanent.districtId.replace(
+      const sanitizedTemporaryProvinceId = data.temporary.provinceId.replace(
         /[^0-9]/g,
         ""
       );
-      const sanitizedtemporaryDistrictId =
-        formData.address.temporary.districtId.replace(/[^0-9]/g, "");
+      const sanitizedDistrictId = data.permanent.districtId.replace(
+        /[^0-9]/g,
+        ""
+      );
+      const sanitizedtemporaryDistrictId = data.temporary.districtId.replace(
+        /[^0-9]/g,
+        ""
+      );
 
       const newData = {
         data: [
           {
             provinceId: sanitizedProvinceId,
             districtId: sanitizedDistrictId,
-            municipality: formData.address.permanent.municipality,
-            wardNumber: formData.address.permanent.wardNumber,
-            pinCode: formData.address.permanent.pinCode,
-            tole: formData.address.permanent.tole,
+            municipality: data.permanent.municipality,
+            wardNumber: data.permanent.wardNumber,
+            pinCode: data.permanent.pinCode,
+            tole: data.permanent.tole,
             addressType: "PERMANENT",
           },
           {
             provinceId: sanitizedTemporaryProvinceId,
             districtId: sanitizedtemporaryDistrictId,
-            municipality: formData.address.temporary.municipality,
-            wardNumber: formData.address.temporary.wardNumber,
-            pinCode: formData.address.temporary.pinCode,
-            tole: formData.address.temporary.tole,
+            municipality: data.temporary.municipality,
+            wardNumber: data.temporary.wardNumber,
+            pinCode: data.temporary.pinCode,
+            tole: data.temporary.tole,
             addressType: "TEMPORARY",
-            isSameAsPermanent: formData.address.sameAsPermanent,
+            isSameAsPermanent: data.sameAsPermanent,
           },
         ],
       };
@@ -343,47 +283,20 @@ const AddressDetails = ({
       );
     } finally {
       setIsLoading(false);
-      setErrors({});
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Mark all fields as touched
-    const allFields = [
-      "provinceId",
-      "districtId",
-      "municipality",
-      "wardNumber",
-      "pinCode",
-      "tole",
-    ];
-    const newTouched = {};
-    allFields.forEach((field) => {
-      newTouched[
-        `permanent${field.charAt(0).toUpperCase() + field.slice(1)}`
-      ] = true;
-      newTouched[
-        `temporary${field.charAt(0).toUpperCase() + field.slice(1)}`
-      ] = true;
-    });
-    setTouched(newTouched);
-
-    if (validateForm()) {
-      onSubmit();
     }
   };
 
   return (
     <>
-      {isLoading && <Loader message="Loading please wait" />}
+      {/* {isLoading && <Loader message="Loading please wait" />} */}
       <ValidationComponent>
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>
-          <form className="w-full">
+          <form
+            className="w-full"
+            onSubmit={handleReactHookFormSubmit(onSubmit)}>
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
@@ -393,203 +306,134 @@ const AddressDetails = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Province Select */}
                 <div>
-                  <Select
-                    variant="bordered"
-                    scrollShadowProps={{
-                      isEnabled: true,
-                    }}
-                    className={`w-full rounded-xl ${
-                      errors.permanentProvinceId
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    label="Select A Province"
-                    items={formData.address?.permanent?.provinceId}
-                    placeholder={formData.address?.permanent?.provinceName}
-                    onSelectionChange={(keys) => {
-                      const provinceId = Array.from(keys)[0];
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "provinceId",
-                        provinceId
-                      );
-                      setDistricts([]);
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "districtId",
-                        ""
-                      );
-                      fetchDistrictsByProvince(provinceId);
-                    }}
-                    onBlur={() => handleFieldBlur("provinceId", "permanent")}>
-                    {provinces.map((province) => (
-                      <SelectItem key={province.id} textValue={province.name}>
-                        {province.name}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  {errors.permanentProvinceId && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentProvinceId}
+                  <Controller
+                    name="permanent.provinceId"
+                    control={control}
+                    rules={{ required: "Permanent Province is required" }}
+                    render={({ field }) => (
+                      <Select
+                        variant="bordered"
+                        scrollShadowProps={{ isEnabled: true }}
+                        isInvalid={!!errors.permanent?.provinceId}
+                        className={`w-full rounded-xl`}
+                        label="Select A Province"
+                        placeholder={formData.address?.permanent?.provinceName}
+                        selectedKeys={field.value ? [field.value] : []}
+                        onSelectionChange={(keys) => {
+                          field.onChange(Array.from(keys)[0]);
+                          fetchDistrictsByProvince(Array.from(keys)[0]);
+                          // Reset district when province changes
+                          setValue("permanent.districtId", "");
+                        }}>
+                        {provinces.map((province) => (
+                          <SelectItem key={province.id} value={province.id}>
+                            {province.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.permanent?.provinceId && (
+                    <p className="text-danger text-sm mt-1">
+                      {errors.permanent.provinceId.message}
                     </p>
                   )}
                 </div>
 
                 {/* District Select */}
                 <div>
-                  <Select
-                    variant="bordered"
-                    scrollShadowProps={{
-                      isEnabled: true,
-                    }}
-                    className={`w-full rounded-xl ${
-                      errors.permanentDistrictId
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    label="Select A District"
-                    selectedKeys={[formData.address?.permanent?.districtId]}
-                    placeholder={formData.address?.permanent?.districtId}
-                    onSelectionChange={(value) => {
-                      const districtId = Array.from(value)[0];
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "districtId",
-                        districtId
-                      );
-                    }}
-                    onBlur={() => handleFieldBlur("districtId", "permanent")}>
-                    {districts.map((district) => (
-                      <SelectItem
-                        key={district.districtId}
-                        textValue={district.name}>
-                        {district.name}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  {errors.permanentDistrictId && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentDistrictId}
+                  <Controller
+                    name="permanent.districtId"
+                    control={control}
+                    rules={{ required: "Permanent District is required" }}
+                    render={({ field }) => (
+                      <Select
+                        variant="bordered"
+                        scrollShadowProps={{ isEnabled: true }}
+                        isInvalid={!!errors.permanent?.districtId}
+                        className={`w-full rounded-xl `}
+                        label="Select A District"
+                        selectedKeys={field.value ? [field.value] : []}
+                        placeholder={formData.address?.permanent?.districtId}
+                        onSelectionChange={(keys) => {
+                          field.onChange(Array.from(keys)[0]);
+                        }}>
+                        {districts.map((district) => (
+                          <SelectItem
+                            key={district.districtId}
+                            value={district.districtId}>
+                            {district.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.permanent?.districtId && (
+                    <p className="text-danger text-sm mt-1">
+                      {errors.permanent.districtId.message}
                     </p>
                   )}
                 </div>
 
                 {/* Municipality */}
                 <div>
-                  <Input
-                    variant="bordered"
-                    className={`w-full rounded-xl ${
-                      errors.permanentMunicipality
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    type="text"
+                  <InputComponent
+                    name="permanent.municipality"
+                    control={control}
+                    rules={{ required: "Permanent Municipality is required" }}
                     label="Municipality"
-                    value={formData.address?.permanent?.municipality}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "municipality",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("municipality", "permanent")}
+                    variant="bordered"
+                    type="text"
+                    inputClassName="w-full rounded-xl"
+                    value={formData.address?.permanent?.municipality || ""}
                   />
-                  {errors.permanentMunicipality && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentMunicipality}
-                    </p>
-                  )}
                 </div>
 
                 {/* Ward Number */}
                 <div>
-                  <Input
-                    variant="bordered"
-                    value={formData.address?.permanent?.wardNumber}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "wardNumber",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("wardNumber", "permanent")}
+                  <InputComponent
+                    name="permanent.wardNumber"
+                    control={control}
+                    rules={{
+                      required: "Permanent Ward Number is required",
+                      pattern: {
+                        value: /^(?:[1-9]|[12][0-9]|3[0-2])$/,
+                        message: "Ward Number must be between 1 and 32",
+                      },
+                    }}
                     label="Ward No"
-                    className={`w-full rounded-xl ${
-                      errors.permanentWardNumber
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
+                    variant="bordered"
                     type="text"
                     id="ward"
+                    inputClassName="w-full rounded-xl"
+                    value={formData.address?.permanent?.wardNumber || ""}
                   />
-                  {errors.permanentWardNumber && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentWardNumber}
-                    </p>
-                  )}
                 </div>
 
-                {/* Pin Code */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    value={formData.address?.permanent?.pinCode}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "pinCode",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("pinCode", "permanent")}
-                    label="Pin Code"
-                    className={`w-full rounded-xl ${
-                      errors.permanentPinCode ? "border-2 border-red-500" : ""
-                    }`}
-                    type="text"
-                    id="pincode"
-                  />
-                  {errors.permanentPinCode && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentPinCode}
-                    </p>
-                  )}
-                </div>
+                {/* Pin Code  */}
+                <InputComponent
+                  name="permanent.pinCode"
+                  control={control}
+                  rules={{ required: "Permanent Pin Code is required" }}
+                  label="Pin Code"
+                  variant="bordered"
+                  type="text"
+                  id="pincode"
+                  inputClassName="w-full rounded-xl"
+                  value={formData.address?.permanent?.pinCode || ""}
+                />
 
-                {/* Tole/Area */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    className={`w-full rounded-xl ${
-                      errors.permanentTole ? "border-2 border-red-500" : ""
-                    }`}
-                    type="text"
-                    label="Tole/Area"
-                    value={formData.address?.permanent?.tole}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "permanent",
-                        "tole",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("tole", "permanent")}
-                  />
-                  {errors.permanentTole && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.permanentTole}
-                    </p>
-                  )}
-                </div>
+                {/* Tole/Area  */}
+                <InputComponent
+                  name="permanent.tole"
+                  control={control}
+                  rules={{ required: "Permanent Tole/Area is required" }}
+                  label="Tole/Area"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  value={formData.address?.permanent?.tole || ""}
+                />
               </div>
             </div>
 
@@ -599,212 +443,178 @@ const AddressDetails = ({
                 <h3 className="text-xl font-semibold text-gray-600">
                   Temporary Address
                 </h3>
-                <Checkbox
-                  isSelected={formData.address?.sameAsPermanent}
-                  onChange={handleSameAsPermanent}>
-                  Same as Permanent Address
-                </Checkbox>
+                <Controller
+                  name="sameAsPermanent"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Checkbox
+                      {...field}
+                      isSelected={value}
+                      onChange={(e) => {
+                        onChange(e.target.checked);
+                        setSameAsPermanent(e.target.checked);
+                      }}>
+                      Same as Permanent Address
+                    </Checkbox>
+                  )}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Temporary Province Select */}
                 <div>
-                  <Select
-                    variant="bordered"
-                    scrollShadowProps={{
-                      isEnabled: true,
+                  <Controller
+                    name="temporary.provinceId"
+                    control={control}
+                    rules={{
+                      required: !watchedSameAsPermanent
+                        ? "Temporary Province is required"
+                        : false,
                     }}
-                    className={`w-full rounded-xl ${
-                      errors.temporaryProvinceId
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    label="Select A Province"
-                    placeholder={formData.address?.temporary?.provinceName}
-                    selectedKeys={[formData.address?.temporary?.provinceId]}
-                    onSelectionChange={(keys) => {
-                      const provinceId = Array.from(keys)[0];
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "provinceId",
-                        provinceId
-                      );
-                      fetchDistrictsByProvince(provinceId);
-                    }}
-                    onBlur={() => handleFieldBlur("provinceId", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}>
-                    {provinces.map((province) => (
-                      <SelectItem key={province.id} textValue={province.name}>
-                        {province.name}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  {errors.temporaryProvinceId && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryProvinceId}
+                    render={({ field }) => (
+                      <Select
+                        variant="bordered"
+                        scrollShadowProps={{ isEnabled: true }}
+                        isInvalid={!!errors.temporary?.provinceId}
+                        className={`w-full rounded-xl`}
+                        label="Select A Province"
+                        placeholder={formData.address?.temporary?.provinceName}
+                        selectedKeys={field.value ? [field.value] : []}
+                        onSelectionChange={(keys) => {
+                          field.onChange(Array.from(keys)[0]);
+                          fetchDistrictsByProvince(Array.from(keys)[0]);
+                          // Reset district when province changes
+                          setValue("temporary.districtId", "");
+                        }}
+                        isDisabled={watchedSameAsPermanent}>
+                        {provinces.map((province) => (
+                          <SelectItem key={province.id} value={province.id}>
+                            {province.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.temporary?.provinceId && (
+                    <p className="text-danger text-sm mt-1">
+                      {errors.temporary.provinceId.message}
                     </p>
                   )}
                 </div>
 
                 {/* Temporary District Select */}
                 <div>
-                  <Select
-                    variant="bordered"
-                    scrollShadowProps={{
-                      isEnabled: true,
+                  <Controller
+                    name="temporary.districtId"
+                    control={control}
+                    rules={{
+                      required: !watchedSameAsPermanent
+                        ? "Temporary District is required"
+                        : false,
                     }}
-                    className={`w-full rounded-xl ${
-                      errors.temporaryDistrictId
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    label="Select A District"
-                    selectedKeys={[formData.address?.temporary?.districtId]}
-                    placeholder={formData.address?.temporary?.districtId}
-                    onSelectionChange={(value) => {
-                      const districtId = Array.from(value)[0];
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "districtId",
-                        districtId
-                      );
-                    }}
-                    onBlur={() => handleFieldBlur("districtId", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}>
-                    {districts.map((district) => (
-                      <SelectItem
-                        key={district.districtId}
-                        textValue={district.name}>
-                        {district.name}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  {errors.temporaryDistrictId && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryDistrictId}
+                    render={({ field }) => (
+                      <Select
+                        variant="bordered"
+                        scrollShadowProps={{ isEnabled: true }}
+                        isInvalid={!!errors.temporary?.districtId}
+                        className={`w-full rounded-xl `}
+                        label="Select A District"
+                        selectedKeys={field.value ? [field.value] : []}
+                        placeholder={formData.address?.temporary?.districtId}
+                        onSelectionChange={(keys) => {
+                          field.onChange(Array.from(keys)[0]);
+                        }}
+                        isDisabled={watchedSameAsPermanent}>
+                        {districts.map((district) => (
+                          <SelectItem
+                            key={district.districtId}
+                            value={district.districtId}>
+                            {district.name}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.temporary?.districtId && (
+                    <p className="text-danger text-sm mt-1">
+                      {errors.temporary.districtId.message}
                     </p>
                   )}
                 </div>
 
                 {/* Temporary Municipality */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    className={`w-full rounded-xl ${
-                      errors.temporaryMunicipality
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    type="text"
-                    label="Municipality"
-                    value={formData.address?.temporary?.municipality}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "municipality",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("municipality", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}
-                  />
-                  {errors.temporaryMunicipality && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryMunicipality}
-                    </p>
-                  )}
-                </div>
+                <InputComponent
+                  name="temporary.municipality"
+                  control={control}
+                  rules={{
+                    required: !watchedSameAsPermanent
+                      ? "Temporary Municipality is required"
+                      : false,
+                  }}
+                  label="Municipality"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  isReadOnly={watchedSameAsPermanent}
+                  value={formData.address?.temporary?.municipality || ""}
+                />
 
-                {/* Temporary Ward Number */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    id="ward"
-                    className={`w-full rounded-xl ${
-                      errors.temporaryWardNumber
-                        ? "border-2 border-red-500"
-                        : ""
-                    }`}
-                    type="text"
-                    label="Ward No."
-                    value={formData.address?.temporary?.wardNumber}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "wardNumber",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("wardNumber", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}
-                  />
-                  {errors.temporaryWardNumber && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryWardNumber}
-                    </p>
-                  )}
-                </div>
+                {/* Temporary Ward Number  */}
+                <InputComponent
+                  name="temporary.wardNumber"
+                  control={control}
+                  rules={{
+                    required: !watchedSameAsPermanent
+                      ? "Temporary Ward Number is required"
+                      : false,
+                    pattern: {
+                      value: /^(?:[1-9]|[12][0-9]|3[0-2])$/,
+                      message: "Ward Number must be between 1 and 32",
+                    },
+                  }}
+                  label="Ward No."
+                  variant="bordered"
+                  type="text"
+                  id="ward"
+                  inputClassName="w-full rounded-xl"
+                  isReadOnly={watchedSameAsPermanent}
+                  value={formData.address?.temporary?.wardNumber || ""}
+                />
 
-                {/* Temporary Pin Code */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    id="pincode"
-                    className={`w-full rounded-xl ${
-                      errors.temporaryPinCode ? "border-2 border-red-500" : ""
-                    }`}
-                    type="text"
-                    label="Pin Code"
-                    value={formData.address?.temporary?.pinCode}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "pinCode",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("pinCode", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}
-                  />
-                  {errors.temporaryPinCode && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryPinCode}
-                    </p>
-                  )}
-                </div>
+                {/* Temporary Pin Code  */}
+                <InputComponent
+                  name="temporary.pinCode"
+                  control={control}
+                  rules={{
+                    required: !watchedSameAsPermanent
+                      ? "Temporary Pin Code is required"
+                      : false,
+                  }}
+                  label="Pin Code"
+                  variant="bordered"
+                  type="text"
+                  id="pincode"
+                  inputClassName="w-full rounded-xl"
+                  isReadOnly={watchedSameAsPermanent}
+                  value={formData.address?.temporary?.pinCode || ""}
+                />
 
-                {/* Temporary Tole/Area */}
-                <div>
-                  <Input
-                    variant="bordered"
-                    className={`w-full rounded-xl ${
-                      errors.temporaryTole ? "border-2 border-red-500" : ""
-                    }`}
-                    type="text"
-                    label="Tole/Area"
-                    value={formData.address?.temporary?.tole}
-                    onChange={(e) =>
-                      handleNestedChangeWithValidation(
-                        "address",
-                        "temporary",
-                        "tole",
-                        e.target.value
-                      )
-                    }
-                    onBlur={() => handleFieldBlur("tole", "temporary")}
-                    isDisabled={formData.address?.sameAsPermanent}
-                  />
-                  {errors.temporaryTole && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.temporaryTole}
-                    </p>
-                  )}
-                </div>
+                {/* Temporary Tole/Area - Using InputComponent */}
+                <InputComponent
+                  name="temporary.tole"
+                  control={control}
+                  rules={{
+                    required: !watchedSameAsPermanent
+                      ? "Temporary Tole/Area is required"
+                      : false,
+                  }}
+                  label="Tole/Area"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  isReadOnly={watchedSameAsPermanent}
+                  value={formData.address?.temporary?.tole || ""}
+                />
               </div>
 
               <div className="form-navigation flex justify-between mt-6">
@@ -814,7 +624,7 @@ const AddressDetails = ({
                   Back
                 </Button>
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   className="px-4 py-2 bg-green-500 text-white rounded">
                   Submit
                 </button>

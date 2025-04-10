@@ -1,15 +1,11 @@
-import {
-  Button,
-  Input,
-  DropdownItem,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Button, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
+import InputComponent from "./InputComponent"; // Import your custom component
+import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa"; // Import icons if needed
 
 const PersonalDetails = ({ handleNext, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +36,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
+    mode: "onBlur", // This triggers validation on blur for better user experience
   });
 
   const onSubmit = async (data) => {
@@ -101,6 +98,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             email: data.email || "",
             dob: data.dateOfBirthAd || "",
             gender: data.gender || "",
+            married: data.married !== undefined ? data.married : "",
             bloodType: data.bloodGroup || "",
             emergencyNumber: data.emergencyNumber || "",
             emergencyName: data.emergencyName || "",
@@ -130,7 +128,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Email */}
-              <Controller
+              <InputComponent
                 name="email"
                 control={control}
                 rules={{
@@ -140,143 +138,115 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                     message: "Invalid email format",
                   },
                 }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      type="email"
-                      variant="bordered"
-                      label="Personal Email"
-                      className={`w-full rounded-xl ${
-                        errors.email ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                label="Personal Email"
+                variant="bordered"
+                type="email"
+                inputClassName="w-full rounded-xl"
+                icon={FaEnvelope}
               />
 
               {/* Date of Birth */}
-              <Controller
+              <InputComponent
                 name="dob"
                 control={control}
                 rules={{ required: "Date of Birth is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      type="date"
-                      variant="bordered"
-                      label="Date of Birth"
-                      className={`w-full rounded-xl ${
-                        errors.dob ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.dob && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.dob.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                label="Date of Birth"
+                variant="bordered"
+                type="date"
+                inputClassName="w-full rounded-xl"
+                icon={FaCalendar}
               />
 
               {/* Blood Type */}
-              <Controller
-                name="bloodType"
-                control={control}
-                rules={{ required: "Blood Type is required" }}
-                render={({ field }) => (
-                  <div>
+              <div>
+                <Controller
+                  name="bloodType"
+                  control={control}
+                  rules={{ required: "Blood Type is required" }}
+                  render={({ field }) => (
                     <Select
                       {...field}
                       variant="bordered"
                       label="Blood Group"
-                      className={`w-full rounded-xl ${
-                        errors.bloodType ? "border-2 border-red-500" : ""
-                      }`}
+                      isInvalid={!!errors.bloodType}
+                      errorMessage={errors.bloodType?.message}
+                      validationBehavior="aria"
+                      className="rounded-xl w-full"
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => field.onChange([...keys][0])}
-                    >
+                      onSelectionChange={(keys) => {
+                        const selectedKey = Array.from(keys)[0];
+                        if (selectedKey) field.onChange(selectedKey);
+                      }}>
                       {bloodGroupOptions.map((group) => (
-                        <SelectItem key={group}>{group}</SelectItem>
+                        <SelectItem key={group} value={group}>
+                          {group}
+                        </SelectItem>
                       ))}
                     </Select>
-                    {errors.bloodType && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.bloodType.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
+                  )}
+                />
+              </div>
 
               {/* Gender */}
-              <Controller
-                name="gender"
-                control={control}
-                rules={{ required: "Gender is required" }}
-                render={({ field }) => (
-                  <div>
+              <div>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={{ required: "Gender is required" }}
+                  render={({ field }) => (
                     <Select
                       {...field}
                       variant="bordered"
                       label="Gender"
-                      className={`w-full rounded-xl ${
-                        errors.gender ? "border-2 border-red-500" : ""
-                      }`}
+                      isInvalid={!!errors.gender}
+                      errorMessage={errors.gender?.message}
+                      validationBehavior="aria"
+                      className="rounded-xl w-full"
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => field.onChange([...keys][0])}
-                    >
+                      onSelectionChange={(keys) => {
+                        const selectedKey = Array.from(keys)[0];
+                        if (selectedKey) field.onChange(selectedKey);
+                      }}>
                       {genderOptions.map((gender) => (
-                        <SelectItem key={gender}>{gender}</SelectItem>
+                        <SelectItem key={gender} value={gender}>
+                          {gender}
+                        </SelectItem>
                       ))}
                     </Select>
-                    {errors.gender && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.gender.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
+                  )}
+                />
+              </div>
 
               {/* Marital Status */}
-              <Controller
-                name="married"
-                control={control}
-                rules={{ required: "Marital Status is required" }}
-                render={({ field }) => (
-                  <div>
+              <div>
+                <Controller
+                  name="married"
+                  control={control}
+                  rules={{ required: "Marital Status is required" }}
+                  render={({ field }) => (
                     <Select
                       {...field}
                       variant="bordered"
                       label="Marital Status"
-                      className={`w-full rounded-xl ${
-                        errors.married ? "border-2 border-red-500" : ""
-                      }
-                    }`}
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => field.onChange([...keys][0])}
-                    >
+                      isInvalid={!!errors.married}
+                      errorMessage={errors.married?.message}
+                      validationBehavior="aria"
+                      className="rounded-xl w-full"
+                      selectedKeys={field.value !== "" ? [field.value] : []}
+                      onSelectionChange={(keys) => {
+                        const selectedKey = Array.from(keys)[0];
+                        if (selectedKey !== undefined)
+                          field.onChange(selectedKey);
+                      }}>
                       {maritalOptions.map((status) => (
-                        <SelectItem key={status.key} textValue={status.label}>
+                        <SelectItem key={status.key} value={status.key}>
                           {status.label}
                         </SelectItem>
                       ))}
                     </Select>
-                    {errors.married && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.married?.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
+                  )}
+                />
+              </div>
             </div>
           </div>
 
@@ -288,32 +258,25 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Guardian Name */}
-              <Controller
+              <InputComponent
                 name="guardianName"
                 control={control}
-                rules={{ required: "Guardian Name is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      variant="bordered"
-                      type="text"
-                      label="Guardian Name"
-                      className={`w-full rounded-xl ${
-                        errors.guardianName ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.guardianName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.guardianName.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                rules={{
+                  required: "Guardian Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Guardian Name must atleast be 3 character long",
+                  },
+                }}
+                label="Guardian Name"
+                variant="bordered"
+                type="text"
+                inputClassName="w-full rounded-xl"
+                icon={FaUser}
               />
 
               {/* Guardian Phone */}
-              <Controller
+              <InputComponent
                 name="guardianPhone"
                 control={control}
                 rules={{
@@ -323,55 +286,42 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                     message: "Phone must start with 9 and be 10 digits long",
                   },
                 }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      variant="bordered"
-                      type="text"
-                      label="Guardian Phone"
-                      className={`w-full rounded-xl ${
-                        errors.guardianPhone ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.guardianPhone && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.guardianPhone.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                label="Guardian Phone"
+                variant="bordered"
+                type="text"
+                inputClassName="w-full rounded-xl"
+                icon={FaPhone}
               />
 
               {/* Guardian Relation */}
-              <Controller
-                name="guardianRelation"
-                control={control}
-                rules={{ required: "Guardian Relation is required" }}
-                render={({ field }) => (
-                  <div>
+              <div>
+                <Controller
+                  name="guardianRelation"
+                  control={control}
+                  rules={{ required: "Guardian Relation is required" }}
+                  render={({ field }) => (
                     <Select
                       {...field}
                       variant="bordered"
                       label="Guardian Relation"
-                      className={`w-full rounded-xl ${
-                        errors.guardianRelation ? "border-2 border-red-500" : ""
-                      }`}
+                      isInvalid={!!errors.guardianRelation}
+                      errorMessage={errors.guardianRelation?.message}
+                      validationBehavior="aria"
+                      className="rounded-xl w-full"
                       selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => field.onChange([...keys][0])}
-                    >
+                      onSelectionChange={(keys) => {
+                        const selectedKey = Array.from(keys)[0];
+                        if (selectedKey) field.onChange(selectedKey);
+                      }}>
                       {relationOptions.map((relation) => (
-                        <SelectItem key={relation}>{relation}</SelectItem>
+                        <SelectItem key={relation} value={relation}>
+                          {relation}
+                        </SelectItem>
                       ))}
                     </Select>
-                    {errors.guardianRelation && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.guardianRelation.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
+                  )}
+                />
+              </div>
             </div>
           </div>
 
@@ -383,32 +333,25 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Emergency Name */}
-              <Controller
+              <InputComponent
                 name="emergencyName"
                 control={control}
-                rules={{ required: "Emergency Name is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      variant="bordered"
-                      type="text"
-                      label="Emergency Name"
-                      className={`w-full rounded-xl ${
-                        errors.emergencyName ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.emergencyName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.emergencyName.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                rules={{
+                  required: "Emergency Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Emergency Name must atleast be 3 character long",
+                  },
+                }}
+                label="Emergency Name"
+                variant="bordered"
+                type="text"
+                inputClassName="w-full rounded-xl"
+                icon={FaUser}
               />
 
               {/* Emergency Number */}
-              <Controller
+              <InputComponent
                 name="emergencyNumber"
                 control={control}
                 rules={{
@@ -418,51 +361,23 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                     message: "Phone must start with 9 and be 10 digits long",
                   },
                 }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      variant="bordered"
-                      type="text"
-                      label="Emergency Phone"
-                      className={`w-full rounded-xl ${
-                        errors.emergencyNumber ? "border-2 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.emergencyNumber && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.emergencyNumber.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                label="Emergency Phone"
+                variant="bordered"
+                type="text"
+                inputClassName="w-full rounded-xl"
+                icon={FaPhone}
               />
 
               {/* Emergency Relation */}
-              <Controller
+              <InputComponent
                 name="emergencyRelation"
                 control={control}
                 rules={{ required: "Emergency Relation is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Input
-                      {...field}
-                      variant="bordered"
-                      type="text"
-                      label="Emergency Relationship"
-                      className={`w-full rounded-xl ${
-                        errors.emergencyRelation
-                          ? "border-2 border-red-500"
-                          : ""
-                      }`}
-                    />
-                    {errors.emergencyRelation && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.emergencyRelation.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+                label="Emergency Relationship"
+                variant="bordered"
+                type="text"
+                inputClassName="w-full rounded-xl"
+                icon={FaUser}
               />
             </div>
           </div>
@@ -472,14 +387,12 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             <Button
               onPress={handleBack}
               isDisabled
-              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg"
-            >
+              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg">
               Back
             </Button>
             <Button
               type="submit"
-              className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
-            >
+              className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
               Submit
             </Button>
           </div>

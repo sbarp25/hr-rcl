@@ -49,6 +49,7 @@ function App() {
   const isAuthRoute = authRoutes.includes(location.pathname);
   return (
     <>
+      {/* const ekyestep = localStorage.getItem(""" */}
       <LocationComponent />
       <ToastContainer />
       {isAuthRoute ? (

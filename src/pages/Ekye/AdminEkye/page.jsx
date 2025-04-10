@@ -42,8 +42,8 @@ const Page = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const hasViewAccess = true;
-  const hasActionAccess = true;
+  const hasViewAccess = false;
+  const hasActionAccess = false;
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -101,11 +101,12 @@ const Page = () => {
 
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
-  const hasaccess = false;
+
+  // const hasaccess = false;
 
   // useEffect(() => {
   //   if (!hasaccess) {
-  //     navigate("/login");
+  //     navigate("/");
   //   }
   // }, []);
   return (

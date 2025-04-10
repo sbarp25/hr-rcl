@@ -40,17 +40,17 @@ const AddEmployeeForm = () => {
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
-  const hasemployeecreateaccess = menu.some((menu) =>
+  const hasemployeecreateaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 1)
   );
 
-  useEffect(() => {
-    if (!hasemployeecreateaccess) {
-      navigate("/Employees");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasemployeecreateaccess) {
+  //     navigate("/Employees");
+  //   }
+  // }, []);
 
-  //Fetc Department
+  //FetchDepartment
   useEffect(() => {
     const fetchDepartments = async () => {
       setIsLoading(true);
@@ -254,9 +254,8 @@ const AddEmployeeForm = () => {
                       {...field}
                       variant="bordered"
                       label="Department"
-                      className={`rounded-xl ${
-                        errors.department ? "border-2 border-red-500 " : ""
-                      }`}
+                      isInvalid={!!errors.department}
+                      className={`rounded-xl `}
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
@@ -270,7 +269,7 @@ const AddEmployeeForm = () => {
                   )}
                 />
                 {errors.department && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-danger text-sm">
                     {errors.department.message}
                   </p>
                 )}
@@ -286,9 +285,8 @@ const AddEmployeeForm = () => {
                       {...field}
                       variant="bordered"
                       label="Position"
-                      className={`rounded-xl ${
-                        errors.position ? "border-2 border-red-500 " : ""
-                      }`}
+                      isInvalid={!!errors.position}
+                      className={`rounded-xl `}
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
@@ -302,7 +300,7 @@ const AddEmployeeForm = () => {
                   )}
                 />
                 {errors.position && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-danger text-sm">
                     {errors.position.message}
                   </p>
                 )}
@@ -319,10 +317,8 @@ const AddEmployeeForm = () => {
                       {...field}
                       variant="bordered"
                       label="Roles"
-                      color={errors.roles ? "danger" : ""}
-                      className={`rounded-xl ${
-                        errors.roles ? "border-2 border-danger " : ""
-                      }`}
+                      isInvalid={!!errors.roles}
+                      className={`rounded-xl`}
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
                         field.onChange(Array.from(keys)[0])
@@ -336,7 +332,7 @@ const AddEmployeeForm = () => {
                   )}
                 />
                 {errors.roles && (
-                  <p className="text-red-500 text-sm">{errors.roles.message}</p>
+                  <p className="text-danger text-sm">{errors.roles.message}</p>
                 )}
               </div>
             </div>

@@ -36,19 +36,34 @@ const Sidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu.some((menu) =>
+  const seeEmployee = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
-  const seeDashboard = menu.some((menu) =>
+  const seeDashboard = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 6)
   );
   /**To check Department see status */
-  const seeDepartment = menu.some((menu) =>
+  const seeDepartment = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 10)
   );
   /**To check Position see status */
-  const seePosition = menu.some((menu) =>
+  const seePosition = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
+  const seeRole = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
+  const seeAttendance = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
+  const seeHandbook = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
+  const seeNotices = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 14)
+  );
+  const seeLeave = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 14)
   );
   const navbarElements = [
@@ -100,16 +115,16 @@ const Sidebar = () => {
         { label: "Leave Request", to: "/Leave/Request", view: true },
       ],
     },
-    {
-      icon: FcLeave,
-      label: "Salary",
-      view: true,
-      children: [
-        { label: "Salary Details", to: "/Salary", view: true },
-        { label: "Salary Breakdown", to: "/salaryEdit", view: true },
-        { label: "Advance", to: "/AdvanceSalary", view: true },
-      ],
-    },
+    // {
+    //   icon: FcLeave,
+    //   label: "Salary",
+    //   view: true,
+    //   children: [
+    //     { label: "Salary Details", to: "/Salary", view: true },
+    //     { label: "Salary Breakdown", to: "/salaryEdit", view: true },
+    //     { label: "Advance", to: "/AdvanceSalary", view: true },
+    //   ],
+    // },
 
     {
       icon: IoIosPeople,
@@ -204,7 +219,7 @@ const Sidebar = () => {
                   {service.children && expandedDropdown === index && (
                     <div className="pl-8 mt-2 space-y-2">
                       {service.children.map((child, childIndex) => {
-                        if (service?.children?.view) return null;
+                        if (!child?.view) return null;
                         return (
                           <Link
                             key={childIndex}

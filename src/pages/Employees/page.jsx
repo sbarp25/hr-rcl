@@ -73,19 +73,19 @@ const Employees = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check create status */
-  const hasemployeecreateaccess = menu.some((menu) =>
+  const hasemployeecreateaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 1)
   );
   /**To read the Data */
-  const hasaccess = menu.some((menu) =>
+  const hasaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 2)
   );
   /**To check edit status */
-  const hasEmployeeEditAccess = menu.some((menu) =>
+  const hasEmployeeEditAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 3)
   );
   /**To check Delete Access */
-  const hasEmployeeDeleteAccess = menu.some((menu) =>
+  const hasEmployeeDeleteAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 4)
   );
 

@@ -102,7 +102,6 @@ const Ekye = () => {
       default:
         setStep(0); // Default to the first step if no match is found
     }
-    console.log("Ekye step", step);
   }, []);
 
   const handleNestedChange = (section, subSection, field, value) => {
@@ -242,7 +241,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        {/* <div className="form-navigation flex justify-center gap-6 mt-6">
+        <div className="form-navigation flex justify-center gap-6 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -259,7 +258,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div> */}
+        </div>
       </div>
     </>
   );

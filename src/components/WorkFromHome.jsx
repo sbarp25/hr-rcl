@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableHeader,
@@ -70,13 +69,12 @@ const WorkFromHome = () => {
     },
   ];
   return (
-    <div className="w-[35vw]">
+    <div className="w-full">
       <Table
         bordered
         aria-label="Dyanamic Attendance Table"
         isHeaderSticky
-        className="max-h-[30vh] overflow-auto  w-[40vw] "
-      >
+        className="max-h-[30vh] overflow-auto  w-[40vw] ">
         <TableHeader className="Capitalize ">
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>
@@ -89,8 +87,7 @@ const WorkFromHome = () => {
           {WorkfromHomeDate.map((data) => (
             <TableRow
               key={data.Sn}
-              className="h-20 justify-center items-center border-b-2 border-gray-300"
-            >
+              className="h-20 justify-center items-center border-b-2 border-gray-300">
               <TableCell>{data.Sn}</TableCell>
               <TableCell>{data.RCLID}</TableCell>
               <TableCell>{data.Name}</TableCell>
