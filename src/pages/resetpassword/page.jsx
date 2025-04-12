@@ -78,11 +78,11 @@ const Rstpwd = () => {
     if (encryptedData) {
       encryptedData = encryptedData.replace(/\s/g, "");
     }
-    if (!encryptedData) {
-      toast.error("No reset password data found");
-      navigate("/login");
-      return;
-    }
+    // if (!encryptedData) {
+    //   toast.error("No reset password data found");
+    //   navigate("/login");
+    //   return;
+    // }
     try {
       const newData = {
         data: {

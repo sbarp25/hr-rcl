@@ -149,7 +149,20 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               <InputComponent
                 name="dob"
                 control={control}
-                rules={{ required: "Date of Birth is required" }}
+                rules={{
+                  required: "Date of Birth is required",
+                  validate: (value) => {
+                    const birthdate = new Date(value);
+                    const today = new Date();
+                    const todayYear = today.getFullYear(); // add ()
+                    const birthYear = birthdate.getFullYear(); // add ()
+
+                    const age = todayYear - birthYear;
+
+                    const is18OrOlder = age > 18;
+                    return is18OrOlder || "You must be 18 or older";
+                  },
+                }}
                 label="Date of Birth"
                 variant="bordered"
                 type="date"

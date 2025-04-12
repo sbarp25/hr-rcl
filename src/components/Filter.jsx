@@ -40,7 +40,7 @@ const Filter = ({ onApplyFilters, url }) => {
       setLoadingDepartments(true);
       try {
         const response = await axiosInstance.post(
-          "/api/v1/departments/get/all",
+          "/api/v1/departments/list",
           {}
         );
         if (response.data.responseCode === "200") {
@@ -71,7 +71,7 @@ const Filter = ({ onApplyFilters, url }) => {
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("Error fetching positions.");
+        toast.error("Error fetching positions.", error);
       } finally {
         setLoadingPositions(false);
       }
@@ -90,7 +90,7 @@ const Filter = ({ onApplyFilters, url }) => {
       pageIndex: 1,
       pageSize: 10,
       filterCriteria: {
-        name: formData.department || "",
+        departmentName: formData.department || "",
         positionName: formData.position || "",
       },
     };
@@ -102,7 +102,12 @@ const Filter = ({ onApplyFilters, url }) => {
 
       if (response.data.responseCode === "200") {
         onClose();
-        resetFilters();
+        onApplyFilters({
+          filters: formData,
+          data: response.data.datalist || [],
+          totalPages: response.data.totalPages,
+          totalRecords: response.data.totalRecords,
+        });
         // toast.success(response?.data?.message);
       } else {
         toast.error(response?.data?.message);

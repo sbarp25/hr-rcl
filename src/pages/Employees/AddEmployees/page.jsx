@@ -5,10 +5,17 @@ import axiosInstance from "../../../lib/axios-Instance";
 import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { DatePicker, Input, Select, SelectItem } from "@nextui-org/react";
+import {
+  DatePicker,
+  Input,
+  Select,
+  SelectItem,
+  Checkbox,
+} from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { getLocalTimeZone } from "@internationalized/date";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -122,7 +129,10 @@ const AddEmployeeForm = () => {
     const sanitizeddepartmentId = data.department.replace(/[^0-9]/g, "");
     const sanitizedpositionId = data.position.replace(/[^0-9]/g, "");
     const sanitizedroleId = data.roles.replace(/[^0-9]/g, "");
-
+    const formatDate = (date) =>
+      date
+        ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0]
+        : null;
     const newEmployee = {
       data: {
         fullName: data.fullname,
@@ -134,9 +144,10 @@ const AddEmployeeForm = () => {
         roleId: sanitizedroleId,
         performEkye: data.performEKYC,
         grossSalary: data.salary,
+        hiringDate: formatDate(data.fromDate),
       },
     };
-
+    // console.log("Hiring Date", data.HireDate);
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axiosInstance.post(
@@ -354,28 +365,55 @@ const AddEmployeeForm = () => {
                 />
               </div>
               <div className="mb-4">
-                <DatePicker label="Hire Date" variant="bordered" />
+                {/* <DatePicker {...register("HireDate",{required:"Hire Date is required"})}  isInvalid={!!errors.HireDate} errorMessage={errors.HireDate?.message} label="Hire Date" variant="bordered" /> */}
+                <div>
+                  <Controller
+                    name="fromDate"
+                    control={control}
+                    rules={{ required: "Start date is required" }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        isInvalid={!!errors.fromDate}
+                        className={`rounded-xl `}
+                        label="Hire Date"
+                        variant="bordered"
+                      />
+                    )}
+                  />
+                  {errors.fromDate && (
+                    <p className="text-danger text-sm">
+                      {errors.fromDate.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
             <div className="mb-4 -mt-16 flex items-center">
-              {/* <div>
+              <div>
                 <Controller
-                  name="checkbox"
+                  name="performEKYC"
                   control={control}
                   render={({ field }) => (
-                    <Checkbox isSelected onValueChange={field.onChange}>
+                    // <Checkbox color="danger" isSelected={field.value} onValueChange={field.onChange}>
+                    // <Checkbox color="primary" isSelected={field.value} onValueChange={field.onChange}>
+                    <Checkbox
+                      color="danger"
+                      isSelected={field.value}
+                      onValueChange={field.onChange}
+                      className="focus:outline-none ">
                       Perform eKYE
                     </Checkbox>
                   )}
                 />
-              </div> */}
+              </div>
 
-              <input
+              {/* <input
                 type="checkbox"
                 {...register("performEKYC")}
                 className="mr-2"
-              />
-              <label className="text-gray-700">Perform eKYC</label>
+              /> 
+              <label className="text-gray-700">Perform eKYC</label>*/}
             </div>
           </div>
           <button

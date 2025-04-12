@@ -173,7 +173,7 @@ const Position = () => {
           if (hasPositionDeleteAccess) {
             console.log(`Deleting position ID: ${position.id}`);
             const response = await axiosInstance.delete(
-              `/positions/delete/${position.id}`
+              `api/v1/positions/delete/${position.id}`
             );
             if (response.data.responseCode === "204") {
               toast.success("Position deleted successfully!");
@@ -394,7 +394,7 @@ const Position = () => {
         ) : (
           /* Table Section */
           <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
-            <Table aria-label="Position Table " isHeaderSticky className="">
+            <Table aria-label="Position Table " className="">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
                 <TableColumn>Position Name</TableColumn>

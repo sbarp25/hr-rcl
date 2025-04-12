@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -9,7 +9,7 @@ import { Button } from "@nextui-org/button";
 import InputComponent from "../../../components/InputComponent";
 const ValidateLink = () => {
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
   const navigate = useNavigate();
   const {
@@ -20,6 +20,7 @@ const ValidateLink = () => {
   } = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const password = watch("password");
+
   {
     /**To extract the encripted data from the url and keep it in localStorage */
   }
@@ -35,14 +36,11 @@ const ValidateLink = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
-  {
-    /**To Submit the data */
-  }
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     let encryptedData = localStorage.getItem("resetpasswordData");
 
-    // Sanitize the encryptedData to remove spaces
     if (encryptedData) {
       encryptedData = encryptedData.replace(/\s/g, "");
     }
@@ -138,19 +136,11 @@ const ValidateLink = () => {
         console.error("An error occurred:", error);
         navigate("/login");
       } finally {
-        setIsLoading(false); // Hide loading state
+        setIsLoading(false);
       }
     };
     fetchData();
-  }, [navigate]); // Dependency array to include navigate so it doesn't trigger on every render
-
-  // const hasaccess = false;
-
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/login");
-  //   }
-  // }, []);
+  }, [navigate]);
 
   return (
     <>
@@ -161,7 +151,7 @@ const ValidateLink = () => {
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
           <div className="grid grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
-            {/* Left Section - Logo & Tagline */}
+            {/* Left Section */}
             <div className="bg-bgprimary flex flex-col items-center justify-center text-white px-12 py-20">
               <img src={Logo} alt="logo" className="w-72 mb-8" />
               <p className="text-2xl font-medium text-center leading-10">
@@ -169,7 +159,7 @@ const ValidateLink = () => {
               </p>
             </div>
 
-            {/* Right Section - Reset Password Form */}
+            {/*  Reset Password Form */}
             <div className="px-16 py-20 flex flex-col justify-center">
               <h1 className="text-2xl font-bold text-gray-800 mb-6">
                 Reset Password
@@ -177,26 +167,6 @@ const ValidateLink = () => {
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {/* New Password Input */}
-                {/* <div>
-                  <Input
-                    variant="bordered"
-                    id="password"
-                    type="password"
-                    name="password"
-                    label="New Password"
-                    className={`w-96 p-3 ${
-                      errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
-                    {...register("password", {
-                      required: "Password is required",
-                    })}
-                  />
-                  {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div> */}
                 <div>
                   <InputComponent
                     type="password"
@@ -208,7 +178,8 @@ const ValidateLink = () => {
                     rules={{
                       required: "Password is required",
                       pattern: {
-                        value: /^[a-zA-Z0-9 ]{6,300}$/,
+                        value:
+                          /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}\[\]:;"'<>,.?\\|-]{6,20}$/,
                         message: "password must be 6 characters long.",
                       },
                     }}
@@ -216,30 +187,6 @@ const ValidateLink = () => {
                 </div>
 
                 {/* Confirm Password Input */}
-                {/* <div>
-                  <Input
-                    variant="bordered"
-                    id="confirmPassword"
-                    type="password"
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    className={`w-96 p-3 ${
-                      errors.confirmPassword
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                    {...register("confirmPassword", {
-                      required: "Confirm password is required",
-                      validate: (value) =>
-                        value === password || "Passwords do not match",
-                    })}
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
-                </div> */}
                 <div>
                   <InputComponent
                     type="password"
@@ -253,8 +200,10 @@ const ValidateLink = () => {
                       validate: (value) =>
                         value === password || "Passwords do not match",
                       pattern: {
-                        value: /^[a-zA-Z0-9 ]{6,300}$/,
-                        message: "password must be 6 characters long.",
+                        value:
+                          /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                        message:
+                          "Password must be 6 characters long and have special characters.",
                       },
                     }}
                   />

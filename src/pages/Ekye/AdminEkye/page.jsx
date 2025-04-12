@@ -42,8 +42,8 @@ const Page = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const hasViewAccess = false;
-  const hasActionAccess = false;
+  const hasViewAccess = true;
+  const hasActionAccess = true;
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -80,6 +80,7 @@ const Page = () => {
         const response = await axiosInstance.get(
           "/api/v1/admin/completed_ekye_users",
           {
+            // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
             pageIndex: currentPage,
             pageSize: ekyeDashboardDataPerPage,
           }

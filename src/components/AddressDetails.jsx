@@ -19,6 +19,9 @@ const AddressDetails = ({
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [permanentDistrictName, setPermanentDistrictName] = useState("");
+  const [temporaryDistrictName, setTemporaryDistrictName] = useState("");
 
   const {
     control,
@@ -28,6 +31,7 @@ const AddressDetails = ({
     watch,
     trigger,
     reset,
+    clearErrors,
   } = useForm({
     defaultValues: {
       permanent: {
@@ -48,6 +52,7 @@ const AddressDetails = ({
       },
       sameAsPermanent: false,
     },
+    mode: "onChange",
   });
 
   const watchedPermanent = watch("permanent");
@@ -90,6 +95,7 @@ const AddressDetails = ({
             provinceId: "",
             provinceName: "",
             districtId: "",
+            districtName: "",
             municipality: "",
             wardNumber: "",
             pinCode: "",
@@ -102,15 +108,20 @@ const AddressDetails = ({
             provinceId: "",
             provinceName: "",
             districtId: "",
+            districtName: "",
             municipality: "",
             wardNumber: "",
             pinCode: "",
             tole: "",
           };
 
+          // Store district names
+          setPermanentDistrictName(permanentAddress.districtName || "");
+          setTemporaryDistrictName(temporaryAddress.districtName || "");
+
           // Set values in the form
           setValue("permanent.provinceId", permanentAddress.provinceId || "");
-          setValue("permanent.districtId", permanentAddress.districtName || "");
+          setValue("permanent.districtId", permanentAddress.districtId || "");
           setValue(
             "permanent.municipality",
             permanentAddress.municipality || ""
@@ -120,7 +131,7 @@ const AddressDetails = ({
           setValue("permanent.tole", permanentAddress.tole || "");
 
           setValue("temporary.provinceId", temporaryAddress.provinceId || "");
-          setValue("temporary.districtId", temporaryAddress.districtName || "");
+          setValue("temporary.districtId", temporaryAddress.districtId || "");
           setValue(
             "temporary.municipality",
             temporaryAddress.municipality || ""
@@ -136,6 +147,11 @@ const AddressDetails = ({
           setValue("sameAsPermanent", isSameAsPermanent);
           setSameAsPermanent(isSameAsPermanent);
 
+          // If we have data from the API, fetch the districts for the saved province
+          if (permanentAddress.provinceId) {
+            fetchDistrictsByProvince(permanentAddress.provinceId);
+          }
+
           // Also update the parent state to keep it in sync
           setFormData((prev) => ({
             ...prev,
@@ -143,7 +159,8 @@ const AddressDetails = ({
               permanent: {
                 provinceId: permanentAddress.provinceId || "",
                 provinceName: permanentAddress.provinceName || "",
-                districtId: permanentAddress.districtName || "",
+                districtId: permanentAddress.districtId || "",
+                districtName: permanentAddress.districtName || "",
                 municipality: permanentAddress.municipality || "",
                 wardNumber: permanentAddress.wardNumber || "",
                 pinCode: permanentAddress.pinCode || "",
@@ -152,7 +169,8 @@ const AddressDetails = ({
               temporary: {
                 provinceId: temporaryAddress.provinceId || "",
                 provinceName: temporaryAddress.provinceName || "",
-                districtId: temporaryAddress.districtName || "",
+                districtId: temporaryAddress.districtId || "",
+                districtName: temporaryAddress.districtName || "",
                 municipality: temporaryAddress.municipality || "",
                 wardNumber: temporaryAddress.wardNumber || "",
                 pinCode: temporaryAddress.pinCode || "",
@@ -161,6 +179,10 @@ const AddressDetails = ({
               sameAsPermanent: isSameAsPermanent,
             },
           }));
+
+          // Mark data as loaded and clear any existing errors
+          setDataLoaded(true);
+          clearErrors();
         }
       } catch (error) {
         console.error("Error fetching address details:", error);
@@ -170,36 +192,65 @@ const AddressDetails = ({
     };
 
     fetchAddressDetails();
-  }, [setValue, setFormData]);
+  }, [setValue, setFormData, clearErrors]);
 
   // Sync form data changes to parent component
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
       address: {
-        permanent: watchedPermanent,
+        permanent: {
+          ...watchedPermanent,
+          districtName: permanentDistrictName,
+        },
         temporary: watchedSameAsPermanent
-          ? watchedPermanent
-          : watch("temporary"),
+          ? {
+              ...watchedPermanent,
+              districtName: permanentDistrictName,
+            }
+          : {
+              ...watch("temporary"),
+              districtName: temporaryDistrictName,
+            },
         sameAsPermanent: watchedSameAsPermanent,
       },
     }));
-  }, [watch, setFormData, watchedPermanent, watchedSameAsPermanent]);
+  }, [
+    watch,
+    setFormData,
+    watchedPermanent,
+    watchedSameAsPermanent,
+    permanentDistrictName,
+    temporaryDistrictName,
+  ]);
 
   // Handle Same As Permanent checkbox
   useEffect(() => {
     if (watchedSameAsPermanent) {
       // Copy permanent address values to temporary
       setValue("temporary", { ...watchedPermanent });
+      setTemporaryDistrictName(permanentDistrictName);
+
+      // Clear any temporary field errors when using same as permanent
+      if (errors.temporary) {
+        clearErrors("temporary");
+      }
     }
-  }, [watchedSameAsPermanent, watchedPermanent, setValue]);
+  }, [
+    watchedSameAsPermanent,
+    watchedPermanent,
+    setValue,
+    clearErrors,
+    errors.temporary,
+    permanentDistrictName,
+  ]);
 
   const fetchDistrictsByProvince = async (provinceId) => {
     if (!provinceId) return;
 
     setIsLoading(true);
     try {
-      const sanitizedProvinceId = provinceId.replace(/[^0-9]/g, "");
+      const sanitizedProvinceId = String(provinceId).replace(/[^0-9]/g, "");
       const response = await axiosInstance.get(
         `/api/v1/district/districts/${sanitizedProvinceId}`
       );
@@ -216,45 +267,82 @@ const AddressDetails = ({
     }
   };
 
+  // Update district name when district ID changes
+  const updateDistrictName = (districtId, type) => {
+    if (!districtId) return;
+
+    const district = districts.find(
+      (d) => String(d.districtId) === String(districtId)
+    );
+
+    if (district) {
+      if (type === "permanent") {
+        setPermanentDistrictName(district.name);
+      } else {
+        setTemporaryDistrictName(district.name);
+      }
+    }
+  };
+
   const onSubmit = async (data) => {
     setIsLoading(true);
 
     try {
-      const sanitizedProvinceId = data.permanent.provinceId.replace(
-        /[^0-9]/g,
-        ""
-      );
-      const sanitizedTemporaryProvinceId = data.temporary.provinceId.replace(
-        /[^0-9]/g,
-        ""
-      );
-      const sanitizedDistrictId = data.permanent.districtId.replace(
-        /[^0-9]/g,
-        ""
-      );
-      const sanitizedtemporaryDistrictId = data.temporary.districtId.replace(
-        /[^0-9]/g,
-        ""
-      );
+      // Helper function to safely sanitize IDs
+      const sanitizeId = (id) => {
+        if (!id) return "";
+        // Convert to string first if it's not already a string
+        const idString = String(id);
+        return idString.replace(/[^0-9]/g, "");
+      };
+
+      // Safely handle provinceId and districtId values
+      const permanentProvinceId = data.permanent?.provinceId
+        ? sanitizeId(data.permanent.provinceId)
+        : sanitizeId(formData.address?.permanent?.provinceId) || "";
+
+      const permanentDistrictId = data.permanent?.districtId
+        ? sanitizeId(data.permanent.districtId)
+        : sanitizeId(formData.address?.permanent?.districtId) || "";
+
+      const temporaryProvinceId = data.sameAsPermanent
+        ? permanentProvinceId
+        : data.temporary?.provinceId
+        ? sanitizeId(data.temporary.provinceId)
+        : sanitizeId(formData.address?.temporary?.provinceId) || "";
+
+      const temporaryDistrictId = data.sameAsPermanent
+        ? permanentDistrictId
+        : data.temporary?.districtId
+        ? sanitizeId(data.temporary.districtId)
+        : sanitizeId(formData.address?.temporary?.districtId) || "";
 
       const newData = {
         data: [
           {
-            provinceId: sanitizedProvinceId,
-            districtId: sanitizedDistrictId,
-            municipality: data.permanent.municipality,
-            wardNumber: data.permanent.wardNumber,
-            pinCode: data.permanent.pinCode,
-            tole: data.permanent.tole,
+            provinceId: permanentProvinceId,
+            districtId: permanentDistrictId,
+            municipality: data.permanent?.municipality || "",
+            wardNumber: data.permanent?.wardNumber || "",
+            pinCode: data.permanent?.pinCode || "",
+            tole: data.permanent?.tole || "",
             addressType: "PERMANENT",
           },
           {
-            provinceId: sanitizedTemporaryProvinceId,
-            districtId: sanitizedtemporaryDistrictId,
-            municipality: data.temporary.municipality,
-            wardNumber: data.temporary.wardNumber,
-            pinCode: data.temporary.pinCode,
-            tole: data.temporary.tole,
+            provinceId: temporaryProvinceId,
+            districtId: temporaryDistrictId,
+            municipality: data.sameAsPermanent
+              ? data.permanent?.municipality || ""
+              : data.temporary?.municipality || "",
+            wardNumber: data.sameAsPermanent
+              ? data.permanent?.wardNumber || ""
+              : data.temporary?.wardNumber || "",
+            pinCode: data.sameAsPermanent
+              ? data.permanent?.pinCode || ""
+              : data.temporary?.pinCode || "",
+            tole: data.sameAsPermanent
+              ? data.permanent?.tole || ""
+              : data.temporary?.tole || "",
             addressType: "TEMPORARY",
             isSameAsPermanent: data.sameAsPermanent,
           },
@@ -276,19 +364,59 @@ const AddressDetails = ({
         toast.error(response.data.message || "Failed to save address data");
       }
     } catch (error) {
+      console.error("Error saving address data:", error);
       toast.error("Failed to save address data");
-      console.error(
-        "Error saving address data:",
-        error?.response?.data || error
-      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Custom validation rules that respect pre-loaded data
+  const getProvinceRules = (addressType) => {
+    const existingValue =
+      addressType === "permanent"
+        ? formData.address?.permanent?.provinceId
+        : formData.address?.temporary?.provinceId;
+
+    return {
+      validate: (value) => {
+        // Skip validation if we already have data from API
+        if (dataLoaded && existingValue) return true;
+        // Otherwise require the field
+        return (
+          !!value ||
+          `${
+            addressType === "permanent" ? "Permanent" : "Temporary"
+          } Province is required`
+        );
+      },
+    };
+  };
+
+  const getDistrictRules = (addressType) => {
+    const existingValue =
+      addressType === "permanent"
+        ? formData.address?.permanent?.districtId
+        : formData.address?.temporary?.districtId;
+
+    return {
+      validate: (value) => {
+        // Skip validation if we already have data from API
+        if (dataLoaded && existingValue) return true;
+        // Otherwise require the field
+        return (
+          !!value ||
+          `${
+            addressType === "permanent" ? "Permanent" : "Temporary"
+          } District is required`
+        );
+      },
+    };
+  };
+
   return (
     <>
-      {/* {isLoading && <Loader message="Loading please wait" />} */}
+      {isLoading && <Loader message="Loading please wait" />}
       <ValidationComponent>
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
@@ -309,7 +437,7 @@ const AddressDetails = ({
                   <Controller
                     name="permanent.provinceId"
                     control={control}
-                    rules={{ required: "Permanent Province is required" }}
+                    rules={getProvinceRules("permanent")}
                     render={({ field }) => (
                       <Select
                         variant="bordered"
@@ -317,13 +445,18 @@ const AddressDetails = ({
                         isInvalid={!!errors.permanent?.provinceId}
                         className={`w-full rounded-xl`}
                         label="Select A Province"
-                        placeholder={formData.address?.permanent?.provinceName}
+                        placeholder={
+                          formData.address?.permanent?.provinceName ||
+                          "Select Province"
+                        }
                         selectedKeys={field.value ? [field.value] : []}
                         onSelectionChange={(keys) => {
-                          field.onChange(Array.from(keys)[0]);
-                          fetchDistrictsByProvince(Array.from(keys)[0]);
+                          const selectedKey = Array.from(keys)[0];
+                          field.onChange(selectedKey);
+                          fetchDistrictsByProvince(selectedKey);
                           // Reset district when province changes
                           setValue("permanent.districtId", "");
+                          setPermanentDistrictName("");
                         }}>
                         {provinces.map((province) => (
                           <SelectItem key={province.id} value={province.id}>
@@ -345,18 +478,24 @@ const AddressDetails = ({
                   <Controller
                     name="permanent.districtId"
                     control={control}
-                    rules={{ required: "Permanent District is required" }}
+                    rules={getDistrictRules("permanent")}
                     render={({ field }) => (
                       <Select
                         variant="bordered"
                         scrollShadowProps={{ isEnabled: true }}
                         isInvalid={!!errors.permanent?.districtId}
-                        className={`w-full rounded-xl `}
+                        className={`w-full rounded-xl`}
                         label="Select A District"
                         selectedKeys={field.value ? [field.value] : []}
-                        placeholder={formData.address?.permanent?.districtId}
+                        placeholder={
+                          permanentDistrictName ||
+                          formData.address?.permanent?.districtName ||
+                          "Select District"
+                        }
                         onSelectionChange={(keys) => {
-                          field.onChange(Array.from(keys)[0]);
+                          const selectedKey = Array.from(keys)[0];
+                          field.onChange(selectedKey);
+                          updateDistrictName(selectedKey, "permanent");
                         }}>
                         {districts.map((district) => (
                           <SelectItem
@@ -466,11 +605,11 @@ const AddressDetails = ({
                   <Controller
                     name="temporary.provinceId"
                     control={control}
-                    rules={{
-                      required: !watchedSameAsPermanent
-                        ? "Temporary Province is required"
-                        : false,
-                    }}
+                    rules={
+                      !watchedSameAsPermanent
+                        ? getProvinceRules("temporary")
+                        : {}
+                    }
                     render={({ field }) => (
                       <Select
                         variant="bordered"
@@ -478,13 +617,18 @@ const AddressDetails = ({
                         isInvalid={!!errors.temporary?.provinceId}
                         className={`w-full rounded-xl`}
                         label="Select A Province"
-                        placeholder={formData.address?.temporary?.provinceName}
+                        placeholder={
+                          formData.address?.temporary?.provinceName ||
+                          "Select Province"
+                        }
                         selectedKeys={field.value ? [field.value] : []}
                         onSelectionChange={(keys) => {
-                          field.onChange(Array.from(keys)[0]);
-                          fetchDistrictsByProvince(Array.from(keys)[0]);
+                          const selectedKey = Array.from(keys)[0];
+                          field.onChange(selectedKey);
+                          fetchDistrictsByProvince(selectedKey);
                           // Reset district when province changes
                           setValue("temporary.districtId", "");
+                          setTemporaryDistrictName("");
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {provinces.map((province) => (
@@ -507,22 +651,28 @@ const AddressDetails = ({
                   <Controller
                     name="temporary.districtId"
                     control={control}
-                    rules={{
-                      required: !watchedSameAsPermanent
-                        ? "Temporary District is required"
-                        : false,
-                    }}
+                    rules={
+                      !watchedSameAsPermanent
+                        ? getDistrictRules("temporary")
+                        : {}
+                    }
                     render={({ field }) => (
                       <Select
                         variant="bordered"
                         scrollShadowProps={{ isEnabled: true }}
                         isInvalid={!!errors.temporary?.districtId}
-                        className={`w-full rounded-xl `}
+                        className={`w-full rounded-xl`}
                         label="Select A District"
                         selectedKeys={field.value ? [field.value] : []}
-                        placeholder={formData.address?.temporary?.districtId}
+                        placeholder={
+                          temporaryDistrictName ||
+                          formData.address?.temporary?.districtName ||
+                          "Select District"
+                        }
                         onSelectionChange={(keys) => {
-                          field.onChange(Array.from(keys)[0]);
+                          const selectedKey = Array.from(keys)[0];
+                          field.onChange(selectedKey);
+                          updateDistrictName(selectedKey, "temporary");
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {districts.map((district) => (

@@ -32,7 +32,6 @@ const Employees = () => {
   const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const startIndex = (currentPage - 1) * employeeDataPerPage;
   const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
   const navigate = useNavigate();
   const breadcrumbItems = [
@@ -46,7 +45,8 @@ const Employees = () => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post("/api/v1/auth/get/all", {
+        const response = await axiosInstance.post("/api/v1/users/list", {
+          // const response = await axiosInstance.post("/api/v1/auth/get/all", {
           pageIndex: currentPage,
           pageSize: employeeDataPerPage,
         });
@@ -68,7 +68,7 @@ const Employees = () => {
     };
 
     fetchEmployees();
-  }, [currentPage]);
+  }, [currentPage, employeeDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
 
@@ -109,7 +109,7 @@ const Employees = () => {
             return;
           }
         } catch (error) {
-          toast.error("");
+          toast.error(error);
           return;
         }
         console.log(`Editing employee ID: ${employeeId}`);
@@ -147,7 +147,7 @@ const Employees = () => {
   const handleApplyFilters = (filters) => {
     // If no filters, show all original data
     if (!filters.department && !filters.position) {
-      employeesData(originalEmployeeData);
+      setEmployeesData(originalEmployeeData);
       return;
     }
     const filteredData = originalEmployeeData.filter((dept) => {
@@ -157,7 +157,7 @@ const Employees = () => {
       );
     });
 
-    employeesData(filteredData);
+    setEmployeesData(filteredData);
   };
 
   return (
@@ -179,7 +179,7 @@ const Employees = () => {
                 <Search />
                 <Filter
                   onApplyFilters={handleApplyFilters}
-                  url="/api/v1/auth/get/all"
+                  url="/api/v1/users/list"
                 />
               </div>
               <Button

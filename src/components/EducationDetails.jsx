@@ -9,7 +9,7 @@ import { Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./InputComponent";
 import { Controller } from "react-hook-form";
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
@@ -19,7 +19,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const [educationalDocument, setEducationalDocument] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Time(10, 0, 45));
+  const [selectedTime, setSelectedTime] = useState(new Time(10, 10, 45));
   const [numberOfItems, setNumberOfItems] = useState(1);
   const navigate = useNavigate();
 
@@ -84,13 +84,14 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         if (response.data.responseCode === "200") {
           const data = response.data.datalist || [];
 
-          // Initialize with empty objects for each degree
+          // Create an empty education array based on degrees
           const initialEducation = degrees.map(() => ({}));
 
-          // Merge fetched data with initial array
-          data.forEach((edu, idx) => {
-            if (idx < initialEducation.length) {
-              initialEducation[idx] = {
+          // Map each fetched education item to its corresponding degree position
+          data.forEach((edu) => {
+            const degreeIndex = degrees.indexOf(edu.degree);
+            if (degreeIndex !== -1) {
+              initialEducation[degreeIndex] = {
                 degree: edu.degree || "",
                 institution: edu.institution || "",
                 faculty: edu.faculty || "",
@@ -107,6 +108,16 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             ...prev,
             education: initialEducation,
           }));
+
+          // Update selected degree if we have education data
+          if (data.length > 0) {
+            const highestDegreeIndex = data.reduce((highest, edu) => {
+              const index = degrees.indexOf(edu.degree);
+              return index > highest ? index : highest;
+            }, 0);
+            setSelectedDegree(degrees[highestDegreeIndex]);
+            setNumberOfItems(highestDegreeIndex + 1);
+          }
         } else {
           // Initialize with empty education array if no data returned
           setFormData((prev) => ({
@@ -129,6 +140,19 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     fetchEducationDetails();
   }, [setFormData]);
+
+  // Set form values when education data is loaded
+  useEffect(() => {
+    if (formData?.education && Array.isArray(formData.education)) {
+      formData.education.forEach((edu, index) => {
+        if (edu.institution) setValue(`institution_${index}`, edu.institution);
+        if (edu.faculty) setValue(`faculty_${index}`, edu.faculty);
+        if (edu.startYear) setValue(`startYear_${index}`, edu.startYear);
+        if (edu.endYear) setValue(`endYear_${index}`, edu.endYear);
+        if (edu.status) setValue(`status_${index}`, edu.status);
+      });
+    }
+  }, [formData.education, setValue]);
 
   const validateFileType = (file) => {
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -288,7 +312,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 name={`faculty_${index}`}
                 control={control}
                 label="Faculty"
-                rules={{ required: "Faculty is required" }}
+                rules={{
+                  required: "Faculty is required",
+                  minLength: {
+                    value: 3,
+                    message: "Faculty  must be atleast 3 character long",
+                  },
+                }}
                 variant="bordered"
                 type="text"
                 inputClassName="w-full rounded-xl"

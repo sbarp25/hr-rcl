@@ -178,31 +178,31 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     }
   };
 
-  // Custom file input handler
-  const handleFileChange = (e, fieldName) => {
-    const file = e.target.files[0];
-    if (file) {
-      setValue(fieldName, file, { shouldValidate: true });
+  // // Custom file input handler
+  // const handleFileChange = (e, fieldName) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setValue(fieldName, file, { shouldValidate: true });
 
-      // Reset file view states
-      if (fieldName === "panCardDocumentFile") {
-        setPhotoPAN(false);
-      } else if (fieldName === "citizenshipFrontDocumentFile") {
-        setCitizenshipFront(false);
-      } else if (fieldName === "citizenshipBackDocumentFile") {
-        setCitizenshipBack(false);
-      }
+  //     // Reset file view states
+  //     if (fieldName === "panCardDocumentFile") {
+  //       setPhotoPAN(false);
+  //     } else if (fieldName === "citizenshipFrontDocumentFile") {
+  //       setCitizenshipFront(false);
+  //     } else if (fieldName === "citizenshipBackDocumentFile") {
+  //       setCitizenshipBack(false);
+  //     }
 
-      // Update formData to maintain state consistency
-      setFormData((prev) => ({
-        ...prev,
-        documents: {
-          ...prev.documents,
-          [fieldName]: file,
-        },
-      }));
-    }
-  };
+  //     // Update formData to maintain state consistency
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       documents: {
+  //         ...prev.documents,
+  //         [fieldName]: file,
+  //       },
+  //     }));
+  //   }
+  // };
 
   // Function to render the document link
   const renderDocumentLink = (url, label) => {
@@ -287,11 +287,20 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   name="panCardDocumentFile"
                   control={control}
                   rules={{
-                    required: "PAN Card file is required",
-                    validate: (file) =>
-                      file && ["image/png", "image/jpg"].includes(file.type)
-                        ? true
-                        : "Only PNG or JPG allowed",
+                    required: {
+                      value: documentUrls?.panCardDocumentUrl === null,
+                      message: "Pan Card photo is required",
+                    },
+                    validate: (file) => {
+                      if (!file && documentUrls?.panCardDocumentUrl !== null) {
+                        return true;
+                      } else {
+                        return file &&
+                          ["image/png", "image/jpeg"].includes(file.type)
+                          ? true
+                          : "Only PNG or JPG allowed";
+                      }
+                    },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
                     <>
@@ -311,7 +320,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         </span>
                         <input
                           type="file"
-                          accept=".png,.jpg"
+                          accept=".png,.jpg, .jpeg"
                           ref={ref}
                           className="absolute inset-0 opacity-0 cursor-pointer w-full"
                           onChange={(e) => {
@@ -405,16 +414,37 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {/* Citizenship Front Photo */}
+              {/* validate: (file) => {
+                      if (!file && documentUrls?.panCardDocumentUrl !== null) {
+                        return true;
+                      }
+
+                      return file &&
+                        ["image/png", "image/jpg"].includes(file.type)
+                        ? true
+                        : "Only PNG or JPG allowed";
+                    }, */}
               <div>
                 <Controller
                   name="citizenshipFrontDocumentFile"
                   control={control}
                   rules={{
-                    required: "Front photo of citizenship is required",
-                    validate: (file) =>
-                      file && ["image/png", "image/jpg"].includes(file.type)
+                    required: {
+                      value: documentUrls.citizenshipFrontDocumentUrl === null,
+                      message: "Pan Card photo is required",
+                    },
+                    validate: (file) => {
+                      if (
+                        !file &&
+                        documentUrls.citizenshipFrontDocumentUrl !== null
+                      ) {
+                        return true;
+                      }
+                      return file &&
+                        ["image/png", "image/jpg"].includes(file.type)
                         ? true
-                        : "Only PNG or JPG allowed",
+                        : "Only PNG or JPG allowed";
+                    },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
                     <>
@@ -478,7 +508,10 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   name="citizenshipBackDocumentFile"
                   control={control}
                   rules={{
-                    required: "Back photo of citizenship is required",
+                    required: {
+                      value: documentUrls.citizenshipBackDocumentUrl === null,
+                      message: "Pan Card photo is required",
+                    },
                     validate: (file) =>
                       file && ["image/png", "image/jpg"].includes(file.type)
                         ? true
