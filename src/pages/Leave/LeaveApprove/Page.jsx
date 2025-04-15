@@ -17,6 +17,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import ButtonComponent from "../../../components/ButtonComp";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import GoBack from "../../../components/GoBack";
 
 const LeaveApprove = ({ leaveId }) => {
   const { id } = useParams();
@@ -94,7 +95,7 @@ const LeaveApprove = ({ leaveId }) => {
     const fetchLeaveById = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.get("/api/leave/leaveId", {});
+        const response = await axiosInstance.post("/api/leave/leaveId", {});
         if (response.data.responseCode === "200") {
           setLeaveByIdData(response.data.datalist);
           toast.success(response.data.message);
@@ -152,6 +153,7 @@ const LeaveApprove = ({ leaveId }) => {
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="bg-white rounded-xl p-4 space-y-4">
         <div className="">
+          {/* <GoBack /> */}
           <h1 className="page-title">Leave Approve</h1>
         </div>
         <div className="">

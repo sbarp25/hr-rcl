@@ -288,18 +288,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: {
-                      value: documentUrls?.panCardDocumentUrl === null,
+                      value: !documentUrls.panCardDocumentUrl,
                       message: "Pan Card photo is required",
                     },
                     validate: (file) => {
-                      if (!file && documentUrls?.panCardDocumentUrl !== null) {
-                        return true;
-                      } else {
-                        return file &&
-                          ["image/png", "image/jpeg"].includes(file.type)
+                      if (documentUrls.panCardDocumentUrl) return true;
+
+                      return file
+                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
+                            file.type
+                          )
                           ? true
-                          : "Only PNG or JPG allowed";
-                      }
+                          : "Only PNG or JPG allowed"
+                        : "Pan Card photo is required";
                     },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
@@ -430,20 +431,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: {
-                      value: documentUrls.citizenshipFrontDocumentUrl === null,
-                      message: "Pan Card photo is required",
+                      value: !documentUrls.citizenshipFrontDocumentUrl,
+                      message: "Citizenship front photo is required",
                     },
                     validate: (file) => {
-                      if (
-                        !file &&
-                        documentUrls.citizenshipFrontDocumentUrl !== null
-                      ) {
-                        return true;
-                      }
-                      return file &&
-                        ["image/png", "image/jpg"].includes(file.type)
-                        ? true
-                        : "Only PNG or JPG allowed";
+                      if (documentUrls.citizenshipFrontDocumentUrl) return true;
+
+                      return file
+                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
+                            file.type
+                          )
+                          ? true
+                          : "Only PNG or JPG allowed"
+                        : "Citizenship front photo is required";
                     },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
@@ -509,13 +509,20 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: {
-                      value: documentUrls.citizenshipBackDocumentUrl === null,
-                      message: "Pan Card photo is required",
+                      value: !documentUrls.citizenshipBackDocumentUrl,
+                      message: "Citizenship back photo is required",
                     },
-                    validate: (file) =>
-                      file && ["image/png", "image/jpg"].includes(file.type)
-                        ? true
-                        : "Only PNG or JPG allowed",
+                    validate: (file) => {
+                      if (documentUrls.citizenshipBackDocumentUrl) return true;
+
+                      return file
+                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
+                            file.type
+                          )
+                          ? true
+                          : "Only PNG or JPG allowed"
+                        : "Citizenship back photo is required";
+                    },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
                     <>

@@ -8,6 +8,7 @@ import Loader from "../../components/Loader.jsx";
 import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
+import { Button } from "@nextui-org/react";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -238,7 +239,7 @@ const Ekye = () => {
             </div>
           </ValidationComponent>
         </div>
-        {/* <div className="form-navigation flex justify-center gap-6 mt-6">
+        <div className="form-navigation flex justify-center gap-6 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -255,7 +256,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div> */}
+        </div>
       </div>
     </>
   );

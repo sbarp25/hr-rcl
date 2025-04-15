@@ -59,7 +59,6 @@ const Filter = ({ onApplyFilters, url }) => {
   }, []);
 
   /**Position Fetch */
-
   useEffect(() => {
     const fetchPositions = async () => {
       setLoadingPositions(true);
@@ -80,18 +79,27 @@ const Filter = ({ onApplyFilters, url }) => {
   }, []);
 
   const resetFilters = () => {
-    onApplyFilters({ department: "", position: "" });
+    setFormData({
+      department: "",
+      position: "",
+    });
+
+    onApplyFilters({});
+    onClose();
   };
 
-  const onSubmit = async () => {
-    setIsLoading(true);
+  const onSubmit = async (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
 
+    setIsLoading(true);
     const requestBody = {
       pageIndex: 1,
       pageSize: 10,
       filterCriteria: {
-        departmentName: formData.department || "",
-        positionName: formData.position || "",
+        departmentId: formData.department || "",
+        positionId: formData.position || "",
       },
     };
 
@@ -103,12 +111,10 @@ const Filter = ({ onApplyFilters, url }) => {
       if (response.data.responseCode === "200") {
         onClose();
         onApplyFilters({
-          filters: formData,
-          data: response.data.datalist || [],
+          data: response.data.datalist,
           totalPages: response.data.totalPages,
           totalRecords: response.data.totalRecords,
         });
-        // toast.success(response?.data?.message);
       } else {
         toast.error(response?.data?.message);
       }
@@ -118,9 +124,6 @@ const Filter = ({ onApplyFilters, url }) => {
     } finally {
       setIsLoading(false);
     }
-
-    // Pass the filters to the parent component
-    onApplyFilters(formData);
   };
 
   const filteredDepartments = useMemo(
@@ -168,7 +171,7 @@ const Filter = ({ onApplyFilters, url }) => {
                   <SelectItem key="loading">Loading departments...</SelectItem>
                 ) : (
                   filteredDepartments?.map((department) => (
-                    <SelectItem key={department.name} value={department.name}>
+                    <SelectItem key={department.id} value={department.name}>
                       {department.name}
                     </SelectItem>
                   ))
@@ -184,9 +187,7 @@ const Filter = ({ onApplyFilters, url }) => {
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
                   filteredPositions?.map((position) => (
-                    <SelectItem
-                      key={position.positionName}
-                      value={position.positionName}>
+                    <SelectItem key={position.id} value={position.positionName}>
                       {position.positionName}
                     </SelectItem>
                   ))

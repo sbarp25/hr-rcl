@@ -22,8 +22,9 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import DropDownComp from "../../../components/Dropdown";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import ButtonComponent from "../../../components/ButtonComp";
 
 const Department = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -300,25 +301,16 @@ const Department = () => {
                 onApplyFilters={handleApplyFilters}
                 url="/api/v1/departments/list"
               />
-              <Button
-                isDisabled={!hasDepartmentCreateAccess}
-                className="button bg-black font-md tracking-normal"
-                onPress={() => setShowAddForm(!showAddForm)}>
-                {showAddForm ? (
-                  <>
-                    <IoReturnDownBack className="text-white text-base" />
-                    <span className="text-white font-normal text-xs">
-                      Return
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <IoIosAddCircleOutline className="text-white text-base" />
-                    <span className="text-white font-normal text-xs">
+
+              <Button className="flex bg-black text-white">
+                <Link to="/master-data/Department/Add">
+                  <div className="flex justify-center items-center gap-2">
+                    <IoIosAddCircleOutline className="text-white text-xl" />
+                    <span className="text-white font-normal">
                       Add Department
                     </span>
-                  </>
-                )}
+                  </div>
+                </Link>
               </Button>
             </div>
           </div>
@@ -365,93 +357,60 @@ const Department = () => {
             </form>
           )}
           <div className="bg-white rounded-lg p-2">
-            {showAddForm ? (
-              <form
-                className="mb-6 p-4 bg-white shadow-md rounded-lg  mx-auto"
-                onSubmit={handleAddDepartment}>
-                <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-                  Add New Department
-                </h2>
-                <div className="flex flex-col md:flex-row gap-6">
-                  <div className="flex flex-col flex-1 gap-4">
-                    <Input
-                      id="name"
-                      type="text"
-                      label="Department Name"
-                      value={departmentName}
-                      onChange={(e) => setDepartmentName(e.target.value)}
-                      className="rounded-xl shadow-md  focus:outline-none w-full"
-                      required
-                    />
-                    <Textarea
-                      id="description"
-                      label="Description"
-                      value={departmentDescription}
-                      onChange={(e) => setDepartmentDescription(e.target.value)}
-                      className="border rounded-xl shadow-md focus:outline-none resize-none w-full"
-                      required></Textarea>
-                  </div>
-                </div>
-                <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                  <button
-                    type="submit"
-                    className=" bg-bgprimary text-white rounded-lg  p-2  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
-                    Submit
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
-                <Table aria-label="Department Table ">
-                  <TableHeader>
-                    <TableColumn className="text-lg">S.N</TableColumn>
-                    <TableColumn className="text-lg">
-                      Department Name
-                    </TableColumn>
-                    <TableColumn className="text-lg">Description</TableColumn>
-                    <TableColumn className="text-lg">User Action</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    {departmentsData.map((department, index) => (
-                      <TableRow
-                        key={department.rclId}
-                        className="h-20 justify-center items-center border-b-2 border-gray-300">
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{department.name}</TableCell>
-                        <TableCell>
-                          {" "}
-                          <Tooltip content={department.description}>
-                            {truncateText(department.description, 30)}
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex">
-                            <HiPencilSquare
-                              className={`${
-                                hasDepartmentEditAccess
-                                  ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                  : "text-xl mr-2"
-                              }`}
-                              title="Edit"
-                              onClick={() => handleAction("edit", department)}
-                            />
-                            <MdDelete
-                              className={`${
-                                hasDepartmentDeleteAccess
-                                  ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                  : "text-xl ml-2"
-                              }`}
-                              title="Delete"
-                              onClick={() => handleAction("delete", department)}
-                            />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+            <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
+              <Table aria-label="Department Table ">
+                <TableHeader>
+                  <TableColumn className="text-lg">S.N</TableColumn>
+                  <TableColumn className="text-lg">Department Name</TableColumn>
+                  <TableColumn className="text-lg">Description</TableColumn>
+                  <TableColumn className="text-lg">Team Lead</TableColumn>
+                  <TableColumn className="text-lg">
+                    Associate Team Lead
+                  </TableColumn>
+                  <TableColumn className="text-lg">User Action</TableColumn>
+                </TableHeader>
+                <TableBody>
+                  {departmentsData.map((department, index) => (
+                    <TableRow
+                      key={department.rclId}
+                      className="h-20 justify-center items-center border-b-2 border-gray-300">
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{department.name}</TableCell>
+                      <TableCell>
+                        {" "}
+                        <Tooltip content={department.description}>
+                          {truncateText(department.description, 30)}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>{department.teamLeadName}</TableCell>
+                      <TableCell>{department.associateTeamLeadId}</TableCell>
+                      <TableCell>
+                        <div className="flex">
+                          <HiPencilSquare
+                            className={`${
+                              hasDepartmentEditAccess
+                                ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                : "text-xl mr-2"
+                            }`}
+                            title="Edit"
+                            onClick={() => handleAction("edit", department)}
+                          />
+                          <MdDelete
+                            className={`${
+                              hasDepartmentDeleteAccess
+                                ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                : "text-xl ml-2"
+                            }`}
+                            title="Delete"
+                            onClick={() => handleAction("delete", department)}
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
           <div className="mt-4 flex justify-between">
             <div className="text-xs">

@@ -410,6 +410,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     validate: {
                       requiredIfCompleted: (files) => {
                         const currentStatus = getValues(`status_${index}`);
+                        // Skip validation if we already have a file URL from the API
+                        if (education[index]?.file) return true;
+
+                        // Otherwise validate as before
                         if (currentStatus === "COMPLETED") {
                           if (!files || files.length === 0)
                             return "File is required.";
@@ -417,15 +421,25 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         return true;
                       },
                       type: (files) => {
+                        // Skip validation if we already have a file URL from the API
+                        if (education[index]?.file) return true;
+
                         if (!files || files.length === 0) return true;
                         const file = files[0];
-                        const allowedTypes = ["image/png", "image/jpg"];
+                        const allowedTypes = [
+                          "image/png",
+                          "image/jpeg",
+                          "image/jpg",
+                        ];
                         return (
                           allowedTypes.includes(file.type) ||
-                          "Invalid file type. Only PNG or JPG."
+                          "Invalid file type. Only PNG, JPEG or JPG."
                         );
                       },
                       size: (files) => {
+                        // Skip validation if we already have a file URL from the API
+                        if (education[index]?.file) return true;
+
                         if (!files || files.length === 0) return true;
                         const file = files[0];
                         return (
@@ -439,10 +453,16 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     <div>
                       <label
                         className={`relative flex items-center justify-left w-full h-14 border-2
-            ${errors[`files_${index}`] ? "border-danger" : "border-gray-300"}
-            rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
+                          ${
+                            errors[`files_${index}`]
+                              ? "border-danger"
+                              : "border-gray-300"
+                          }
+                          rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
                         <span className="text-gray-600 px-4">
-                          {value?.length > 0 ? (
+                          {education[index]?.file ? (
+                            "Document already uploaded"
+                          ) : value?.length > 0 ? (
                             <div className="flex gap-2">
                               <p>Selected: {value[0].name}</p>
                             </div>

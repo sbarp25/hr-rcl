@@ -86,9 +86,9 @@ const Login = () => {
       <LocationComponent />
       {/* {isLoading && <Loader message="Logging in, please wait..." />} */}
       <div className="pt-10  bg-gray-200 h-screen">
-        <div className=" container grid grid-cols-2  h-[90vh]">
+        <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
           {/* <div className="grid grid-cols-2 shadow-2xl shadow-gray-400 h-screen"> */}
-          <div className=" bg-bgprimary rounded-l-3xl">
+          <div className="hidden md:block bg-bgprimary rounded-l-3xl">
             {/* <div className="bg-bgprimary"> */}
             <div className="mt-64 flex flex-col gap-y-16 items-center justify-center">
               <img src={Logo} alt="logo" className="w-96" />
@@ -98,7 +98,7 @@ const Login = () => {
               </p>
             </div>
           </div>
-          <div className="px-16 pt-64 bg-white rounded-r-3xl">
+          <div className="px-16 pt-64 bg-white rounded-2xl md:rounded-r-3xl">
             <form
               onSubmit={handleSubmit(handleLogin)}
               className="flex flex-col space-y-4 gap-6 w-full">

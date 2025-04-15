@@ -40,11 +40,13 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
   });
 
   const onSubmit = async (data) => {
+    // const marriedstatus = Boolean(data.married);
     const formattedData = {
       data: {
         email: data.email,
         dateOfBirthAd: data.dob,
         gender: data.gender,
+        // married: marriedstatus,
         married: data.married,
         bloodGroup: data.bloodType,
         emergencyNumber: data.emergencyNumber,
@@ -98,7 +100,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             email: data.email || "",
             dob: data.dateOfBirthAd || "",
             gender: data.gender || "",
-            married: data.married !== undefined ? data.married : "",
+            married: data.married !== undefined ? Boolean(data.married) : "",
             bloodType: data.bloodGroup || "",
             emergencyNumber: data.emergencyNumber || "",
             emergencyName: data.emergencyName || "",
@@ -249,7 +251,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       onSelectionChange={(keys) => {
                         const selectedKey = Array.from(keys)[0];
                         if (selectedKey !== undefined)
-                          field.onChange(selectedKey);
+                          // field.onChange(selectedKey);
+                          field.onChange(selectedKey === "true");
                       }}>
                       {maritalOptions.map((status) => (
                         <SelectItem key={status.key} value={status.key}>

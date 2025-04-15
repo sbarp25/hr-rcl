@@ -150,9 +150,9 @@ const ValidateLink = () => {
 
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-          <div className="grid grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
             {/* Left Section */}
-            <div className="bg-bgprimary flex flex-col items-center justify-center text-white px-12 py-20">
+            <div className="hidden md:flex bg-bgprimary  flex-col items-center justify-center text-white px-12 py-20">
               <img src={Logo} alt="logo" className="w-72 mb-8" />
               <p className="text-2xl font-medium text-center leading-10">
                 Whispers of Code, <br /> Symphonies of Solution

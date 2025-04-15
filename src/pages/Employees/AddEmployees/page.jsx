@@ -395,13 +395,23 @@ const AddEmployeeForm = () => {
                   name="performEKYC"
                   control={control}
                   render={({ field }) => (
-                    // <Checkbox color="danger" isSelected={field.value} onValueChange={field.onChange}>
-                    // <Checkbox color="primary" isSelected={field.value} onValueChange={field.onChange}>
+                    // <Checkbox
+                    //   color="default"
+                    //   isSelected={field.value}
+                    //   onValueChange={field.onChange}>
+                    //   Perform eKYE
+                    // </Checkbox>
+                    // <Checkbox
+                    //   color="danger"
+                    //   isSelected={field.value}
+                    //   onValueChange={field.onChange}
+                    //   className="focus:outline-none ">
+                    //   Perform eKYE
+                    // </Checkbox>
                     <Checkbox
-                      color="danger"
+                      color="primary"
                       isSelected={field.value}
-                      onValueChange={field.onChange}
-                      className="focus:outline-none ">
+                      onValueChange={field.onChange}>
                       Perform eKYE
                     </Checkbox>
                   )}

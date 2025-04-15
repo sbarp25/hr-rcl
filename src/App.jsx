@@ -29,6 +29,8 @@ import SalaryDetails from "./pages/Salary/page.jsx";
 import SalaryEdit from "./pages/Salary/SalaryDetail/Page.jsx";
 import AdvanceSalary from "./pages/Salary/AdvanceSalary/Page.jsx";
 import PrivateRoutes from "./utils/ProtectedRoutes.jsx";
+import AddDepartment from "./pages/MasterData/Deparement/AddDepartment/Page.jsx";
+import EditDepartment from "./pages/MasterData/Deparement/EditDepartment/page.jsx";
 
 function App() {
   useEffect(() => {
@@ -47,6 +49,7 @@ function App() {
   const location = useLocation();
   const authRoutes = ["/login", "/rstpwd", "/resetpwd", "/EKYE"];
   const isAuthRoute = authRoutes.includes(location.pathname);
+
   return (
     <>
       {/* const ekyestep = localStorage.getItem(""" */}
@@ -75,6 +78,14 @@ function App() {
               <Route path="/Employees" element={<Employees />} />
               <Route path="/AddEmployees" element={<AddEmployees />} />
               <Route path="/master-data/Department" element={<Department />} />
+              <Route
+                path="/master-data/Department/Add"
+                element={<AddDepartment />}
+              />
+              <Route
+                path="/master-data/Department/Edit/:id"
+                element={<EditDepartment />}
+              />
               <Route path="/master-data/Position" element={<Position />} />
               <Route path="/master-data/Roles" element={<Roles />} />
               <Route path="/HandBook" element={<HandBook />} />

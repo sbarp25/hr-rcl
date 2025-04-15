@@ -144,22 +144,58 @@ const Employees = () => {
     setCurrentPage(page);
   };
 
-  const handleApplyFilters = (filters) => {
-    // If no filters, show all original data
-    if (!filters.department && !filters.position) {
-      setEmployeesData(originalEmployeeData);
-      return;
+  // const handleApplyFilters = (filters) => {
+  //   // If no filters, show all original data
+  //   if (!filters.department && !filters.position) {
+  //     setEmployeesData(originalEmployeeData);
+  //     return;
+  //   }
+  //   const filteredData = originalEmployeeData.filter((dept) => {
+  //     return (
+  //       (!filters.department || dept.name === filters.department) &&
+  //       (!filters.position || dept.positionName === filters.position)
+  //     );
+  //   });
+
+  //   setEmployeesData(filteredData);
+  // };
+  const handleApplyFilters = (result) => {
+    console.log("Filter result:", result); // Add this debug line
+
+    if (result.data) {
+      // Filter component returned filtered data
+      setEmployeesData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      // Reset case - refetch original data
+      const fetchEmployees = async () => {
+        setIsLoading(true);
+        try {
+          const response = await axiosInstance.post("/api/v1/users/list", {
+            pageIndex: currentPage,
+            pageSize: employeeDataPerPage,
+          });
+
+          if (response?.data?.responseCode === "200") {
+            setOriginalEmployeeData(response?.data?.datalist || []);
+            setEmployeesData(response?.data?.datalist || []);
+            setTotalPages(response.data.totalPages);
+            setTotalRecords(response.data.totalRecords);
+          } else {
+            toast.error(response?.data?.message);
+          }
+        } catch (error) {
+          console.error("Error fetching employees:", error);
+          toast.error("Error fetching employees.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchEmployees();
     }
-    const filteredData = originalEmployeeData.filter((dept) => {
-      return (
-        (!filters.department || dept.name === filters.department) &&
-        (!filters.position || dept.positionName === filters.position)
-      );
-    });
-
-    setEmployeesData(filteredData);
   };
-
   return (
     <>
       {isLoading && <Loader message="Loading employees..." />}

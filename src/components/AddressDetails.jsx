@@ -250,6 +250,9 @@ const AddressDetails = ({
 
     setIsLoading(true);
     try {
+      // Clear existing districts before fetching new ones
+      setDistricts([]);
+
       const sanitizedProvinceId = String(provinceId).replace(/[^0-9]/g, "");
       const response = await axiosInstance.get(
         `/api/v1/district/districts/${sanitizedProvinceId}`
@@ -453,10 +456,11 @@ const AddressDetails = ({
                         onSelectionChange={(keys) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
-                          fetchDistrictsByProvince(selectedKey);
                           // Reset district when province changes
                           setValue("permanent.districtId", "");
                           setPermanentDistrictName("");
+                          // Fetch new districts for the selected province
+                          fetchDistrictsByProvince(selectedKey);
                         }}>
                         {provinces.map((province) => (
                           <SelectItem key={province.id} value={province.id}>
@@ -496,11 +500,13 @@ const AddressDetails = ({
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "permanent");
+                          console.log(
+                            "Selected permanent district ID:",
+                            selectedKey
+                          );
                         }}>
                         {districts.map((district) => (
-                          <SelectItem
-                            key={district.districtId}
-                            value={district.districtId}>
+                          <SelectItem key={district.id} value={district.id}>
                             {district.name}
                           </SelectItem>
                         ))}
@@ -625,10 +631,11 @@ const AddressDetails = ({
                         onSelectionChange={(keys) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
-                          fetchDistrictsByProvince(selectedKey);
                           // Reset district when province changes
                           setValue("temporary.districtId", "");
                           setTemporaryDistrictName("");
+                          // Fetch new districts for the selected province
+                          fetchDistrictsByProvince(selectedKey);
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {provinces.map((province) => (
@@ -660,7 +667,7 @@ const AddressDetails = ({
                       <Select
                         variant="bordered"
                         scrollShadowProps={{ isEnabled: true }}
-                        isInvalid={!!errors.temporary?.districtId}
+                        isInvalid={!!errors.temporary?.id}
                         className={`w-full rounded-xl`}
                         label="Select A District"
                         selectedKeys={field.value ? [field.value] : []}
@@ -673,12 +680,14 @@ const AddressDetails = ({
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "temporary");
+                          console.log(
+                            "Selected temporary district ID:",
+                            selectedKey
+                          );
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {districts.map((district) => (
-                          <SelectItem
-                            key={district.districtId}
-                            value={district.districtId}>
+                          <SelectItem key={district.id} value={district.id}>
                             {district.name}
                           </SelectItem>
                         ))}
