@@ -4,11 +4,9 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { Button, Input, Pagination, Tooltip } from "@nextui-org/react";
-import { Textarea } from "@nextui-org/input";
+import { Button, Pagination, Tooltip } from "@nextui-org/react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BiData } from "react-icons/bi";
-import { IoReturnDownBack } from "react-icons/io5";
 import {
   Table,
   TableHeader,
@@ -24,15 +22,9 @@ import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { Link, useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import ButtonComponent from "../../../components/ButtonComp";
 
 const Department = () => {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
   const [departmentsData, setDepartmentsData] = useState([]);
-  const [departmentName, setDepartmentName] = useState("");
-  const [departmentDescription, setDepartmentDescription] = useState("");
-  const [editingDepartmentId, setEditingDepartmentId] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -99,99 +91,100 @@ const Department = () => {
   };
 
   // Add Department code
-  const handleAddDepartment = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const newDepartment = {
-      data: {
-        departmentName: departmentName,
-        description: departmentDescription,
-      },
-    };
+  // const handleAddDepartment = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  //   const newDepartment = {
+  //     data: {
+  //       departmentName: departmentName,
+  //       description: departmentDescription,
+  //     },
+  //   };
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/register",
-        newDepartment
-      );
-      if (response.data.responseCode === "201") {
-        setDepartmentName("");
-        setDepartmentDescription("");
-        setDepartmentsData((prev) => [...prev, response.data]);
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error adding department:", error);
-      toast.error("Error adding department.", error.response?.data?.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "/api/v1/departments/register",
+  //       newDepartment
+  //     );
+  //     if (response.data.responseCode === "201") {
+  //       setDepartmentName("");
+  //       setDepartmentDescription("");
+  //       setDepartmentsData((prev) => [...prev, response.data]);
+  //       toast.success(response.data.message);
+  //     } else {
+  //       toast.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding department:", error);
+  //     toast.error("Error adding department.", error.response?.data?.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  // Edit Department code
-  const handleEditdepartment = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  // // Edit Department code
+  // const handleEditdepartment = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
 
-    const updatedDepartment = {
-      data: {
-        departmentName: departmentName,
-        description: departmentDescription,
-      },
-    };
+  //   const updatedDepartment = {
+  //     data: {
+  //       departmentName: departmentName,
+  //       description: departmentDescription,
+  //     },
+  //   };
 
-    try {
-      const response = await axiosInstance.put(
-        `/api/v1/departments/update/${editingDepartmentId}`,
-        updatedDepartment,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //   try {
+  //     const response = await axiosInstance.put(
+  //       `/api/v1/departments/update/${editingDepartmentId}`,
+  //       updatedDepartment,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        setDepartmentsData((prevData) =>
-          prevData.map((item) =>
-            item.id === editingDepartmentId
-              ? {
-                  ...item,
-                  name: departmentName,
-                  description: departmentDescription,
-                }
-              : item
-          )
-        );
-        // Reset form and states
-        setDepartmentName("");
-        setDepartmentDescription("");
-        setShowEditForm(false);
-        setEditingDepartmentId(null);
-      } else {
-        toast.error("Failed to update the position.");
-      }
-    } catch (error) {
-      console.error("Error updating position:", error);
-      toast.error(error.response?.data?.messages);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (response.data.responseCode === "200") {
+  //       toast.success(response.data.message);
+  //       setDepartmentsData((prevData) =>
+  //         prevData.map((item) =>
+  //           item.id === editingDepartmentId
+  //             ? {
+  //                 ...item,
+  //                 name: departmentName,
+  //                 description: departmentDescription,
+  //               }
+  //             : item
+  //         )
+  //       );
+  //       // Reset form and states
+  //       setDepartmentName("");
+  //       setDepartmentDescription("");
+  //       setShowEditForm(false);
+  //       setEditingDepartmentId(null);
+  //     } else {
+  //       toast.error("Failed to update the position.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating position:", error);
+  //     toast.error(error.response?.data?.messages);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleAction = async (action, department) => {
     switch (action) {
       // Start Of Edit Operation
       case "edit":
         if (hasDepartmentEditAccess) {
+          navigate(`/master-data/Department/Edit/${department.id}`);
           console.log(`Editing Department ID: ${department.id}`);
-          setShowEditForm(true);
-          setDepartmentName(department.name || "");
-          setDepartmentDescription(department.description || "");
-          setEditingDepartmentId(department.id);
+          // setShowEditForm(true);
+          // setDepartmentName(department.name || "");
+          // setDepartmentDescription(department.description || "");
+          // setEditingDepartmentId(department.id);
         } else {
           toast.error("Access denied");
         }
@@ -221,7 +214,6 @@ const Department = () => {
           }
         } catch (error) {
           console.error("Error deleting position:", error);
-          setShowEditForm(true);
           toast.error(error.response?.data?.message);
         }
 
@@ -268,9 +260,6 @@ const Department = () => {
       navigate("/");
     }
   }, []);
-  const handleRedirect = () => {
-    navigate("/AddEmployees");
-  };
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
@@ -303,7 +292,11 @@ const Department = () => {
               />
 
               <Button className="flex bg-black text-white">
-                <Link to="/master-data/Department/Add">
+                <Link
+                  to="/master-data/Department/Add"
+                  className={`${
+                    hasDepartmentCreateAccess ? "" : "pointer-events-none"
+                  }`}>
                   <div className="flex justify-center items-center gap-2">
                     <IoIosAddCircleOutline className="text-white text-xl" />
                     <span className="text-white font-normal">
@@ -314,48 +307,6 @@ const Department = () => {
               </Button>
             </div>
           </div>
-          {showEditForm && (
-            <form
-              className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-              onSubmit={handleEditdepartment}>
-              <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-                Edit Department
-              </h2>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col flex-1 gap-4">
-                  <Input
-                    type="text"
-                    id="name"
-                    placeholder="Department Name"
-                    value={departmentName}
-                    onChange={(e) => setDepartmentName(e.target.value)}
-                    className="input border rounded-lg px-4 py-2 focus:outline-none w-full"
-                    required
-                  />
-                  <textarea
-                    placeholder="Description"
-                    value={departmentDescription}
-                    onChange={(e) => setDepartmentDescription(e.target.value)}
-                    className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                    required></textarea>
-                </div>
-                {/* Submit and Cancel Buttons */}
-                <div className="flex flex-col md:w-1/4 justify-end md:justify-start gap-y-4">
-                  <Button
-                    type="submit"
-                    className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
-                    Save Changes
-                  </Button>
-                  <Button
-                    type="button"
-                    className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                    onPress={() => setShowEditForm(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </form>
-          )}
           <div className="bg-white rounded-lg p-2">
             <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
               <Table aria-label="Department Table ">

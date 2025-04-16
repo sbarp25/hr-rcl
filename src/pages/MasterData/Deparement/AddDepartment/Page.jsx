@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
-import { Button, Textarea } from "@nextui-org/react";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Textarea } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import ButtonComponent from "../../../../components/ButtonComp";
 import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import GoBack from "../../../../components/GoBack";
+import SelectComp from "../../../../components/Select";
 
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
   const [associateTeamLead, setAssociateTeamLead] = useState([]);
-
+  const navigate = useNavigate;
   const {
     register,
     control,
-    reset,
     handleSubmit,
+    reset,
     formState: { errors },
-    watch,
   } = useForm({
     defaultValues: {
       title: "",
@@ -55,61 +54,60 @@ const AddDepartment = () => {
     return 4; // default for smaller screens
   };
 
-  //   const hasaccess = true;
+  const hasaccess = true;
 
-  //   useEffect(() => {
-  //     if (!hasaccess) {
-  //       navigate("/login");
-  //     }
-  //   }, [hasaccess, navigate]);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/login");
+    }
+  }, [hasaccess, navigate]);
 
-  //   const onSubmit = async (data) => {
-  //     const AddDepartment = {
-  //       data: {
-  //         departmentName: data?.leaveType,
-  //         description: data?.description,
-  //         teamLeadId: data?.teamlead,
-  //         associateTeamLeadId: data?.Associateteamlead,
-  //       },
-  //     };
+  const onSubmit = async (data) => {
+    const AddDepartment = {
+      data: {
+        departmentName: data?.leaveType,
+        description: data?.description,
+        teamLeadId: data?.teamlead,
+        associateTeamLeadId: data?.Associateteamlead,
+      },
+    };
 
-  //     try {
-  //       const accessToken = localStorage.getItem("accessToken");
-  //       if (!accessToken) {
-  //         toast.error("Authentication token is missing.");
-  //         setIsLoading(false);
-  //         return;
-  //       }
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("Authentication token is missing.");
+        setIsLoading(false);
+        return;
+      }
 
-  //       const response = await axiosInstance.post(
-  //         "/api/leave/apply_leave",
-  //         AddDepartment,
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${accessToken}`,
-  //           },
-  //         }
-  //       );
+      const response = await axiosInstance.post(
+        "/api/v1/departments/register",
+        AddDepartment,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-  //       if (response?.data?.responseCode === "200") {
-  //         reset();
-  //         navigate("/");
-  //         toast.success(response?.data?.message);
-  //       } else {
-  //         toast.error(response?.data?.message);
-  //       }
-  //     } catch (error) {
-  //       const errorMessage =
-  //         error.response?.data?.error || "Something went wrong";
-  //       toast.error(errorMessage);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  {
-    /**To fetch Team lead */
-  }
+      if (response?.data?.responseCode === "200") {
+        reset();
+        navigate("/");
+        toast.success(response?.data?.message);
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**To fetch Team lead */
   const fetchTeamLead = async () => {
     setIsLoading(true);
     try {
@@ -125,9 +123,8 @@ const AddDepartment = () => {
       setIsLoading(false);
     }
   };
-  {
-    /**To fetch Associate Team lead */
-  }
+
+  /**To fetch Associate Team lead */
   const fetchAssociateTeamLead = async () => {
     setIsLoading(true);
     try {
@@ -147,9 +144,7 @@ const AddDepartment = () => {
     fetchTeamLead();
     fetchAssociateTeamLead();
   }, []);
-  const onSubmit = async (data) => {
-    console.log(data);
-  };
+
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -204,66 +199,31 @@ const AddDepartment = () => {
               </p>
             )}
           </div>
-          {/* Team Leader */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Team Leader */}
             <div>
-              <Controller
+              <SelectComp
                 name="teamlead"
+                label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Team Leader"
-                    isInvalid={!!errors.teamlead}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {teamLead.map((team) => (
-                      <SelectItem key={team.key} value={team.key}>
-                        {team.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={teamLead}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.teamlead && (
-                <p className="text-danger text-sm">{errors.teamlead.message}</p>
-              )}
             </div>
+
             {/* Associate Team Leader */}
             <div>
-              <Controller
+              <SelectComp
                 name="Associateteamlead"
+                label="Associate Team Leader"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Associate Team Leader"
-                    isInvalid={!!errors.teamlead}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {associateTeamLead.map((team) => (
-                      <SelectItem key={team.key} value={team.key}>
-                        {team.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={associateTeamLead}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.Associateteamlead && (
-                <p className="text-danger text-sm">
-                  {errors.Associateteamlead.message}
-                </p>
-              )}
             </div>
           </div>
           <ButtonComponent

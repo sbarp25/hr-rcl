@@ -19,7 +19,7 @@ const BreadcrumbsComponent = ({ items }) => {
           href={item.href}
           isCurrent={currentPage === `{item.label}`}>
           <span className="relative inline-flex items-center h-6 w-48">
-            <div className="relative w-48 h-10 bg-teal-800 hover:bg-red-600 pl-2 text-white text-xs text-center flex items-center justify-center clip-ribbon">
+            <div className="relative w-28 md:w-32 lg:w-48 h-10 bg-teal-800 hover:bg-red-600 pl-2 text-white text-xs text-center flex items-center justify-center clip-ribbon">
               {item.label}
             </div>
           </span>

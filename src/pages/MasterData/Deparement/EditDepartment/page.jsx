@@ -1,23 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
-import { Select, SelectItem, Textarea } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ButtonComp";
 import axiosInstance from "../../../../lib/axios-Instance";
 import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import GoBack from "../../../../components/GoBack";
+import { useNavigate, useParams } from "react-router-dom";
+import SelectComp from "../../../../components/Select";
+import { toast, ToastContainer } from "react-toastify";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
   const [associateTeamLead, setAssociateTeamLead] = useState([]);
+
+  const { id } = useParams();
+  const navigate = useNavigate();
   const {
     register,
     control,
-    reset,
     handleSubmit,
+    reset,
     formState: { errors },
-    watch,
   } = useForm({
     defaultValues: {
       title: "",
@@ -84,9 +89,32 @@ const EditDepartment = () => {
       setIsLoading(false);
     }
   };
+  {
+    /**To fetch Department Data */
+  }
+  const fetchDepartmentById = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
+      if (response.data.responseCode === "200") {
+        const data = response.data.datalist;
+        reset({
+          title: data?.personalDetails?.departmentName,
+          description: data?.personalDetails?.description,
+          Associateteamlead: data?.personalDetails?.AssociateteamLead,
+          teamLead: data?.personalDetails?.teamLead,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     fetchTeamLead();
     fetchAssociateTeamLead();
+    fetchDepartmentById();
   }, []);
 
   const breadcrumbItems = [
@@ -96,8 +124,41 @@ const EditDepartment = () => {
   ];
 
   const onSubmit = async (data) => {
-    console.log(data);
+    const updatedDepartment = {
+      data: {
+        departmentName: data.title,
+        description: data.description,
+        AssociateteamLead: data.Associateteamlead,
+        teamLead: data.teamLead,
+      },
+    };
+    setIsLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axiosInstance.put(
+        `/api/v1/departments/update/${id}`,
+        updatedDepartment,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response?.data?.responseCode === "200") {
+        reset();
+        navigate("/");
+        ToastContainer.success(response?.data?.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -114,6 +175,7 @@ const EditDepartment = () => {
               control={control}
               variant="bordered"
               label="Title"
+              // value={}
               rules={{
                 required: "Title is required",
                 pattern: {
@@ -150,63 +212,28 @@ const EditDepartment = () => {
           {/* Team Leader */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Controller
+              <SelectComp
                 name="teamlead"
+                label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Team Leader"
-                    isInvalid={!!errors.teamlead}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {teamLead.map((team) => (
-                      <SelectItem key={team.key} value={team.key}>
-                        {team.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={teamLead}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.teamlead && (
-                <p className="text-danger text-sm">{errors.teamlead.message}</p>
-              )}
             </div>
+
             {/* Associate Team Leader */}
             <div>
-              <Controller
+              <SelectComp
                 name="Associateteamlead"
+                label="Associate Team Leader"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Associate Team Leader"
-                    isInvalid={!!errors.teamlead}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {associateTeamLead.map((team) => (
-                      <SelectItem key={team.key} value={team.key}>
-                        {team.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={associateTeamLead}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.Associateteamlead && (
-                <p className="text-danger text-sm">
-                  {errors.Associateteamlead.message}
-                </p>
-              )}
             </div>
           </div>
           <ButtonComponent

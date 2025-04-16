@@ -1,27 +1,44 @@
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
-import InputComponent from "./InputComponent"; // Import your custom component
-import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa"; // Import icons if needed
+import InputComponent from "./InputComponent";
+import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
+import SelectComp from "./Select";
 
 const PersonalDetails = ({ handleNext, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const genderOptions = ["Male", "Female"];
+  const genderOptions = [
+    { key: "Male", label: "Male" },
+    { key: "Female", label: "Female" },
+  ];
   const maritalOptions = [
     { key: false, label: "Unmarried" },
     { key: true, label: "Married" },
   ];
-  const bloodGroupOptions = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
-  const relationOptions = ["Father", "Mother", "Brother", "Sister"];
-
+  const bloodGroupOptions = [
+    { key: "O+", label: "O+" },
+    { key: "O-", label: "O-" },
+    { key: "A+", label: "A+" },
+    { key: "A-", label: "A-" },
+    { key: "B+", label: "B+" },
+    { key: "B-", label: "B-" },
+    { key: "AB+", label: "AB+" },
+    { key: "AB-", label: "AB-" },
+  ];
+  const relationOptions = [
+    { key: "Father", label: "Father" },
+    { key: "Mother", label: "Mother" },
+    { key: "Brother", label: "Brother" },
+    { key: "Sister", label: "Sister" },
+  ];
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    // formState: { errors },
   } = useForm({
     defaultValues: {
       email: "",
@@ -174,7 +191,16 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
               {/* Blood Type */}
               <div>
-                <Controller
+                <SelectComp
+                  control={control}
+                  name="bloodType"
+                  rules={{ required: "Blood Type is required" }}
+                  label="Blood Group"
+                  data={bloodGroupOptions}
+                  valueKey="key"
+                  labelKey="label"
+                />
+                {/* <Controller
                   name="bloodType"
                   control={control}
                   rules={{ required: "Blood Type is required" }}
@@ -199,12 +225,21 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       ))}
                     </Select>
                   )}
-                />
+                /> */}
               </div>
 
               {/* Gender */}
               <div>
-                <Controller
+                <SelectComp
+                  control={control}
+                  name="gender"
+                  rules={{ required: "Gender is required" }}
+                  label="Gender"
+                  data={genderOptions}
+                  valueKey="key"
+                  labelKey="label"
+                />
+                {/* <Controller
                   name="gender"
                   control={control}
                   rules={{ required: "Gender is required" }}
@@ -229,12 +264,21 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       ))}
                     </Select>
                   )}
-                />
+                /> */}
               </div>
 
               {/* Marital Status */}
               <div>
-                <Controller
+                <SelectComp
+                  name="married"
+                  label="Maritial Status"
+                  control={control}
+                  rules={{ required: "Maritial Status is required" }}
+                  data={maritalOptions}
+                  valueKey="key"
+                  labelKey="label"
+                />
+                {/* <Controller
                   name="married"
                   control={control}
                   rules={{ required: "Marital Status is required" }}
@@ -261,7 +305,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       ))}
                     </Select>
                   )}
-                />
+                /> */}
               </div>
             </div>
           </div>
@@ -311,7 +355,16 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
               {/* Guardian Relation */}
               <div>
-                <Controller
+                <SelectComp
+                  name="guardianRelation"
+                  label="Relation"
+                  control={control}
+                  rules={{ required: "Guardian Relation is required" }}
+                  data={relationOptions}
+                  valueKey="key"
+                  labelKey="label"
+                />
+                {/* <Controller
                   name="guardianRelation"
                   control={control}
                   rules={{ required: "Guardian Relation is required" }}
@@ -336,7 +389,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                       ))}
                     </Select>
                   )}
-                />
+                /> */}
               </div>
             </div>
           </div>

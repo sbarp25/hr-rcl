@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { Button, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  ModalBody,
+  ModalContent,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa";
@@ -12,9 +19,11 @@ import { Controller } from "react-hook-form";
 const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
+
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
+  const { onOpen } = useDisclosure();
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
@@ -216,7 +225,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
     // Check if formData.education exists before iterating
     if (formData?.education && Array.isArray(formData.education)) {
-      formData.education.forEach((edu, index) => {
+      formData.education.forEach((edu) => {
         if (edu?.files?.length) {
           edu.files.forEach((file) => formDataToSend.append("files", file));
         }
@@ -266,6 +275,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700">Level</label>
+
         <Select
           variant="bordered"
           className="w-full"
@@ -285,7 +295,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           <h3 className="text-lg font-semibold text-gray-600">
             {degrees[index]} Details
           </h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/**Institution */}
             <div>
               <InputComponent
@@ -499,15 +509,34 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     education &&
                     education[index] &&
                     (education[index]?.file ? (
-                      <a
-                        href={education[index].file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-green-600 underline flex items-center gap-x-2">
-                        <FaRegEye />
-                        View Uploaded Document
-                      </a>
+                      <>
+                        <FaRegEye className="text-green-500 mr-2" />
+                        <div
+                          onClick={onOpen}
+                          className="text-green-500 hover:text-green-700 text-sm">
+                          View Certificate
+                        </div>
+                        <ModalContent>
+                          {() => (
+                            <>
+                              <ModalBody>
+                                <div className="h-96 w-96">
+                                  <img src={education[index].file} />
+                                </div>
+                              </ModalBody>
+                            </>
+                          )}
+                        </ModalContent>
+                      </>
                     ) : (
+                      // <a
+                      //   href={education[index].file}
+                      //   target="_blank"
+                      //   rel="noopener noreferrer"
+                      //   className="text-green-600 underline flex items-center gap-x-2">
+                      //   <FaRegEye />
+                      //   View Uploaded Document
+                      // </a>
                       <div className="text-xs text-red-500">
                         No Links Available
                       </div>

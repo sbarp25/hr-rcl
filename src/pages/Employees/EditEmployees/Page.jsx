@@ -1,0 +1,405 @@
+import { useEffect, useState } from "react";
+import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import GoBack from "../../../components/GoBack";
+import { useForm } from "react-hook-form";
+import UnderlineComponent from "../../../components/underlinecomponent";
+import InputComponent from "../../../components/InputComponent";
+import SelectComp from "../../../components/Select";
+import DatepickerComponent, {
+  formatDate,
+} from "../../../components/DatepickerComponent";
+import ButtonComponent from "../../../components/ButtonComp";
+import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../../lib/axios-Instance";
+import { toast } from "react-toastify";
+const EditEmployees = () => {
+  const { id } = useParams();
+  const { handleSubmit, control, reset } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/" },
+    { label: "Employees", href: "/Employees" },
+    { label: "Edit Employees", href: "" },
+  ];
+  const genderOptions = [
+    { key: "Male", label: "Male" },
+    { key: "Female", label: "Female" },
+  ];
+  const bloodGroupOptions = [
+    { key: "O+", label: "O+" },
+    { key: "O-", label: "O-" },
+    { key: "A+", label: "A+" },
+    { key: "A-", label: "A-" },
+    { key: "B+", label: "B+" },
+    { key: "B-", label: "B-" },
+    { key: "AB+", label: "AB+" },
+    { key: "AB-", label: "AB-" },
+  ];
+
+  const maritalOptions = [
+    { key: false, label: "Unmarried" },
+    { key: true, label: "Married" },
+  ];
+  const relationOptions = [
+    { key: "Father", label: "Father" },
+    { key: "Mother", label: "Mother" },
+    { key: "Brother", label: "Brother" },
+    { key: "Sister", label: "Sister" },
+  ];
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/${id}`
+        );
+        if (response.data.responseCode === "200") {
+          const data = response?.data?.data;
+          reset({
+            fullname: data?.personalDetails?.fullName,
+            age: data?.personalDetails?.age,
+            gender: data?.personalDetails?.gender,
+          });
+
+          console.log(data);
+        } else {
+          toast.error(response?.data?.Message);
+        }
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+        // toast.error("Error fetching employee data.");
+      }
+    };
+    fetchEmployeeData();
+  }, []);
+
+  const onSubmit = async (data) => {
+    const formattedData = {
+      data: {
+        email: data.email,
+        dateOfBirthAd: data.dob,
+        gender: data.gender,
+        married: data.married,
+        bloodGroup: data.bloodType,
+        emergencyNumber: data.emergencyNumber,
+        emergencyName: data.emergencyName,
+        emergencyType: data.emergencyRelation,
+        guardianName: data.guardianName,
+        guardianType: data.guardianRelation,
+        guardianNumber: data.guardianPhone,
+      },
+    };
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/personal/save",
+        formattedData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response?.data?.responseCode === "201") {
+        reset();
+        toast.success(response?.data?.message);
+      } else {
+        toast.error(response.data.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding Personal Data", error);
+      toast.error("Error adding personal Data");
+    }
+    console.log();
+    console.log(data);
+    console.log(formatDate(data.DOB));
+  };
+  return (
+    <div className="px-4 flex flex-col space-y-4">
+      <BreadcrumbsComponent items={breadcrumbItems} />
+      <div className="flex justify-between">
+        <div className="page-title -pl-2">Edit Employee</div>
+        <GoBack />
+      </div>
+      <div className="bg-gray-100 p-6 rounded-3xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 space-y-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <div className="bg-white p-4 rounded-2xl">
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-semibold flex mb-6">
+                <span className="relative">
+                  Basic Information
+                  <UnderlineComponent />
+                </span>
+              </h1>
+
+              <div className="flex gap-1 items-end justify-end text-right">
+                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
+                <div className="flex w-2 h-2 rounded-full bg-black"></div>
+                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* All Basic Inputs */}
+              <InputComponent
+                control={control}
+                label="Fullname"
+                name="fullname"
+                rules={{
+                  required: "Full Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Full name must be at least 3 characters",
+                  },
+                }}
+                variant="bordered"
+              />
+              <InputComponent
+                control={control}
+                label="Age"
+                name="Age"
+                rules={{
+                  required: "Age is required",
+                }}
+                variant="bordered"
+              />
+              <SelectComp
+                name="gender"
+                label="Gender"
+                control={control}
+                rules={{ required: "Gender is required" }}
+                data={genderOptions}
+                valueKey="key"
+                labelKey="label"
+              />
+              <InputComponent
+                control={control}
+                label="Phone"
+                name="phone"
+                rules={{
+                  required: "Phone is required",
+                  minLength: {
+                    value: 10,
+                    message: "Phone number must be 10 digits long",
+                  },
+                  pattern: {
+                    value: /^9[0-9]{9}$/,
+                    message: "Phone must start with 9 and be 10 digits long",
+                  },
+                }}
+                variant="bordered"
+              />
+              <InputComponent
+                name="email"
+                control={control}
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email format",
+                  },
+                }}
+                label="Personal Email"
+                variant="bordered"
+                type="email"
+                inputClassName="w-full rounded-xl"
+                icon={FaEnvelope}
+              />
+              <DatepickerComponent
+                name="DOB"
+                label="Date of birth"
+                control={control}
+                rules={{
+                  required: "Date of Birth is required",
+                  validate: (value) => {
+                    const birthdate = new Date(value);
+                    const today = new Date();
+                    const age = today.getFullYear() - birthdate.getFullYear();
+                    return age > 18 || "You must be 18 or older";
+                  },
+                }}
+              />
+              <SelectComp
+                name="department"
+                label="Department"
+                control={control}
+                rules={{ required: "Department is required" }}
+                data={genderOptions}
+                valueKey="key"
+                labelKey="label"
+              />
+              <SelectComp
+                name="position"
+                label="Position"
+                control={control}
+                rules={{ required: "Position is required" }}
+                data={genderOptions}
+                valueKey="key"
+                labelKey="label"
+              />
+              <SelectComp
+                name="maritialStatus"
+                label="Maritial Status"
+                control={control}
+                rules={{ required: "Maritial Status is required" }}
+                data={maritalOptions}
+                valueKey="key"
+                labelKey="label"
+              />
+              <SelectComp
+                name="bloodGroup"
+                label="Blood Group"
+                control={control}
+                rules={{ required: "Blood Group is required" }}
+                data={bloodGroupOptions}
+                valueKey="key"
+                labelKey="label"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Guardian Details */}
+            <div className="bg-white p-6 rounded-xl  space-y-6">
+              <div className="flex justify-between items-center">
+                <h1 className="text-xl font-semibold flex mb-6">
+                  <span className="relative">
+                    Guardians Details
+                    <UnderlineComponent />
+                  </span>
+                </h1>
+
+                <div className="flex gap-1 items-end justify-end text-right">
+                  <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
+                  <div className="flex w-2 h-2 rounded-full bg-black"></div>
+                  <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InputComponent
+                  name="guardianName"
+                  control={control}
+                  rules={{
+                    required: "Guardian Name is required",
+                    minLength: {
+                      value: 3,
+                      message:
+                        "Guardian Name must be at least 3 characters long",
+                    },
+                  }}
+                  label="Guardian Name"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  icon={FaUser}
+                />
+                <InputComponent
+                  name="guardianPhone"
+                  control={control}
+                  rules={{
+                    required: "Guardian Phone is required",
+                    pattern: {
+                      value: /^9[0-9]{9}$/,
+                      message: "Phone must start with 9 and be 10 digits long",
+                    },
+                  }}
+                  label="Guardian Phone"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  icon={FaPhone}
+                />
+                <SelectComp
+                  name="guardianRelation"
+                  label="Relation"
+                  control={control}
+                  rules={{ required: "Relation is required" }}
+                  data={relationOptions}
+                  valueKey="key"
+                  labelKey="label"
+                />
+              </div>
+            </div>
+
+            {/* Emergency Details */}
+            <div className="bg-white p-6 rounded-xl  space-y-6">
+              <div className="flex justify-between items-center">
+                <h1 className="text-xl font-semibold flex mb-6">
+                  <span className="relative">
+                    Emergency Details
+                    <UnderlineComponent />
+                  </span>
+                </h1>
+
+                <div className="flex gap-1 items-end justify-end text-right">
+                  <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
+                  <div className="flex w-2 h-2 rounded-full bg-black"></div>
+                  <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InputComponent
+                  name="emergencyName"
+                  control={control}
+                  rules={{
+                    required: "Emergency Name is required",
+                    minLength: {
+                      value: 3,
+                      message:
+                        "Emergency Name must be at least 3 characters long",
+                    },
+                  }}
+                  label="Emergency Name"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  icon={FaUser}
+                />
+                <InputComponent
+                  name="emergencyNumber"
+                  control={control}
+                  rules={{
+                    required: "Emergency Number is required",
+                    pattern: {
+                      value: /^9[0-9]{9}$/,
+                      message: "Phone must start with 9 and be 10 digits long",
+                    },
+                  }}
+                  label="Emergency Phone"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  icon={FaPhone}
+                />
+                <InputComponent
+                  name="emergencyRelation"
+                  control={control}
+                  rules={{ required: "Emergency Relation is required" }}
+                  label="Emergency Relationship"
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  icon={FaUser}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-start gap-4 pt-4">
+            <ButtonComponent
+              type="submit"
+              className="bg-amber-400 text-white"
+              content={isLoading ? "Updating..." : "Update"}
+            />
+            <ButtonComponent
+              className="bg-white border-2 border-red-500 text-red-500"
+              content="Cancel"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditEmployees;

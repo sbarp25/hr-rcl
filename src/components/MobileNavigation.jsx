@@ -135,7 +135,7 @@ const MobileNavigation = () => {
 
   return (
     <>
-      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-white shadow-lg">
+      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
         <div className="flex justify-center">
           <button
             onClick={onOpen}

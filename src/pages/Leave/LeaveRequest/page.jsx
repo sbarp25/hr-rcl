@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
+import SelectComp from "../../../components/Select";
 
 const LeaveRequest = () => {
   const {
@@ -35,7 +36,7 @@ const LeaveRequest = () => {
       isHalfDay: false,
     },
   });
-
+  const [teamLead, setTeamLead] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -52,11 +53,24 @@ const LeaveRequest = () => {
     { key: "UNPAID", label: "Unpaid Leave" },
   ];
 
-  const TeamLeader = [
-    { key: "john", label: "John Doe" },
-    { key: "jane", label: "Jane Smith" },
-    { key: "Alex", label: "Alex Johnson" },
-  ];
+  {
+    /**To fetch Team lead */
+  }
+  const fetchTeamLead = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/departments/team-leads"
+      );
+      if (response.data.responseCode === "200") {
+        setTeamLead(response.data.datalist);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fromDate = watch("fromDate");
 
@@ -114,6 +128,9 @@ const LeaveRequest = () => {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    fetchTeamLead();
+  }, []);
   /**Width checking resizing the rows according to the screen size*/
   /**To check The screen width */
   useEffect(() => {
@@ -196,64 +213,28 @@ const LeaveRequest = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12">
             {/* Leave Type */}
             <div>
-              <Controller
+              <SelectComp
                 name="leaveType"
+                label="Leave Type"
                 control={control}
                 rules={{ required: "Type of leave is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Leave Type"
-                    isInvalid={!!errors.leaveType}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {LeaveType.map((leave) => (
-                      <SelectItem key={leave.key} value={leave.key}>
-                        {leave.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={LeaveType}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.leaveType && (
-                <p className="text-danger text-sm">
-                  {errors.leaveType.message}
-                </p>
-              )}
             </div>
 
             {/* Team Leader */}
             <div>
-              <Controller
+              <SelectComp
                 name="teamlead"
+                label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    variant="bordered"
-                    label="Team Leader"
-                    isInvalid={!!errors.teamlead}
-                    className={`rounded-xl`}
-                    selectedKeys={field.value ? [field.value] : []}
-                    onSelectionChange={(keys) =>
-                      field.onChange(Array.from(keys)[0])
-                    }>
-                    {TeamLeader.map((team) => (
-                      <SelectItem key={team.key} value={team.key}>
-                        {team.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                )}
+                data={teamLead}
+                valueKey="key"
+                labelKey="label"
               />
-              {errors.teamlead && (
-                <p className="text-danger text-sm">{errors.teamlead.message}</p>
-              )}
             </div>
 
             {/* From Date */}

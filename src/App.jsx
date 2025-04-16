@@ -31,6 +31,7 @@ import AdvanceSalary from "./pages/Salary/AdvanceSalary/Page.jsx";
 import PrivateRoutes from "./utils/ProtectedRoutes.jsx";
 import AddDepartment from "./pages/MasterData/Deparement/AddDepartment/Page.jsx";
 import EditDepartment from "./pages/MasterData/Deparement/EditDepartment/page.jsx";
+import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -77,6 +78,7 @@ function App() {
               />
               <Route path="/Employees" element={<Employees />} />
               <Route path="/AddEmployees" element={<AddEmployees />} />
+              <Route path="/Employees/Edit/:id" element={<EditEmployees />} />
               <Route path="/master-data/Department" element={<Department />} />
               <Route
                 path="/master-data/Department/Add"

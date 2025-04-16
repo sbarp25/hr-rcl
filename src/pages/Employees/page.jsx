@@ -12,6 +12,7 @@ import {
   TableRow,
   Pagination,
   Button,
+  Switch,
 } from "@nextui-org/react";
 import Loader from "../../components/Loader";
 import Search from "../../components/Search";
@@ -104,6 +105,7 @@ const Employees = () => {
         try {
           if (hasEmployeeEditAccess) {
             toast.success("You have edit access");
+            navigate(`/Employees/Edit/${employeeId}`);
           } else {
             toast.error("Access Denied");
             return;
@@ -144,21 +146,6 @@ const Employees = () => {
     setCurrentPage(page);
   };
 
-  // const handleApplyFilters = (filters) => {
-  //   // If no filters, show all original data
-  //   if (!filters.department && !filters.position) {
-  //     setEmployeesData(originalEmployeeData);
-  //     return;
-  //   }
-  //   const filteredData = originalEmployeeData.filter((dept) => {
-  //     return (
-  //       (!filters.department || dept.name === filters.department) &&
-  //       (!filters.position || dept.positionName === filters.position)
-  //     );
-  //   });
-
-  //   setEmployeesData(filteredData);
-  // };
   const handleApplyFilters = (result) => {
     console.log("Filter result:", result); // Add this debug line
 
@@ -257,6 +244,7 @@ const Employees = () => {
                     <TableCell>{employee.postionName}</TableCell>
                     <TableCell>
                       <div className="flex justify-center gap-4">
+                        {/* <Switch isSelected={isSelected} onValueChange={setIsSelected}> */}
                         <FaRegEye
                           className={`  ${
                             hasEmployeeEditAccess

@@ -12,8 +12,11 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
+import SelectComp from "./Select";
+import { useForm } from "react-hook-form";
 
 const Filter = ({ onApplyFilters, url }) => {
+  const { control } = useForm();
   const [formData, setFormData] = useState({
     department: "",
     position: "",
@@ -33,7 +36,10 @@ const Filter = ({ onApplyFilters, url }) => {
   const handleChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-
+  const sortData = [
+    { key: "descending ", label: "Descending Order" },
+    { key: "ascending ", label: "Ascending Order" },
+  ];
   /**Department Fetch */
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -98,9 +104,11 @@ const Filter = ({ onApplyFilters, url }) => {
       pageIndex: 1,
       pageSize: 10,
       filterCriteria: {
-        departmentId: formData.department || "",
-        positionId: formData.position || "",
+        departmentId: parseInt(formData.department || ""),
+        positionId: parseInt(formData.position || ""),
       },
+      // sortCriteria:{
+      // }
     };
 
     try {
@@ -149,12 +157,14 @@ const Filter = ({ onApplyFilters, url }) => {
             <div className="p-4 space-y-6">
               <div className="flex gap-4">
                 <DatePicker
+                  variant="bordered"
                   isRequired
                   className="w-full"
                   label="From Date"
                   placeholder="Select from date"
                 />
                 <DatePicker
+                  variant="bordered"
                   isRequired
                   className="w-full"
                   label="To Date"
@@ -164,6 +174,7 @@ const Filter = ({ onApplyFilters, url }) => {
 
               <Select
                 label={loadingDepartments ? "Loading..." : "Department"}
+                variant="bordered"
                 value={formData.department}
                 onChange={(e) => handleChange("department", e.target.value)}
                 placeholder="Select a department">
@@ -181,6 +192,7 @@ const Filter = ({ onApplyFilters, url }) => {
               <Select
                 label={loadingPositions ? "Loading..." : "Position"}
                 value={formData.position}
+                variant="bordered"
                 onChange={(e) => handleChange("position", e.target.value)}
                 placeholder="Select a position">
                 {loadingPositions ? (
@@ -193,6 +205,14 @@ const Filter = ({ onApplyFilters, url }) => {
                   ))
                 )}
               </Select>
+              <SelectComp
+                control={control}
+                name="sort"
+                label="Sort"
+                data={sortData}
+                valueKey="key"
+                labelKey="label"
+              />
 
               <div className="flex justify-between">
                 <Button
