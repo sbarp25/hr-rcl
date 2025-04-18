@@ -111,13 +111,13 @@ const Page = () => {
   //   }
   // }, []);
   return (
-    <div className="max-w-[200vh] max-h-[450vh] h-full w-full">
+    <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex justify-between items-center px-8">
-        <div className="flex flex-col space-y-10">
+        <div className="flex flex-col  space-y-10">
           <BreadcrumbsComponent items={breadcrumbItems} />
           <h1 className="page-title">EKYE</h1>
         </div>
-
+        <div className="flex flex-col space-y-4"></div>
         <div className="flex items-center space-x-4">
           <Search onApplySearch={handleApplySearch} />
           <Filter

@@ -193,10 +193,10 @@ const Employees = () => {
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
           <div className="flex justify-between items-center">
-            <h1 className="flex items-center gap-2">
+            <div className="flex items-center page-title -pl-2">
               <IoIosPeople className="text-2xl" />
               <span className="page-title">Employees</span>
-            </h1>
+            </div>
             <div className="flex gap-x-4">
               <div className="flex items-center space-x-4">
                 <Search />

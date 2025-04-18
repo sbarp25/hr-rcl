@@ -96,14 +96,19 @@ const EditDepartment = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
+      // const response = await axiosInstance.post(`/api/v1/departments/get`, {
+      //   id: id,
+      // });
       if (response.data.responseCode === "200") {
-        const data = response.data.datalist;
+        const data = response.data.data;
         reset({
-          title: data?.personalDetails?.departmentName,
-          description: data?.personalDetails?.description,
-          Associateteamlead: data?.personalDetails?.AssociateteamLead,
-          teamLead: data?.personalDetails?.teamLead,
+          title: data?.name,
+          description: data?.description,
+          Associateteamlead: data?.associateTeamLeadName,
+          teamLead: data?.teamLeadName,
         });
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -128,8 +133,8 @@ const EditDepartment = () => {
       data: {
         departmentName: data.title,
         description: data.description,
-        AssociateteamLead: data.Associateteamlead,
-        teamLead: data.teamLead,
+        AssociateteamLead: parseFloat(data.Associateteamlead),
+        teamLead: parseFloat(data.teamlead),
       },
     };
     setIsLoading(true);
@@ -158,7 +163,14 @@ const EditDepartment = () => {
       setIsLoading(false);
     }
   };
-
+  const teamLeadid = teamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
+  const associateteamLeadid = associateTeamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -217,7 +229,7 @@ const EditDepartment = () => {
                 label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                data={teamLead}
+                data={teamLeadid}
                 valueKey="key"
                 labelKey="label"
               />
@@ -230,7 +242,7 @@ const EditDepartment = () => {
                 label="Associate Team Leader"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                data={associateTeamLead}
+                data={associateteamLeadid}
                 valueKey="key"
                 labelKey="label"
               />

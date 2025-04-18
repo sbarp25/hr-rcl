@@ -90,42 +90,42 @@ const Position = () => {
     setPositionData(filteredData);
   };
   /** start of API calls to Add Position */
-  const handleAddPosition = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const newPosition = {
-      data: {
-        positionName: positionName,
-        description: description,
-      },
-    };
+  // const handleAddPosition = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  //   const newPosition = {
+  //     data: {
+  //       positionName: positionName,
+  //       description: description,
+  //     },
+  //   };
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/positions/save",
-        newPosition,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.responseCode === "201") {
-        toast.success("Position added successfully!");
+  //   try {
+  //     const response = await axiosInstance.post(
+  //       "/api/v1/positions/save",
+  //       newPosition,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     if (response.data.responseCode === "201") {
+  //       toast.success("Position added successfully!");
 
-        // Reset form fields
-        setPositionName("");
-        setDescription("");
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error adding position:", error);
-      toast.error("Error adding position.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //       // Reset form fields
+  //       setPositionName("");
+  //       setDescription("");
+  //     } else {
+  //       toast.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding position:", error);
+  //     toast.error("Error adding position.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const menu = LocalStorageUtil.getItem("menu");
 
@@ -157,11 +157,12 @@ const Position = () => {
       // Start Of Edit Operation
       case "edit":
         if (hasPositionEditAccess) {
-          console.log(`Editing position ID: ${position.id}`);
-          setShowEditForm(true);
-          setPositionName(position.name || "");
-          setDescription(position.description || "");
-          setEditingPositionId(position.id);
+          navigate(`/master-data/Position/Edit/${position.id}`);
+          // console.log(`Editing position ID: ${position.id}`);
+          // setShowEditForm(true);
+          // setPositionName(position.name || "");
+          // setDescription(position.description || "");
+          // setEditingPositionId(position.id);
         } else {
           toast.error("Access denied");
         }
@@ -263,53 +264,49 @@ const Position = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
-
+  const navigateAdd = () => {
+    navigate("/master-data/AddPosition");
+  };
   return (
     <>
       {isLoading && (
         <Loader message="Please wait while the work is being done" />
       )}
 
-      <div className="p-4 md:p-8">
+      <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <div className=" flex justify-between">
-            <div className=" flex flex-col space-y-4">
-              <BreadcrumbsComponent items={breadcrumbItems} />
-              <h2 className="page-title ">
-                <div className="flex items-center gap-2 ">
-                  <BiData />
-                  Position
-                </div>
-              </h2>
-            </div>
+        <div className="flex flex-col space-y-4">
+          <div className="text-sm">
+            <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
-          <div className="flex justify-center gap-4">
-            <Search />
-            <Filter
-              onApplyFilters={handleApplyFilters}
-              url="/api/v1/positions/list"
-            />
-            <Button
-              isDisabled={!hasPositioncreateaccess}
-              className="button bg-black tracking-normal"
-              onPress={() => setShowAddForm(!showAddForm)}>
-              {showAddForm ? (
-                <>
-                  <IoReturnDownBack className="text-white text-base" />
-                  <span className="text-white font-normal text-xs">Return</span>
-                </>
-              ) : (
+          <div className="flex justify-between items-center">
+            <div className="flex items-center page-title -pl-2">
+              <BiData />
+              Position
+            </div>
+            <div className="flex gap-x-4">
+              <div className="flex items-center space-x-4">
+                <Search />
+                <Filter
+                  onApplyFilters={handleApplyFilters}
+                  url="/api/v1/departments/list"
+                />
+              </div>
+              <Button
+                isDisabled={!hasPositioncreateaccess}
+                className="button bg-black tracking-normal"
+                onPress={navigateAdd}>
                 <>
                   <IoIosAddCircleOutline className="text-white text-base" />
                   <span className="text-white font-normal text-xs">
                     Add Position
                   </span>
                 </>
-              )}
-            </Button>
+              </Button>
+            </div>
           </div>
         </div>
+
         {/**  Edit Postion form */}
         {showEditForm && (
           <form
@@ -355,7 +352,7 @@ const Position = () => {
           </form>
         )}
         {/* Add Position Form */}
-        {showAddForm ? (
+        {/* {showAddForm ? (
           <form
             className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
             onSubmit={handleAddPosition}>
@@ -363,7 +360,6 @@ const Position = () => {
               Add New Position
             </h2>
             <div className="flex flex-col md:flex-row gap-6">
-              {/* Input Fields */}
               <div className="flex flex-col flex-1 gap-4">
                 <input
                   type="text"
@@ -381,7 +377,6 @@ const Position = () => {
                   required></textarea>
               </div>
 
-              {/* Submit Button */}
               <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
                 <button
                   type="submit"
@@ -391,9 +386,10 @@ const Position = () => {
               </div>
             </div>
           </form>
-        ) : (
-          /* Table Section */
-          <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
+        ) : ( */}
+        {/* Table Section */}
+        <div className="bg-white rounded-lg p-2">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
             <Table aria-label="Position Table " className="">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -432,30 +428,31 @@ const Position = () => {
               </TableBody>
             </Table>
           </div>
-        )}
-        <div className="flex mt-4 justify-between">
-          <div className="flex text-xs">
-            <span>Showing:</span>
-            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
-            <span>of</span>
-            <span>{totalRecords}</span>
-          </div>
-          <Pagination
-            showControls
-            total={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-          />
-          <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
-            <DropDownComp
-              items={dropdownItems}
-              selectedItem={ekyeDashboardDataPerPage}
-              onChange={(value) => {
-                setEkyeDashboardDataPerPage(value);
-                setCurrentPage(1); // Reset to page 1
-              }}
+          {/* )} */}
+          <div className="flex mt-4 justify-between">
+            <div className="flex text-xs">
+              <span>Showing:</span>
+              <span className="font-bold">{ekyeDashboardDataPerPage}</span>
+              <span>of</span>
+              <span>{totalRecords}</span>
+            </div>
+            <Pagination
+              showControls
+              total={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
             />
+            <div className="flex justify-center items-center">
+              <span className="text-xs">Lines Per Page :</span>
+              <DropDownComp
+                items={dropdownItems}
+                selectedItem={ekyeDashboardDataPerPage}
+                onChange={(value) => {
+                  setEkyeDashboardDataPerPage(value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -70,7 +70,7 @@ const DatepickerComponent = ({
               variant={variant}
               disabled={disabled}
             />
-            {error && <p className="text-red-500 text-sm">{error.message}</p>}
+            {error && <p className="text-danger text-sm">{error.message}</p>}
           </>
         )}
       />

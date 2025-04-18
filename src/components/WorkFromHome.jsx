@@ -69,13 +69,13 @@ const WorkFromHome = () => {
     },
   ];
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-auto">
       <Table
         bordered
-        aria-label="Dyanamic Attendance Table"
+        aria-label="Work From Home Table"
         isHeaderSticky
-        className="max-h-[30vh] overflow-auto  w-[40vw] ">
-        <TableHeader className="Capitalize ">
+        className="min-w-full h-auto max-h-[60vh] overflow-auto">
+        <TableHeader className="capitalize">
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>
           <TableColumn>Name</TableColumn>
@@ -85,14 +85,12 @@ const WorkFromHome = () => {
         </TableHeader>
         <TableBody>
           {WorkfromHomeDate.map((data) => (
-            <TableRow
-              key={data.Sn}
-              className="h-20 justify-center items-center border-b-2 border-gray-300">
+            <TableRow key={data.Sn} className="h-20 overflow-y-auto">
               <TableCell>{data.Sn}</TableCell>
               <TableCell>{data.RCLID}</TableCell>
               <TableCell>{data.Name}</TableCell>
               <TableCell title={data.Email}>
-                {truncateText(data.Email, 7)}
+                {truncateText(data.Email, 12)}
               </TableCell>
               <TableCell>{data.Department}</TableCell>
               <TableCell>{data.ApprovedBy}</TableCell>

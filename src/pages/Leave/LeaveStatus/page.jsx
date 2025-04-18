@@ -64,21 +64,25 @@ const LeaveStatus = () => {
   const hasLeaveApproveAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 4)
   );
-  // const handleClick = (event) => {
-  //   event.preventDefault();
-  // };
+
   return (
     <>
       <div className="container space-y-4">
         {/**Page Section */}
-        <div className="space-y-4">
-          <BreadcrumbsComponent items={breadcrumbItems} />
-          <h1 className="page-title">Leave Status</h1>
+        <div className="flex flex-col space-y-4">
+          <div className="text-sm">
+            <BreadcrumbsComponent items={breadcrumbItems} />
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center page-title -pl-2">
+              <h1 className="page-title">Leave Status</h1>
+            </div>
+          </div>
         </div>
 
         {/**Table Section */}
         <div className="bg-white rounded-lg p-2">
-          <div className="max-h-[78vh] overflow-auto mt-4 rounded-3xl max-w-[100%] ">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
             <Table bordered aria-label="Table of Leave">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -109,13 +113,9 @@ const LeaveStatus = () => {
                       <Link
                         key={data.leaveId}
                         to={`/Leave/apprej/${data.leaveId}`}
-                        // onClick={handleClick}
                         className={`${
                           hasLeaveApproveAccess ? "" : "pointer-events-none"
-                        }`}
-                        // {hasEditAccess ?{``}}
-                        // style={{ pointerEvents: {`${none}`} }}
-                      >
+                        }`}>
                         <div
                           className={`${
                             data?.leaveStatus === "APPROVED"

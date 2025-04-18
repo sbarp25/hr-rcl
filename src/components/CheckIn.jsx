@@ -103,7 +103,7 @@ const CheckIn = () => {
   };
 
   return (
-    <div className="flex justify-end mb-2">
+    <div className="flex justify-end ">
       {isCheckedIn ? (
         <MdRadioButtonChecked className="text-green-700 h-8 w-8 md:h-10 md:w-10" />
       ) : (

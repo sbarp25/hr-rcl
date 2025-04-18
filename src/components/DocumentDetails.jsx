@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
 import {
   Button,
+  Modal,
   ModalBody,
   ModalContent,
   useDisclosure,
@@ -217,23 +218,32 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     return (
       <div className="mt-2 flex items-center">
         <FaRegEye className="text-green-500 mr-2" />
-        <div
+        <p
           onClick={onOpen}
           className="text-green-500 hover:text-green-700 text-sm">
           View {label}
-        </div>
+        </p>
         {/* <Button onPress={onOpen}>Open Modal</Button> */}
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <div className="h-96 w-96">
-                  <img src={url} />
-                </div>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
+        <Modal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          // size="5xl"
+          // placement="bottom"
+          //  backdrop="blur">
+          isDismissable={true}
+          isKeyboardDismissDisabled={false}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalBody>
+                  <div className="h-full w-full">
+                    <img src={url} />
+                  </div>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         {/* <a
           href={url}
           target="_blank"

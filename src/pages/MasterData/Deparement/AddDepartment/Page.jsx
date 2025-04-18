@@ -65,7 +65,7 @@ const AddDepartment = () => {
   const onSubmit = async (data) => {
     const AddDepartment = {
       data: {
-        departmentName: data?.leaveType,
+        departmentName: data?.title,
         description: data?.description,
         teamLeadId: data?.teamlead,
         associateTeamLeadId: data?.Associateteamlead,
@@ -91,10 +91,10 @@ const AddDepartment = () => {
         }
       );
 
-      if (response?.data?.responseCode === "200") {
-        reset();
+      if (response?.data.responseCode === "201") {
         navigate("/");
         toast.success(response?.data?.message);
+        reset();
       } else {
         toast.error(response?.data?.message);
       }
@@ -133,6 +133,7 @@ const AddDepartment = () => {
       );
       if (response.data.responseCode === "200") {
         setAssociateTeamLead(response.data.datalist);
+        console.log(response.data.datalist);
       }
     } catch (error) {
       console.log(error);
@@ -150,6 +151,14 @@ const AddDepartment = () => {
     { label: "MasterData", href: "" },
     { label: "Department", href: "/master-data/Department" },
   ];
+  const teamLeadid = teamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
+  const associateteamLeadid = associateTeamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -207,7 +216,7 @@ const AddDepartment = () => {
                 label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                data={teamLead}
+                data={teamLeadid}
                 valueKey="key"
                 labelKey="label"
               />
@@ -220,7 +229,7 @@ const AddDepartment = () => {
                 label="Associate Team Leader"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                data={associateTeamLead}
+                data={associateteamLeadid}
                 valueKey="key"
                 labelKey="label"
               />

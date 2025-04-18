@@ -1,39 +1,77 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LocalStorageUtil from "../utils/LocalStorageUtil"; // Adjust the path as needed
 
 const LocationComponent = () => {
+  const [accuracy, setAccuracy] = useState(null);
+
   useEffect(() => {
     // Function to capture and store location data
     const storeLocationData = (position) => {
-      const { latitude, longitude } = position.coords;
+      const { latitude, longitude, accuracy } = position.coords;
       LocalStorageUtil.setItem("latitude", latitude); // Use utility to set data
       LocalStorageUtil.setItem("longitude", longitude);
+      LocalStorageUtil.setItem("locationAccuracy", accuracy);
+      setAccuracy(accuracy);
+
+      console.log(
+        `Location updated: ${latitude}, ${longitude} (±${accuracy.toFixed(1)}m)`
+      );
     };
 
     // Function to handle location errors
     const handleError = (error) => {
       console.error("Error getting location:", error);
+      LocalStorageUtil.setItem("locationError", error.message);
     };
 
-    // Get the current position and store it
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(storeLocationData, handleError, {
-        enableHighAccuracy: true, // Get the most precise location possible
-        timeout: 10000, // Timeout after 10 seconds
-        maximumAge: 0, // Always fetch the latest location data
-      });
-    } else {
+    const options = {
+      enableHighAccuracy: true, // Get the most precise location possible
+      timeout: 15000, // Increased timeout to 15 seconds to allow GPS lock
+      maximumAge: 0, // Always fetch the latest location data
+    };
+
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser.");
+      LocalStorageUtil.setItem("locationError", "Geolocation not supported");
+      return;
     }
 
-    // Cleanup function to remove location data on component unmount
-    // return () => {
-    //   LocalStorageUtil.removeItem("latitude"); // Use utility to remove data
-    //   LocalStorageUtil.removeItem("longitude");
-    // };
+    // Use watchPosition instead of getCurrentPosition for continuous updates
+    // This will help improve accuracy over time as the device gets better fixes
+    const watchId = navigator.geolocation.watchPosition(
+      storeLocationData,
+      handleError,
+      options
+    );
+
+    // Set initial position immediately as well
+    navigator.geolocation.getCurrentPosition(
+      storeLocationData,
+      handleError,
+      options
+    );
+
+    // Cleanup function to clear the watch when component unmounts
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+      // Removed the cleanup that deletes the location data
+      // This allows the location to persist after component unmount
+    };
   }, []);
 
-  return <div></div>;
+  return (
+    <div></div>
+    // <div className="hidden">
+    //   {/* Hidden component that handles location tracking */}
+    //   {accuracy !== null && accuracy > 50 && (
+    //     <div className="sr-only" aria-live="polite">
+    //       Location accuracy is currently {accuracy.toFixed(1)} meters. Trying to
+    //       improve accuracy...
+    //     </div>
+    //   )}
+    // </div>
+  );
 };
 
 export default LocationComponent;

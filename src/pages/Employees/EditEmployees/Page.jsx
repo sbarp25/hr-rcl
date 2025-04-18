@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import GoBack from "../../../components/GoBack";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import UnderlineComponent from "../../../components/underlinecomponent";
 import InputComponent from "../../../components/InputComponent";
 import SelectComp from "../../../components/Select";
@@ -10,13 +10,17 @@ import DatepickerComponent, {
 } from "../../../components/DatepickerComponent";
 import ButtonComponent from "../../../components/ButtonComp";
 import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
+import { Switch } from "@nextui-org/react";
 const EditEmployees = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { handleSubmit, control, reset } = useForm();
   const [isLoading, setIsLoading] = useState(false);
+  const [departmentsData, setDepartmentsData] = useState([]);
+  const [positionData, setPositionData] = useState([]);
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
@@ -47,79 +51,124 @@ const EditEmployees = () => {
     { key: "Brother", label: "Brother" },
     { key: "Sister", label: "Sister" },
   ];
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/${id}`
-        );
-        if (response.data.responseCode === "200") {
-          const data = response?.data?.data;
-          reset({
-            fullname: data?.personalDetails?.fullName,
-            age: data?.personalDetails?.age,
-            gender: data?.personalDetails?.gender,
-          });
-
-          console.log(data);
-        } else {
-          toast.error(response?.data?.Message);
-        }
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-        // toast.error("Error fetching employee data.");
-      }
-    };
-    fetchEmployeeData();
-  }, []);
-
-  const onSubmit = async (data) => {
-    const formattedData = {
-      data: {
-        email: data.email,
-        dateOfBirthAd: data.dob,
-        gender: data.gender,
-        married: data.married,
-        bloodGroup: data.bloodType,
-        emergencyNumber: data.emergencyNumber,
-        emergencyName: data.emergencyName,
-        emergencyType: data.emergencyRelation,
-        guardianName: data.guardianName,
-        guardianType: data.guardianRelation,
-        guardianNumber: data.guardianPhone,
-      },
-    };
+  /**Fetch Departments */
+  const fetchDepartments = async () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        "/api/v1/personal/save",
-        formattedData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        "/api/v1/departments/get/all",
+        {}
       );
-      if (response?.data?.responseCode === "201") {
-        reset();
-        toast.success(response?.data?.message);
+      if (response.data.responseCode === "200") {
+        setDepartmentsData(response?.data?.datalist);
       } else {
-        toast.error(response.data.data.message);
+        toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error adding Personal Data", error);
-      toast.error("Error adding personal Data");
+      console.error("Error fetching departments:", error);
+      toast.error("Error fetching departments.", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+  /**Fetch Employee Data */
+  const fetchEmployeeData = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/admin/singleCompleteEkyeUser/rclId/${id}`
+      );
+      if (response.data.responseCode === "200") {
+        const data = response?.data?.data;
+        reset({
+          fullname: data?.personalDetails?.fullName,
+          age: data?.personalDetails?.age,
+          gender: data?.personalDetails?.gender,
+        });
+
+        console.log(data);
+      } else {
+        toast.error(response?.data?.Message);
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+      // toast.error("Error fetching employee data.");
+    }
+  };
+  /**Fetch Position */
+  const fetchPositions = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/positions/get/all");
+      if (response.data.responseCode === "200") {
+        setPositionData(response?.data?.datalist);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching positions:", error);
+      toast.error("Error fetching positions.", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeData();
+    fetchDepartments();
+    fetchPositions();
+  }, []);
+
+  const onSubmit = async (data) => {
+    // const formattedData = {
+    //   data: {
+    //     email: data.email,
+    //     dateOfBirthAd: data.dob,
+    //     gender: data.gender,
+    //     married: data.married,
+    //     bloodGroup: data.bloodType,
+    //     emergencyNumber: data.emergencyNumber,
+    //     emergencyName: data.emergencyName,
+    //     emergencyType: data.emergencyRelation,
+    //     guardianName: data.guardianName,
+    //     guardianType: data.guardianRelation,
+    //     guardianNumber: data.guardianPhone,
+    //   },
+    // };
+    // setIsLoading(true);
+    // try {
+    //   const response = await axiosInstance.post(
+    //     "/api/v1/personal/save",
+    //     formattedData,
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //     }
+    //   );
+    //   if (response?.data?.responseCode === "201") {
+    //     reset();
+    //     toast.success(response?.data?.message);
+    //   } else {
+    //     toast.error(response.data.data.message);
+    //   }
+    // } catch (error) {
+    //   console.error("Error adding Personal Data", error);
+    //   toast.error("Error adding personal Data");
+    // }
     console.log();
     console.log(data);
     console.log(formatDate(data.DOB));
+  };
+
+  const onCancel = () => {
+    navigate("/Employees");
   };
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="flex justify-between">
         <div className="page-title -pl-2">Edit Employee</div>
-        <GoBack />
+        {/* <GoBack /> */}
       </div>
       <div className="bg-gray-100 p-6 rounded-3xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 space-y-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -223,7 +272,8 @@ const EditEmployees = () => {
                 label="Department"
                 control={control}
                 rules={{ required: "Department is required" }}
-                data={genderOptions}
+                data={departmentsData}
+                // data={maritalOptions}
                 valueKey="key"
                 labelKey="label"
               />
@@ -232,7 +282,8 @@ const EditEmployees = () => {
                 label="Position"
                 control={control}
                 rules={{ required: "Position is required" }}
-                data={genderOptions}
+                // data={maritalOptions}
+                data={positionData}
                 valueKey="key"
                 labelKey="label"
               />
@@ -383,7 +434,18 @@ const EditEmployees = () => {
               </div>
             </div>
           </div>
-
+          <div>
+            <Controller
+              name="isActive"
+              defaultValue={true}
+              control={control}
+              render={({ field }) => (
+                <Switch isSelected={field.value} onValueChange={field.onChange}>
+                  Is Employee Active
+                </Switch>
+              )}
+            />
+          </div>
           {/* Buttons */}
           <div className="flex justify-start gap-4 pt-4">
             <ButtonComponent
@@ -392,6 +454,7 @@ const EditEmployees = () => {
               content={isLoading ? "Updating..." : "Update"}
             />
             <ButtonComponent
+              onPress={onCancel}
               className="bg-white border-2 border-red-500 text-red-500"
               content="Cancel"
             />

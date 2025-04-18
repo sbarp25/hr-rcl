@@ -9,6 +9,7 @@ import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
+import FormStepper from "../../components/FormStepIndicator.jsx";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -124,7 +125,12 @@ const Ekye = () => {
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
-
+  const steps = [
+    "Personal Info",
+    "Address Details",
+    "Document Details",
+    "Educational Details",
+  ];
   return (
     <>
       {isLoading && <Loader />}
@@ -137,58 +143,7 @@ const Ekye = () => {
         </div>
 
         {/* Stepper */}
-        <div className="rounded-md relative">
-          <div className="mb-6 flex flex-wrap sm:flex-nowrap justify-center sm:justify-between items-center gap-4 relative">
-            {[
-              "Personal Info",
-              "Address Details",
-              "Document Details",
-              "Educational Details",
-            ].map((label, index) => {
-              const stepIndex = index;
-              return (
-                <div
-                  key={label}
-                  className={`flex-1 flex flex-col items-center relative cursor-pointer ${
-                    step >= stepIndex ? "text-white" : "text-bgprimaryhover"
-                  }`}>
-                  {/* Step Icon */}
-                  <div className="relative flex items-center">
-                    <div className="relative">
-                      <img
-                        src={step >= stepIndex ? After : Before}
-                        alt={
-                          step >= stepIndex
-                            ? "after complete"
-                            : "before complete"
-                        }
-                        className="w-10 h-10 sm:w-14 sm:h-14"
-                      />
-                      <span className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm font-semibold">
-                        {index + 1}
-                      </span>
-                    </div>
-                    {/* Line */}
-                    {stepIndex < 3 && (
-                      <div
-                        className={`hidden sm:block absolute top-1/2 transform -translate-y-1/2 h-1 rounded-lg ${
-                          step > stepIndex ? "bg-sky-900" : "bg-gray-300"
-                        }`}
-                        style={{
-                          left: "100%",
-                          width: "calc(750% + 1rem)",
-                        }}></div>
-                    )}
-                  </div>
-                  {/* Step Label */}
-                  <div className="mt-2 text-[0.75rem] sm:text-sm text-center text-bgprimaryhover">
-                    {label}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <FormStepper steps={steps} currentStep={step} />
 
         {/* Form Container */}
         <ValidationComponent>

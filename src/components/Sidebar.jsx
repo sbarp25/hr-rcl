@@ -84,12 +84,7 @@ const Sidebar = () => {
       to: "/Employees",
       view: seeEmployee,
     },
-    // {
-    //   icon: IoIosPeople,
-    //   label: "Department",
-    //   to: "/master-data/Department",
-    //   view: seeDepartment,
-    // },
+
     {
       icon: BiData,
       label: "Master Data",

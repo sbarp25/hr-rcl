@@ -15,7 +15,6 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import DropDownComp from "../../../components/Dropdown";
 import Filter from "../../../components/Filter";
@@ -263,106 +262,107 @@ const Department = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
-
+  const gotoAdd = () => {
+    if (hasDepartmentCreateAccess) {
+      navigate("/master-data/Department/Add");
+    } else {
+      toast.error("You don't have Edit Access");
+    }
+  };
   return (
     <>
-      <ValidationComponent>
-        {isLoading && (
-          <Loader message="Please wait while the work is being done" />
-        )}
-        <div className="p-4 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div className=" flex justify-between">
-              <div className=" flex flex-col space-y-4">
-                <BreadcrumbsComponent items={breadcrumbItems} />
-
-                <h2 className="page-title ">
-                  <div className="flex items-center gap-2">
-                    <BiData />
-                    Department
-                  </div>
-                </h2>
-              </div>
+      {isLoading && (
+        <Loader message="Please wait while the work is being done" />
+      )}
+      <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
+        {/**Header Section */}
+        <div className="flex flex-col space-y-4">
+          <div className="text-sm">
+            <BreadcrumbsComponent items={breadcrumbItems} />
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center page-title -pl-2">
+              <BiData />
+              Department
             </div>
-            <div className="flex justify-center gap-4">
-              <Search />
-              <Filter
-                onApplyFilters={handleApplyFilters}
-                url="/api/v1/departments/list"
-              />
-
-              <Button className="flex bg-black text-white">
-                <Link
+            <div className="flex gap-x-4">
+              <div className="flex items-center space-x-4">
+                <Search />
+                <Filter
+                  onApplyFilters={handleApplyFilters}
+                  url="/api/v1/departments/list"
+                />
+              </div>
+              <Button className="flex bg-black text-white" onPress={gotoAdd}>
+                {/* <Link
                   to="/master-data/Department/Add"
                   className={`${
                     hasDepartmentCreateAccess ? "" : "pointer-events-none"
-                  }`}>
-                  <div className="flex justify-center items-center gap-2">
-                    <IoIosAddCircleOutline className="text-white text-xl" />
-                    <span className="text-white font-normal">
-                      Add Department
-                    </span>
-                  </div>
-                </Link>
+                  }`}> */}
+                <div className="flex justify-center items-center gap-2">
+                  <IoIosAddCircleOutline className="text-white text-xl" />
+                  <span className="text-white font-normal">Add Department</span>
+                </div>
+                {/* </Link> */}
               </Button>
             </div>
           </div>
-          <div className="bg-white rounded-lg p-2">
-            <div className="bg-white shadow-md rounded-lg overflow-y-auto max-h-[74vh]">
-              <Table aria-label="Department Table ">
-                <TableHeader>
-                  <TableColumn className="text-lg">S.N</TableColumn>
-                  <TableColumn className="text-lg">Department Name</TableColumn>
-                  <TableColumn className="text-lg">Description</TableColumn>
-                  <TableColumn className="text-lg">Team Lead</TableColumn>
-                  <TableColumn className="text-lg">
-                    Associate Team Lead
-                  </TableColumn>
-                  <TableColumn className="text-lg">User Action</TableColumn>
-                </TableHeader>
-                <TableBody>
-                  {departmentsData.map((department, index) => (
-                    <TableRow
-                      key={department.rclId}
-                      className="h-20 justify-center items-center border-b-2 border-gray-300">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{department.name}</TableCell>
-                      <TableCell>
-                        {" "}
-                        <Tooltip content={department.description}>
-                          {truncateText(department.description, 30)}
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>{department.teamLeadName}</TableCell>
-                      <TableCell>{department.associateTeamLeadId}</TableCell>
-                      <TableCell>
-                        <div className="flex">
-                          <HiPencilSquare
-                            className={`${
-                              hasDepartmentEditAccess
-                                ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                : "text-xl mr-2"
-                            }`}
-                            title="Edit"
-                            onClick={() => handleAction("edit", department)}
-                          />
-                          <MdDelete
-                            className={`${
-                              hasDepartmentDeleteAccess
-                                ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                : "text-xl ml-2"
-                            }`}
-                            title="Delete"
-                            onClick={() => handleAction("delete", department)}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-2">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <Table bordered aria-label="Department Table">
+              <TableHeader>
+                <TableColumn>S.N</TableColumn>
+                <TableColumn>Department Name</TableColumn>
+                <TableColumn>Description</TableColumn>
+                <TableColumn>Team Lead</TableColumn>
+                <TableColumn>Associate Team Lead</TableColumn>
+                <TableColumn>User Action</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {departmentsData.map((department, index) => (
+                  <TableRow
+                    key={department.rclId}
+                    className="h-20 justify-center items-center border-b-2 border-gray-300">
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{department.name}</TableCell>
+                    <TableCell>
+                      {" "}
+                      <Tooltip content={department.description}>
+                        {truncateText(department.description, 30)}
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>{department.teamLeadName}</TableCell>
+                    <TableCell>{department.associateTeamLeadName}</TableCell>
+                    <TableCell>
+                      <div className="flex">
+                        <HiPencilSquare
+                          className={`${
+                            hasDepartmentEditAccess
+                              ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                              : "text-xl mr-2"
+                          }`}
+                          title="Edit"
+                          onClick={() => handleAction("edit", department)}
+                        />
+                        <MdDelete
+                          className={`${
+                            hasDepartmentDeleteAccess
+                              ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                              : "text-xl ml-2"
+                          }`}
+                          title="Delete"
+                          onClick={() => handleAction("delete", department)}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
+
           <div className="mt-4 flex justify-between">
             <div className="text-xs">
               <span>
@@ -384,7 +384,7 @@ const Department = () => {
             </div>
           </div>
         </div>
-      </ValidationComponent>
+      </div>
     </>
   );
 };

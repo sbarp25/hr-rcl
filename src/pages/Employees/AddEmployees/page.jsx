@@ -192,10 +192,10 @@ const AddEmployeeForm = () => {
           <BreadcrumbsComponent items={breadcrumbItems} />
         </div>
       </div>
-      <h1 className=" flex items-center text-2xl font-semibold text-gray-800">
+      <div className="page-title flex items-center -pl-2">
         <IoIosPeople />
         Add Employee
-      </h1>
+      </div>
       <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8">
           <div className="flex flex-col space-y-8 gap-4 w-full">

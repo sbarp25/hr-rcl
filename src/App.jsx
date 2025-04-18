@@ -32,6 +32,8 @@ import PrivateRoutes from "./utils/ProtectedRoutes.jsx";
 import AddDepartment from "./pages/MasterData/Deparement/AddDepartment/Page.jsx";
 import EditDepartment from "./pages/MasterData/Deparement/EditDepartment/page.jsx";
 import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
+import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
+import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -89,6 +91,14 @@ function App() {
                 element={<EditDepartment />}
               />
               <Route path="/master-data/Position" element={<Position />} />
+              <Route
+                path="/master-data/AddPosition"
+                element={<AddPosition />}
+              />
+              <Route
+                path="/master-data/Position/Edit/:id"
+                element={<EditPosition />}
+              />
               <Route path="/master-data/Roles" element={<Roles />} />
               <Route path="/HandBook" element={<HandBook />} />
               <Route path="/Notice" element={<Notices />} />

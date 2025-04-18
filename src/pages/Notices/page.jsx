@@ -186,22 +186,24 @@ const Page = () => {
   return (
     <div className="container">
       {/* Notice Heading section */}
-      <div className="page-title">
-        <div className="flex flex-col">
+      <div className="flex flex-col space-y-4">
+        <div className="text-sm">
           <BreadcrumbsComponent items={breadcrumbItems} />
-          <div className="flex flex-row">
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center page-title -pl-2">
             <MdArticle />
             <p className="-mt-1">Notices</p>
           </div>
         </div>
       </div>
-      <div className="bg-white max-h-[90vh]  rounded-md ">
-        <div className="p-4 max-h-[40rem] overflow-y-auto">
+
+      <div className="bg-white max-h-[85vh]  rounded-md ">
+        <div className="p-4 max-h-[34rem] overflow-y-auto">
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
-              className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4"
-            >
+              className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
               <div className="flex-shrink-0 w-32 h-64 border-r-2 border-red-600 flex items-center justify-center">
                 <p className="text-xl font-bold text-gray-900 mb-1 leading-10">
                   {notice.date}
@@ -220,8 +222,7 @@ const Page = () => {
                             href={attachment.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline"
-                          >
+                            className="text-blue-500 hover:underline">
                             {attachment.name}
                           </a>
                         </li>
@@ -235,8 +236,7 @@ const Page = () => {
                     {notice.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs"
-                      >
+                        className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
                         {tag}
                       </span>
                     ))}
@@ -250,8 +250,7 @@ const Page = () => {
                         : notice.priority === "Medium"
                         ? "bg-yellow-500 text-white"
                         : "bg-green-500 text-white"
-                    }`}
-                  >
+                    }`}>
                     {notice.priority} Priority
                   </span>
                 </div>

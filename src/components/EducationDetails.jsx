@@ -3,6 +3,8 @@ import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import {
   Button,
+  Checkbox,
+  Modal,
   ModalBody,
   ModalContent,
   Select,
@@ -23,7 +25,7 @@ const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
-  const { onOpen } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
@@ -516,17 +518,26 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                           className="text-green-500 hover:text-green-700 text-sm">
                           View Certificate
                         </div>
-                        <ModalContent>
-                          {() => (
-                            <>
-                              <ModalBody>
-                                <div className="h-96 w-96">
-                                  <img src={education[index].file} />
-                                </div>
-                              </ModalBody>
-                            </>
-                          )}
-                        </ModalContent>
+                        <Modal
+                          isOpen={isOpen}
+                          onOpenChange={onOpenChange}
+                          // size="full"
+                          // placement="bottom"
+                          //  backdrop="blur">
+                          isDismissable={true}
+                          isKeyboardDismissDisabled={false}>
+                          <ModalContent>
+                            {() => (
+                              <>
+                                <ModalBody>
+                                  <div className="h-96 w-96">
+                                    <img src={education[index].file} />
+                                  </div>
+                                </ModalBody>
+                              </>
+                            )}
+                          </ModalContent>
+                        </Modal>
                       </>
                     ) : (
                       // <a
@@ -549,7 +560,20 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ))}
 
       <div className="flex flex-col gap-3">
-        <label className="flex items-center gap-2">
+        <Checkbox
+          checked={isCurrentlyStudying}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setIsCurrentlyStudying(checked);
+            setFormData((prev) => ({
+              ...prev,
+              currentlyStudying: checked,
+            }));
+          }}>
+          {" "}
+          Are you currently a student?
+        </Checkbox>
+        {/* <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={isCurrentlyStudying}
@@ -563,7 +587,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             }}
           />
           Are you currently a student?
-        </label>
+        </label> */}
         {isCurrentlyStudying && (
           <TimeInput
             label="Expected Checking Time"

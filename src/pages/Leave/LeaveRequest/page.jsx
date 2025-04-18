@@ -90,6 +90,7 @@ const LeaveRequest = () => {
         leaveStartDate: formatDate(data.fromDate),
         leaveEndDate: formatDate(data.ToDate),
         leaveDate: formatDate(data.fromDate),
+        // teamLeaderName: parseFloat(data?.teamlead),
         teamLeaderName: data?.teamlead,
       },
     };
@@ -162,6 +163,14 @@ const LeaveRequest = () => {
       navigate("/login");
     }
   }, [hasaccess, navigate]);
+  const teamLeadid = teamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
+  // const associateteamLeadid = associateTeamLead.map((item) => ({
+  //   key: item.id, // Using id as the key
+  //   label: item.fullName, // Using fullName as the display label
+  // }));
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -231,8 +240,8 @@ const LeaveRequest = () => {
                 label="Team Leader"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
-                data={teamLead}
-                valueKey="key"
+                data={teamLeadid}
+                valueKey="label"
                 labelKey="label"
               />
             </div>
