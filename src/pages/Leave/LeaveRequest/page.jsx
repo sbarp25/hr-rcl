@@ -37,6 +37,7 @@ const LeaveRequest = () => {
     },
   });
   const [teamLead, setTeamLead] = useState([]);
+  const [associateTeamLead, setAssociateTeamLead] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -71,6 +72,22 @@ const LeaveRequest = () => {
       setIsLoading(false);
     }
   };
+  /**To fetch Accociate Team lead */
+  const fetchassociateTeamLead = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/departments/associate-team-leads"
+      );
+      if (response.data.responseCode === "200") {
+        setAssociateTeamLead(response.data.datalist);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fromDate = watch("fromDate");
 
@@ -90,8 +107,11 @@ const LeaveRequest = () => {
         leaveStartDate: formatDate(data.fromDate),
         leaveEndDate: formatDate(data.ToDate),
         leaveDate: formatDate(data.fromDate),
-        // teamLeaderName: parseFloat(data?.teamlead),
         teamLeaderName: data?.teamlead,
+        associateTeamLeadName: data?.associateteamlead,
+
+        // teamLeaderName: parseFloat(data?.teamlead),
+        // associateTeamLeadName: parseFloat(data?.associateteamlead),
       },
     };
 
@@ -119,17 +139,21 @@ const LeaveRequest = () => {
         navigate("/");
         toast.success(response?.data?.message);
       } else {
-        toast.error(response?.data?.message);
+        const errorMessage = response?.data?.error || "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
+      console.log(errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
   useEffect(() => {
+    fetchassociateTeamLead();
     fetchTeamLead();
   }, []);
   /**Width checking resizing the rows according to the screen size*/
@@ -167,10 +191,10 @@ const LeaveRequest = () => {
     key: item.id, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
-  // const associateteamLeadid = associateTeamLead.map((item) => ({
-  //   key: item.id, // Using id as the key
-  //   label: item.fullName, // Using fullName as the display label
-  // }));
+  const associateteamLeadid = associateTeamLead.map((item) => ({
+    key: item.id, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -237,7 +261,7 @@ const LeaveRequest = () => {
             <div>
               <SelectComp
                 name="teamlead"
-                label="Team Leader"
+                label="Team Lead"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
                 data={teamLeadid}
@@ -245,6 +269,18 @@ const LeaveRequest = () => {
                 labelKey="label"
               />
             </div>
+            {/**Assiciate Team Lead */}
+            {/* <div>
+              <SelectComp
+                name="associateteamlead"
+                label="Associate Team Lead"
+                control={control}
+                // rules={{ required: "Team Lead is required" }}
+                data={associateteamLeadid}
+                valueKey="label"
+                labelKey="label"
+              />
+            </div> */}
 
             {/* From Date */}
             <div>

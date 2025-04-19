@@ -20,7 +20,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
   const [photoPAN, setPhotoPAN] = useState(false);
-
+  const [citizenshipFrontModalOpen, setCitizenshipFrontModalOpen] =
+    useState(false);
+  const [citizenshipBackModalOpen, setCitizenshipBackModalOpen] =
+    useState(false);
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
   // Add new state to store the URLs
   const [documentUrls, setDocumentUrls] = useState({
     panCardDocumentUrl: null,
@@ -212,14 +216,14 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   // };
 
   // Function to render the document link
-  const renderDocumentLink = (url, label) => {
+  const renderDocumentLink = (url, label, isOpen, onOpenChange) => {
     if (!url) return null;
 
     return (
       <div className="mt-2 flex items-center">
         <FaRegEye className="text-green-500 mr-2" />
         <p
-          onClick={onOpen}
+          onClick={() => onOpenChange(true)}
           className="text-green-500 hover:text-green-700 text-sm">
           View {label}
         </p>
@@ -382,7 +386,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       {/* Add document link */}
                       {renderDocumentLink(
                         documentUrls.panCardDocumentUrl,
-                        "PAN Card"
+                        "PAN Card",
+                        photoModalOpen,
+                        setPhotoModalOpen
                       )}
                     </>
                   )}
@@ -528,7 +534,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       {/* Add document link */}
                       {renderDocumentLink(
                         documentUrls.citizenshipFrontDocumentUrl,
-                        "Citizenship Front"
+                        "Citizenship Front",
+                        citizenshipFrontModalOpen,
+                        setCitizenshipFrontModalOpen
                       )}
                     </>
                   )}
@@ -603,7 +611,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       {/* Add document link */}
                       {renderDocumentLink(
                         documentUrls.citizenshipBackDocumentUrl,
-                        "Citizenship Back"
+                        "Citizenship Back",
+                        citizenshipBackModalOpen,
+                        setCitizenshipBackModalOpen
                       )}
                     </>
                   )}

@@ -36,7 +36,7 @@ const InputComponent = ({
           <Input
             ref={ref}
             id={id || name}
-            isReadOnly={isReadOnly} // Set read-only state
+            isDisabled={isReadOnly} // Set read-only state
             variant={variant}
             label={label}
             type={isPasswordField && showPassword ? "text" : type}

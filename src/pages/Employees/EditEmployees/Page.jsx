@@ -21,6 +21,7 @@ const EditEmployees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [departmentsData, setDepartmentsData] = useState([]);
   const [positionData, setPositionData] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
@@ -79,10 +80,31 @@ const EditEmployees = () => {
       );
       if (response.data.responseCode === "200") {
         const data = response?.data?.data;
+
+        const departmentObj = departmentsData.find(
+          (dept) => dept.name === data?.personalDetails?.departmentName
+        );
+        const PositionObj = positionData.find(
+          (dept) => dept.name === data?.personalDetails?.postionName
+        );
         reset({
           fullname: data?.personalDetails?.fullName,
-          age: data?.personalDetails?.age,
+          Age: data?.personalDetails?.age,
           gender: data?.personalDetails?.gender,
+          phone: data?.personalDetails?.phone,
+          email: data?.personalDetails?.email,
+          // DOB: data?.personalDetails?.dateOfBirthAd,
+          department: departmentObj?.id || "",
+          // department: data?.personalDetails?.departmentName,
+          position: data?.personalDetails?.postionName,
+          maritialStatus: data?.personalDetails?.married,
+          bloodGroup: data?.personalDetails?.bloodGroup,
+          guardianName: data?.personalDetails?.guardianName,
+          guardianPhone: data?.personalDetails?.guardianNumber,
+          guardianRelation: data?.personalDetails?.guardianType,
+          emergencyName: data?.personalDetails?.emergencyName,
+          emergencyNumber: data?.personalDetails?.emergencyNumber,
+          emergencyRelation: data?.personalDetails?.emergencyType,
         });
 
         console.log(data);
@@ -155,9 +177,7 @@ const EditEmployees = () => {
     //   console.error("Error adding Personal Data", error);
     //   toast.error("Error adding personal Data");
     // }
-    console.log();
     console.log(data);
-    console.log(formatDate(data.DOB));
   };
 
   const onCancel = () => {
@@ -193,6 +213,7 @@ const EditEmployees = () => {
                 control={control}
                 label="Fullname"
                 name="fullname"
+                isReadOnly={true}
                 rules={{
                   required: "Full Name is required",
                   minLength: {
@@ -205,12 +226,14 @@ const EditEmployees = () => {
               <InputComponent
                 control={control}
                 label="Age"
+                isReadOnly={true}
                 name="Age"
                 rules={{
                   required: "Age is required",
                 }}
                 variant="bordered"
               />
+
               <SelectComp
                 name="gender"
                 label="Gender"
@@ -223,6 +246,7 @@ const EditEmployees = () => {
               <InputComponent
                 control={control}
                 label="Phone"
+                isReadOnly={true}
                 name="phone"
                 rules={{
                   required: "Phone is required",
@@ -237,6 +261,7 @@ const EditEmployees = () => {
                 }}
                 variant="bordered"
               />
+
               <InputComponent
                 name="email"
                 control={control}
@@ -253,6 +278,7 @@ const EditEmployees = () => {
                 inputClassName="w-full rounded-xl"
                 icon={FaEnvelope}
               />
+
               <DatepickerComponent
                 name="DOB"
                 label="Date of birth"
@@ -270,22 +296,41 @@ const EditEmployees = () => {
               <SelectComp
                 name="department"
                 label="Department"
+                isReadOnly={true}
                 control={control}
                 rules={{ required: "Department is required" }}
                 data={departmentsData}
                 // data={maritalOptions}
-                valueKey="key"
-                labelKey="label"
+                valueKey="id"
+                labelKey="name"
+                defaultValue={selectedDepartment}
+                onSelectionChange={(selectedId) => {
+                  // Find the selected department object using the ID
+                  const department = departmentsData.find(
+                    (dept) => dept.id === selectedId
+                  );
+                  setSelectedDepartment(department);
+
+                  // You can also access other related information from the department
+                  // console.log(
+                  //   "Selected department lead:",
+                  //   department?.teamLeadName
+                  // );
+
+                  // If you need to fetch additional data based on department selection:
+                  // fetchRelatedDataByDepartment(selectedId);
+                }}
               />
               <SelectComp
                 name="position"
                 label="Position"
                 control={control}
+                isReadOnly={true}
                 rules={{ required: "Position is required" }}
                 // data={maritalOptions}
                 data={positionData}
-                valueKey="key"
-                labelKey="label"
+                valueKey="id"
+                labelKey="positionName"
               />
               <SelectComp
                 name="maritialStatus"
@@ -359,6 +404,7 @@ const EditEmployees = () => {
                   inputClassName="w-full rounded-xl"
                   icon={FaPhone}
                 />
+
                 <SelectComp
                   name="guardianRelation"
                   label="Relation"
@@ -405,6 +451,7 @@ const EditEmployees = () => {
                   inputClassName="w-full rounded-xl"
                   icon={FaUser}
                 />
+
                 <InputComponent
                   name="emergencyNumber"
                   control={control}
@@ -421,6 +468,7 @@ const EditEmployees = () => {
                   inputClassName="w-full rounded-xl"
                   icon={FaPhone}
                 />
+
                 <InputComponent
                   name="emergencyRelation"
                   control={control}
@@ -434,7 +482,7 @@ const EditEmployees = () => {
               </div>
             </div>
           </div>
-          <div>
+          {/* <div>
             <Controller
               name="isActive"
               defaultValue={true}
@@ -445,7 +493,7 @@ const EditEmployees = () => {
                 </Switch>
               )}
             />
-          </div>
+          </div> */}
           {/* Buttons */}
           <div className="flex justify-start gap-4 pt-4">
             <ButtonComponent

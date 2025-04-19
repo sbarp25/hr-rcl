@@ -41,33 +41,31 @@ const Employees = () => {
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
+  const fetchEmployees = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/users/list", {
+        // const response = await axiosInstance.post("/api/v1/auth/get/all", {
+        pageIndex: currentPage,
+        pageSize: employeeDataPerPage,
+      });
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/users/list", {
-          // const response = await axiosInstance.post("/api/v1/auth/get/all", {
-          pageIndex: currentPage,
-          pageSize: employeeDataPerPage,
-        });
-
-        if (response?.data?.responseCode === "200") {
-          setOriginalEmployeeData(response?.data?.datalist || []);
-          setEmployeesData(response?.data?.datalist || []);
-          setTotalPages(response.data.totalPages);
-          setTotalRecords(response.data.totalRecords);
-        } else {
-          toast.error(response?.data?.message);
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        toast.error("Error fetching employees.");
-      } finally {
-        setIsLoading(false);
+      if (response?.data?.responseCode === "200") {
+        setOriginalEmployeeData(response?.data?.datalist || []);
+        setEmployeesData(response?.data?.datalist || []);
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
+      } else {
+        toast.error(response?.data?.message);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      toast.error("Error fetching employees.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchEmployees();
   }, [currentPage, employeeDataPerPage]);
 
@@ -121,13 +119,12 @@ const Employees = () => {
           if (hasEmployeeDeleteAccess) {
             console.log(`Deleting employee ID: ${employeeId}`);
             const response = await axiosInstance.delete(
-              `/api/v1/employee/delete/${employeeId}`
+              // `/api/v1/employee/delete/${employeeId}`
+              `/api/v1/auth/toggle/${employeeId}`
             );
             if (response.data.responseCode === "204") {
               toast.success(response.data.message);
-              setEmployeesData(
-                employeesData.filter((e) => e.id !== employeeId)
-              );
+              fetchEmployees();
             } else {
               toast.error(response.data.message);
             }
@@ -230,43 +227,47 @@ const Employees = () => {
                 <TableColumn>Action</TableColumn>
               </TableHeader>
               <TableBody>
-                {employeesData.map((employee, index) => (
-                  <TableRow
-                    key={employee.rclId}
-                    className="h-14 border-b-2 border-gray-300">
-                    <TableCell>
-                      {(currentPage - 1) * employeeDataPerPage + index + 1}
-                    </TableCell>
-                    <TableCell>{employee.rclId}</TableCell>
-                    <TableCell>{employee.fullName}</TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>{employee.departmentName}</TableCell>
-                    <TableCell>{employee.postionName}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-center gap-4">
-                        {/* <Switch isSelected={isSelected} onValueChange={setIsSelected}> */}
-                        <FaRegEye
-                          className={`  ${
-                            hasEmployeeEditAccess
-                              ? "text-green-500 hover:text-green-700 cursor-pointer "
-                              : ""
-                          }`}
-                          title="Edit"
-                          onClick={() => handleAction("edit", employee.rclId)}
-                        />
-                        <MdDelete
-                          className={`${
-                            hasEmployeeDeleteAccess
-                              ? "text-red-500 cursor-pointer hover:text-red-700"
-                              : ""
-                          }`}
-                          title="Delete"
-                          onClick={() => handleAction("delete", employee.rclId)}
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {employeesData
+                  .filter((employee) => employee.isActive)
+                  .map((employee, index) => (
+                    <TableRow
+                      key={employee.rclId}
+                      className="h-14 border-b-2 border-gray-300">
+                      <TableCell>
+                        {(currentPage - 1) * employeeDataPerPage + index + 1}
+                      </TableCell>
+                      <TableCell>{employee.rclId}</TableCell>
+                      <TableCell>{employee.fullName}</TableCell>
+                      <TableCell>{employee.email}</TableCell>
+                      <TableCell>{employee.departmentName}</TableCell>
+                      <TableCell>{employee.postionName}</TableCell>
+                      <TableCell>
+                        <div className="flex justify-center gap-4">
+                          {/* <Switch isSelected={isSelected} onValueChange={setIsSelected}> */}
+                          <FaRegEye
+                            className={`  ${
+                              hasEmployeeEditAccess
+                                ? "text-green-500 hover:text-green-700 cursor-pointer "
+                                : ""
+                            }`}
+                            title="Edit"
+                            onClick={() => handleAction("edit", employee.rclId)}
+                          />
+                          <MdDelete
+                            className={`${
+                              hasEmployeeDeleteAccess
+                                ? "text-red-500 cursor-pointer hover:text-red-700"
+                                : ""
+                            }`}
+                            title="Delete"
+                            onClick={() =>
+                              handleAction("delete", employee.rclId)
+                            }
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>

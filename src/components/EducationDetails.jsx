@@ -161,6 +161,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         if (edu.startYear) setValue(`startYear_${index}`, edu.startYear);
         if (edu.endYear) setValue(`endYear_${index}`, edu.endYear);
         if (edu.status) setValue(`status_${index}`, edu.status);
+        if (edu.file) setValue(`files_${index}`, "existing_file");
       });
     }
   }, [formData.education, setValue]);
@@ -184,11 +185,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const handleFileChange = (index, files) => {
     if (files.length > 0) {
       const file = files[0];
-      const fileErrors = validateFile(file);
 
-      if (fileErrors.length > 0) {
-        toast.error(fileErrors.join(" "));
-        return;
+      // Skip validation if there's an existing file URL from API
+      if (!education[index]?.file) {
+        const fileErrors = validateFile(file);
+
+        if (fileErrors.length > 0) {
+          toast.error(fileErrors.join(" "));
+          return;
+        }
       }
 
       setFormData((prev) => {
@@ -197,15 +202,21 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           ? [...prev.education]
           : degrees.map(() => ({}));
 
-        // Ensure the element at index exists
+        // Update the element at index with new file info
+        // If there was an existing file URL, retain it but add the new files as well
         updatedEducation[index] = {
           ...updatedEducation[index],
           files,
           fileName: files[0].name,
+          // Keep the existing file reference if it exists
+          file: updatedEducation[index]?.file || null,
         };
 
         return { ...prev, education: updatedEducation };
       });
+
+      // Also update the react-hook-form value
+      setValue(`files_${index}`, files);
     }
   };
 
@@ -423,20 +434,27 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       requiredIfCompleted: (files) => {
                         const currentStatus = getValues(`status_${index}`);
                         // Skip validation if we already have a file URL from the API
-                        if (education[index]?.file) return true;
+                        if (
+                          education[index]?.file ||
+                          (files && files.length > 0)
+                        )
+                          return true;
 
                         // Otherwise validate as before
                         if (currentStatus === "COMPLETED") {
-                          if (!files || files.length === 0)
-                            return "File is required.";
+                          return "File is required.";
                         }
                         return true;
                       },
                       type: (files) => {
                         // Skip validation if we already have a file URL from the API
-                        if (education[index]?.file) return true;
+                        if (
+                          education[index]?.file ||
+                          !files ||
+                          files.length === 0
+                        )
+                          return true;
 
-                        if (!files || files.length === 0) return true;
                         const file = files[0];
                         const allowedTypes = [
                           "image/png",
@@ -450,9 +468,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       },
                       size: (files) => {
                         // Skip validation if we already have a file URL from the API
-                        if (education[index]?.file) return true;
+                        if (
+                          education[index]?.file ||
+                          !files ||
+                          files.length === 0
+                        )
+                          return true;
 
-                        if (!files || files.length === 0) return true;
                         const file = files[0];
                         return (
                           file.size <= MAX_FILE_SIZE ||
@@ -512,7 +534,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     education[index] &&
                     (education[index]?.file ? (
                       <>
-                        <FaRegEye className="text-green-500 mr-2" />
+                        <a
+                          href={education[index].file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 underline flex items-center gap-x-2">
+                          <FaRegEye />
+                          View Uploaded Document
+                        </a>
+                        {/* <FaRegEye className="text-green-500 mr-2" />
                         <div
                           onClick={onOpen}
                           className="text-green-500 hover:text-green-700 text-sm">
@@ -537,7 +567,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                               </>
                             )}
                           </ModalContent>
-                        </Modal>
+                        </Modal> */}
                       </>
                     ) : (
                       // <a

@@ -58,10 +58,10 @@ const EditPosition = () => {
     try {
       const response = await axiosInstance.get(`/api/v1/positions/get/${id}`);
       if (response.data.responseCode === "200") {
-        const data = response.data.datalist;
+        const data = response.data.data;
         reset({
-          title: data?.personalDetails?.departmentName,
-          description: data?.personalDetails?.description,
+          title: data?.positionName,
+          description: data?.description,
         });
       } else {
         toast.error(response.data.message);
@@ -84,9 +84,38 @@ const EditPosition = () => {
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
-  const onSubmit = (data) => {
-    navigate("/master-data/Position");
-    console.log(data);
+  const onSubmit = async (data) => {
+    const updatePosition = {
+      data: {
+        positionName: data.title,
+        description: data.description,
+      },
+    };
+    setIsLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axiosInstance.put(
+        `/api/v1/positions/update/${id}`,
+        updatePosition,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response?.data?.responseCode === "200") {
+        navigate("/master-data/Position");
+        toast.success(response?.data?.message);
+        reset();
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="px-4 flex flex-col space-y-4">

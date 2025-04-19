@@ -95,17 +95,20 @@ const EditDepartment = () => {
   const fetchDepartmentById = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
-      // const response = await axiosInstance.post(`/api/v1/departments/get`, {
-      //   id: id,
-      // });
+      // const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
+      const response = await axiosInstance.post(
+        `/api/v1/departments/get/{id}`,
+        {
+          id: parseFloat(id),
+        }
+      );
       if (response.data.responseCode === "200") {
         const data = response.data.data;
         reset({
           title: data?.name,
           description: data?.description,
-          Associateteamlead: data?.associateTeamLeadName,
-          teamLead: data?.teamLeadName,
+          Associateteamlead: data?.associateTeamLeadId,
+          teamLead: data?.teamLeadId,
         });
       } else {
         toast.error(response.data.message);
@@ -133,8 +136,8 @@ const EditDepartment = () => {
       data: {
         departmentName: data.title,
         description: data.description,
-        AssociateteamLead: parseFloat(data.Associateteamlead),
-        teamLead: parseFloat(data.teamlead),
+        associateTeamLeadId: parseFloat(data.Associateteamlead),
+        teamLeadId: parseFloat(data.teamlead),
       },
     };
     setIsLoading(true);
@@ -151,9 +154,9 @@ const EditDepartment = () => {
         }
       );
       if (response?.data?.responseCode === "200") {
+        navigate("/master-data/Department");
+        toast.success(response?.data?.message);
         reset();
-        navigate("/");
-        ToastContainer.success(response?.data?.message);
       }
     } catch (error) {
       const errorMessage =

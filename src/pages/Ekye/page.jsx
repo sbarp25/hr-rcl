@@ -135,7 +135,7 @@ const Ekye = () => {
     <>
       {isLoading && <Loader />}
       <div className="min-h-screen overflow-y-auto bg-gray-200 p-4">
-        <a href="/">GO home</a>
+        {/* <a href="/">GO home</a> */}
         {/* Header */}
         <div className="page-title flex flex-col sm:flex-row justify-center items-center gap-2 text-center sm:text-left mb-4">
           <IoIosPeople className="text-3xl" />
@@ -189,7 +189,7 @@ const Ekye = () => {
         </ValidationComponent>
 
         {/* Navigation Buttons */}
-        <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        {/* <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -204,7 +204,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

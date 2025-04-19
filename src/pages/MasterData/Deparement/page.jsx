@@ -19,7 +19,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import DropDownComp from "../../../components/Dropdown";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const Department = () => {
@@ -227,14 +227,6 @@ const Department = () => {
     { label: "MasterData", href: "" },
     { label: "Department", href: "/master-data/Department" },
   ];
-  // const navigate = useNavigate();
-  // const hasaccess = false;
-
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/");
-  //   }
-  // }, []);
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check create status */
@@ -262,6 +254,7 @@ const Department = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
+
   const gotoAdd = () => {
     if (hasDepartmentCreateAccess) {
       navigate("/master-data/Department/Add");

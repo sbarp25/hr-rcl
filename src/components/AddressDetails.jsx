@@ -22,6 +22,9 @@ const AddressDetails = ({
   const [dataLoaded, setDataLoaded] = useState(false);
   const [permanentDistrictName, setPermanentDistrictName] = useState("");
   const [temporaryDistrictName, setTemporaryDistrictName] = useState("");
+  // Add state variables for province names
+  const [permanentProvinceName, setPermanentProvinceName] = useState("");
+  const [temporaryProvinceName, setTemporaryProvinceName] = useState("");
 
   const {
     control,
@@ -115,9 +118,11 @@ const AddressDetails = ({
             tole: "",
           };
 
-          // Store district names
+          // Store district and province names
           setPermanentDistrictName(permanentAddress.districtName || "");
           setTemporaryDistrictName(temporaryAddress.districtName || "");
+          setPermanentProvinceName(permanentAddress.provinceName || "");
+          setTemporaryProvinceName(temporaryAddress.provinceName || "");
 
           // Set values in the form
           setValue("permanent.provinceId", permanentAddress.provinceId || "");
@@ -202,15 +207,18 @@ const AddressDetails = ({
         permanent: {
           ...watchedPermanent,
           districtName: permanentDistrictName,
+          provinceName: permanentProvinceName,
         },
         temporary: watchedSameAsPermanent
           ? {
               ...watchedPermanent,
               districtName: permanentDistrictName,
+              provinceName: permanentProvinceName,
             }
           : {
               ...watch("temporary"),
               districtName: temporaryDistrictName,
+              provinceName: temporaryProvinceName,
             },
         sameAsPermanent: watchedSameAsPermanent,
       },
@@ -222,6 +230,8 @@ const AddressDetails = ({
     watchedSameAsPermanent,
     permanentDistrictName,
     temporaryDistrictName,
+    permanentProvinceName,
+    temporaryProvinceName,
   ]);
 
   // Handle Same As Permanent checkbox
@@ -230,6 +240,7 @@ const AddressDetails = ({
       // Copy permanent address values to temporary
       setValue("temporary", { ...watchedPermanent });
       setTemporaryDistrictName(permanentDistrictName);
+      setTemporaryProvinceName(permanentProvinceName);
 
       // Clear any temporary field errors when using same as permanent
       if (errors.temporary) {
@@ -243,6 +254,7 @@ const AddressDetails = ({
     clearErrors,
     errors.temporary,
     permanentDistrictName,
+    permanentProvinceName,
   ]);
 
   const fetchDistrictsByProvince = async (provinceId) => {
@@ -283,6 +295,21 @@ const AddressDetails = ({
         setPermanentDistrictName(district.name);
       } else {
         setTemporaryDistrictName(district.name);
+      }
+    }
+  };
+
+  // Update province name when province ID changes
+  const updateProvinceName = (provinceId, type) => {
+    if (!provinceId) return;
+
+    const province = provinces.find((p) => String(p.id) === String(provinceId));
+
+    if (province) {
+      if (type === "permanent") {
+        setPermanentProvinceName(province.name);
+      } else {
+        setTemporaryProvinceName(province.name);
       }
     }
   };
@@ -449,6 +476,7 @@ const AddressDetails = ({
                         className={`w-full rounded-xl`}
                         label="Select A Province"
                         placeholder={
+                          permanentProvinceName ||
                           formData.address?.permanent?.provinceName ||
                           "Select Province"
                         }
@@ -456,6 +484,8 @@ const AddressDetails = ({
                         onSelectionChange={(keys) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
+                          // Update province name
+                          updateProvinceName(selectedKey, "permanent");
                           // Reset district when province changes
                           setValue("permanent.districtId", "");
                           setPermanentDistrictName("");
@@ -598,6 +628,11 @@ const AddressDetails = ({
                       onChange={(e) => {
                         onChange(e.target.checked);
                         setSameAsPermanent(e.target.checked);
+
+                        // If checked, copy province name as well
+                        if (e.target.checked) {
+                          setTemporaryProvinceName(permanentProvinceName);
+                        }
                       }}>
                       Same as Permanent Address
                     </Checkbox>
@@ -624,6 +659,7 @@ const AddressDetails = ({
                         className={`w-full rounded-xl`}
                         label="Select A Province"
                         placeholder={
+                          temporaryProvinceName ||
                           formData.address?.temporary?.provinceName ||
                           "Select Province"
                         }
@@ -631,6 +667,8 @@ const AddressDetails = ({
                         onSelectionChange={(keys) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
+                          // Update province name
+                          updateProvinceName(selectedKey, "temporary");
                           // Reset district when province changes
                           setValue("temporary.districtId", "");
                           setTemporaryDistrictName("");

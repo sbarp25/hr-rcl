@@ -12,6 +12,7 @@ const SelectComp = ({
   labelKey = "label",
   className = "rounded-xl",
   defaultValue = "",
+  isReadOnly,
 }) => {
   return (
     <div>
@@ -25,6 +26,7 @@ const SelectComp = ({
             <Select
               {...field}
               variant={variant}
+              isDisabled={isReadOnly}
               label={label}
               isInvalid={!!error}
               className={className}
