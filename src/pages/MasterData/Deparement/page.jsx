@@ -317,7 +317,7 @@ const Department = () => {
                 {departmentsData.map((department, index) => (
                   <TableRow
                     key={department.rclId}
-                    className="h-20 justify-center items-center border-b-2 border-gray-300">
+                    className="h-14 justify-center items-center border-b-2 border-gray-300">
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{department.name}</TableCell>
                     <TableCell>

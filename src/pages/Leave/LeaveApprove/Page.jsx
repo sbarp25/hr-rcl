@@ -50,9 +50,9 @@ const LeaveApprove = ({ leaveId }) => {
 
     const updateLeave = {
       data: {
-        leaveId: id,
+        leaveId: leaveByIdData?.leaveId,
         leaveStatus: data.leaveStatus,
-        remarks: data.remarks,
+        remark: data.remarks,
       },
     };
 
@@ -95,9 +95,13 @@ const LeaveApprove = ({ leaveId }) => {
     const fetchLeaveById = async () => {
       setIsLoading(true);
       try {
-        const response = await axiosInstance.post("/api/leave/leaveId", {});
+        const response = await axiosInstance.post("/api/leave/leaveId", {
+          data: {
+            rclId: id,
+          },
+        });
         if (response.data.responseCode === "200") {
-          setLeaveByIdData(response.data.datalist);
+          setLeaveByIdData(response.data.datalist[0]);
           toast.success(response.data.message);
         } else {
           toast.error(response.data.message);
@@ -160,7 +164,7 @@ const LeaveApprove = ({ leaveId }) => {
           <Table aria-label="Details of Leave">
             <TableHeader>
               <TableColumn>LeaveId</TableColumn>
-              <TableColumn>Employee Name</TableColumn>
+              {/* <TableColumn>Employee Name</TableColumn> */}
               <TableColumn>Leave Type</TableColumn>
               <TableColumn>Leave Start Date</TableColumn>
               <TableColumn>Leave End Date</TableColumn>
@@ -169,7 +173,7 @@ const LeaveApprove = ({ leaveId }) => {
             <TableBody>
               <TableRow key="1">
                 <TableCell>{leaveByIdData?.leaveId || "N/A"}</TableCell>
-                <TableCell>{leaveByIdData?.employeeName || "N/A"}</TableCell>
+                {/* <TableCell>{leaveByIdData?.employeeName || "N/A"}</TableCell> */}
                 <TableCell>{leaveByIdData?.leaveType || "N/A"}</TableCell>
                 <TableCell>{leaveByIdData?.startDate || "N/A"}</TableCell>
                 <TableCell>{leaveByIdData?.endDate || "N/A"}</TableCell>
@@ -213,6 +217,7 @@ const LeaveApprove = ({ leaveId }) => {
           </div>
 
           {/* Remarks Field */}
+
           <div>
             <Textarea
               placeholder="Comment:"

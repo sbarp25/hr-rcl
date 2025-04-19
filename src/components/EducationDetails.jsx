@@ -18,6 +18,7 @@ import { Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./InputComponent";
 import { Controller } from "react-hook-form";
+import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
@@ -95,6 +96,23 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         if (response.data.responseCode === "200") {
           const data = response.data.datalist || [];
 
+          // Check if user is currently studying
+          if (response.data.data?.expectedCheckingTime) {
+            setIsCurrentlyStudying(true);
+            // Parse the time from string if needed
+            const timeParts =
+              response.data.data.expectedCheckingTime.split(":");
+            if (timeParts.length >= 3) {
+              setSelectedTime(
+                new Time(
+                  parseInt(timeParts[0]),
+                  parseInt(timeParts[1]),
+                  parseInt(timeParts[2])
+                )
+              );
+            }
+          }
+
           // Create an empty education array based on degrees
           const initialEducation = degrees.map(() => ({}));
 
@@ -106,8 +124,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 degree: edu.degree || "",
                 institution: edu.institution || "",
                 faculty: edu.faculty || "",
-                startYear: edu.startYear || "",
-                endYear: edu.endYear || "",
+                startYear: formatDate(edu.startYear || ""),
+                endYear: formatDate(edu.endYear || ""),
                 status: edu.status || "",
                 file: edu.documentUrl || "",
                 files: [],
@@ -237,12 +255,26 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     formDataToSend.append("educationData", JSON.stringify(educationData));
 
     // Check if formData.education exists before iterating
+    let hasFiles = false;
     if (formData?.education && Array.isArray(formData.education)) {
-      formData.education.forEach((edu) => {
+      formData.education.forEach((edu, index) => {
         if (edu?.files?.length) {
-          edu.files.forEach((file) => formDataToSend.append("files", file));
+          edu.files.forEach((file) => {
+            formDataToSend.append("files", file);
+            hasFiles = true;
+          });
         }
       });
+    }
+
+    // If no files were appended but we need the parameter for the server
+    if (!hasFiles) {
+      // Create a small empty blob to make the 'files' array exist but empty
+      // This is a workaround for the backend requiring files parameter
+      formDataToSend.append(
+        "files",
+        new Blob([], { type: "application/octet-stream" })
+      );
     }
 
     formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
@@ -268,7 +300,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred while saving educational details.");
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while saving educational details.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -350,7 +386,13 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             </div>
             {/**Start Year */}
             <div>
-              <InputComponent
+              <DatepickerComponent
+                name={`startYear_${index}`}
+                label="Start Year"
+                control={control}
+                rules={{ required: "Start year is required" }}
+              />
+              {/* <InputComponent
                 name={`startYear_${index}`}
                 control={control}
                 label="Start Year"
@@ -359,11 +401,22 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 variant="bordered"
                 inputClassName="w-full rounded-xl"
                 value={education[index]?.startYear || ""}
-              />
+              /> */}
             </div>
             {/**End Year */}
             <div>
-              <InputComponent
+              <DatepickerComponent
+                name={`endYear_${index}`}
+                label="Start Year"
+                control={control}
+                rules={{
+                  required:
+                    education[index]?.status !== "IN_PROGRESS"
+                      ? "End year is required"
+                      : false,
+                }}
+              />
+              {/* <InputComponent
                 name={`endYear_${index}`}
                 control={control}
                 label="End Year"
@@ -377,7 +430,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 variant="bordered"
                 inputClassName="w-full rounded-xl"
                 value={education[index]?.endYear || ""}
-              />
+              /> */}
             </div>
             {/**Status */}
             <div>
@@ -442,7 +495,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
                         // Otherwise validate as before
                         if (currentStatus === "COMPLETED") {
-                          return "File is required.";
+                          return files ? true : "File is required.";
                         }
                         return true;
                       },
@@ -451,6 +504,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         if (
                           education[index]?.file ||
                           !files ||
+                          files === "existing_file" ||
                           files.length === 0
                         )
                           return true;
@@ -471,6 +525,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         if (
                           education[index]?.file ||
                           !files ||
+                          files === "existing_file" ||
                           files.length === 0
                         )
                           return true;
@@ -496,7 +551,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         <span className="text-gray-600 px-4">
                           {education[index]?.file ? (
                             "Document already uploaded"
-                          ) : value?.length > 0 ? (
+                          ) : value?.length > 0 && value !== "existing_file" ? (
                             <div className="flex gap-2">
                               <p>Selected: {value[0].name}</p>
                             </div>
@@ -570,14 +625,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                         </Modal> */}
                       </>
                     ) : (
-                      // <a
-                      //   href={education[index].file}
-                      //   target="_blank"
-                      //   rel="noopener noreferrer"
-                      //   className="text-green-600 underline flex items-center gap-x-2">
-                      //   <FaRegEye />
-                      //   View Uploaded Document
-                      // </a>
                       <div className="text-xs text-red-500">
                         No Links Available
                       </div>
@@ -590,19 +637,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ))}
 
       <div className="flex flex-col gap-3">
-        <Checkbox
-          checked={isCurrentlyStudying}
-          onChange={(e) => {
-            const checked = e.target.checked;
-            setIsCurrentlyStudying(checked);
-            setFormData((prev) => ({
-              ...prev,
-              currentlyStudying: checked,
-            }));
-          }}>
-          {" "}
-          Are you currently a student?
-        </Checkbox>
         {/* <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -618,6 +652,19 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           />
           Are you currently a student?
         </label> */}
+        <Checkbox
+          checked={isCurrentlyStudying}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setIsCurrentlyStudying(checked);
+            setFormData((prev) => ({
+              ...prev,
+              currentlyStudying: checked,
+            }));
+          }}>
+          {" "}
+          Are you currently a student?
+        </Checkbox>
         {isCurrentlyStudying && (
           <TimeInput
             label="Expected Checking Time"

@@ -13,6 +13,7 @@ const SelectComp = ({
   className = "rounded-xl",
   defaultValue = "",
   isReadOnly,
+  placeholder,
 }) => {
   return (
     <div>
@@ -21,28 +22,42 @@ const SelectComp = ({
         control={control}
         rules={rules}
         defaultValue={defaultValue}
-        render={({ field, fieldState: { error } }) => (
-          <>
-            <Select
-              {...field}
-              variant={variant}
-              isDisabled={isReadOnly}
-              label={label}
-              isInvalid={!!error}
-              className={className}
-              selectedKeys={field.value ? [field.value] : []}
-              onSelectionChange={(keys) => field.onChange(Array.from(keys)[0])}>
-              {data.map((item) => (
-                <SelectItem key={item[valueKey]} value={item[valueKey]}>
-                  {item[labelKey]}
-                </SelectItem>
-              ))}
-            </Select>
-            {error && <p className="text-danger text-sm">{error.message}</p>}
-          </>
-        )}
+        render={({ field, fieldState: { error } }) => {
+          // Find the selected item's label to display as placeholder text if needed
+          const selectedItem = data.find(
+            (item) => item[valueKey] === field.value
+          );
+          const displayPlaceholder = selectedItem
+            ? selectedItem[labelKey]
+            : placeholder;
+
+          return (
+            <>
+              <Select
+                {...field}
+                variant={variant}
+                isDisabled={isReadOnly}
+                placeholder={displayPlaceholder}
+                label={label}
+                isInvalid={!!error}
+                className={className}
+                selectedKeys={field.value !== undefined ? [field.value] : []}
+                onSelectionChange={(keys) =>
+                  field.onChange(Array.from(keys)[0])
+                }>
+                {data.map((item) => (
+                  <SelectItem key={item[valueKey]} value={item[valueKey]}>
+                    {item[labelKey]}
+                  </SelectItem>
+                ))}
+              </Select>
+              {error && <p className="text-danger text-sm">{error.message}</p>}
+            </>
+          );
+        }}
       />
     </div>
   );
 };
+
 export default SelectComp;

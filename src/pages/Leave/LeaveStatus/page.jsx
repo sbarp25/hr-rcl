@@ -112,7 +112,7 @@ const LeaveStatus = () => {
                     <TableCell>
                       <Link
                         key={data.leaveId}
-                        to={`/Leave/apprej/${data.leaveId}`}
+                        to={`/Leave/apprej/${data.rclId}`}
                         className={`${
                           hasLeaveApproveAccess ? "" : "pointer-events-none"
                         }`}>
@@ -155,9 +155,9 @@ const LeaveStatus = () => {
                               ? "bg-red-100 text-red-600"
                               : "bg-yellow-100 text-yellow-500"
                           }`}>
-                          {data?.Approver?.charAt(0) || "?"}
+                          {data?.approvedBy?.charAt(0) || "?"}
                         </div>
-                        <div>{data?.Approver || "N/A"}</div>
+                        <div>{data?.approvedBy || "N/A"}</div>
                       </div>
                     </TableCell>
                   </TableRow>

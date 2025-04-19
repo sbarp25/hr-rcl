@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
@@ -121,7 +121,7 @@ const EditPosition = () => {
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="flex justify-between">
-        <div className="page-title -pl-2">Add Position</div>
+        <div className="page-title -pl-2">Edit Position</div>
         <GoBack />
       </div>
       <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
@@ -143,9 +143,36 @@ const EditPosition = () => {
             />
           </div>
 
-          {/* Department description*/}
+          {/* Position description*/}
           <div>
-            <Textarea
+            <Controller
+              name="description"
+              control={control}
+              rules={{
+                required: "Description is required",
+                minLength: {
+                  value: 10,
+                  message: "Description must be at least 10 characters long.",
+                },
+              }}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  minRows={getRows()}
+                  maxRows={getMaxRows()}
+                  isInvalid={!!errors.description}
+                  className="rounded-xl"
+                  label="Description"
+                  variant="bordered"
+                />
+              )}
+            />
+            {errors.description && (
+              <p className="text-danger text-sm">
+                {errors.description.message}
+              </p>
+            )}
+            {/* <Textarea
               minRows={getRows()}
               maxRows={getMaxRows()}
               isInvalid={!!errors.description}
@@ -164,7 +191,7 @@ const EditPosition = () => {
               <p className="text-danger text-sm">
                 {errors.description.message}
               </p>
-            )}
+            )} */}
           </div>
 
           <ButtonComponent

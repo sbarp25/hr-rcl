@@ -1,9 +1,37 @@
 import { Controller } from "react-hook-form";
-import { getLocalTimeZone } from "@internationalized/date";
+import { getLocalTimeZone, parseDate } from "@internationalized/date";
 import { DatePicker } from "@nextui-org/react";
 
-const formatDate = (date) =>
-  date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
+// Helper function to convert string date to CalendarDate
+const parseStringToCalendarDate = (dateString) => {
+  if (!dateString) return null;
+  try {
+    // Parse YYYY-MM-DD string to CalendarDate
+    return parseDate(dateString);
+  } catch (e) {
+    console.error("Error parsing date:", e);
+    return null;
+  }
+};
+
+const formatDate = (date) => {
+  if (!date) return null;
+
+  if (date.toDate && typeof date.toDate === "function") {
+    return date.toDate(getLocalTimeZone()).toISOString().split("T")[0];
+  }
+
+  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
+
+  if (date instanceof Date) {
+    return date.toISOString().split("T")[0];
+  }
+
+  return null;
+};
+
 const DatepickerComponent = ({
   name,
   control,
@@ -59,20 +87,30 @@ const DatepickerComponent = ({
         control={control}
         rules={validationRules}
         defaultValue={placeholderDate}
-        render={({ field, fieldState: { error } }) => (
-          <>
-            <DatePicker
-              {...field}
-              showMonthAndYearPickers
-              isInvalid={!!error}
-              className={className}
-              label={label}
-              variant={variant}
-              disabled={disabled}
-            />
-            {error && <p className="text-danger text-sm">{error.message}</p>}
-          </>
-        )}
+        render={({ field, fieldState: { error } }) => {
+          // Convert string date value to CalendarDate if it's a string
+          const dateValue =
+            typeof field.value === "string"
+              ? parseStringToCalendarDate(field.value)
+              : field.value;
+
+          return (
+            <>
+              <DatePicker
+                {...field}
+                value={dateValue}
+                showMonthAndYearPickers
+                isInvalid={!!error}
+                className={className}
+                label={label}
+                variant={variant}
+                disabled={disabled}
+                onChange={field.onChange}
+              />
+              {error && <p className="text-danger text-sm">{error.message}</p>}
+            </>
+          );
+        }}
       />
     </div>
   );

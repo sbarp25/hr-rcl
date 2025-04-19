@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
 import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ButtonComp";
@@ -108,7 +108,7 @@ const EditDepartment = () => {
           title: data?.name,
           description: data?.description,
           Associateteamlead: data?.associateTeamLeadId,
-          teamLead: data?.teamLeadId,
+          teamlead: data?.teamLeadId,
         });
       } else {
         toast.error(response.data.message);
@@ -203,20 +203,27 @@ const EditDepartment = () => {
 
           {/* Department description*/}
           <div>
-            <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className={` rounded-xl `}
-              label="Description"
-              {...register("description", {
+            <Controller
+              name="description"
+              control={control}
+              rules={{
                 required: "Description is required",
                 minLength: {
                   value: 10,
                   message: "Description must be at least 10 characters long.",
                 },
-              })}
-              variant="bordered"
+              }}
+              render={({ field }) => (
+                <Textarea
+                  {...field}
+                  minRows={getRows()}
+                  maxRows={getMaxRows()}
+                  isInvalid={!!errors.description}
+                  className="rounded-xl"
+                  label="Description"
+                  variant="bordered"
+                />
+              )}
             />
             {errors.description && (
               <p className="text-danger text-sm">

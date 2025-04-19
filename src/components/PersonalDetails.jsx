@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import InputComponent from "./InputComponent";
 import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
 import SelectComp from "./Select";
+import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 
 const PersonalDetails = ({ handleNext, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +54,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
-    mode: "onBlur", // This triggers validation on blur for better user experience
+    mode: "onBlur",
   });
 
   const onSubmit = async (data) => {
@@ -61,7 +62,8 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
     const formattedData = {
       data: {
         email: data.email,
-        dateOfBirthAd: data.dob,
+        dateOfBirthAd: formatDate(data.dob),
+        // dateOfBirthAd: data.dob,
         gender: data.gender,
         // married: marriedstatus,
         married: Boolean(data.married),
@@ -165,7 +167,21 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               />
 
               {/* Date of Birth */}
-              <InputComponent
+              <DatepickerComponent
+                name="dob"
+                label="Date of birth"
+                control={control}
+                rules={{
+                  required: "Date of Birth is required",
+                  validate: (value) => {
+                    const birthdate = new Date(value);
+                    const today = new Date();
+                    const age = today.getFullYear() - birthdate.getFullYear();
+                    return age > 18 || "You must be 18 or older";
+                  },
+                }}
+              />
+              {/* <InputComponent
                 name="dob"
                 control={control}
                 rules={{
@@ -187,7 +203,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                 type="date"
                 inputClassName="w-full rounded-xl"
                 icon={FaCalendar}
-              />
+              /> */}
 
               {/* Blood Type */}
               <div>

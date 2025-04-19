@@ -85,7 +85,7 @@ const EditEmployees = () => {
           (dept) => dept.name === data?.personalDetails?.departmentName
         );
         const PositionObj = positionData.find(
-          (dept) => dept.name === data?.personalDetails?.postionName
+          (post) => post.name === data?.personalDetails?.postionName
         );
         reset({
           fullname: data?.personalDetails?.fullName,
@@ -93,10 +93,11 @@ const EditEmployees = () => {
           gender: data?.personalDetails?.gender,
           phone: data?.personalDetails?.phone,
           email: data?.personalDetails?.email,
-          // DOB: data?.personalDetails?.dateOfBirthAd,
+          DOB: data?.personalDetails?.dateOfBirthAd,
           department: departmentObj?.id || "",
           // department: data?.personalDetails?.departmentName,
-          position: data?.personalDetails?.postionName,
+          position: PositionObj?.id || "",
+
           maritialStatus: data?.personalDetails?.married,
           bloodGroup: data?.personalDetails?.bloodGroup,
           guardianName: data?.personalDetails?.guardianName,
@@ -310,15 +311,6 @@ const EditEmployees = () => {
                     (dept) => dept.id === selectedId
                   );
                   setSelectedDepartment(department);
-
-                  // You can also access other related information from the department
-                  // console.log(
-                  //   "Selected department lead:",
-                  //   department?.teamLeadName
-                  // );
-
-                  // If you need to fetch additional data based on department selection:
-                  // fetchRelatedDataByDepartment(selectedId);
                 }}
               />
               <SelectComp
@@ -482,14 +474,24 @@ const EditEmployees = () => {
               </div>
             </div>
           </div>
-          {/* <div>
+          {/* <div className="flex flex-col gap-4">
             <Controller
-              name="isActive"
+              name="isteamLead"
               defaultValue={true}
               control={control}
               render={({ field }) => (
                 <Switch isSelected={field.value} onValueChange={field.onChange}>
-                  Is Employee Active
+                  Is Employee treamLead
+                </Switch>
+              )}
+            />
+            <Controller
+              name="isAssociateteamLead"
+              defaultValue={true}
+              control={control}
+              render={({ field }) => (
+                <Switch isSelected={field.value} onValueChange={field.onChange}>
+                  Is Employee Associate Team Active
                 </Switch>
               )}
             />

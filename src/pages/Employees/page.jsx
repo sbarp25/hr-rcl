@@ -124,7 +124,7 @@ const Employees = () => {
             );
             if (response.data.responseCode === "204") {
               toast.success(response.data.message);
-              fetchEmployees();
+              // fetchEmployees();
             } else {
               toast.error(response.data.message);
             }

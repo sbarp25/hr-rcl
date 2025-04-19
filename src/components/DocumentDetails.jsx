@@ -13,6 +13,7 @@ import { FaRegEye } from "react-icons/fa";
 import Loader from "./Loader";
 import InputComponent from "./InputComponent";
 import { useForm, Controller } from "react-hook-form";
+import DatepickerComponent from "./DatepickerComponent";
 
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -290,16 +291,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
               {/* PAN Issue Date */}
               <div>
-                <InputComponent
+                <DatepickerComponent
                   name="panIssueDate"
+                  label="Pan Issue Date"
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
                   }}
-                  variant="bordered"
-                  label="Pan Issue Date"
-                  type="date"
-                  inputClassName="w-full rounded-xl"
                 />
               </div>
 
@@ -424,16 +422,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
               {/* Citizenship Issue Date */}
               <div>
-                <InputComponent
+                <DatepickerComponent
                   name="issuedDate"
+                  label="Citizenship Issue Date"
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",
                   }}
-                  variant="bordered"
-                  label="Citizenship Issue Date"
-                  type="date"
-                  inputClassName="w-full rounded-xl"
                 />
               </div>
               {/* Citizenship Issue Place */}

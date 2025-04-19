@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
 import SelectComp from "../../../components/Select";
+import DatepickerComponent, {
+  formatDate,
+} from "../../../components/DatepickerComponent";
 
 const LeaveRequest = () => {
   const {
@@ -93,10 +96,6 @@ const LeaveRequest = () => {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    const formatDate = (date) =>
-      date
-        ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0]
-        : null;
 
     const applyleave = {
       data: {
@@ -211,10 +210,18 @@ const LeaveRequest = () => {
               label="Title"
               rules={{
                 required: "Title is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,300}$/,
-                  message: "Title must be 3-300 characters long.",
+                minLength: {
+                  value: 3,
+                  message: "Title must be at least 3 characters long.",
                 },
+                maxLength: {
+                  value: 255,
+                  message: "Title must be less than 255 characters long.",
+                },
+                // pattern: {
+                //   value: /^[a-zA-Z0-9 ]{3,300}$/,
+                //   message: "Title must be 3-300 characters long.",
+                // },
               }}
             />
           </div>
@@ -232,6 +239,10 @@ const LeaveRequest = () => {
                 minLength: {
                   value: 10,
                   message: "Description must be at least 10 characters long.",
+                },
+                maxLength: {
+                  value: 255,
+                  message: "Description must be less than 255 characters long.",
                 },
               })}
               variant="bordered"
@@ -284,28 +295,30 @@ const LeaveRequest = () => {
 
             {/* From Date */}
             <div>
-              <Controller
+              <DatepickerComponent
                 name="fromDate"
+                label="From Date"
                 control={control}
-                rules={{ required: "Start date is required" }}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    isInvalid={!!errors.fromDate}
-                    className={`rounded-xl `}
-                    label="From Date"
-                    variant="bordered"
-                  />
-                )}
+                rules={{
+                  required: "Start date is required",
+
+                  validate: (value) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const selectedDate = new Date(value);
+                    selectedDate.setHours(0, 0, 0, 0);
+                    return (
+                      selectedDate >= today || "Date cannot be in the past"
+                    );
+                  },
+                }}
+                // rules={{ required: "Start date is required" }}
               />
-              {errors.fromDate && (
-                <p className="text-danger text-sm">{errors.fromDate.message}</p>
-              )}
             </div>
 
             {/* To Date */}
             <div>
-              <Controller
+              <DatepickerComponent
                 name="ToDate"
                 control={control}
                 rules={{
@@ -316,19 +329,8 @@ const LeaveRequest = () => {
                     value >= fromDate ||
                     "End date cannot be before start date",
                 }}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    isInvalid={!!errors.ToDate}
-                    className={`rounded-xl `}
-                    label="To Date"
-                    variant="bordered"
-                  />
-                )}
+                label="To Date"
               />
-              {errors.ToDate && (
-                <p className="text-red-500 text-sm">{errors.ToDate.message}</p>
-              )}
             </div>
           </div>
           <div>

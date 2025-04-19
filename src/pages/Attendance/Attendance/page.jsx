@@ -12,11 +12,11 @@ const Attendance = () => {
   const navigate = useNavigate();
   const hasaccess = false;
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/");
+  //   }
+  // }, []);
   return (
     <>
       <BreadcrumbsComponent items={breadcrumbItems} />

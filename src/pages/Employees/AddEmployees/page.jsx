@@ -11,6 +11,7 @@ import {
   Select,
   SelectItem,
   Checkbox,
+  Switch,
 } from "@nextui-org/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
@@ -145,6 +146,8 @@ const AddEmployeeForm = () => {
         performEkye: data.performEKYC,
         grossSalary: data.salary,
         hiringDate: formatDate(data.fromDate),
+        isTeamLead: data.isteamLead,
+        isAssociateTeamLead: data.isAssociateteamLead,
       },
     };
     // console.log("Hiring Date", data.HireDate);
@@ -389,25 +392,12 @@ const AddEmployeeForm = () => {
                 </div>
               </div>
             </div>
-            <div className="mb-4 -mt-16 flex items-center">
+            <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               <div>
                 <Controller
                   name="performEKYC"
                   control={control}
                   render={({ field }) => (
-                    // <Checkbox
-                    //   color="default"
-                    //   isSelected={field.value}
-                    //   onValueChange={field.onChange}>
-                    //   Perform eKYE
-                    // </Checkbox>
-                    // <Checkbox
-                    //   color="danger"
-                    //   isSelected={field.value}
-                    //   onValueChange={field.onChange}
-                    //   className="focus:outline-none ">
-                    //   Perform eKYE
-                    // </Checkbox>
                     <Checkbox
                       color="primary"
                       isSelected={field.value}
@@ -417,13 +407,34 @@ const AddEmployeeForm = () => {
                   )}
                 />
               </div>
-
-              {/* <input
-                type="checkbox"
-                {...register("performEKYC")}
-                className="mr-2"
-              /> 
-              <label className="text-gray-700">Perform eKYC</label>*/}
+              <div>
+                <Controller
+                  name="isteamLead"
+                  defaultValue={false}
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      isSelected={field.value}
+                      onValueChange={field.onChange}>
+                      Is Employee treamLead
+                    </Switch>
+                  )}
+                />
+              </div>
+              <div>
+                <Controller
+                  name="isAssociateteamLead"
+                  defaultValue={false}
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      isSelected={field.value}
+                      onValueChange={field.onChange}>
+                      Is Employee Associate Team Active
+                    </Switch>
+                  )}
+                />
+              </div>
             </div>
           </div>
           <button

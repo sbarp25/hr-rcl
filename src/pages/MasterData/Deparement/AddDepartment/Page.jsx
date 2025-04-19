@@ -14,7 +14,7 @@ const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
   const [associateTeamLead, setAssociateTeamLead] = useState([]);
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const {
     register,
     control,
@@ -67,8 +67,8 @@ const AddDepartment = () => {
       data: {
         departmentName: data?.title,
         description: data?.description,
-        teamLeadId: data?.teamlead,
-        associateTeamLeadId: data?.Associateteamlead,
+        teamLeadId: parseFloat(data?.teamlead),
+        associateTeamLeadId: parseFloat(data?.Associateteamlead),
       },
     };
 
@@ -92,7 +92,7 @@ const AddDepartment = () => {
       );
 
       if (response?.data.responseCode === "201") {
-        navigate("/");
+        navigate("/master-data/Department");
         toast.success(response?.data?.message);
         reset();
       } else {
