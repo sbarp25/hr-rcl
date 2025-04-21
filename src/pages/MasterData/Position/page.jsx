@@ -8,6 +8,9 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
   Pagination,
   Table,
   TableBody,
@@ -16,6 +19,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
+  useDisclosure,
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import DropDownComp from "../../../components/Dropdown";
@@ -28,6 +32,7 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [positionId, setPositionId] = useState(null);
 
   const [positionData, setPositionData] = useState([]);
   const [positionName, setPositionName] = useState("");
@@ -42,6 +47,7 @@ const Position = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [originalPositionsData, setOriginalPositionsData] = useState([]);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -158,11 +164,6 @@ const Position = () => {
       case "edit":
         if (hasPositionEditAccess) {
           navigate(`/master-data/Position/Edit/${position.id}`);
-          // console.log(`Editing position ID: ${position.id}`);
-          // setShowEditForm(true);
-          // setPositionName(position.name || "");
-          // setDescription(position.description || "");
-          // setEditingPositionId(position.id);
         } else {
           toast.error("Access denied");
         }
@@ -170,33 +171,35 @@ const Position = () => {
 
       // Start Of Delete Operation
       case "delete":
-        try {
-          if (hasPositionDeleteAccess) {
-            console.log(`Deleting position ID: ${position.id}`);
-            const response = await axiosInstance.delete(
-              `api/v1/positions/delete/${position.id}`
-            );
-            if (response.data.responseCode === "204") {
-              toast.success("Position deleted successfully!");
-            } else {
-              toast.error("Failed to delete the position.");
-            }
-          } else {
-            ("Access Denied");
-          }
-        } catch (error) {
-          console.error("Error deleting position:", error);
-          toast.error("Error deleting position.");
-        }
+        setPositionId(position.id);
+        onOpen();
         break;
       // End Of Delete Operation
       default:
         console.log("Unknown action");
     }
   };
-  {
-    /**Start of Edit */
-  }
+
+  const onDelete = async () => {
+    try {
+      if (hasPositionDeleteAccess) {
+        const response = await axiosInstance.delete(
+          `api/v1/positions/delete/${positionId}`
+        );
+        if (response.data.responseCode === "204") {
+          toast.success("Position deleted successfully!");
+          onClose();
+        } else {
+          toast.error("Failed to delete the position.");
+        }
+      } else {
+        ("Access Denied");
+      }
+    } catch (error) {
+      console.error("Error deleting position:", error);
+      toast.error("Error deleting position.");
+    }
+  };
   const handleEditPosition = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -243,9 +246,7 @@ const Position = () => {
       setIsLoading(false);
     }
   };
-  {
-    /**Edit of Edit */
-  }
+
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -456,6 +457,27 @@ const Position = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <p>Are you sure you want to delete htis department </p>
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button color="danger" onPress={() => onDelete()}>
+                    Delete
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

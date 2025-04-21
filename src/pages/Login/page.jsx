@@ -1,13 +1,10 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
-import { CiMail } from "react-icons/ci";
-import { FaEye, FaRegEyeSlash } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import Loader from "../../components/Loader";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Button, Form, Input, Spinner } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import ButtonComponent from "../../components/ButtonComp";
 import InputComponent from "../../components/InputComponent";
 import LocationComponent from "../../components/LocationComponent";
@@ -53,6 +50,8 @@ const Login = () => {
         const Email = response?.data?.data?.email;
         const ekeyStep = response?.data?.data?.ekeyStep;
         const Menu = response?.data?.data?.menuActionsAndPermissions;
+        const CheckinStatus = response?.data?.data?.isCheckedInToday;
+        localStorage.setItem("CheckinStatus", CheckinStatus);
         localStorage.setItem("ekeyStep", ekeyStep);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);

@@ -39,8 +39,7 @@ const LeaveRequest = () => {
       isHalfDay: false,
     },
   });
-  const [teamLead, setTeamLead] = useState([]);
-  const [associateTeamLead, setAssociateTeamLead] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -56,41 +55,11 @@ const LeaveRequest = () => {
     { key: "EXAM", label: "Exam Leave" },
     { key: "UNPAID", label: "Unpaid Leave" },
   ];
-
-  {
-    /**To fetch Team lead */
-  }
-  const fetchTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/team-leads"
-      );
-      if (response.data.responseCode === "200") {
-        setTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  /**To fetch Accociate Team lead */
-  const fetchassociateTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/associate-team-leads"
-      );
-      if (response.data.responseCode === "200") {
-        setAssociateTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const leaveStatus = [
+    { key: "FULL_DAY", label: "Full day" },
+    { key: "FIRST_HALF", label: "First half" },
+    { key: "SECOND_HALF", label: "Second half" },
+  ];
 
   const fromDate = watch("fromDate");
 
@@ -101,16 +70,12 @@ const LeaveRequest = () => {
       data: {
         leaveType: data?.leaveType,
         leaveSubject: data?.description,
+        leaveCategory: data?.leaveStatus,
         leaveStatus: "PENDING",
         isHalfDay: data.isHalfDay,
         leaveStartDate: formatDate(data.fromDate),
         leaveEndDate: formatDate(data.ToDate),
         leaveDate: formatDate(data.fromDate),
-        teamLeaderName: data?.teamlead,
-        associateTeamLeadName: data?.associateteamlead,
-
-        // teamLeaderName: parseFloat(data?.teamlead),
-        // associateTeamLeadName: parseFloat(data?.associateteamlead),
       },
     };
 
@@ -151,10 +116,10 @@ const LeaveRequest = () => {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    fetchassociateTeamLead();
-    fetchTeamLead();
-  }, []);
+  // useEffect(() => {
+  //   fetchassociateTeamLead();
+  //   fetchTeamLead();
+  // }, []);
   /**Width checking resizing the rows according to the screen size*/
   /**To check The screen width */
   useEffect(() => {
@@ -186,14 +151,7 @@ const LeaveRequest = () => {
       navigate("/login");
     }
   }, [hasaccess, navigate]);
-  const teamLeadid = teamLead.map((item) => ({
-    key: item.id, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
-  const associateteamLeadid = associateTeamLead.map((item) => ({
-    key: item.id, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
+
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -226,34 +184,6 @@ const LeaveRequest = () => {
             />
           </div>
 
-          {/* Reason for Leave */}
-          <div>
-            <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className={` rounded-xl `}
-              label="Description"
-              {...register("description", {
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-                maxLength: {
-                  value: 255,
-                  message: "Description must be less than 255 characters long.",
-                },
-              })}
-              variant="bordered"
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12">
             {/* Leave Type */}
             <div>
@@ -267,31 +197,17 @@ const LeaveRequest = () => {
                 labelKey="label"
               />
             </div>
-
-            {/* Team Leader */}
             <div>
               <SelectComp
-                name="teamlead"
-                label="Team Lead"
+                name="leaveStatus"
+                label="Leave Category"
                 control={control}
-                rules={{ required: "Team Lead is required" }}
-                data={teamLeadid}
-                valueKey="label"
+                rules={{ required: "Category of leave is required" }}
+                data={leaveStatus}
+                valueKey="key"
                 labelKey="label"
               />
             </div>
-            {/**Assiciate Team Lead */}
-            {/* <div>
-              <SelectComp
-                name="associateteamlead"
-                label="Associate Team Lead"
-                control={control}
-                // rules={{ required: "Team Lead is required" }}
-                data={associateteamLeadid}
-                valueKey="label"
-                labelKey="label"
-              />
-            </div> */}
 
             {/* From Date */}
             <div>
@@ -333,7 +249,34 @@ const LeaveRequest = () => {
               />
             </div>
           </div>
+          {/* Reason for Leave */}
           <div>
+            <Textarea
+              minRows={getRows()}
+              maxRows={getMaxRows()}
+              isInvalid={!!errors.description}
+              className={` rounded-xl `}
+              label="Description"
+              {...register("description", {
+                required: "Description is required",
+                minLength: {
+                  value: 10,
+                  message: "Description must be at least 10 characters long.",
+                },
+                maxLength: {
+                  value: 255,
+                  message: "Description must be less than 255 characters long.",
+                },
+              })}
+              variant="bordered"
+            />
+            {errors.description && (
+              <p className="text-danger text-sm">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+          {/* <div>
             <Controller
               name="isHalfDay"
               control={control}
@@ -346,6 +289,36 @@ const LeaveRequest = () => {
               )}
             />
           </div>
+          {halfDay && (
+            <div className="flex gap-4">
+              <div>
+                <Controller
+                  name="isfirsthalf"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      isSelected={field.value}
+                      onValueChange={field.onChange}>
+                      Is First Half
+                    </Checkbox>
+                  )}
+                />
+              </div>
+              <div>
+                <Controller
+                  name="isSecondhalf"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      isSelected={field.value}
+                      onValueChange={field.onChange}>
+                      Is Second Half
+                    </Checkbox>
+                  )}
+                />
+              </div>
+            </div>
+          )} */}
           <ButtonComponent
             type="submit"
             className="bg-black text-white"

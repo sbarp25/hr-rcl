@@ -34,6 +34,7 @@ import EditDepartment from "./pages/MasterData/Deparement/EditDepartment/page.js
 import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
 import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
 import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
+import LeaveView from "./pages/Leave/LeaveView/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -105,6 +106,7 @@ function App() {
               <Route path="/Leave/status" element={<LeaveStatus />} />
               <Route path="/Leave/Request" element={<LeaveRequest />} />
               <Route path="/Leave/apprej/:id" element={<LeaveApprove />} />
+              <Route path="/Leave/view/:id" element={<LeaveView />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />

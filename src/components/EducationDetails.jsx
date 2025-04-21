@@ -14,11 +14,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa";
-import { Time } from "@internationalized/date";
+import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./InputComponent";
 import { Controller } from "react-hook-form";
-import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import DatepickerComponent from "./DatepickerComponent";
 const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
@@ -27,6 +27,7 @@ const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
@@ -119,13 +120,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           // Map each fetched education item to its corresponding degree position
           data.forEach((edu) => {
             const degreeIndex = degrees.indexOf(edu.degree);
+            const startyear = formatDate(edu.startYear);
+            const endyear = formatDate(edu.endYear);
             if (degreeIndex !== -1) {
               initialEducation[degreeIndex] = {
                 degree: edu.degree || "",
                 institution: edu.institution || "",
                 faculty: edu.faculty || "",
-                startYear: formatDate(edu.startYear || ""),
-                endYear: formatDate(edu.endYear || ""),
+                startYear: startyear,
+                endYear: endyear,
                 status: edu.status || "",
                 file: edu.documentUrl || "",
                 files: [],
@@ -316,6 +319,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ? formData.education
       : degrees.map(() => ({}));
 
+  const formatDate = (date) =>
+    date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
   return (
     <div className="space-y-4 py-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -589,15 +594,15 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     education[index] &&
                     (education[index]?.file ? (
                       <>
-                        <a
+                        {/* <a
                           href={education[index].file}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-green-600 underline flex items-center gap-x-2">
                           <FaRegEye />
                           View Uploaded Document
-                        </a>
-                        {/* <FaRegEye className="text-green-500 mr-2" />
+                        </a> */}
+                        <FaRegEye className="text-green-500 mr-2" />
                         <div
                           onClick={onOpen}
                           className="text-green-500 hover:text-green-700 text-sm">
@@ -622,7 +627,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                               </>
                             )}
                           </ModalContent>
-                        </Modal> */}
+                        </Modal>
                       </>
                     ) : (
                       <div className="text-xs text-red-500">
@@ -630,6 +635,53 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       </div>
                     ))}
                 </div>
+                {/* <div>
+                  <label className="text-xs text-gray-500 mt-1">
+                    Please upload the image of type either PNG or JPG
+                  </label>
+                  {educationalDocument &&
+                    education &&
+                    education[index] &&
+                    (education[index]?.file ? (
+                      <>
+                        <FaRegEye className="text-green-500 mr-2" />
+                        <div
+                          onClick={() => {
+                            // Set the selected image URL before opening the modal
+                            setSelectedImageUrl(education[index].file);
+                            onOpen();
+                          }}
+                          className="text-green-500 hover:text-green-700 text-sm">
+                          View Certificate
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-xs text-red-500">
+                        No Links Available
+                      </div>
+                    ))}
+                  {/* Then update your Modal to use the selectedImageUrl: 
+                  <Modal
+                    isOpen={isOpen}
+                    onOpenChange={onOpenChange}
+                    isDismissable={true}
+                    isKeyboardDismissDisabled={false}>
+                    <ModalContent>
+                      {() => (
+                        <>
+                          <ModalBody>
+                            <div className="h-96 w-96">
+                              <img
+                                src={selectedImageUrl}
+                                alt="Education Certificate"
+                              />
+                            </div>
+                          </ModalBody>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
+                </div> */}
               </div>
             </div>
           </div>
@@ -637,21 +689,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ))}
 
       <div className="flex flex-col gap-3">
-        {/* <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={isCurrentlyStudying}
-            onChange={(e) => {
-              const checked = e.target.checked;
-              setIsCurrentlyStudying(checked);
-              setFormData((prev) => ({
-                ...prev,
-                currentlyStudying: checked,
-              }));
-            }}
-          />
-          Are you currently a student?
-        </label> */}
         <Checkbox
           checked={isCurrentlyStudying}
           onChange={(e) => {

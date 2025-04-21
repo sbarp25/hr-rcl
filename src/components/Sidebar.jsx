@@ -75,7 +75,7 @@ const Sidebar = () => {
       view: true,
       children: [
         { label: "My Attendence", to: "/Attendance", view: true },
-        // { label: "Request Attendence", to: "/Attendance/Request" },
+        { label: "Late Checkin ", to: "/Attendance/Request", view: true },
       ],
     },
     {

@@ -13,6 +13,10 @@ import {
   Pagination,
   Button,
   Switch,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalBody,
 } from "@nextui-org/react";
 import Loader from "../../components/Loader";
 import Search from "../../components/Search";
@@ -35,6 +39,9 @@ const Employees = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
   const navigate = useNavigate();
+  const [deletingId, setDeletingId] = useState(null);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Employees", href: "/Employees" },
@@ -42,7 +49,7 @@ const Employees = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const fetchEmployees = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/users/list", {
         // const response = await axiosInstance.post("/api/v1/auth/get/all", {
@@ -62,12 +69,12 @@ const Employees = () => {
       console.error("Error fetching employees:", error);
       toast.error("Error fetching employees.");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
-  useEffect(() => {
-    fetchEmployees();
-  }, [currentPage, employeeDataPerPage]);
+  // useEffect(() => {
+  //   fetchEmployees();
+  // }, [currentPage, employeeDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
 
@@ -96,7 +103,25 @@ const Employees = () => {
   const handleRedirect = () => {
     navigate("/AddEmployees");
   };
-
+  const onDelete = async () => {
+    try {
+      if (hasEmployeeDeleteAccess) {
+        const response = await axiosInstance.delete(
+          `/api/v1/auth/toggle/${deletingId}`
+        );
+        if (response.data.responseCode === "204") {
+          toast.success(response.data.message);
+          fetchEmployees();
+          onClose();
+        } else {
+          toast.error(response.data.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      toast.error("Error deleting employee.");
+    }
+  };
   const handleAction = async (action, employeeId) => {
     switch (action) {
       case "edit":
@@ -115,24 +140,8 @@ const Employees = () => {
         console.log(`Editing employee ID: ${employeeId}`);
         break;
       case "delete":
-        try {
-          if (hasEmployeeDeleteAccess) {
-            console.log(`Deleting employee ID: ${employeeId}`);
-            const response = await axiosInstance.delete(
-              // `/api/v1/employee/delete/${employeeId}`
-              `/api/v1/auth/toggle/${employeeId}`
-            );
-            if (response.data.responseCode === "204") {
-              toast.success(response.data.message);
-              // fetchEmployees();
-            } else {
-              toast.error(response.data.message);
-            }
-          }
-        } catch (error) {
-          console.error("Error deleting employee:", error);
-          toast.error("Error deleting employee.");
-        }
+        setDeletingId(employeeId);
+        onOpen();
         break;
       default:
         console.log("Unknown action");
@@ -180,9 +189,19 @@ const Employees = () => {
       fetchEmployees();
     }
   };
+  // const employeData = [
+  //   {
+  //     rclId: "Odinson",
+  //     fullName: "Odinson",
+  //     email: "odinson@gmail.com",
+  //     departmentName: "Odinson",
+  //     postionName: "odinson",
+  //     isActive: true,
+  //   },
+  // ];
   return (
     <>
-      {isLoading && <Loader message="Loading employees..." />}
+      {/* {isLoading && <Loader message="Loading employees..." />} */}
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/* Breadcrumbs and Header */}
         <div className="flex flex-col space-y-4">
@@ -295,6 +314,27 @@ const Employees = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <p>Are you sure you want to approve this leave?</p>
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button color="primary" onPress={() => onDelete()}>
+                    Approve
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

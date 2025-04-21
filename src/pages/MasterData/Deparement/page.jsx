@@ -4,7 +4,15 @@ import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { Button, Pagination, Tooltip } from "@nextui-org/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Pagination,
+  Tooltip,
+  useDisclosure,
+} from "@nextui-org/react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BiData } from "react-icons/bi";
 import {
@@ -34,9 +42,10 @@ const Department = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const accessToken = localStorage.getItem("accessToken");
-
+  const [departmentId, setDepartmentId] = useState(null);
   const navigate = useNavigate();
   const [originalDepartmentsData, setOriginalDepartmentsData] = useState([]);
 
@@ -190,38 +199,41 @@ const Department = () => {
         break;
       // End Of Edit Operation
       case "delete":
+        setDepartmentId(department.id);
         console.log(`Deleting position ID: ${department.id}`);
-        try {
-          if (hasDepartmentDeleteAccess) {
-            const response = await axiosInstance.delete(
-              `/api/v1/departments/delete/${department.id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-
-            if (response.data.responseCode === "204") {
-              toast.success(response.data.message);
-            } else {
-              toast.error(response.data.message);
-            }
-          } else {
-            toast.error("Access denied");
-          }
-        } catch (error) {
-          console.error("Error deleting position:", error);
-          toast.error(error.response?.data?.message);
-        }
-
+        onOpen();
         break;
       default:
         console.log("Unknown action");
     }
   };
 
+  const onDelete = async () => {
+    try {
+      if (hasDepartmentDeleteAccess) {
+        const response = await axiosInstance.delete(
+          `/api/v1/departments/delete/${departmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.data.responseCode === "204") {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        toast.error("Access denied");
+      }
+    } catch (error) {
+      console.error("Error deleting position:", error);
+      toast.error(error.response?.data?.message);
+    }
+  };
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -378,6 +390,27 @@ const Department = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <p>Are you sure you want to delete htis department </p>
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button color="danger" onPress={() => onDelete()}>
+                    Delete
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

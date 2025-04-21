@@ -5,9 +5,9 @@ import Sidebar from "../Sidebar";
 export const Layout = ({ className, children }) => {
   return (
     <div className={`flex h-screen bg-gray-200 ${className}`}>
-      <div className="flex md:hidden mb-1 bg-gray-200 h-fit">
+      {/* <div className="flex md:hidden mb-1 bg-gray-200 h-fit">
         <MobileNavigation />
-      </div>
+      </div> */}
       <div className="hidden md:flex">
         <Sidebar />
       </div>
