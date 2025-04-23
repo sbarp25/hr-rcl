@@ -22,11 +22,13 @@ import {
   Avatar,
   Input,
   Tooltip,
+  Button,
 } from "@nextui-org/react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
+import CheckIn from "./CheckIn";
 
 const MobileNavigation = () => {
   const navigate = useNavigate();
@@ -142,7 +144,25 @@ const MobileNavigation = () => {
             className="p-2 rounded-lg hover:bg-gray-600 transition">
             {isOpen ? <RxCross2 size={24} /> : <CiMenuBurger size={24} />}
           </button>
+          <Input
+            isClearable
+            className="max-w-full mb-4 mt-2"
+            placeholder="Search in emails"
+            radius="lg"
+            variant="underlined"
+            // startContent={
+            //   <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
+            // }
+          />
         </div>
+        <Tooltip content={email}>
+          <Avatar
+            className={"mt-1"}
+            size="md"
+            // onClick={handleProfileChange}
+            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+          />
+        </Tooltip>
       </div>
 
       <Drawer
@@ -213,6 +233,9 @@ const MobileNavigation = () => {
                     </div>
                   ))}
                 </div>
+                <button>
+                  <CheckIn />
+                </button>
                 <button className="">
                   <CiLogout
                     onClick={handleLogOut}

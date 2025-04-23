@@ -27,6 +27,7 @@ import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/Dropdown";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import SkeletonLoader from "../../components/SkeletonLoader";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +50,7 @@ const Employees = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const fetchEmployees = async () => {
-    // setIsLoading(true);
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/users/list", {
         // const response = await axiosInstance.post("/api/v1/auth/get/all", {
@@ -69,12 +70,12 @@ const Employees = () => {
       console.error("Error fetching employees:", error);
       toast.error("Error fetching employees.");
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
-  // useEffect(() => {
-  //   fetchEmployees();
-  // }, [currentPage, employeeDataPerPage]);
+  useEffect(() => {
+    fetchEmployees();
+  }, [currentPage, employeeDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
 
@@ -245,7 +246,10 @@ const Employees = () => {
                 <TableColumn>Position</TableColumn>
                 <TableColumn>Action</TableColumn>
               </TableHeader>
-              <TableBody>
+              <TableBody
+                items={isLoading ? [] : employeesData}
+                isLoading={isLoading}
+                loadingContent={<SkeletonLoader />}>
                 {employeesData
                   .filter((employee) => employee.isActive)
                   .map((employee, index) => (
@@ -290,7 +294,11 @@ const Employees = () => {
               </TableBody>
             </Table>
           </div>
-
+          {!isLoading && (!employeesData || employeesData.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              No Data available
+            </div>
+          )}
           {/* Pagination */}
           <div className="mt-4 flex justify-between">
             <div className="text-xs">

@@ -35,6 +35,7 @@ import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
 import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
 import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
 import LeaveView from "./pages/Leave/LeaveView/Page.jsx";
+import MobileNavigation from "./components/MobileNavigation.jsx";
 
 function App() {
   useEffect(() => {
@@ -71,6 +72,9 @@ function App() {
         </AuthLayout>
       ) : (
         <Layout>
+          <div className="flex md:hidden mb-1">
+            <MobileNavigation />
+          </div>
           <Routes>
             <Route element={<PrivateRoutes />}>
               <Route path="/" element={<Dashboard />} />

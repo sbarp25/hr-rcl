@@ -13,7 +13,6 @@ import { toast, ToastContainer } from "react-toastify";
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
-  const [associateTeamLead, setAssociateTeamLead] = useState([]);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -59,8 +58,8 @@ const EditDepartment = () => {
   const fetchTeamLead = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/team-leads"
+      const response = await axiosInstance.get(
+        "/api/v1/departments/get_all_users_name_id"
       );
       if (response.data.responseCode === "200") {
         setTeamLead(response.data.datalist);
@@ -71,24 +70,7 @@ const EditDepartment = () => {
       setIsLoading(false);
     }
   };
-  {
-    /**To fetch Associate Team lead */
-  }
-  const fetchAssociateTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/associate-team-leads"
-      );
-      if (response.data.responseCode === "200") {
-        setAssociateTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
   {
     /**To fetch Department Data */
   }
@@ -121,7 +103,6 @@ const EditDepartment = () => {
   };
   useEffect(() => {
     fetchTeamLead();
-    fetchAssociateTeamLead();
     fetchDepartmentById();
   }, []);
 
@@ -167,13 +148,10 @@ const EditDepartment = () => {
     }
   };
   const teamLeadid = teamLead.map((item) => ({
-    key: item.id, // Using id as the key
+    key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
-  const associateteamLeadid = associateTeamLead.map((item) => ({
-    key: item.id, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
+
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -236,7 +214,7 @@ const EditDepartment = () => {
             <div>
               <SelectComp
                 name="teamlead"
-                label="Team Leader"
+                label="Team Lead"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
                 data={teamLeadid}
@@ -249,10 +227,10 @@ const EditDepartment = () => {
             <div>
               <SelectComp
                 name="Associateteamlead"
-                label="Associate Team Leader"
+                label="Associate Team Lead"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                data={associateteamLeadid}
+                data={teamLeadid}
                 valueKey="key"
                 labelKey="label"
               />

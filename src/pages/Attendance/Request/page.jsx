@@ -53,7 +53,7 @@ const AttendanceRequest = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/");
     }
   }, []);
 
@@ -223,6 +223,34 @@ const AttendanceRequest = () => {
     }
   };
 
+  const fetchEmployees = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/users/list", {
+        // const response = await axiosInstance.post("/api/v1/auth/get/all", {
+        pageIndex: currentPage,
+        pageSize: lateCheckInDataPerPage,
+      });
+
+      if (response?.data?.responseCode === "200") {
+        setOriginalLateCheckInDataData(response?.data?.datalist || []);
+        setLateCheckinData(response?.data?.datalist || []);
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      toast.error("Error fetching employees.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchEmployees();
+  }, [currentPage, lateCheckInDataPerPage]);
+
   return (
     <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
       {" "}
@@ -303,6 +331,9 @@ const AttendanceRequest = () => {
             </TableBody>
           </Table>
         </div>
+        {(!lateCheckinData || lateCheckinData.length === 0) && (
+          <div className="p-8 text-center text-gray-500">No Data available</div>
+        )}
 
         {/* Pagination */}
         <div className="mt-4 flex justify-between">

@@ -18,13 +18,12 @@ const WorkFromHome = () => {
         bordered
         aria-label="Work From Home Table"
         isHeaderSticky
-        className="min-w-full h-auto max-h-[60vh] overflow-auto">
+        className="min-w-full h-auto max-h-[50vh] overflow-auto">
         <TableHeader className="capitalize">
           <TableColumn>S.N</TableColumn>
           <TableColumn>RCL-ID</TableColumn>
           <TableColumn>Name</TableColumn>
-          <TableColumn>Email</TableColumn>
-          <TableColumn>Department</TableColumn>
+          <TableColumn>Team Lead</TableColumn>
           <TableColumn>Approved By</TableColumn>
         </TableHeader>
         <TableBody>
@@ -44,6 +43,9 @@ const WorkFromHome = () => {
             : null}
         </TableBody>
       </Table>
+      {(!WorkfromHomeDate || WorkfromHomeDate.length === 0) && (
+        <div className="p-8 text-center text-gray-500">No data available</div>
+      )}
     </div>
   );
 };

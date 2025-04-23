@@ -182,6 +182,11 @@ const Page = () => {
               ))}
             </TableBody>
           </Table>
+          {!isLoading && (!paginatedEkye || paginatedEkye.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              No Data available
+            </div>
+          )}
         </div>
 
         <div className="flex justify-between items-center">

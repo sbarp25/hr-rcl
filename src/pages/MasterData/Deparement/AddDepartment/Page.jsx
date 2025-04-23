@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
-import { Textarea } from "@nextui-org/react";
+import { Input, Textarea } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
@@ -13,7 +13,7 @@ import SelectComp from "../../../../components/Select";
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
-  const [associateTeamLead, setAssociateTeamLead] = useState([]);
+
   const navigate = useNavigate();
   const {
     register,
@@ -111,8 +111,8 @@ const AddDepartment = () => {
   const fetchTeamLead = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/team-leads"
+      const response = await axiosInstance.get(
+        "/api/v1/departments/get_all_users_name_id"
       );
       if (response.data.responseCode === "200") {
         setTeamLead(response.data.datalist);
@@ -124,26 +124,8 @@ const AddDepartment = () => {
     }
   };
 
-  /**To fetch Associate Team lead */
-  const fetchAssociateTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/departments/associate-team-leads"
-      );
-      if (response.data.responseCode === "200") {
-        setAssociateTeamLead(response.data.datalist);
-        console.log(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   useEffect(() => {
     fetchTeamLead();
-    fetchAssociateTeamLead();
   }, []);
 
   const breadcrumbItems = [
@@ -152,13 +134,10 @@ const AddDepartment = () => {
     { label: "Department", href: "/master-data/Department" },
   ];
   const teamLeadid = teamLead.map((item) => ({
-    key: item.id, // Using id as the key
+    key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
-  const associateteamLeadid = associateTeamLead.map((item) => ({
-    key: item.id, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
+
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
@@ -213,7 +192,7 @@ const AddDepartment = () => {
             <div>
               <SelectComp
                 name="teamlead"
-                label="Team Leader"
+                label="Team Lead"
                 control={control}
                 rules={{ required: "Team Lead is required" }}
                 data={teamLeadid}
@@ -226,10 +205,10 @@ const AddDepartment = () => {
             <div>
               <SelectComp
                 name="Associateteamlead"
-                label="Associate Team Leader"
+                label="Associate Team Lead"
                 control={control}
                 rules={{ required: "Associate Team Lead is required" }}
-                data={associateteamLeadid}
+                data={teamLeadid}
                 valueKey="key"
                 labelKey="label"
               />

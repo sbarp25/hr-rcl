@@ -199,22 +199,9 @@ const LeaveStatus = () => {
   };
 
   // Fallback data if API fails
-  const fallbackLeaveData = [
-    {
-      rclId: "1",
-      leaveId: "1",
-      leaveStartDate: "2024-07-02",
-      leaveType: "Sick",
-      leaveEndDate: "2024-07-02",
-      Days: "1",
-      leaveStatus: "PENDING",
-      teamLeaderName: "Odinson",
-      approvedBy: "",
-    },
-  ];
 
   // Use API data if available, otherwise use fallback
-  const displayData = leaveData.length > 0 ? leaveData : fallbackLeaveData;
+  const displayData = leaveData.length > 0 && leaveData;
 
   return (
     <>
@@ -332,6 +319,11 @@ const LeaveStatus = () => {
               </TableBody>
             </Table>
           </div>
+          {!isLoading && (!leaveData || leaveData.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              No Data available
+            </div>
+          )}
           {/**Pagination Section */}
           <div>
             <div className="flex mt-4 justify-between items-center">

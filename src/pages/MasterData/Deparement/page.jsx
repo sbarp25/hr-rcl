@@ -29,6 +29,7 @@ import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const Department = () => {
   const [departmentsData, setDepartmentsData] = useState([]);
@@ -276,9 +277,6 @@ const Department = () => {
   };
   return (
     <>
-      {isLoading && (
-        <Loader message="Please wait while the work is being done" />
-      )}
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/**Header Section */}
         <div className="flex flex-col space-y-4">
@@ -325,7 +323,10 @@ const Department = () => {
                 <TableColumn>Associate Team Lead</TableColumn>
                 <TableColumn>User Action</TableColumn>
               </TableHeader>
-              <TableBody>
+              <TableBody
+                items={isLoading ? [] : departmentsData}
+                isLoading={isLoading}
+                loadingContent={<SkeletonLoader />}>
                 {departmentsData.map((department, index) => (
                   <TableRow
                     key={department.rclId}
@@ -367,7 +368,11 @@ const Department = () => {
               </TableBody>
             </Table>
           </div>
-
+          {!isLoading && (!departmentsData || departmentsData.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              No Data available
+            </div>
+          )}
           <div className="mt-4 flex justify-between">
             <div className="text-xs">
               <span>

@@ -28,6 +28,7 @@ import Search from "../../../components/Search";
 import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -270,9 +271,9 @@ const Position = () => {
   };
   return (
     <>
-      {isLoading && (
+      {/* {isLoading && (
         <Loader message="Please wait while the work is being done" />
-      )}
+      )} */}
 
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/* Header Section */}
@@ -398,7 +399,10 @@ const Position = () => {
                 <TableColumn>Description</TableColumn>
                 <TableColumn>User Action</TableColumn>
               </TableHeader>
-              <TableBody>
+              <TableBody
+                items={isLoading ? [] : positionData}
+                isLoading={isLoading}
+                loadingContent={<SkeletonLoader />}>
                 {positionData.map((position, index) => (
                   <TableRow
                     key={position.rclId}
@@ -429,6 +433,11 @@ const Position = () => {
               </TableBody>
             </Table>
           </div>
+          {!isLoading && (!positionData || positionData.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              No Data available
+            </div>
+          )}
           {/* )} */}
           <div className="flex mt-4 justify-between">
             <div className="flex text-xs">

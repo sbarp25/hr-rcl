@@ -270,10 +270,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       });
     }
 
-    // If no files were appended but we need the parameter for the server
     if (!hasFiles) {
-      // Create a small empty blob to make the 'files' array exist but empty
-      // This is a workaround for the backend requiring files parameter
       formDataToSend.append(
         "files",
         new Blob([], { type: "application/octet-stream" })

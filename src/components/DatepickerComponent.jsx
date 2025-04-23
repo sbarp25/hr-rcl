@@ -1,5 +1,5 @@
 import { Controller } from "react-hook-form";
-import { getLocalTimeZone, parseDate } from "@internationalized/date";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { DatePicker } from "@nextui-org/react";
 
 // Helper function to convert string date to CalendarDate
@@ -14,19 +14,36 @@ const parseStringToCalendarDate = (dateString) => {
   }
 };
 
+// Modified to handle timezone issues properly
 const formatDate = (date) => {
   if (!date) return null;
 
+  // If it's already a CalendarDate object with toDate method
   if (date.toDate && typeof date.toDate === "function") {
-    return date.toDate(getLocalTimeZone()).toISOString().split("T")[0];
+    // Use the local timezone to prevent date shifting
+    const localDate = date.toDate(getLocalTimeZone());
+
+    // Get year, month, and day components and create ISO date string
+    const year = localDate.getFullYear();
+    // Month is 0-indexed in JS Date, so add 1 and pad with leading zero if needed
+    const month = String(localDate.getMonth() + 1).padStart(2, "0");
+    const day = String(localDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   }
 
+  // If it's already a YYYY-MM-DD string, return it as is
   if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return date;
   }
 
+  // Handle JavaScript Date objects
   if (date instanceof Date) {
-    return date.toISOString().split("T")[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   }
 
   return null;
@@ -105,7 +122,14 @@ const DatepickerComponent = ({
                 label={label}
                 variant={variant}
                 disabled={disabled}
-                onChange={field.onChange}
+                onChange={(date) => {
+                  // When a new date is selected, pass it through field.onChange
+                  field.onChange(date);
+
+                  // Optionally, for debugging:
+                  // console.log("Selected date:", date);
+                  // console.log("Formatted date:", formatDate(date));
+                }}
               />
               {error && <p className="text-danger text-sm">{error.message}</p>}
             </>
