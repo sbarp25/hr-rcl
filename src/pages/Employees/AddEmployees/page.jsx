@@ -180,13 +180,13 @@ const AddEmployeeForm = () => {
     }
   };
 
-  // const hasaccess = false;
+  const hasaccess = true;
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/login");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
 
   return (
     <div className="container space-y-4">

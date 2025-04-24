@@ -14,7 +14,7 @@ const Attendance = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
   return (

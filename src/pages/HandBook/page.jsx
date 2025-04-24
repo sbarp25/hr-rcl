@@ -11,7 +11,7 @@ const HandBook = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
   return (

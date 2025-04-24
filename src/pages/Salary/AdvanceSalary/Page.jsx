@@ -23,6 +23,13 @@ const AdvanceSalary = () => {
     console.log("Submitted Data", data);
   };
 
+  const hasaccess = true;
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="flex flex-col space-y-10">
       <BreadcrumbsComponent items={breadcrumbItems} />

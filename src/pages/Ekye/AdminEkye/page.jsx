@@ -103,13 +103,13 @@ const Page = () => {
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
-  // const hasaccess = false;
+  const hasaccess = true;
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex justify-between items-center px-8">

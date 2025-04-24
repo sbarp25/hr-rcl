@@ -212,7 +212,7 @@ const Roles = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
   const breadcrumbItems = [

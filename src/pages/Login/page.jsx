@@ -65,7 +65,7 @@ const Login = () => {
           response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
           response?.data?.data?.ekyeStatus === "COMPLETED"
         ) {
-          navigate("/");
+          navigate("/dashboard");
         } else {
           navigate("/EKYE");
         }

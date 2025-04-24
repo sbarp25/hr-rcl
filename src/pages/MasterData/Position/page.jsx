@@ -155,7 +155,7 @@ const Position = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
   /**Start Of handleActions*/
@@ -254,12 +254,11 @@ const Position = () => {
     { label: "Position", href: "/master-data/Position" },
   ];
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   {
     /**Trancate Text */
   }
@@ -269,6 +268,7 @@ const Position = () => {
   const navigateAdd = () => {
     navigate("/master-data/AddPosition");
   };
+
   return (
     <>
       {/* {isLoading && (

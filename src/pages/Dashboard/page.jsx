@@ -7,7 +7,7 @@ import CheckIn from "../../components/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { BiCreditCard } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -15,7 +15,6 @@ const Page = () => {
   const [checkedInStatus, setCheckedInStatus] = useState(false);
   const [totalDelayTime, setTotalDelayTime] = useState("");
   const [totalEarlyTime, setTotalEarlyTime] = useState("");
-
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
   const lati = localStorage.getItem("latitude");
@@ -31,6 +30,7 @@ const Page = () => {
         setAttendanceData(response?.data?.data?.weeklyAttendanceReport);
         setTotalDelayTime(response?.data?.data?.totalDelayTime);
         setTotalEarlyTime(response?.data?.data?.totalEarlyTime);
+        setCheckedInStatus(response?.data?.data?.isCheckedIn);
       } else {
         toast.error(
           response?.data?.message || "Failed to retrieve attendance data"
@@ -71,10 +71,10 @@ const Page = () => {
             </div>
           </div>
           <div className="text-md font-bold text-right mr-4 mb-3">
-            <p className="text-teal-500 mt-1">
+            <p className="text-green-700 mt-1">
               Total Early Time: {totalEarlyTime || "N/A"}
             </p>
-            <p className="text-red-500 mt-1">
+            <p className="text-red-700 mt-1">
               Total delay Time: {totalDelayTime || "N/A"}
             </p>
           </div>

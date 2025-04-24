@@ -52,18 +52,18 @@ function App() {
     }
   }, []);
   const location = useLocation();
-  const authRoutes = ["/login", "/rstpwd", "/resetpwd", "/EKYE"];
+  const authRoutes = ["/login", "/", "/rstpwd", "/resetpwd", "/EKYE"];
   const isAuthRoute = authRoutes.includes(location.pathname);
 
   return (
     <>
-      {/* const ekyestep = localStorage.getItem(""" */}
       <LocationComponent />
       <ToastContainer />
       {isAuthRoute ? (
         <AuthLayout>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/rstpwd" element={<ValidateLink />} />
             <Route element={<PrivateRoutes />}>
               <Route path="/EKYE" element={<Ekye />} />
@@ -77,7 +77,8 @@ function App() {
           </div>
           <Routes>
             <Route element={<PrivateRoutes />}>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              {/* <Route path="/dashboard" element={<Dashboard />} /> */}
               <Route path="/Attendance" element={<Attendance />} />
               <Route
                 path="/Attendance/Request"

@@ -58,7 +58,7 @@ const AddDepartment = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
 
@@ -124,10 +124,6 @@ const AddDepartment = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTeamLead();
-  }, []);
-
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
@@ -137,6 +133,12 @@ const AddDepartment = () => {
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
 
   return (
     <div className="px-4 flex flex-col space-y-4">

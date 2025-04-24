@@ -25,6 +25,7 @@ const LeaveRequest = () => {
     register,
     control,
     reset,
+    setValue,
     handleSubmit,
     formState: { errors },
     watch,
@@ -41,6 +42,7 @@ const LeaveRequest = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isToDateDisabled, setIsToDateDisabled] = useState(false);
   const navigate = useNavigate();
 
   const breadcrumbItems = [
@@ -62,6 +64,20 @@ const LeaveRequest = () => {
   ];
 
   const fromDate = watch("fromDate");
+  const leaveCategory = watch("leaveStatus");
+
+  useEffect(() => {
+    if (leaveCategory === "FIRST_HALF" || leaveCategory === "SECOND_HALF") {
+      // Copy fromDate to ToDate and disable ToDate field
+      if (fromDate) {
+        setValue("ToDate", fromDate);
+      }
+      setIsToDateDisabled(true);
+    } else {
+      // Enable ToDate field when FULL_DAY is selected
+      setIsToDateDisabled(false);
+    }
+  }, [leaveCategory, fromDate, setValue]);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -102,7 +118,7 @@ const LeaveRequest = () => {
 
       if (response?.data?.responseCode === "200") {
         reset();
-        navigate("/");
+        navigate("/dashboard");
         toast.success(response?.data?.message);
       } else {
         const errorMessage = response?.data?.error || "Something went wrong";
@@ -148,9 +164,9 @@ const LeaveRequest = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/dashboard");
     }
-  }, [hasaccess, navigate]);
+  }, []);
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
@@ -254,6 +270,7 @@ const LeaveRequest = () => {
                 label="To Date"
                 size="sm"
                 className="w-full"
+                disabled={isToDateDisabled}
                 rules={{
                   required: "End date is required",
                   validate: (value) =>

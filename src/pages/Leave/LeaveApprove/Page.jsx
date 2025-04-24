@@ -151,7 +151,12 @@ const LeaveApprove = ({ leaveId }) => {
       setIsLoading(false);
     }
   };
-
+  const hasaccess = true;
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <div className="space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />

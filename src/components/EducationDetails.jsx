@@ -294,7 +294,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
       if (response.data.responseCode === "201") {
         toast.success(response.data.message);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         toast.error("Failed to save educational details.");
       }

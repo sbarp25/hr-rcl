@@ -57,7 +57,7 @@ const AttendanceRequest = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
 
@@ -88,13 +88,15 @@ const AttendanceRequest = () => {
     menu.actionList.some((action) => action.actionId === 1)
   );
   /**To read the Data */
-  const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 2)
-  );
+  // const hasaccess = menu?.some((menu) =>
+  //   menu.actionList.some((action) => action.actionId === 2)
+  // );
+  const hasaccess = true;
+  const hasEmployeeEditAccess = true;
   /**To check edit status */
-  const hasEmployeeEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 3)
-  );
+  // const hasEmployeeEditAccess = menu?.some((menu) =>
+  //   menu.actionList.some((action) => action.actionId === 3)
+  // );
   /**To check Delete Access */
   const hasEmployeeDeleteAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 4)
@@ -303,8 +305,8 @@ const AttendanceRequest = () => {
                 <TableColumn>Email</TableColumn>
                 <TableColumn>Attendance Date</TableColumn>
                 <TableColumn>Expected CheckInTime</TableColumn>
-                <TableColumn>Actual checkInTime</TableColumn>
                 <TableColumn>Status</TableColumn>
+                <TableColumn>Actual checkInTime</TableColumn>
                 <TableColumn>Justification</TableColumn>
                 <TableColumn>Actions</TableColumn>
               </TableHeader>

@@ -92,6 +92,7 @@ const LeaveStatus = () => {
   useEffect(() => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
+  // }, []);
 
   const menu = LocalStorageUtil.getItem("menu");
   const hasLeaveApproveAccess = true; // This is set to true in original code
@@ -217,7 +218,7 @@ const LeaveStatus = () => {
 
   const getStatusClass = (status) => {
     if (status === "APPROVED")
-      return "bg-teal-100 border border-teal-600 text-teal-600";
+      return "bg-green-100 border border-green-600 text-green-600";
     if (status === "REJECTED")
       return "bg-red-100 border border-red-600 text-red-600";
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
@@ -256,15 +257,17 @@ const LeaveStatus = () => {
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
+                  <TableColumn>Full Name</TableColumn>
                   <TableColumn>Request Date</TableColumn>
                   <TableColumn>Leave Type</TableColumn>
                   <TableColumn>Leave Start Date</TableColumn>
                   <TableColumn>Leave End Date</TableColumn>
-                  <TableColumn>Days</TableColumn>
-                  <TableColumn>Status</TableColumn>
-                  <TableColumn>Team Leader</TableColumn>
-                  <TableColumn>Approver</TableColumn>
+                  {/* <TableColumn>Status</TableColumn> */}
+                  <TableColumn>Team Lead</TableColumn>
                   <TableColumn>Action</TableColumn>
+                  {/* <TableColumn>Employee Name</TableColumn> */}
+                  {/* <TableColumn>Approver</TableColumn>
+                  <TableColumn>Action</TableColumn> */}
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -275,12 +278,13 @@ const LeaveStatus = () => {
                       key={item.rclId}
                       className="h-14 border-b-2 border-gray-300">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                      <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
+                      <TableCell>{item?.fullName || "N/A"}</TableCell>
+                      <TableCell>{item?.requestDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>
                       <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
-                      <TableCell>{item?.Days || "N/A"}</TableCell>
-                      <TableCell>
+
+                      {/* <TableCell>
                         <div
                           className={`${getStatusClass(
                             item?.leaveStatus
@@ -300,16 +304,20 @@ const LeaveStatus = () => {
                             {item?.teamLeaderName || "N/A"}
                           </div>
                         </div>
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         <div className="flex items-center gap-3 p-2 rounded-lg">
                           <div
                             className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
                               item?.leaveStatus
                             )}`}>
-                            {item?.approvedBy?.charAt(0) || "?"}
+                            {item?.approvedBy?.charAt(0) ||
+                              item?.rejectedBy?.charAt(0) ||
+                              "?"}
                           </div>
-                          <div>{item?.approvedBy || "N/A"}</div>
+                          <div>
+                            {item?.approvedBy || item?.rejectedBy || "N/A"}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -401,11 +409,6 @@ const LeaveStatus = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <button
-                            className="text-blue-600 hover:text-blue-800"
-                            onClick={() => handleAction("view", item)}>
-                            <FaRegEye size={16} />
-                          </button>
                           {item?.leaveStatus === "PENDING" &&
                             hasLeaveApproveAccess && (
                               <>
@@ -431,7 +434,7 @@ const LeaveStatus = () => {
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
             <div className="space-y-4">
-              {leaveData.map((leave, index) => (
+              {leaveData.map((leave) => (
                 <div
                   key={leave.rclId}
                   className="border rounded-lg overflow-hidden shadow-sm">
@@ -462,7 +465,7 @@ const LeaveStatus = () => {
                     } p-3 space-y-2 text-sm`}>
                     <div className="grid grid-cols-2 gap-2">
                       <div className="font-medium">Request Date:</div>
-                      <div>{leave?.leaveStartDate || "N/A"}</div>
+                      <div>{leave?.requestDate || "N/A"}</div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div className="font-medium">Start Date:</div>
@@ -485,12 +488,6 @@ const LeaveStatus = () => {
                       <div>{leave?.approvedBy || "N/A"}</div>
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
-                      <Button
-                        size="sm"
-                        color="primary"
-                        onPress={() => handleAction("view", leave)}>
-                        View
-                      </Button>
                       {leave?.leaveStatus === "PENDING" &&
                         hasLeaveApproveAccess && (
                           <>
@@ -623,8 +620,17 @@ const LeaveStatus = () => {
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="font-medium">Days:</span>
-                        <span>{selectedLeave?.Days}</span>
+                        {selectedLeave.isHalfDay ? (
+                          <div>
+                            <span className="font-medium">Half Day</span>
+                            <span>{selectedLeave?.isHalfDay}</span>
+                          </div>
+                        ) : (
+                          <div>
+                            <span className="font-medium">Days:</span>
+                            <span>{selectedLeave?.Days}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

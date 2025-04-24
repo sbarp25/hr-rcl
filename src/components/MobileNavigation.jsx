@@ -45,7 +45,7 @@ const MobileNavigation = () => {
   const location = useLocation();
 
   const navbarElements = [
-    { icon: MdDashboard, label: "Dashboard", to: "/" },
+    { icon: MdDashboard, label: "Dashboard", to: "/dashboard" },
     {
       icon: IoAlarm,
       label: "Attendance",

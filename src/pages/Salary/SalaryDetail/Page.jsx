@@ -16,6 +16,7 @@ const SalaryEdit = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({});
+
   const month = "January";
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
@@ -42,7 +43,13 @@ const SalaryEdit = () => {
 
     fetchDepartments();
   }, []);
-
+  const hasaccess = true;
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="flex flex-col space-y-8">
       <BreadcrumbsComponent items={breadcrumbItems} />

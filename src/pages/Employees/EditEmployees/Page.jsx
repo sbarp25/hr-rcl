@@ -184,12 +184,18 @@ const EditEmployees = () => {
   const onCancel = () => {
     navigate("/Employees");
   };
+  const hasaccess = true;
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="flex justify-between">
         <div className="page-title -pl-2">Edit Employee</div>
-        {/* <GoBack /> */}
+        <GoBack />
       </div>
       <div className="bg-gray-100 p-6 rounded-3xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 space-y-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">

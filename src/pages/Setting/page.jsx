@@ -7,9 +7,9 @@ const Settings = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/login");
+      navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   return <div>Settings</div>;
 };
 

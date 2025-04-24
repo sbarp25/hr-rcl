@@ -68,7 +68,7 @@ const Sidebar = () => {
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
-    { icon: MdDashboard, label: "Dashboard", to: "/", view: true },
+    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
     {
       icon: IoAlarm,
       label: "Attendance",
@@ -184,7 +184,7 @@ const Sidebar = () => {
               onClick={toggleSidebar}
             />
             {isSidebarExpanded && (
-              <Link to="/">
+              <Link to="/dashboard">
                 <img src={Logo} className="w-32" alt="Logo" />
               </Link>
             )}

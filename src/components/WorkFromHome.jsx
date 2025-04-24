@@ -24,7 +24,6 @@ const WorkFromHome = () => {
           <TableColumn>RCL-ID</TableColumn>
           <TableColumn>Name</TableColumn>
           <TableColumn>Team Lead</TableColumn>
-          <TableColumn>Approved By</TableColumn>
         </TableHeader>
         <TableBody>
           {WorkfromHomeDate.length > 0
@@ -37,7 +36,6 @@ const WorkFromHome = () => {
                     {truncateText(data.Email, 12)}
                   </TableCell>
                   <TableCell>{data.Department}</TableCell>
-                  <TableCell>{data.ApprovedBy}</TableCell>
                 </TableRow>
               ))
             : null}

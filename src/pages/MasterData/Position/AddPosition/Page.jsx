@@ -82,6 +82,12 @@ const AddPosition = () => {
     return 4; // default for smaller screens
   };
 
+  const hasaccess = true;
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="px-4 flex flex-col space-y-4">
       <BreadcrumbsComponent items={breadcrumbItems} />

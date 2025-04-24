@@ -83,6 +83,14 @@ const SalaryDetails = () => {
   ];
   const handleClick = () => {};
 
+  const hasaccess = true;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="flex flex-col space-y-10">
       {isLoading && ""}
@@ -96,8 +104,7 @@ const SalaryDetails = () => {
           {SalaryD.map((item, index) => (
             <div
               key={index}
-              className={`text-text ${item.color} p-2 rounded-lg text-center`}
-            >
+              className={`text-text ${item.color} p-2 rounded-lg text-center`}>
               <div className="font-bold">{item.value}</div>
               <div>{item.key}</div>
             </div>

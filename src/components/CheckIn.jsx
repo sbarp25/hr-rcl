@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import { getIpAddress } from "../utils/getIpAddress";
 import { toast } from "react-toastify";
@@ -17,12 +17,7 @@ import TextAreaComp from "./TextAreaComp";
 
 const CheckIn = ({ checkedInStatus }) => {
   const [isloading, setIsloading] = useState(false);
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+  const { control, handleSubmit, reset } = useForm();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isSecondModalOpen,
@@ -37,18 +32,13 @@ const CheckIn = ({ checkedInStatus }) => {
     onOpen();
   };
   const handleLateCheckInConfirm = () => {
-    // Close the first modal
     onOpenChange(false);
-
-    // Open the second modal
     onOpenSecondModal();
   };
 
   const isStudent = localStorage.getItem("isCurrentlyStudying") === "true";
 
   const handleAttendance = async () => {
-    console.log("checkedInStatus:", isStudent);
-
     const ipAddress = await getIpAddress();
 
     if (!checkedInStatus) {
@@ -149,7 +139,7 @@ const CheckIn = ({ checkedInStatus }) => {
       );
       if (response?.data?.responseCode === "200") {
         toast.success("Late check-in processed successfully!");
-        onOpenChangeSecondModal(false); // Close the second modal
+        onOpenChangeSecondModal(false);
       } else {
         toast.error("Late Check In Failed");
       }
@@ -158,7 +148,7 @@ const CheckIn = ({ checkedInStatus }) => {
     }
   };
   const closeRejectModal = () => {
-    onOpenChangeSecondModal(false); // Close the second modal
+    onOpenChangeSecondModal(false);
     reset();
   };
   return (
@@ -197,7 +187,7 @@ const CheckIn = ({ checkedInStatus }) => {
                 <ModalBody>
                   <div className="flex flex-col justify-center items-center py-4">
                     <span>You are currently checking in late.</span> <br />
-                    <span>Do you want to Check in lates?</span>
+                    <span>Do you want to Check in late?</span>
                   </div>
                   <div className="flex justify-center gap-4 py-2">
                     <Button
@@ -205,9 +195,7 @@ const CheckIn = ({ checkedInStatus }) => {
                       className="text-white bg-black">
                       Yes
                     </Button>
-                    <Button onPress={onClose} color="danger">
-                      No
-                    </Button>
+                    <Button onPress={onClose}>No</Button>
                   </div>
                 </ModalBody>
               </>
@@ -221,7 +209,7 @@ const CheckIn = ({ checkedInStatus }) => {
           isDismissable={true}
           isKeyboardDismissDisabled={false}>
           <ModalContent>
-            {(onClose) => (
+            {() => (
               <>
                 <ModalBody className="py-4">
                   <div className="text-center font-medium text-lg py-2">
@@ -245,10 +233,7 @@ const CheckIn = ({ checkedInStatus }) => {
                       <Button className="text-white bg-black" type="submit">
                         Submit
                       </Button>
-                      <Button
-                        color="danger"
-                        onPress={closeRejectModal}
-                        className="px-8">
+                      <Button onPress={closeRejectModal} className="px-8">
                         Cancel
                       </Button>
                     </div>

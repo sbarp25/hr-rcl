@@ -99,7 +99,7 @@ const Employees = () => {
 
   useEffect(() => {
     if (!hasaccess) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, []);
   const handleRedirect = () => {

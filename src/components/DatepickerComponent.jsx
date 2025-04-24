@@ -60,7 +60,7 @@ const DatepickerComponent = ({
   compareDirection = "after",
   compareErrorMessage = "",
   placeholderDate = null,
-  disabled = false,
+  disabled,
   formatDateFn = formatDate,
 }) => {
   const validationRules = {
@@ -117,11 +117,11 @@ const DatepickerComponent = ({
                 {...field}
                 value={dateValue}
                 showMonthAndYearPickers
+                isDisabled={disabled}
                 isInvalid={!!error}
                 className={className}
                 label={label}
                 variant={variant}
-                disabled={disabled}
                 onChange={(date) => {
                   // When a new date is selected, pass it through field.onChange
                   field.onChange(date);

@@ -86,7 +86,55 @@ const Leave = (props) => {
       setLeaveList(upComingLeave);
     }
   }, [isToday, todayLeave, upComingLeave]);
-
+  // Dummy leave list data
+  // const leaveList = [
+  //   {
+  //     fullName: "John Smith",
+  //     teamLeaderName: "Sarah Johnson",
+  //     leaveStartDate: "2025-04-25",
+  //     leaveEndDate: "2025-04-28",
+  //   },
+  //   {
+  //     fullName: "Emma Wilson",
+  //     teamLeaderName: "Michael Chen",
+  //     leaveStartDate: "2025-05-01",
+  //     leaveEndDate: "2025-05-05",
+  //   },
+  //   {
+  //     fullName: "David Lee",
+  //     teamLeaderName: "Sarah Johnson",
+  //     leaveStartDate: "2025-04-30",
+  //     leaveEndDate: "2025-05-02",
+  //   },
+  //   {
+  //     fullName: "Priya Patel",
+  //     teamLeaderName: "Michael Chen",
+  //     leaveStartDate: "2025-05-10",
+  //     leaveEndDate: "2025-05-17",
+  //   },
+  //   {
+  //     fullName: "Robert Garcia",
+  //     teamLeaderName: "Lisa Wong",
+  //     leaveStartDate: "2025-04-27",
+  //     leaveEndDate: "2025-05-08",
+  //   },
+  //   {
+  //     fullName: "Sophia Kim",
+  //     teamLeaderName: "Sarah Johnson",
+  //     leaveStartDate: "2025-05-15",
+  //     leaveEndDate: "2025-05-16",
+  //   },
+  //   {
+  //     fullName: "James Wilson",
+  //     teamLeaderName: "Lisa Wong",
+  //     leaveStartDate: "2025-05-05",
+  //     leaveEndDate: "2025-05-09",
+  //   },
+  // ];
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <>
       <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
@@ -99,7 +147,59 @@ const Leave = (props) => {
             />
           </div>
         </div>
-        <div className="w-full overflow-x-auto">
+        <div className="w-full p-4 ">
+          <div className="max-h-[30vh] overflow-auto px-1">
+            {leaveList && leaveList.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2    gap-4">
+                {leaveList.map((data, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="flex-shrink-0 mr-3">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 border border-green-600 text-green-600">
+                          {data?.fullName?.charAt(0) || "?"}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {data.fullName}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Team Leader: {data.teamLeaderName}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 pt-3">
+                      <div className="flex justify-between items-center">
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-500">
+                            From:
+                          </span>
+                          <span className="ml-1 text-gray-800">
+                            {formatDate(data.leaveStartDate)}
+                          </span>
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium text-gray-500">To:</span>
+                          <span className="ml-1 text-gray-800">
+                            {formatDate(data.leaveEndDate)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center text-gray-500">
+                No Data available
+              </div>
+            )}
+          </div>
+        </div>
+        {/* <div className="w-full overflow-x-auto">
           <div className="  ">
             <Table
               bordered
@@ -108,7 +208,6 @@ const Leave = (props) => {
               className="min-w-full h-auto max-h-[50vh] overflow-auto">
               <TableHeader className="Capitalize gap-4  ">
                 <TableColumn>S.N</TableColumn>
-                <TableColumn>RCL-ID</TableColumn>
                 <TableColumn>Name</TableColumn>
                 <TableColumn>Team Leader</TableColumn>
                 <TableColumn>From Date</TableColumn>
@@ -120,8 +219,13 @@ const Leave = (props) => {
                     key={index + 1}
                     className="h-20 justify-center items-center border-b-2 border-gray-300">
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{data.rclId}</TableCell>
-                    <TableCell>{data.fullName}</TableCell>
+                    <TableCell>
+                      <div
+                        className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base bg-teal-100 border border-teal-600 text-teal-600`}>
+                        {data?.fullName?.charAt(0) || "?"}
+                      </div>
+                      {data.fullName}
+                    </TableCell>
                     <TableCell>{data.teamLeaderName}</TableCell>
                     <TableCell>{data.leaveStartDate}</TableCell>
                     <TableCell>{data.leaveEndDate}</TableCell>
@@ -135,7 +239,7 @@ const Leave = (props) => {
               No Data available
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

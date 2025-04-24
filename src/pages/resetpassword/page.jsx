@@ -116,7 +116,7 @@ const Rstpwd = () => {
           response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
           response?.data?.data?.ekyeStatus === "COMPLETED"
         ) {
-          navigate("/");
+          navigate("/dashboard");
         } else {
           navigate("/EKYE");
         }
@@ -209,8 +209,7 @@ const Rstpwd = () => {
                 errors.password || errors.confirmPassword
                   ? " cursor-not-allowed"
                   : ""
-              }`}
-            >
+              }`}>
               {isLoading ? "Loading..." : "Submit"}
             </Button>
           </Form>

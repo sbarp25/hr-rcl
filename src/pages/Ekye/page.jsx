@@ -10,10 +10,12 @@ import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
 import FormStepper from "../../components/FormStepIndicator.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     personalInfo: {
       email: "",
@@ -131,6 +133,12 @@ const Ekye = () => {
     "Document Details",
     "Educational Details",
   ];
+  const hasaccess = true;
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <>
       {isLoading && <Loader />}
