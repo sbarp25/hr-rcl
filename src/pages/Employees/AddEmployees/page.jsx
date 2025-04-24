@@ -392,21 +392,21 @@ const AddEmployeeForm = () => {
                 </div>
               </div>
             </div>
-            <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <Controller
-                  name="performEKYC"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      color="primary"
-                      isSelected={field.value}
-                      onValueChange={field.onChange}>
-                      Perform eKYE
-                    </Checkbox>
-                  )}
-                />
-              </div>
+            <div>
+              <Controller
+                name="performEKYC"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    color="primary"
+                    isSelected={field.value}
+                    onValueChange={field.onChange}>
+                    Perform eKYE
+                  </Checkbox>
+                )}
+              />
+            </div>
+            {/* <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               <div>
                 <Controller
                   name="isteamLead"
@@ -435,7 +435,7 @@ const AddEmployeeForm = () => {
                   )}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
           <button
             type="submit"

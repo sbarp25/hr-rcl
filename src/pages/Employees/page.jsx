@@ -49,6 +49,7 @@ const Employees = () => {
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
+
   const fetchEmployees = async () => {
     setIsLoading(true);
     try {
@@ -266,7 +267,6 @@ const Employees = () => {
                       <TableCell>{employee.postionName}</TableCell>
                       <TableCell>
                         <div className="flex justify-center gap-4">
-                          {/* <Switch isSelected={isSelected} onValueChange={setIsSelected}> */}
                           <FaRegEye
                             className={`  ${
                               hasEmployeeEditAccess

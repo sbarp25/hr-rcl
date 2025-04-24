@@ -249,8 +249,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       level: deg,
       institution: data[`institution_${index}`],
       faculty: data[`faculty_${index}`],
-      startYear: data[`startYear_${index}`],
-      endYear: data[`endYear_${index}`],
+      startYear: formatDate(data[`startYear_${index}`]),
+      endYear: formatDate(data[`endYear_${index}`]),
       status: data[`status_${index}`],
       imageIndex: index + 1,
     }));
@@ -409,7 +409,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <DatepickerComponent
                 name={`endYear_${index}`}
-                label="Start Year"
+                label="End Year"
                 control={control}
                 rules={{
                   required:

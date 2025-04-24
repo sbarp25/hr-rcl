@@ -20,13 +20,16 @@ import DropDownComp from "../../../components/Dropdown";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { FaCheckCircle, FaRegEye } from "react-icons/fa";
+import { FaCheckCircle, FaRegEye, FaChevronDown } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../../../components/TextAreaComp";
+import Search from "../../../components/Search";
+import Filter from "../../../components/Filter";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedRow, setExpandedRow] = useState(null);
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -39,8 +42,9 @@ const LeaveStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
   const [selectedLeave, setSelectedLeave] = useState(null);
+  const [originalLeaveData, setOriginalLeaveData] = useState([]);
 
-  const [leaveDataperpage, setLeaveDataPerPage] = useState(10);
+  const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const navigate = useNavigate();
@@ -48,6 +52,10 @@ const LeaveStatus = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const toggleExpandedRow = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
   };
 
   const breadcrumbItems = [
@@ -61,11 +69,12 @@ const LeaveStatus = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get(
-        `/api/leave/all?page=${currentPage}&size=${leaveDataperpage}`,
+        `/api/leave/all?page=${currentPage}&size=${leaveDataPerPage}`,
         {}
       );
       if (response.data.responseCode === "200") {
         setLeaveData(response.data.datalist);
+        setOriginalLeaveData(response.data.datalist);
         setTotalPages(response.data.totalPages);
         setTotalRecords(response.data.totalRecords);
       } else {
@@ -82,17 +91,22 @@ const LeaveStatus = () => {
 
   useEffect(() => {
     fetchLeave();
-  }, [currentPage, leaveDataperpage]);
+  }, [currentPage, leaveDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
-  /**To check Delete Access */
-  // const hasLeaveApproveAccess = menu?.some((menu) =>
-  //   menu.actionList.some((action) => action.actionId === 4)
-  // );
-  const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 1)
-  );
-  const hasLeaveApproveAccess = true;
+  const hasLeaveApproveAccess = true; // This is set to true in original code
+
+  const handleApplyFilters = (result) => {
+    if (result.data) {
+      // Filter component returned filtered data
+      setLeaveData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      // Reset case - restore original data
+      setLeaveData(originalLeaveData);
+    }
+  };
 
   const handleAction = (action, data) => {
     setSelectedLeave(data);
@@ -198,156 +212,341 @@ const LeaveStatus = () => {
     }
   };
 
-  // Fallback data if API fails
-
-  // Use API data if available, otherwise use fallback
+  // Use API data if available
   const displayData = leaveData.length > 0 && leaveData;
+
+  const getStatusClass = (status) => {
+    if (status === "APPROVED")
+      return "bg-teal-100 border border-teal-600 text-teal-600";
+    if (status === "REJECTED")
+      return "bg-red-100 border border-red-600 text-red-600";
+    return "bg-yellow-100 border border-yellow-500 text-yellow-500";
+  };
 
   return (
     <>
-      <div className="container space-y-4">
+      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
         {/**Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
               <h1 className="page-title">Leave Status</h1>
+            </div>
+            <div className="flex gap-x-2 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                <Search className="w-full sm:w-auto" />
+                <Filter
+                  onApplyFilters={handleApplyFilters}
+                  url="/api/leave/all"
+                  className="w-full sm:w-auto"
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {/**Table Section */}
         <div className="bg-white rounded-lg p-2">
-          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
-            <Table bordered aria-label="Table of Leave">
-              <TableHeader>
-                <TableColumn>S.N</TableColumn>
-                <TableColumn>Request Date</TableColumn>
-                <TableColumn>Leave Type</TableColumn>
-                <TableColumn>Leave Start Date</TableColumn>
-                <TableColumn>Leave End Date</TableColumn>
-                <TableColumn>Days</TableColumn>
-                <TableColumn>Status</TableColumn>
-                <TableColumn>Team Leader</TableColumn>
-                <TableColumn>Approver</TableColumn>
-                <TableColumn>Action</TableColumn>
-              </TableHeader>
-              <TableBody
-                items={isLoading ? [] : leaveData}
-                isLoading={isLoading}
-                loadingContent={<SkeletonLoader />}>
-                {(item) => (
-                  <TableRow
-                    key={item.rclId}
-                    className="h-14 border-b-2 border-gray-300">
-                    <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                    <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
-                    <TableCell>{item?.leaveType || "N/A"}</TableCell>
-                    <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
-                    <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
-                    <TableCell>{item?.Days || "N/A"}</TableCell>
-                    <TableCell>
-                      <div
-                        className={`${
-                          item?.leaveStatus === "APPROVED"
-                            ? "bg-teal-100 border border-teal-600 text-teal-600"
-                            : item?.leaveStatus === "REJECTED"
-                            ? "bg-red-100 border border-red-600 text-red-600"
-                            : "bg-yellow-100 border border-yellow-500 text-yellow-500"
-                        } text-center p-2 rounded-md w-fit`}>
-                        {item?.leaveStatus || "N/A"}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3 p-2 rounded-lg">
+          {/* Large screens - Full table */}
+          <div className="hidden lg:block">
+            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+              <Table bordered aria-label="Table of Leave">
+                <TableHeader>
+                  <TableColumn>S.N</TableColumn>
+                  <TableColumn>Request Date</TableColumn>
+                  <TableColumn>Leave Type</TableColumn>
+                  <TableColumn>Leave Start Date</TableColumn>
+                  <TableColumn>Leave End Date</TableColumn>
+                  <TableColumn>Days</TableColumn>
+                  <TableColumn>Status</TableColumn>
+                  <TableColumn>Team Leader</TableColumn>
+                  <TableColumn>Approver</TableColumn>
+                  <TableColumn>Action</TableColumn>
+                </TableHeader>
+                <TableBody
+                  items={isLoading ? [] : leaveData}
+                  isLoading={isLoading}
+                  loadingContent={<SkeletonLoader />}>
+                  {(item) => (
+                    <TableRow
+                      key={item.rclId}
+                      className="h-14 border-b-2 border-gray-300">
+                      <TableCell>{displayData.indexOf(item) + 1}</TableCell>
+                      <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
+                      <TableCell>{item?.leaveType || "N/A"}</TableCell>
+                      <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
+                      <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
+                      <TableCell>{item?.Days || "N/A"}</TableCell>
+                      <TableCell>
                         <div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                            item?.leaveStatus === "APPROVED"
-                              ? "bg-teal-100 text-teal-600"
-                              : item?.leaveStatus === "REJECTED"
-                              ? "bg-red-100 text-red-600"
-                              : "bg-yellow-100 text-yellow-500"
-                          }`}>
-                          {item?.teamLeaderName?.charAt(0) || "?"}
+                          className={`${getStatusClass(
+                            item?.leaveStatus
+                          )} text-center p-2 rounded-md w-fit`}>
+                          {item?.leaveStatus || "N/A"}
                         </div>
-                        <div className="text-gray-800 font-medium">
-                          {item?.teamLeaderName || "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3 p-2 rounded-lg">
+                          <div
+                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
+                              item?.leaveStatus
+                            )}`}>
+                            {item?.teamLeaderName?.charAt(0) || "?"}
+                          </div>
+                          <div className="text-gray-800 font-medium">
+                            {item?.teamLeaderName || "N/A"}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3 p-2 rounded-lg">
-                        <div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${
-                            item?.leaveStatus === "APPROVED"
-                              ? "bg-teal-100 text-teal-600"
-                              : item?.leaveStatus === "REJECTED"
-                              ? "bg-red-100 text-red-600"
-                              : "bg-yellow-100 text-yellow-500"
-                          }`}>
-                          {item?.approvedBy?.charAt(0) || "?"}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3 p-2 rounded-lg">
+                          <div
+                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
+                              item?.leaveStatus
+                            )}`}>
+                            {item?.approvedBy?.charAt(0) || "?"}
+                          </div>
+                          <div>{item?.approvedBy || "N/A"}</div>
                         </div>
-                        <div>{item?.approvedBy || "N/A"}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <button
-                          className="text-blue-600 hover:text-blue-800"
-                          onClick={() => handleAction("view", item)}>
-                          <FaRegEye size={18} />
-                        </button>
-                        {item?.leaveStatus === "PENDING" &&
-                          hasLeaveApproveAccess && (
-                            <>
-                              <FaCheckCircle
-                                className="text-xl text-green-600 hover:text-green-800"
-                                onClick={() => handleAction("approve", item)}
-                              />
-                              <FaXmark
-                                className="text-xl text-red-600 hover:text-red-800"
-                                onClick={() => handleAction("reject", item)}
-                              />
-                            </>
-                          )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <button
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => handleAction("view", item)}>
+                            <FaRegEye size={18} />
+                          </button>
+                          {item?.leaveStatus === "PENDING" &&
+                            hasLeaveApproveAccess && (
+                              <>
+                                <FaCheckCircle
+                                  className="text-xl text-green-600 hover:text-green-800 cursor-pointer"
+                                  onClick={() => handleAction("approve", item)}
+                                />
+                                <FaXmark
+                                  className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                  onClick={() => handleAction("reject", item)}
+                                />
+                              </>
+                            )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
+
+          {/* Medium screens - Simplified table */}
+          <div className="hidden md:block lg:hidden">
+            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+              <Table bordered aria-label="Table of Leave">
+                <TableHeader>
+                  <TableColumn>Leave</TableColumn>
+                  <TableColumn>Date</TableColumn>
+                  <TableColumn>Duration</TableColumn>
+                  <TableColumn>Status</TableColumn>
+                  <TableColumn>Team</TableColumn>
+                  <TableColumn>Action</TableColumn>
+                </TableHeader>
+                <TableBody
+                  items={isLoading ? [] : leaveData}
+                  isLoading={isLoading}
+                  loadingContent={<SkeletonLoader />}>
+                  {(item) => (
+                    <TableRow key={item.rclId} className="hover:bg-gray-50">
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {item?.leaveType || "N/A"}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            #{item.rclId}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span>Start: {item?.leaveStartDate || "N/A"}</span>
+                          <span>End: {item?.leaveEndDate || "N/A"}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span>{item?.Days || "N/A"} days</span>
+                      </TableCell>
+                      <TableCell>
+                        <div
+                          className={`${getStatusClass(
+                            item?.leaveStatus
+                          )} text-center py-1 px-2 rounded-md w-fit`}>
+                          {item?.leaveStatus || "N/A"}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base ${getStatusClass(
+                              item?.leaveStatus
+                            )}`}>
+                            {item?.teamLeaderName?.charAt(0) || "?"}
+                          </div>
+                          <div className="text-sm truncate max-w-20">
+                            {item?.teamLeaderName || "N/A"}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <button
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => handleAction("view", item)}>
+                            <FaRegEye size={16} />
+                          </button>
+                          {item?.leaveStatus === "PENDING" &&
+                            hasLeaveApproveAccess && (
+                              <>
+                                <FaCheckCircle
+                                  className="text-lg text-green-600 hover:text-green-800 cursor-pointer"
+                                  onClick={() => handleAction("approve", item)}
+                                />
+                                <FaXmark
+                                  className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
+                                  onClick={() => handleAction("reject", item)}
+                                />
+                              </>
+                            )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Small screens - Card-like view */}
+          <div className="block md:hidden">
+            <div className="space-y-4">
+              {leaveData.map((leave, index) => (
+                <div
+                  key={leave.rclId}
+                  className="border rounded-lg overflow-hidden shadow-sm">
+                  <div
+                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                    onClick={() => toggleExpandedRow(leave.rclId)}>
+                    <div className="font-medium">
+                      {leave.leaveType || "N/A"}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`${getStatusClass(
+                          leave?.leaveStatus
+                        )} text-center py-1 px-2 text-xs rounded-md w-fit`}>
+                        {leave?.leaveStatus || "N/A"}
+                      </div>
+                      <FaChevronDown
+                        size={16}
+                        className={`transition-transform ${
+                          expandedRow === leave.rclId ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className={`${
+                      expandedRow === leave.rclId ? "block" : "hidden"
+                    } p-3 space-y-2 text-sm`}>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">Request Date:</div>
+                      <div>{leave?.leaveStartDate || "N/A"}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">Start Date:</div>
+                      <div>{leave?.leaveStartDate || "N/A"}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">End Date:</div>
+                      <div>{leave?.leaveEndDate || "N/A"}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">Days:</div>
+                      <div>{leave?.Days || "N/A"}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">Team Leader:</div>
+                      <div>{leave?.teamLeaderName || "N/A"}</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="font-medium">Approver:</div>
+                      <div>{leave?.approvedBy || "N/A"}</div>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button
+                        size="sm"
+                        color="primary"
+                        onPress={() => handleAction("view", leave)}>
+                        View
+                      </Button>
+                      {leave?.leaveStatus === "PENDING" &&
+                        hasLeaveApproveAccess && (
+                          <>
+                            <Button
+                              size="sm"
+                              color="success"
+                              onPress={() => handleAction("approve", leave)}>
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              color="danger"
+                              onPress={() => handleAction("reject", leave)}>
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {!isLoading && (!leaveData || leaveData.length === 0) && (
             <div className="p-8 text-center text-gray-500">
               No Data available
             </div>
           )}
-          {/**Pagination Section */}
-          <div>
-            <div className="flex mt-4 justify-between items-center">
-              <div className="flex text-xs">
-                <span>Showing: </span>
-                <span className="font-bold">{leaveDataperpage}</span>
-                <span> of </span>
-                <span>{totalRecords}</span>
+
+          {/**Pagination Section - Responsive for all screens */}
+          {leaveData && leaveData.length > 0 && (
+            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="text-xs order-2 sm:order-1">
+                <span>
+                  Showing {leaveDataPerPage} of {totalRecords}
+                </span>
               </div>
-              <Pagination
-                showControls
-                total={totalPages}
-                page={currentPage}
-                onChange={handlePageChange}
-              />
-              <div className="flex justify-center items-center">
-                <span className="text-xs">Lines Per Page: </span>
+              <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+                <Pagination
+                  showControls
+                  total={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  size="sm"
+                />
+              </div>
+              <div className="flex justify-center items-center order-3">
+                <span className="text-xs mr-2">Lines Per Page:</span>
                 <DropDownComp
                   items={dropdownItems}
                   onSelect={setLeaveDataPerPage}
                 />
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -361,8 +560,30 @@ const LeaveStatus = () => {
           {(onClose) => (
             <>
               <ModalBody>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Leave Approval</h3>
+                  {selectedLeave && (
+                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                      <div className="flex justify-between">
+                        <span className="font-medium">Leave Type:</span>
+                        <span>{selectedLeave?.leaveType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Start Date:</span>
+                        <span>{selectedLeave?.leaveStartDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">End Date:</span>
+                        <span>{selectedLeave?.leaveEndDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Days:</span>
+                        <span>{selectedLeave?.Days}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <p>Are you sure you want to approve this leave?</p>
-                <p></p>
                 <div className="flex gap-2 justify-end mt-4">
                   <Button color="primary" onPress={() => onApprove()}>
                     Approve
@@ -385,11 +606,35 @@ const LeaveStatus = () => {
           {(onClose) => (
             <>
               <ModalBody>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Leave Rejection</h3>
+                  {selectedLeave && (
+                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                      <div className="flex justify-between">
+                        <span className="font-medium">Leave Type:</span>
+                        <span>{selectedLeave?.leaveType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Start Date:</span>
+                        <span>{selectedLeave?.leaveStartDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">End Date:</span>
+                        <span>{selectedLeave?.leaveEndDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Days:</span>
+                        <span>{selectedLeave?.Days}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <p>Are you sure you want to reject this leave?</p>
                 <form onSubmit={handleSubmit(onReject)}>
                   <TextAreaComp
                     name="reason"
                     control={control}
+                    placeholder="Enter reason for rejection"
                     rules={{
                       required: "Reason is required",
                       minLength: {

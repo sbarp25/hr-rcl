@@ -51,7 +51,7 @@ const MobileNavigation = () => {
       label: "Attendance",
       children: [
         { label: "My Attendence", to: "/Attendance" },
-        // { label: "Request Attendence", to: "/Attendance/Request" },
+        { label: "Request Attendence", to: "/Attendance/Request" },
       ],
     },
     {

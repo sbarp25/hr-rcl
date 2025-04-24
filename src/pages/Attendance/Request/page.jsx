@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
 import {
   Table,
   TableBody,
@@ -24,15 +25,14 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
-import { AiOutlineUserAdd } from "react-icons/ai";
-import { Controller, useForm } from "react-hook-form";
-import { Textarea } from "@nextui-org/input";
+import { useForm, FormProvider } from "react-hook-form";
 import TextAreaComp from "../../../components/TextAreaComp";
+
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lateCheckinData, setLateCheckinData] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
-
+  const [expandedRow, setExpandedRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [lateCheckInDataPerPage, setLateCheckInDataPerPage] = useState(10);
@@ -42,7 +42,11 @@ const AttendanceRequest = () => {
     useState([]);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const navigate = useNavigate();
-  const { reset, handleSubmit, control } = useForm();
+
+  // Create a form methods object using useForm hook
+  const methods = useForm();
+  const { reset, handleSubmit, control } = methods;
+
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     isOpen: isRejectOpen,
@@ -58,7 +62,10 @@ const AttendanceRequest = () => {
   }, []);
 
   const handleAction = async (action, data) => {
-    setSelectedData(data);
+    const selectedItem = lateCheckinData.find(
+      (item) => item.lateCheckInId === data
+    );
+    setSelectedData(selectedItem);
     switch (action) {
       case "Approve":
         onOpen();
@@ -70,6 +77,7 @@ const AttendanceRequest = () => {
         console.log("Unknown action");
     }
   };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -108,13 +116,16 @@ const AttendanceRequest = () => {
       if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
       // Reset case - refetch original data
-      const fetchEmployees = async () => {
+      const fetchLateCheckInData = async () => {
         setIsLoading(true);
         try {
-          const response = await axiosInstance.post("/api/v1/users/list", {
-            pageIndex: currentPage,
-            pageSize: lateCheckInDataPerPage,
-          });
+          const response = await axiosInstance.post(
+            "/api/v1/attendance/late-check-in/pending-reviews",
+            {
+              pageIndex: currentPage,
+              pageSize: lateCheckInDataPerPage,
+            }
+          );
 
           if (response?.data?.responseCode === "200") {
             setOriginalLateCheckInDataData(response?.data?.datalist || []);
@@ -132,7 +143,7 @@ const AttendanceRequest = () => {
         }
       };
 
-      fetchEmployees();
+      fetchLateCheckInData();
     }
   };
 
@@ -142,7 +153,7 @@ const AttendanceRequest = () => {
     setIsLoading(true);
     const updateLeave = {
       data: {
-        lateAttendanceId: selectedData,
+        lateAttendanceId: selectedData.lateCheckInId,
         isApproved: true,
       },
     };
@@ -153,7 +164,7 @@ const AttendanceRequest = () => {
         toast.error("Authentication is missing.");
         return;
       }
-      const response = await axiosInstance.put(
+      const response = await axiosInstance.post(
         "/api/attendance/review_late_check_in",
         updateLeave,
         {
@@ -165,7 +176,7 @@ const AttendanceRequest = () => {
       );
       if (response?.data?.responseCode === "200") {
         toast.success(response?.data?.message);
-        lateCheckinData();
+        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
         onClose();
       } else {
         toast.error(response?.data?.error || "Something went wrong");
@@ -179,15 +190,14 @@ const AttendanceRequest = () => {
     }
   };
 
-  const onReject = async (formData) => {
+  const onReject = async () => {
     if (!selectedData) return;
 
     setIsLoading(true);
     const RejectLeave = {
       data: {
-        lateAttendanceId: selectedData,
-        isApproved: "REJECTED",
-        remark: formData.reason,
+        lateAttendanceId: selectedData.lateCheckInId,
+        isApproved: false,
       },
     };
     try {
@@ -196,7 +206,7 @@ const AttendanceRequest = () => {
         toast.error("Authentication is missing.");
         return;
       }
-      const response = await axiosInstance.put(
+      const response = await axiosInstance.post(
         "/api/attendance/review_late_check_in",
         RejectLeave,
         {
@@ -208,7 +218,7 @@ const AttendanceRequest = () => {
       );
       if (response?.data?.responseCode === "200") {
         toast.success(response?.data?.message);
-        lateCheckinData();
+        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
         onRejectClose();
         reset();
       } else {
@@ -223,14 +233,17 @@ const AttendanceRequest = () => {
     }
   };
 
-  const fetchEmployees = async () => {
+  const fetchLateCheckInData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post("/api/v1/users/list", {
-        // const response = await axiosInstance.post("/api/v1/auth/get/all", {
-        pageIndex: currentPage,
-        pageSize: lateCheckInDataPerPage,
-      });
+      const response = await axiosInstance.post(
+        "/api/v1/attendance/late-check-in/all-reviews",
+        {
+          // const response = await axiosInstance.post("/api/v1/auth/get/all", {
+          pageIndex: currentPage,
+          pageSize: lateCheckInDataPerPage,
+        }
+      );
 
       if (response?.data?.responseCode === "200") {
         setOriginalLateCheckInDataData(response?.data?.datalist || []);
@@ -248,114 +261,298 @@ const AttendanceRequest = () => {
     }
   };
   useEffect(() => {
-    fetchEmployees();
+    fetchLateCheckInData();
   }, [currentPage, lateCheckInDataPerPage]);
 
+  const toggleExpandedRow = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
+  };
+
   return (
-    <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
-      {" "}
+    <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex flex-col space-y-4">
         <div className="text-sm">
           <BreadcrumbsComponent items={breadcrumbItems} />
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div className="flex items-center page-title -pl-2">
             <IoIosPeople className="text-2xl" />
-            <span className="page-title">Late Checkin </span>
+            <span className="page-title">Late Check in</span>
           </div>
-          <div className="flex gap-x-4">
-            <div className="flex items-center space-x-4">
-              <Search />
+          <div className="flex gap-x-2 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+              <Search className="w-full sm:w-auto" />
               <Filter
                 onApplyFilters={handleApplyFilters}
                 url="/api/v1/users/list"
+                className="w-full sm:w-auto"
               />
             </div>
           </div>
         </div>
       </div>
       <div className="bg-white rounded-lg p-2">
-        <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
-          <Table bordered aria-label="List of Review for Late Checkin">
-            <TableHeader>
-              <TableColumn>S.N</TableColumn>
-              <TableColumn>RCL-ID</TableColumn>
-              <TableColumn>Name</TableColumn>
-              <TableColumn>Email</TableColumn>
-              <TableColumn>Department</TableColumn>
-              <TableColumn>Position</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {lateCheckinData
-                .filter((employee) => employee.isActive)
-                .map((employee, index) => (
+        {/* Large screens - Full table */}
+        <div className="hidden lg:block">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <Table bordered aria-label="List of Review for Late Checkin">
+              <TableHeader>
+                <TableColumn>S.N</TableColumn>
+                <TableColumn>RCL-ID</TableColumn>
+                <TableColumn>Name</TableColumn>
+                <TableColumn>Email</TableColumn>
+                <TableColumn>Attendance Date</TableColumn>
+                <TableColumn>Expected CheckInTime</TableColumn>
+                <TableColumn>Actual checkInTime</TableColumn>
+                <TableColumn>Status</TableColumn>
+                <TableColumn>Justification</TableColumn>
+                <TableColumn>Actions</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {lateCheckinData.map((late, index) => (
                   <TableRow
-                    key={employee.rclId}
+                    key={late.lateCheckInId}
                     className="h-14 border-b-2 border-gray-300">
                     <TableCell>
                       {(currentPage - 1) * lateCheckInDataPerPage + index + 1}
                     </TableCell>
-                    <TableCell>{employee.rclId}</TableCell>
-                    <TableCell>{employee.fullName}</TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>{employee.departmentName}</TableCell>
-                    <TableCell>{employee.postionName}</TableCell>
+                    <TableCell>{late.rclId}</TableCell>
+                    <TableCell>{late.fullName}</TableCell>
+                    <TableCell>{late.email}</TableCell>
+                    <TableCell>{late.attendanceDate}</TableCell>
+                    <TableCell>{late.expectedCheckInTime}</TableCell>
+                    <TableCell>{late.status}</TableCell>
+                    <TableCell>{late.checkInTime}</TableCell>
+                    <TableCell>{late.lateReason}</TableCell>
                     <TableCell>
-                      <div className="flex justify-center gap-4">
-                        {/* <Switch isSelected={isSelected} onValueChange={setIsSelected}> */}
-                        <FaRegEye
-                          className={`  ${
-                            hasEmployeeEditAccess
-                              ? "text-green-500 hover:text-green-700 cursor-pointer "
-                              : ""
-                          }`}
-                          title="Edit"
-                          onClick={() =>
-                            handleAction("Approve", employee.rclId)
-                          }
-                        />
-                        <MdDelete
-                          className={`${
-                            hasEmployeeDeleteAccess
-                              ? "text-red-500 cursor-pointer hover:text-red-700"
-                              : ""
-                          }`}
-                          title="Delete"
-                          onClick={() => handleAction("Reject", employee.rclId)}
-                        />
-                      </div>
+                      {late.status === "Pending" && (
+                        <div className="flex justify-center gap-4">
+                          <FaRegEye
+                            className={`${
+                              hasEmployeeEditAccess
+                                ? "text-green-500 hover:text-green-700 cursor-pointer"
+                                : ""
+                            }`}
+                            title="Edit"
+                            onClick={() =>
+                              handleAction("Approve", late.lateCheckInId)
+                            }
+                          />
+                          <MdDelete
+                            className={`${
+                              hasEmployeeDeleteAccess
+                                ? "text-red-500 cursor-pointer hover:text-red-700"
+                                : ""
+                            }`}
+                            title="Delete"
+                            onClick={() =>
+                              handleAction("Reject", late.lateCheckInId)
+                            }
+                          />
+                        </div>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </div>
         </div>
-        {(!lateCheckinData || lateCheckinData.length === 0) && (
-          <div className="p-8 text-center text-gray-500">No Data available</div>
-        )}
 
-        {/* Pagination */}
-        <div className="mt-4 flex justify-between">
-          <div className="text-xs">
-            <span>
-              Showing {lateCheckInDataPerPage} of {totalRecords}
-            </span>
-          </div>
-          <Pagination
-            showControls
-            total={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-          />
-          <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
-            <DropDownComp
-              items={dropdownItems}
-              onSelect={setLateCheckInDataPerPage}
-            />
+        {/* Medium screens - Simplified table */}
+        <div className="hidden md:block lg:hidden">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <Table bordered aria-label="List of Review for Late Checkin">
+              <TableHeader>
+                <TableColumn>Employee</TableColumn>
+                <TableColumn>Date</TableColumn>
+                <TableColumn>Check In</TableColumn>
+                <TableColumn>Reason</TableColumn>
+                <TableColumn>Actions</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {lateCheckinData.map((late, index) => (
+                  <TableRow
+                    key={late.lateCheckInId}
+                    className="hover:bg-gray-50">
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span>{late.fullName}</span>
+                        <span className="text-xs text-gray-500">
+                          {late.rclId}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{late.attendanceDate}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span>Expected: {late.expectedCheckInTime}</span>
+                        <span>Actual: {late.checkInTime}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div
+                        className="max-w-[150px] truncate"
+                        title={late.lateReason}>
+                        {late.lateReason}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {late.status === "Pending" && (
+                        <div className="flex justify-center gap-4">
+                          <FaRegEye
+                            className={`${
+                              hasEmployeeEditAccess
+                                ? "text-green-500 hover:text-green-700 cursor-pointer"
+                                : ""
+                            }`}
+                            title="Edit"
+                            onClick={() =>
+                              handleAction("Approve", late.lateCheckInId)
+                            }
+                          />
+                          <MdDelete
+                            className={`${
+                              hasEmployeeDeleteAccess
+                                ? "text-red-500 cursor-pointer hover:text-red-700"
+                                : ""
+                            }`}
+                            title="Delete"
+                            onClick={() =>
+                              handleAction("Reject", late.lateCheckInId)
+                            }
+                          />
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
+
+        {/* Small screens - Card-like view */}
+        <div className="block md:hidden">
+          <div className="space-y-4">
+            {lateCheckinData.map((late, index) => (
+              <div
+                key={late.lateCheckInId}
+                className="border rounded-lg overflow-hidden shadow-sm">
+                <div
+                  className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                  onClick={() => toggleExpandedRow(late.lateCheckInId)}>
+                  <div className="font-medium">{late.fullName}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">
+                      {late.attendanceDate}
+                    </span>
+                    <FaChevronDown
+                      size={16}
+                      className={`transition-transform ${
+                        expandedRow === late.lateCheckInId ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    expandedRow === late.lateCheckInId ? "block" : "hidden"
+                  } p-3 space-y-2 text-sm`}>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="font-medium">RCL-ID:</div>
+                    <div>{late.rclId}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="font-medium">Email:</div>
+                    <div className="truncate">{late.email}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="font-medium">Expected Time:</div>
+                    <div>{late.expectedCheckInTime}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="font-medium">Actual Time:</div>
+                    <div>{late.checkInTime}</div>
+                  </div>
+                  <div className="col-span-2 mt-2">
+                    <div className="font-medium">Justification:</div>
+                    <div className="mt-1 p-2 bg-gray-50 rounded">
+                      {late.lateReason}
+                    </div>
+                  </div>
+                  {late.status === "Pending" && (
+                    <div className="flex justify-end gap-4 mt-2">
+                      <Button
+                        size="sm"
+                        color="success"
+                        className={`${
+                          !hasEmployeeEditAccess
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        onPress={() =>
+                          hasEmployeeEditAccess &&
+                          handleAction("Approve", late.lateCheckInId)
+                        }
+                        disabled={!hasEmployeeEditAccess}>
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="danger"
+                        className={`${
+                          !hasEmployeeDeleteAccess
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        onPress={() =>
+                          hasEmployeeDeleteAccess &&
+                          handleAction("Reject", late.lateCheckInId)
+                        }
+                        disabled={!hasEmployeeDeleteAccess}>
+                        Reject
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {(!lateCheckinData || lateCheckinData.length === 0) && (
+              <div className="p-8 text-center text-gray-500">
+                No Data available
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Pagination - Responsive for all screens */}
+        {lateCheckinData && lateCheckinData.length > 0 && (
+          <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div className="text-xs order-2 sm:order-1">
+              <span>
+                Showing {lateCheckInDataPerPage} of {totalRecords}
+              </span>
+            </div>
+            <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+              <Pagination
+                showControls
+                total={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                size="sm"
+              />
+            </div>
+            <div className="flex justify-center items-center order-3">
+              <span className="text-xs mr-2">Lines Per Page:</span>
+              <DropDownComp
+                items={dropdownItems}
+                onSelect={setLateCheckInDataPerPage}
+              />
+            </div>
+          </div>
+        )}
       </div>
       {/* Approve Modal */}
       <Modal
@@ -367,7 +564,44 @@ const AttendanceRequest = () => {
           {(onClose) => (
             <>
               <ModalBody>
-                <p>Are you sure you want to approve this leave?</p>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">
+                    <p>Are you sure you want to approve this late checkin?</p>
+                  </h3>
+                  {selectedData && (
+                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                      <div className="flex justify-between">
+                        <span className="font-medium">Employee:</span>
+                        <span>{selectedData?.fullName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">RCL-ID:</span>
+                        <span>{selectedData?.rclId}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Date:</span>
+                        <span>{selectedData?.attendanceDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Expected Time:</span>
+                        <span>
+                          {selectedData?.expectedCheckInTime || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-medium">Actual Time:</span>
+                        <span>{selectedData?.checkInTime}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium">Justification:</span>
+                        <p className="text-sm mt-1 p-2 bg-white rounded">
+                          {selectedData?.lateReason}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex gap-2 justify-end mt-4">
                   <Button color="primary" onPress={() => onApprove()}>
                     Approve
@@ -379,6 +613,7 @@ const AttendanceRequest = () => {
           )}
         </ModalContent>
       </Modal>
+
       {/* Reject Modal */}
       <Modal
         isOpen={isRejectOpen}
@@ -389,26 +624,46 @@ const AttendanceRequest = () => {
           {(onClose) => (
             <>
               <ModalBody>
-                <p>Are you sure you want to reject this leave?</p>
-                <form onSubmit={handleSubmit(onReject)}>
-                  <TextAreaComp
-                    name="reason"
-                    control={control}
-                    rules={{
-                      required: "Reason is required",
-                      minLength: {
-                        value: 10,
-                        message: "Reason must be at least 10 characters long.",
-                      },
-                    }}
-                  />
-                  <div className="flex gap-2 justify-end mt-4">
-                    <Button color="danger" type="submit">
-                      Reject
-                    </Button>
-                    <Button onPress={onClose}>Cancel</Button>
+                <h3 className="text-lg font-medium">
+                  <p>Are you sure you want to reject this late checkin?</p>
+                </h3>
+                {selectedData && (
+                  <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Employee:</span>
+                      <span>{selectedData?.fullName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">RCL-ID:</span>
+                      <span>{selectedData?.rclId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Date:</span>
+                      <span>{selectedData?.attendanceDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Expected Time:</span>
+                      <span>{selectedData?.expectedCheckInTime || "N/A"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Actual Time:</span>
+                      <span>{selectedData?.checkInTime}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium">Justification:</span>
+                      <p className="text-sm mt-1 p-2 bg-white rounded">
+                        {selectedData?.lateReason}
+                      </p>
+                    </div>
                   </div>
-                </form>
+                )}
+                {/* Wrap form in FormProvider */}
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button color="danger" type="submit" onPress={onReject}>
+                    Reject
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
               </ModalBody>
             </>
           )}

@@ -7,11 +7,42 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import { VisuallyHidden, useSwitch } from "@nextui-org/react";
 import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../lib/axios-Instance";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+
+const CustomToggleButton = ({ isSelected, onChange }) => {
+  return (
+    <div className="w-60 flex items-center justify-center">
+      <div
+        onClick={onChange}
+        className="relative flex w-full h-10 bg-gray-200 rounded-full cursor-pointer p-1 transition-all duration-300 shadow-inner">
+        {/* Sliding toggle */}
+        <div
+          className={`absolute w-1/2 h-8 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+            isSelected ? "translate-x-0" : "translate-x-full"
+          }`}
+        />
+        {/* Labels */}
+        <div className="flex justify-between items-center w-full z-10 px-3 text-xs font-medium text-gray-700">
+          <span
+            className={`transition-colors duration-300 ${
+              isSelected ? "text-gray-900" : "text-gray-400"
+            }`}>
+            Today Leave
+          </span>
+          <span
+            className={`transition-colors duration-300 ${
+              !isSelected ? "text-gray-900" : "text-gray-400"
+            }`}>
+            Upcoming Leave
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Leave = (props) => {
   const [isToday, setIsToday] = useState(true);
@@ -19,21 +50,9 @@ const Leave = (props) => {
   const [upComingLeave, setUpComingLeave] = useState([]);
   const [leaveList, setLeaveList] = useState([]);
 
-  const switchProps = {
-    ...props,
-    isSelected: isToday,
-    onChange: () => {
-      setIsToday(!isToday);
-    },
+  const handleToggleChange = () => {
+    setIsToday(!isToday);
   };
-  const {
-    Component,
-    slots,
-    isSelected,
-    getBaseProps,
-    getInputProps,
-    getWrapperProps,
-  } = useSwitch(switchProps);
 
   const fetchTodayLeave = async () => {
     try {
@@ -74,22 +93,10 @@ const Leave = (props) => {
         <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
           <p className="text-xl font-bold">Leave</p>
           <div>
-            <Component {...getBaseProps()}>
-              <VisuallyHidden>
-                <input {...getInputProps()} />
-              </VisuallyHidden>
-              <div
-                {...getWrapperProps()}
-                className={slots.wrapper({
-                  class: [
-                    "w-40 md:w-48 h-fit",
-                    "flex items-center justify-center",
-                    "p-2",
-                  ],
-                })}>
-                {isSelected ? <p>Today Leave</p> : <p>Upcoming Leave</p>}
-              </div>
-            </Component>
+            <CustomToggleButton
+              isSelected={isToday}
+              onChange={handleToggleChange}
+            />
           </div>
         </div>
         <div className="w-full overflow-x-auto">
@@ -103,7 +110,6 @@ const Leave = (props) => {
                 <TableColumn>S.N</TableColumn>
                 <TableColumn>RCL-ID</TableColumn>
                 <TableColumn>Name</TableColumn>
-
                 <TableColumn>Team Leader</TableColumn>
                 <TableColumn>From Date</TableColumn>
                 <TableColumn>To Date</TableColumn>
@@ -116,7 +122,6 @@ const Leave = (props) => {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{data.rclId}</TableCell>
                     <TableCell>{data.fullName}</TableCell>
-
                     <TableCell>{data.teamLeaderName}</TableCell>
                     <TableCell>{data.leaveStartDate}</TableCell>
                     <TableCell>{data.leaveEndDate}</TableCell>

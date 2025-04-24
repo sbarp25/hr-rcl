@@ -1,8 +1,7 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
-import { useNavigate } from "react-router-dom";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -178,34 +177,35 @@ const Page = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   const breadcrumbItems = [
     { label: "Dashboard", href: "/" },
     { label: "Notice", href: "/notice" },
   ];
 
   return (
-    <div className="container">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Notice Heading section */}
       <div className="flex flex-col space-y-4">
         <div className="text-sm">
           <BreadcrumbsComponent items={breadcrumbItems} />
         </div>
         <div className="flex justify-between items-center">
-          <div className="flex items-center page-title -pl-2">
-            <MdArticle />
-            <p className="-mt-1">Notices</p>
+          <div className="flex items-center gap-2">
+            <MdArticle className="text-xl" />
+            <p className="text-lg font-semibold">Notices</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white max-h-[85vh]  rounded-md ">
+      <div className="bg-white rounded-md mt-4">
         <div className="p-4 max-h-[34rem] overflow-y-auto">
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
-              className="notice-item border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
-              <div className="flex-shrink-0 w-32 h-64 border-r-2 border-red-600 flex items-center justify-center">
-                <p className="text-xl font-bold text-gray-900 mb-1 leading-10">
+              className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
+              <div className="flex-shrink-0 md:w-32 md:h-64 border-b-2 md:border-b-0 md:border-r-2 border-red-600 flex items-center justify-center">
+                <p className="text-xl font-bold text-gray-900 leading-6 text-center">
                   {notice.date}
                 </p>
               </div>
@@ -258,7 +258,7 @@ const Page = () => {
             </div>
           ))}
         </div>
-        <div className="mt-4 ml-96">
+        <div className="mt-4 flex justify-center">
           <Pagination
             initialPage={1}
             total={Math.ceil(Notice.length / noticesPerPage)}

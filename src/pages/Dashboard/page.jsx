@@ -83,7 +83,7 @@ const Page = () => {
         {/* WFH and Leave Sections */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Work From Home Panel */}
-          <div className="hidden md:flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
+          <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
               <h3 className="text-xl font-bold">Work From Home</h3>
               <div className="flex items-center gap-2 flex-wrap">
