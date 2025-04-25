@@ -77,10 +77,7 @@ const SalaryDetails = () => {
     },
   ];
 
-  const breadcrumbItems = [
-    { label: "Profile", href: "/" },
-    { label: "Salary Details", href: "/salary" },
-  ];
+  const breadcrumbItems = [{ label: "Salary Details", href: "/salary" }];
   const handleClick = () => {};
 
   const hasaccess = true;

@@ -15,7 +15,7 @@ import {
   ModalContent,
   ModalBody,
 } from "@nextui-org/react";
-import { FaRegEye } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
@@ -81,7 +81,6 @@ const AttendanceRequest = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
   const menu = LocalStorageUtil.getItem("menu");
   /**To check create status */
   const hasemployeecreateaccess = menu?.some((menu) =>
@@ -103,9 +102,8 @@ const AttendanceRequest = () => {
   );
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Attendance", href: "/Attendance" },
-    { label: "Late Checkin", href: "/Employees" },
+    { label: "Attendance", href: "" },
+    { label: "Late Checkin", href: "/Attendance/Request" },
   ];
 
   const handleApplyFilters = (result) => {
@@ -270,6 +268,19 @@ const AttendanceRequest = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
+  useEffect(() => {
+    onRejectOpen();
+    onOpen();
+  }, []);
+  // const selectedData = {
+  //   fullName: "John Doe",
+  //   rclId: "RCL123",
+  //   attendanceDate: "2023-10-01",
+  //   expectedCheckInTime: "09:00 AM",
+  //   checkInTime: "09:30 AM",
+  //   lateReason: "",
+  // };
+
   return (
     <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex flex-col space-y-4">
@@ -296,7 +307,7 @@ const AttendanceRequest = () => {
       <div className="bg-white rounded-lg p-2">
         {/* Large screens - Full table */}
         <div className="hidden lg:block">
-          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+          <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
             <Table bordered aria-label="List of Review for Late Checkin">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -329,7 +340,7 @@ const AttendanceRequest = () => {
                     <TableCell>
                       {late.status === "Pending" && (
                         <div className="flex justify-center gap-4">
-                          <FaRegEye
+                          <FaCheck
                             className={`${
                               hasEmployeeEditAccess
                                 ? "text-green-500 hover:text-green-700 cursor-pointer"
@@ -363,7 +374,7 @@ const AttendanceRequest = () => {
 
         {/* Medium screens - Simplified table */}
         <div className="hidden md:block lg:hidden">
-          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+          <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
             <Table bordered aria-label="List of Review for Late Checkin">
               <TableHeader>
                 <TableColumn>Employee</TableColumn>
@@ -402,7 +413,7 @@ const AttendanceRequest = () => {
                     <TableCell>
                       {late.status === "Pending" && (
                         <div className="flex justify-center gap-4">
-                          <FaRegEye
+                          <FaCheck
                             className={`${
                               hasEmployeeEditAccess
                                 ? "text-green-500 hover:text-green-700 cursor-pointer"
@@ -532,11 +543,15 @@ const AttendanceRequest = () => {
         {/* Pagination - Responsive for all screens */}
         {lateCheckinData && lateCheckinData.length > 0 && (
           <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div className="text-xs order-2 sm:order-1">
-              <span>
-                Showing {lateCheckInDataPerPage} of {totalRecords}
+            <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
+              <span className="mr-1">Showing</span>
+              <span className="font-bold text-gray-800 mx-1">
+                {lateCheckInDataPerPage}
               </span>
+              <span className="mr-1">of</span>
+              <span className="font-bold text-gray-800">{totalRecords}</span>
             </div>
+
             <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
               <Pagination
                 showControls
@@ -560,7 +575,9 @@ const AttendanceRequest = () => {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        isDismissable={true}
+        // isDismissable={true}
+        placement="center"
+        size="4xl"
         isKeyboardDismissDisabled={false}>
         <ModalContent>
           {(onClose) => (
@@ -571,33 +588,62 @@ const AttendanceRequest = () => {
                     <p>Are you sure you want to approve this late checkin?</p>
                   </h3>
                   {selectedData && (
-                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                      <div className="flex justify-between">
-                        <span className="font-medium">Employee:</span>
-                        <span>{selectedData?.fullName}</span>
+                    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                      {/**Personal details */}
+                      <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
+                        <div className="flex  items-center">
+                          <span className="font-semibold text-gray-700">
+                            Employee:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.fullName}
+                          </span>
+                        </div>
+                        <div className="flex  items-center">
+                          <span className="font-semibold text-gray-700">
+                            RCL-ID:
+                          </span>
+                          <span className="font-mono text-gray-800">
+                            {selectedData?.rclId}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">RCL-ID:</span>
-                        <span>{selectedData?.rclId}</span>
+                      {/**Date and Time */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Date:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.attendanceDate}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Expected Time:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.expectedCheckInTime || "N/A"}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Actual Time:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.checkInTime}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Date:</span>
-                        <span>{selectedData?.attendanceDate}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Expected Time:</span>
-                        <span>
-                          {selectedData?.expectedCheckInTime || "N/A"}
+                      {/**Justification  */}
+                      <div className="flex flex-col h-60">
+                        <span className="font-semibold text-gray-700 mb-2">
+                          Justification:
                         </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Actual Time:</span>
-                        <span>{selectedData?.checkInTime}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-medium">Justification:</span>
-                        <p className="text-sm mt-1 p-2 bg-white rounded">
-                          {selectedData?.lateReason}
+                        <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
+                          {selectedData?.lateReason ||
+                            "No justification provided"}
                         </p>
                       </div>
                     </div>
@@ -605,7 +651,9 @@ const AttendanceRequest = () => {
                 </div>
 
                 <div className="flex gap-2 justify-end mt-4">
-                  <Button color="primary" onPress={() => onApprove()}>
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => onApprove()}>
                     Approve
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
@@ -619,8 +667,10 @@ const AttendanceRequest = () => {
       {/* Reject Modal */}
       <Modal
         isOpen={isRejectOpen}
+        size="4xl"
         onOpenChange={onRejectOpenChange}
-        isDismissable={true}
+        // isDismissable={true}
+        placement="center"
         isKeyboardDismissDisabled={false}>
         <ModalContent>
           {(onClose) => (
@@ -630,38 +680,72 @@ const AttendanceRequest = () => {
                   <p>Are you sure you want to reject this late checkin?</p>
                 </h3>
                 {selectedData && (
-                  <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                    <div className="flex justify-between">
-                      <span className="font-medium">Employee:</span>
-                      <span>{selectedData?.fullName}</span>
+                  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                    {/**Personal details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
+                      <div className="flex  items-center">
+                        <span className="font-semibold text-gray-700">
+                          Employee:
+                        </span>
+                        <span className="text-gray-800">
+                          {selectedData?.fullName}
+                        </span>
+                      </div>
+                      <div className="flex  items-center">
+                        <span className="font-semibold text-gray-700">
+                          RCL-ID:
+                        </span>
+                        <span className="font-mono text-gray-800">
+                          {selectedData?.rclId}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium">RCL-ID:</span>
-                      <span>{selectedData?.rclId}</span>
+                    {/**Date and Time */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
+                      <div className="flex items-center">
+                        <span className="font-semibold text-gray-700">
+                          Date:
+                        </span>
+                        <span className="text-gray-800">
+                          {selectedData?.attendanceDate}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center">
+                        <span className="font-semibold text-gray-700">
+                          Expected Time:
+                        </span>
+                        <span className="text-gray-800">
+                          {selectedData?.expectedCheckInTime || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="font-semibold text-gray-700">
+                          Actual Time:
+                        </span>
+                        <span className="text-gray-800">
+                          {selectedData?.checkInTime}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium">Date:</span>
-                      <span>{selectedData?.attendanceDate}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium">Expected Time:</span>
-                      <span>{selectedData?.expectedCheckInTime || "N/A"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium">Actual Time:</span>
-                      <span>{selectedData?.checkInTime}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-medium">Justification:</span>
-                      <p className="text-sm mt-1 p-2 bg-white rounded">
-                        {selectedData?.lateReason}
+                    {/**Justification  */}
+                    <div className="flex flex-col h-60">
+                      <span className="font-semibold text-gray-700 mb-2">
+                        Justification:
+                      </span>
+                      <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
+                        {selectedData?.lateReason ||
+                          "No justification provided"}
                       </p>
                     </div>
                   </div>
                 )}
                 {/* Wrap form in FormProvider */}
                 <div className="flex gap-2 justify-end mt-4">
-                  <Button color="danger" type="submit" onPress={onReject}>
+                  <Button
+                    className="bg-black text-white"
+                    type="submit"
+                    onPress={onReject}>
                     Reject
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>

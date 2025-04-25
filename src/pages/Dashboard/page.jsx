@@ -7,7 +7,6 @@ import CheckIn from "../../components/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -16,9 +15,6 @@ const Page = () => {
   const [totalDelayTime, setTotalDelayTime] = useState("");
   const [totalEarlyTime, setTotalEarlyTime] = useState("");
   const username = localStorage.getItem("fullName");
-  const email = localStorage.getItem("email");
-  const lati = localStorage.getItem("latitude");
-  const long = localStorage.getItem("longitude");
 
   const getWeeklyAttendanceReport = async () => {
     try {
@@ -66,11 +62,11 @@ const Page = () => {
             <h1 className="page-title mt-2 text-xl font-bold">
               Weekly Attendance Report
             </h1>
-            <div className="w-full overflow-x-auto">
+            <div className="w-full ">
               <Attendancereport attendanceData={attendanceData} />
             </div>
           </div>
-          <div className="text-md font-bold text-right mr-4 mb-3">
+          <div className="text-md font-bold text-right mt-1 mr-4 mb-3">
             <p className="text-green-700 mt-1">
               Total Early Time: {totalEarlyTime || "N/A"}
             </p>
@@ -87,24 +83,24 @@ const Page = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
               <h3 className="text-xl font-bold">Work From Home</h3>
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-sm">Search:</p>
+                <p className="text-sm">Search </p>
                 <Input
                   className="max-w-xs w-full sm:w-auto"
                   type="search"
-                  placeholder="Search..."
+                  placeholder="Search for employees..."
                   size="sm"
                 />
               </div>
             </div>
 
-            <div className="w-full overflow-x-auto">
+            <div className="w-full">
               <WorkFromHome />
             </div>
           </div>
 
           {/* Leave Panel */}
           <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="w-full overflow-x-auto">
+            <div className="w-full ">
               <Leave />
             </div>
           </div>

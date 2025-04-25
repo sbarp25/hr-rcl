@@ -105,7 +105,6 @@ const DatepickerComponent = ({
         rules={validationRules}
         defaultValue={placeholderDate}
         render={({ field, fieldState: { error } }) => {
-          // Convert string date value to CalendarDate if it's a string
           const dateValue =
             typeof field.value === "string"
               ? parseStringToCalendarDate(field.value)
@@ -119,19 +118,14 @@ const DatepickerComponent = ({
                 showMonthAndYearPickers
                 isDisabled={disabled}
                 isInvalid={!!error}
+                errorMessage={error?.message}
                 className={className}
                 label={label}
                 variant={variant}
                 onChange={(date) => {
-                  // When a new date is selected, pass it through field.onChange
                   field.onChange(date);
-
-                  // Optionally, for debugging:
-                  // console.log("Selected date:", date);
-                  // console.log("Formatted date:", formatDate(date));
                 }}
               />
-              {error && <p className="text-danger text-sm">{error.message}</p>}
             </>
           );
         }}

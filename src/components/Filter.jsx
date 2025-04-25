@@ -146,7 +146,7 @@ const Filter = ({ onApplyFilters, url }) => {
 
   return (
     <div className="bg-white rounded-xl">
-      <Button onPress={onOpen} variant="light" className="text-sm font-medium">
+      <Button onPress={onOpen} className="text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
         <p className="">Filters</p>
       </Button>
@@ -175,14 +175,19 @@ const Filter = ({ onApplyFilters, url }) => {
               <Select
                 label={loadingDepartments ? "Loading..." : "Department"}
                 variant="bordered"
-                value={formData.department}
-                onChange={(e) => handleChange("department", e.target.value)}
+                selectedKeys={formData.department ? [formData.department] : []}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0];
+                  handleChange("department", selected);
+                }}
                 placeholder="Select a department">
                 {loadingDepartments ? (
                   <SelectItem key="loading">Loading departments...</SelectItem>
                 ) : (
                   filteredDepartments?.map((department) => (
-                    <SelectItem key={department.id} value={department.name}>
+                    <SelectItem
+                      key={department.id.toString()}
+                      value={department.name}>
                       {department.name}
                     </SelectItem>
                   ))
@@ -191,28 +196,33 @@ const Filter = ({ onApplyFilters, url }) => {
 
               <Select
                 label={loadingPositions ? "Loading..." : "Position"}
-                value={formData.position}
                 variant="bordered"
-                onChange={(e) => handleChange("position", e.target.value)}
+                selectedKeys={formData.position ? [formData.position] : []}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0];
+                  handleChange("position", selected);
+                }}
                 placeholder="Select a position">
                 {loadingPositions ? (
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
                   filteredPositions?.map((position) => (
-                    <SelectItem key={position.id} value={position.positionName}>
+                    <SelectItem
+                      key={position.id.toString()}
+                      value={position.positionName}>
                       {position.positionName}
                     </SelectItem>
                   ))
                 )}
               </Select>
-              <SelectComp
+              {/* <SelectComp
                 control={control}
                 name="sort"
                 label="Sort"
                 data={sortData}
                 valueKey="key"
                 labelKey="label"
-              />
+              /> */}
 
               <div className="flex justify-between">
                 <Button

@@ -20,10 +20,7 @@ import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 
 const Page = () => {
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "EKYE", href: "/EKYE" },
-  ];
+  const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
 
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,7 +125,7 @@ const Page = () => {
       </div>
 
       <div className="px-1 bg-white rounded-xl">
-        <div className="max-h-[90vh] overflow-auto mt-4 rounded-3xl max-w-[100%]">
+        <div className="max-h-[90vh] mt-4 rounded-3xl max-w-[100%]">
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
@@ -190,11 +187,13 @@ const Page = () => {
         </div>
 
         <div className="flex justify-between items-center">
-          <div className="flex text-xs">
-            <span>Showing:</span>
-            <span className="font-bold">{ekyeDashboardDataPerPage}</span>
-            <span>of</span>
-            <span>{totalRecords || 0}</span>
+          <div className="text-sm font-medium text-gray-600  flex items-center">
+            <span className="mr-1">Showing:</span>
+            <span className="font-bold text-gray-800 mx-1">
+              {ekyeDashboardDataPerPage}
+            </span>
+            <span className="mr-1">of</span>
+            <span className="font-bold text-gray-800">{totalRecords}</span>
           </div>
           <Pagination
             showControls

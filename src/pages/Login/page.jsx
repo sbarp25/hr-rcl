@@ -1,6 +1,6 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -81,7 +81,11 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
+  useEffect(() => {
+    if (location.pathname === "/login" || location.pathname === "/") {
+      LocalStorageUtil.removeItem("accessToken");
+    }
+  }, [location.pathname]);
   return (
     <>
       <LocationComponent />

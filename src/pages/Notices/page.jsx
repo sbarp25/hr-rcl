@@ -178,10 +178,7 @@ const Page = () => {
     setCurrentPage(page);
   };
 
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Notice", href: "/notice" },
-  ];
+  const breadcrumbItems = [{ label: "Notice", href: "/notice" }];
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">

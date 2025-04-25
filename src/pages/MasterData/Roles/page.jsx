@@ -216,7 +216,6 @@ const Roles = () => {
     }
   }, []);
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
     { label: "Roles", href: "/master-data/Roles" },
   ];
@@ -433,7 +432,7 @@ const Roles = () => {
               <b
                 type="submit"
                 className="button bg-bgprimary text-white rounded-lg px-6  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
-                Submit
+                Add
               </b>
             </Form>
           ) : (

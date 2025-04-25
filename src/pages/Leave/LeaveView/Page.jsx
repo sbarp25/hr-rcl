@@ -50,10 +50,6 @@ const LeaveView = () => {
     }
   }, [navigate]);
 
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -67,12 +63,32 @@ const LeaveView = () => {
     if (!status) return "PENDING";
     return status.replace(/_/g, " ");
   };
+  // const leaveByIdData = {
+  //   leaveId: "12345",
+  //   rclId: "67890",
+  //   leaveType: "Sick Leave",
+  //   leaveCategory: "Medical",
+  //   leaveSubject:
+  //     "happy dozen essential according perhaps tears castle dress motor spring month old straight whom recent force shoot curious creature grown dead condition gently begunFlu Symptoms happy dozen essential according perhaps tears castle dress motor spring month old straight whom recent force shoot curious creature grown dead condition gently begunFlu Symptoms",
+  //   leaveStartDate: "2023-10-01",
+  //   leaveEndDate: "2023-10-05",
+  //   requestDate: "2023-09-30",
+  //   approvedDate: "2023-10-02",
+  //   rejectedData: "2023-10-23",
+  //   teamLeaderName: "John Doe",
+  //   associateTeamLeadName: "Jane Smith",
+  //   approvedBy: null,
+  //   rejectedBy: "Alice Johnson",
+  //   rejectionRemark: "Odinson drinks bear",
+  //   leaveStatus: "REJECTED",
+  // };
 
   return (
     <div className=" mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-bold">Leave Details</h1>
         <GoBack />
+        <h1 className="text-2xl font-bold">Leave Details</h1>
+        <div></div>
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -96,7 +112,7 @@ const LeaveView = () => {
         {/* Card content */}
         <div className="p-6 space-y-4">
           {/* Leave Type and Category */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-3 border-b border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-3 border-b border-gray-300">
             <div>
               <span className="text-gray-600 text-sm">Leave Type</span>
               <p className="text-gray-800 font-semibold">
@@ -111,20 +127,28 @@ const LeaveView = () => {
                   : "N/A"}
               </p>
             </div>
+            <div>
+              <span className="text-gray-600 text-sm">Leave Title</span>
+              <p className="text-gray-800 font-semibold">
+                {leaveByIdData?.leaveTitle
+                  ? leaveByIdData.leaveCategory
+                  : "N/A"}
+              </p>
+            </div>
           </div>
 
           {/* Subject */}
-          <div className="pb-3 border-b border-gray-100">
+          <div className="pb-3 border-b border-gray-300">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-gray-600 text-sm">Subject</span>
             </div>
-            <p className="text-gray-800 pl-6">
+            <p className="text-gray-800 ">
               {leaveByIdData?.leaveSubject || "N/A"}
             </p>
           </div>
 
           {/* Date Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3 border-b border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3 border-b border-gray-300">
             <div className="flex items-start gap-2">
               <div>
                 <span className="text-gray-600 text-sm">Leave Period</span>
@@ -154,10 +178,20 @@ const LeaveView = () => {
                 </div>
               </div>
             )}
+            {leaveByIdData?.rejectedData && (
+              <div className="flex items-start gap-2">
+                <div>
+                  <span className="text-gray-600 text-sm">Rejected Date</span>
+                  <p className="text-gray-800">
+                    {leaveByIdData?.rejectedData || "N/A"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Team Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="flex items-start gap-2">
               <div>
                 <span className="text-gray-600 text-sm">Team Leader</span>
@@ -181,7 +215,7 @@ const LeaveView = () => {
 
           {/* Approval Information */}
           {leaveByIdData?.approvedBy && (
-            <div className="pt-3 border-t border-gray-100">
+            <div className="pt-3 border-t border-gray-300">
               <div className="flex items-start gap-2">
                 <div>
                   <span className="text-gray-600 text-sm">Approved By</span>
@@ -195,7 +229,7 @@ const LeaveView = () => {
 
           {/* Rejection Information */}
           {leaveByIdData?.rejectedBy && (
-            <div className="pt-3 border-t border-gray-100">
+            <div className="pt-3 border-t border-gray-300">
               <div>
                 <span className="text-gray-600 text-sm">Rejected By</span>
                 <p className="text-gray-800">

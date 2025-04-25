@@ -107,7 +107,6 @@ const EditDepartment = () => {
   }, []);
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
     { label: "Department", href: "/master-data/Department" },
   ];
@@ -161,10 +160,11 @@ const EditDepartment = () => {
 
   return (
     <div className="px-4 flex flex-col space-y-4">
-      <BreadcrumbsComponent items={breadcrumbItems} />
+      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
       <div className="flex justify-between">
-        <div className="page-title -pl-2">Edit Department</div>
         <GoBack />
+        <div className="page-title -pl-2">Edit Department</div>
+        <div></div>
       </div>
       <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
@@ -246,7 +246,7 @@ const EditDepartment = () => {
           <ButtonComponent
             type="submit"
             className="bg-black text-white"
-            content={isLoading ? "Submitting..." : "Submit"}
+            content={isLoading ? "Editing..." : "Edit"}
             disabled={isLoading}
           />
         </form>

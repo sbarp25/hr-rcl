@@ -23,7 +23,7 @@ const EditEmployees = () => {
   const [positionData, setPositionData] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
+    { label: "Dashboard", href: "/dashboard" },
     { label: "Employees", href: "/Employees" },
     { label: "Edit Employees", href: "" },
   ];
@@ -192,10 +192,11 @@ const EditEmployees = () => {
   }, []);
   return (
     <div className="px-4 flex flex-col space-y-4">
-      <BreadcrumbsComponent items={breadcrumbItems} />
+      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
       <div className="flex justify-between">
-        <div className="page-title -pl-2">Edit Employee</div>
         <GoBack />
+        <div className="page-title -pl-2">Edit Employee</div>
+        <div></div>
       </div>
       <div className="bg-gray-100 p-6 rounded-3xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 space-y-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -507,7 +508,7 @@ const EditEmployees = () => {
             <ButtonComponent
               type="submit"
               className="bg-amber-400 text-white"
-              content={isLoading ? "Updating..." : "Update"}
+              content={isLoading ? "Editing..." : "Edit"}
             />
             <ButtonComponent
               onPress={onCancel}

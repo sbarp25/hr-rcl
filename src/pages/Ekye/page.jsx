@@ -155,7 +155,7 @@ const Ekye = () => {
 
         {/* Form Container */}
         <ValidationComponent>
-          <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300 overflow-x-auto max-h-[80vh]">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh]">
             {step === 0 && !isLoading && (
               <PersonalDetails
                 handleNext={handleNext}

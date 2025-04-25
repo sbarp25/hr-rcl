@@ -19,7 +19,7 @@ const SalaryEdit = () => {
 
   const month = "January";
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
+    { label: "Dashboard", href: "/dashboard" },
     { label: "Employees", href: "/Employees" },
     { label: "Edit Salary Details", href: "/notice" },
   ];

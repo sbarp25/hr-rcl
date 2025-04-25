@@ -17,6 +17,7 @@ import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { getLocalTimeZone } from "@internationalized/date";
+import GoBack from "../../../components/GoBack";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -190,14 +191,18 @@ const AddEmployeeForm = () => {
 
   return (
     <div className="container space-y-4">
-      <div className="flex flex-col space-y-8 ">
-        <div className="text-sm">
-          <BreadcrumbsComponent items={breadcrumbItems} />
+      <div className="flex justify-between">
+        <div className="flex flex-col space-y-8 ">
+          <div className="text-sm">
+            <GoBack />
+            {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+          </div>
         </div>
-      </div>
-      <div className="page-title flex items-center -pl-2">
-        <IoIosPeople />
-        Add Employee
+        <div className="page-title flex items-center -pl-2">
+          <IoIosPeople />
+          Add Employee
+        </div>
+        <div></div>
       </div>
       <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8">
@@ -441,7 +446,7 @@ const AddEmployeeForm = () => {
             type="submit"
             className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
             <img src={Submit} alt="Submit" className="h-4 w-4" />
-            Submit
+            Add Employee
           </button>
         </form>
       </div>

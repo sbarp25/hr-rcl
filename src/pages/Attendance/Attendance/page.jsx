@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 const Attendance = () => {
   let [value, setValue] = React.useState(parseDate("2024-03-07"));
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "Attendance", href: "/Attendance" },
+    { label: "My Attendance", href: "/Attendance" },
   ];
   const navigate = useNavigate();
   const hasaccess = false;

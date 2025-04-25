@@ -147,7 +147,6 @@ const Department = () => {
   };
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
     { label: "Department", href: "/master-data/Department" },
   ];
@@ -229,7 +228,7 @@ const Department = () => {
         <div className="bg-white rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <div className=" rounded-lg max-h-[80vh]  text-left">
               <Table bordered aria-label="Department Table">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
@@ -261,7 +260,7 @@ const Department = () => {
                           <HiPencilSquare
                             className={`${
                               hasDepartmentEditAccess
-                                ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
                                 : "text-xl mr-2"
                             }`}
                             title="Edit"
@@ -287,7 +286,7 @@ const Department = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
               <Table bordered aria-label="Department Table">
                 <TableHeader>
                   <TableColumn>Department</TableColumn>
@@ -442,11 +441,15 @@ const Department = () => {
           {/* Pagination - Responsive for all screens */}
           {departmentsData && departmentsData.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-              <div className="text-xs order-2 sm:order-1">
-                <span>
-                  Showing {departmentPerPage} of {totalRecords}
+              <div className="text-sm font-medium text-gray-600  flex items-center">
+                <span className="mr-1">Showing:</span>
+                <span className="font-bold text-gray-800 mx-1">
+                  {departmentPerPage}
                 </span>
+                <span className="mr-1">of</span>
+                <span className="font-bold text-gray-800">{totalRecords}</span>
               </div>
+
               <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
                 <Pagination
                   showControls

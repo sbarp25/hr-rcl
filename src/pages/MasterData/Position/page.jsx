@@ -249,7 +249,6 @@ const Position = () => {
   };
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
@@ -391,7 +390,7 @@ const Position = () => {
         ) : ( */}
         {/* Table Section */}
         <div className="bg-white rounded-lg p-2">
-          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+          <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
             <Table aria-label="Position Table " className="">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -417,7 +416,7 @@ const Position = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <HiPencilSquare
-                          className="text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                          className="text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
                           title="Edit"
                           onClick={() => handleAction("edit", position)}
                         />
@@ -440,12 +439,15 @@ const Position = () => {
           )}
           {/* )} */}
           <div className="flex mt-4 justify-between">
-            <div className="flex text-xs">
-              <span>Showing:</span>
-              <span className="font-bold">{ekyeDashboardDataPerPage}</span>
-              <span>of</span>
-              <span>{totalRecords}</span>
+            <div className="text-sm font-medium text-gray-600  flex items-center">
+              <span className="mr-1">Showing:</span>
+              <span className="font-bold text-gray-800 mx-1">
+                {ekyeDashboardDataPerPage}
+              </span>
+              <span className="mr-1">of</span>
+              <span className="font-bold text-gray-800">{totalRecords}</span>
             </div>
+
             <Pagination
               showControls
               total={totalPages}

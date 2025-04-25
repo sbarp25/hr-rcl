@@ -1,13 +1,3 @@
-import { Button } from "@nextui-org/react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/table";
-import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../lib/axios-Instance";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -17,34 +7,38 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
     <div className="w-60 flex items-center justify-center">
       <div
         onClick={onChange}
-        className="relative flex w-full h-10 bg-gray-200 rounded-full cursor-pointer p-1 transition-all duration-300 shadow-inner">
+        className="relative flex items-center p-1  w-full h-12 bg-gray-200 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
         {/* Sliding toggle */}
         <div
-          className={`absolute w-1/2 h-8 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-            isSelected ? "translate-x-0" : "translate-x-full"
+          className={`absolute h-10 w-1/2 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+            isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-1"
           }`}
         />
         {/* Labels */}
-        <div className="flex justify-between items-center w-full z-10 px-3 text-xs font-medium text-gray-700">
-          <span
-            className={`transition-colors duration-300 ${
-              isSelected ? "text-gray-900" : "text-gray-400"
-            }`}>
-            Today Leave
-          </span>
-          <span
-            className={`transition-colors duration-300 ${
-              !isSelected ? "text-gray-900" : "text-gray-400"
-            }`}>
-            Upcoming Leave
-          </span>
+        <div className="flex w-full z-10 text-sm font-medium">
+          <div className="w-1/2 text-center py-2">
+            <span
+              className={`transition-colors duration-300 ${
+                isSelected ? "text-gray-900" : "text-gray-400"
+              }`}>
+              Today <br />
+              Leave
+            </span>
+          </div>
+          <div className="w-1/2 text-center py-2">
+            <span
+              className={`transition-colors duration-300 ${
+                !isSelected ? "text-gray-900" : "text-gray-400"
+              }`}>
+              Upcoming Leave
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 };
-
-const Leave = (props) => {
+const Leave = () => {
   const [isToday, setIsToday] = useState(true);
   const [todayLeave, setTodayLeave] = useState([]);
   const [upComingLeave, setUpComingLeave] = useState([]);
@@ -86,51 +80,7 @@ const Leave = (props) => {
       setLeaveList(upComingLeave);
     }
   }, [isToday, todayLeave, upComingLeave]);
-  // Dummy leave list data
-  // const leaveList = [
-  //   {
-  //     fullName: "John Smith",
-  //     teamLeaderName: "Sarah Johnson",
-  //     leaveStartDate: "2025-04-25",
-  //     leaveEndDate: "2025-04-28",
-  //   },
-  //   {
-  //     fullName: "Emma Wilson",
-  //     teamLeaderName: "Michael Chen",
-  //     leaveStartDate: "2025-05-01",
-  //     leaveEndDate: "2025-05-05",
-  //   },
-  //   {
-  //     fullName: "David Lee",
-  //     teamLeaderName: "Sarah Johnson",
-  //     leaveStartDate: "2025-04-30",
-  //     leaveEndDate: "2025-05-02",
-  //   },
-  //   {
-  //     fullName: "Priya Patel",
-  //     teamLeaderName: "Michael Chen",
-  //     leaveStartDate: "2025-05-10",
-  //     leaveEndDate: "2025-05-17",
-  //   },
-  //   {
-  //     fullName: "Robert Garcia",
-  //     teamLeaderName: "Lisa Wong",
-  //     leaveStartDate: "2025-04-27",
-  //     leaveEndDate: "2025-05-08",
-  //   },
-  //   {
-  //     fullName: "Sophia Kim",
-  //     teamLeaderName: "Sarah Johnson",
-  //     leaveStartDate: "2025-05-15",
-  //     leaveEndDate: "2025-05-16",
-  //   },
-  //   {
-  //     fullName: "James Wilson",
-  //     teamLeaderName: "Lisa Wong",
-  //     leaveStartDate: "2025-05-05",
-  //     leaveEndDate: "2025-05-09",
-  //   },
-  // ];
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -166,7 +116,7 @@ const Leave = (props) => {
                           {data.fullName}
                         </h3>
                         <p className="text-sm text-gray-600">
-                          Team Leader: {data.teamLeaderName}
+                          Team Lead: {data.teamLeaderName}
                         </p>
                       </div>
                     </div>

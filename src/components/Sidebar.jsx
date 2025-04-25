@@ -212,14 +212,14 @@ const Sidebar = () => {
                   </Link>
                   {/* Dropdown items */}
                   {service.children && expandedDropdown === index && (
-                    <div className="pl-8 mt-2 space-y-2">
+                    <div className="pl-8 mt-2 space-y-2 bg-slate-600">
                       {service.children.map((child, childIndex) => {
                         if (!child?.view) return null;
                         return (
                           <Link
                             key={childIndex}
                             to={child.to}
-                            className={`flex p-2 rounded-lg transition-colors gap-4 ${
+                            className={`flex p-2 rounded-lg transition-colors gap-4  ${
                               location.pathname === child.to
                                 ? "bg-active text-white border-l-4 border-l-red-800"
                                 : "hover:bg-gray-600"

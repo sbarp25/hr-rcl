@@ -83,8 +83,7 @@ const Page = () => {
     fetchEmployeeData();
   }, []);
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "AdminEKYE", href: "/AdminEkye" },
+    { label: "Admin EKYE", href: "/AdminEkye" },
     { label: activeTab.name, href: "" },
   ];
   const navigate = useNavigate();

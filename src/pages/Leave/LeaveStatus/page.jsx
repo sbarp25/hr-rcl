@@ -41,7 +41,7 @@ const LeaveStatus = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
-  const [selectedLeave, setSelectedLeave] = useState(null);
+  // const [selectedLeave, setSelectedLeave] = useState(null);
   const [originalLeaveData, setOriginalLeaveData] = useState([]);
 
   const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
@@ -59,9 +59,15 @@ const LeaveStatus = () => {
   };
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Leave Status", href: "" },
+    { label: "Leave", href: "" },
+    { label: "Leave Status", href: "/Leave/Status" },
   ];
+  // useEffect(() => {
+  //   onOpen();
+  // }, []);
+  // useEffect(() => {
+  //   isRejectOpen();
+  // }, []);
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -110,7 +116,7 @@ const LeaveStatus = () => {
   };
 
   const handleAction = (action, data) => {
-    setSelectedLeave(data);
+    // setSelectedLeave(data);
     switch (action) {
       case "approve":
         onOpen();
@@ -224,6 +230,20 @@ const LeaveStatus = () => {
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
 
+  const selectedLeave = {
+    leaveId: 1,
+    leaveType: "Sick Leave",
+    leaveStartDate: "2023-10-01",
+    leaveEndDate: "2023-10-05",
+    Days: 5,
+    isHalfDay: false,
+    leaveStatus: "PENDING",
+    teamleadName: "John Doe",
+    associateteamleadName: "John Doe",
+    approvedBy: "Jane Smith",
+    rejectedBy: "John Doe",
+  };
+
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -232,7 +252,7 @@ const LeaveStatus = () => {
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div className="flex flex-col sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
               <h1 className="page-title">Leave Status</h1>
             </div>
@@ -253,7 +273,7 @@ const LeaveStatus = () => {
         <div className="bg-white rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
@@ -263,7 +283,7 @@ const LeaveStatus = () => {
                   <TableColumn>Leave Start Date</TableColumn>
                   <TableColumn>Leave End Date</TableColumn>
                   {/* <TableColumn>Status</TableColumn> */}
-                  <TableColumn>Team Lead</TableColumn>
+                  <TableColumn>Approved by</TableColumn>
                   <TableColumn>Action</TableColumn>
                   {/* <TableColumn>Employee Name</TableColumn> */}
                   {/* <TableColumn>Approver</TableColumn>
@@ -284,27 +304,6 @@ const LeaveStatus = () => {
                       <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
 
-                      {/* <TableCell>
-                        <div
-                          className={`${getStatusClass(
-                            item?.leaveStatus
-                          )} text-center p-2 rounded-md w-fit`}>
-                          {item?.leaveStatus || "N/A"}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
-                              item?.leaveStatus
-                            )}`}>
-                            {item?.teamLeaderName?.charAt(0) || "?"}
-                          </div>
-                          <div className="text-gray-800 font-medium">
-                            {item?.teamLeaderName || "N/A"}
-                          </div>
-                        </div>
-                      </TableCell> */}
                       <TableCell>
                         <div className="flex items-center gap-3 p-2 rounded-lg">
                           <div
@@ -351,7 +350,7 @@ const LeaveStatus = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>Leave</TableColumn>
@@ -413,7 +412,7 @@ const LeaveStatus = () => {
                             hasLeaveApproveAccess && (
                               <>
                                 <FaCheckCircle
-                                  className="text-lg text-green-600 hover:text-green-800 cursor-pointer"
+                                  className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
                                   onClick={() => handleAction("approve", item)}
                                 />
                                 <FaXmark
@@ -521,11 +520,15 @@ const LeaveStatus = () => {
           {/**Pagination Section - Responsive for all screens */}
           {leaveData && leaveData.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-              <div className="text-xs order-2 sm:order-1">
-                <span>
-                  Showing {leaveDataPerPage} of {totalRecords}
+              <div className="text-sm font-medium text-gray-600  flex items-center">
+                <span className="mr-1">Showing:</span>
+                <span className="font-bold text-gray-800 mx-1">
+                  {leaveDataPerPage}
                 </span>
+                <span className="mr-1">of</span>
+                <span className="font-bold text-gray-800">{totalRecords}</span>
               </div>
+
               <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
                 <Pagination
                   showControls
@@ -551,6 +554,7 @@ const LeaveStatus = () => {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
+        size="4xl"
         isDismissable={true}
         isKeyboardDismissDisabled={false}>
         <ModalContent>
@@ -559,30 +563,40 @@ const LeaveStatus = () => {
               <ModalBody>
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">Leave Approval</h3>
+                  <p>Are you sure you want to approve this leave?</p>
                   {selectedLeave && (
-                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                      <div className="flex justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
+                      <div className="flex ">
+                        <span className="font-medium">Team Lead:</span>
+                        <span>{selectedLeave?.teamleadName}</span>
+                      </div>
+                      <div className="flex ">
+                        <span className="font-medium">AssociateTeam Lead:</span>
+                        <span>{selectedLeave?.associateteamleadName}</span>
+                      </div>
+                      <div className="flex ">
                         <span className="font-medium">Leave Type:</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">Start Date:</span>
                         <span>{selectedLeave?.leaveStartDate}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">End Date:</span>
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">Days:</span>
                         <span>{selectedLeave?.Days}</span>
                       </div>
                     </div>
                   )}
                 </div>
-                <p>Are you sure you want to approve this leave?</p>
                 <div className="flex gap-2 justify-end mt-4">
-                  <Button color="primary" onPress={() => onApprove()}>
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => onApprove()}>
                     Approve
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
@@ -598,6 +612,7 @@ const LeaveStatus = () => {
         isOpen={isRejectOpen}
         onOpenChange={onRejectOpenChange}
         isDismissable={true}
+        size="4xl"
         isKeyboardDismissDisabled={false}>
         <ModalContent>
           {(onClose) => (
@@ -605,21 +620,22 @@ const LeaveStatus = () => {
               <ModalBody>
                 <div className="space-y-4">
                   <h3 className="text-lg font-medium">Leave Rejection</h3>
+                  <p>Are you sure you want to reject this leave?</p>
                   {selectedLeave && (
                     <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">Leave Type:</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">Start Date:</span>
                         <span>{selectedLeave?.leaveStartDate}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         <span className="font-medium">End Date:</span>
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex ">
                         {selectedLeave.isHalfDay ? (
                           <div>
                             <span className="font-medium">Half Day</span>
@@ -635,7 +651,6 @@ const LeaveStatus = () => {
                     </div>
                   )}
                 </div>
-                <p>Are you sure you want to reject this leave?</p>
                 <form onSubmit={handleSubmit(onReject)}>
                   <TextAreaComp
                     name="reason"
@@ -650,7 +665,7 @@ const LeaveStatus = () => {
                     }}
                   />
                   <div className="flex gap-2 justify-end mt-4">
-                    <Button color="danger" type="submit">
+                    <Button className="text-white bg-black" type="submit">
                       Reject
                     </Button>
                     <Button onPress={onClose}>Cancel</Button>

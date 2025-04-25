@@ -14,7 +14,7 @@ const AdvanceSalary = () => {
   // } = useForm({});
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
+    { label: "Dashboard", href: "/dashboard" },
     { label: "RCL-ID", href: "" },
     { label: "Add Advance", href: "/AdvanceSalary" },
   ];

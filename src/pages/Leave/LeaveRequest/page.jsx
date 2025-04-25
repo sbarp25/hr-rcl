@@ -6,7 +6,7 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import InputComponent from "../../../components/InputComponent";
 import ButtonComponent from "../../../components/ButtonComp";
@@ -19,17 +19,10 @@ import SelectComp from "../../../components/Select";
 import DatepickerComponent, {
   formatDate,
 } from "../../../components/DatepickerComponent";
+import TextAreaComp from "../../../components/TextAreaComp";
 
 const LeaveRequest = () => {
-  const {
-    register,
-    control,
-    reset,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm({
+  const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -46,7 +39,7 @@ const LeaveRequest = () => {
   const navigate = useNavigate();
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
+    { label: "Leave", href: "" },
     { label: "Leave Request", href: "/Leave/Request" },
   ];
 
@@ -285,14 +278,11 @@ const LeaveRequest = () => {
 
           {/* Reason for Leave */}
           <div>
-            <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className="w-full rounded-xl text-sm sm:text-base"
+            <TextAreaComp
+              control={control}
+              name="description"
               label="Description"
-              size="sm"
-              {...register("description", {
+              rules={{
                 required: "Description is required",
                 minLength: {
                   value: 10,
@@ -302,14 +292,8 @@ const LeaveRequest = () => {
                   value: 255,
                   message: "Description must be less than 255 characters long.",
                 },
-              })}
-              variant="bordered"
+              }}
             />
-            {errors.description && (
-              <p className="text-danger text-xs sm:text-sm mt-1">
-                {errors.description.message}
-              </p>
-            )}
           </div>
 
           <div className="flex justify-center sm:justify-start pt-2">

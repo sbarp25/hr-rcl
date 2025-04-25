@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaRegEye } from "react-icons/fa";
+import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
@@ -43,10 +43,7 @@ const Employees = () => {
   const [deletingId, setDeletingId] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
-    { label: "Employees", href: "/Employees" },
-  ];
+  const breadcrumbItems = [{ label: "Employees", href: "/Employees" }];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -191,16 +188,17 @@ const Employees = () => {
       fetchEmployees();
     }
   };
-  // const employeData = [
-  //   {
-  //     rclId: "Odinson",
-  //     fullName: "Odinson",
-  //     email: "odinson@gmail.com",
-  //     departmentName: "Odinson",
-  //     postionName: "odinson",
-  //     isActive: true,
-  //   },
-  // ];
+  const employeData = [
+    {
+      rclId: "Odinson",
+      fullName: "Odinson",
+      email: "odinson@gmail.com",
+      departmentName: "Odinson",
+      postionName: "odinson",
+      isActive: true,
+    },
+  ];
+
   return (
     <>
       {/* {isLoading && <Loader message="Loading employees..." />} */}
@@ -236,7 +234,7 @@ const Employees = () => {
 
         {/* Employee Table */}
         <div className="bg-white rounded-lg p-2">
-          <div className="shadow-md rounded-lg max-h-[80vh] overflow-x-auto text-left">
+          <div className=" rounded-lg max-h-[80vh]  text-left">
             <Table bordered aria-label="List of Employees">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -267,10 +265,10 @@ const Employees = () => {
                       <TableCell>{employee.postionName}</TableCell>
                       <TableCell>
                         <div className="flex justify-center gap-4">
-                          <FaRegEye
+                          <HiPencilSquare
                             className={`  ${
                               hasEmployeeEditAccess
-                                ? "text-green-500 hover:text-green-700 cursor-pointer "
+                                ? "text-orange-500 hover:text-orange-700 cursor-pointer "
                                 : ""
                             }`}
                             title="Edit"
@@ -301,11 +299,15 @@ const Employees = () => {
           )}
           {/* Pagination */}
           <div className="mt-4 flex justify-between">
-            <div className="text-xs">
-              <span>
-                Showing {employeeDataPerPage} of {totalRecords}
+            <div className="text-sm font-medium text-gray-600  flex items-center">
+              <span className="mr-1">Showing:</span>
+              <span className="font-bold text-gray-800 mx-1">
+                {employeeDataPerPage}
               </span>
+              <span className="mr-1">of</span>
+              <span className="font-bold text-gray-800">{totalRecords}</span>
             </div>
+
             <Pagination
               showControls
               total={totalPages}
@@ -331,9 +333,11 @@ const Employees = () => {
           {(onClose) => (
             <>
               <ModalBody>
-                <p>Are you sure you want to approve this leave?</p>
+                <p>Are you sure you want to delete this employee ?</p>
                 <div className="flex gap-2 justify-end mt-4">
-                  <Button color="primary" onPress={() => onDelete()}>
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => onDelete()}>
                     Approve
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>

@@ -39,6 +39,7 @@ const SelectComp = ({
                 isDisabled={isReadOnly}
                 placeholder={displayPlaceholder}
                 label={label}
+                errorMessage={error?.message}
                 isInvalid={!!error}
                 className={className}
                 selectedKeys={field.value !== undefined ? [field.value] : []}
@@ -51,7 +52,6 @@ const SelectComp = ({
                   </SelectItem>
                 ))}
               </Select>
-              {error && <p className="text-danger text-sm">{error.message}</p>}
             </>
           );
         }}

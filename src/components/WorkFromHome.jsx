@@ -13,7 +13,7 @@ const WorkFromHome = () => {
   const WorkfromHomeDate = []; // This is your empty data array
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full">
       <Table
         bordered
         aria-label="Work From Home Table"

@@ -39,7 +39,6 @@ const LeaveApprove = ({ leaveId }) => {
   });
 
   const breadcrumbItems = [
-    { label: "Dashboard", href: "/" },
     { label: "Leave", href: "" },
     { label: "Leave Status", href: "/Leave/apprej" },
   ];
