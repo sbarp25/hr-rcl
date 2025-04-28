@@ -66,7 +66,7 @@ const Search = ({ onApplySearch }) => {
   return (
     <div className="bg-white rounded-xl">
       <Input
-        className="w-72"
+        className="w-full sm:w-72 md:w-80 lg:w-96"
         onKeyDown={handleKeyPress}
         variant="bordered"
         placeholder="Search"

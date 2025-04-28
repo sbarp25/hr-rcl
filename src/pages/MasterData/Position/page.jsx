@@ -137,19 +137,19 @@ const Position = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check create status */
-  const hasPositioncreateaccess = menu.some((menu) =>
+  const hasPositioncreateaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 13)
   );
   /**To read the Data */
-  const hasaccess = menu.some((menu) =>
+  const hasaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 14)
   );
   /**To check edit status */
-  const hasPositionEditAccess = menu.some((menu) =>
+  const hasPositionEditAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 15)
   );
   /**To check Delete Access */
-  const hasPositionDeleteAccess = menu.some((menu) =>
+  const hasPositionDeleteAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 16)
   );
 
@@ -291,6 +291,12 @@ const Position = () => {
                 <Filter
                   onApplyFilters={handleApplyFilters}
                   url="/api/v1/departments/list"
+                  fieldNames={{
+                    departmentField: "id",
+                    fromDateField: "createdAt",
+                    toDateField: "createdto",
+                    positionField: "positionId",
+                  }}
                 />
               </div>
               <Button
@@ -308,87 +314,6 @@ const Position = () => {
           </div>
         </div>
 
-        {/**  Edit Postion form */}
-        {showEditForm && (
-          <form
-            className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleEditPosition}>
-            <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-              Edit Position
-            </h2>
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Input Fields */}
-              <div className="flex flex-col flex-1 gap-4">
-                <input
-                  type="text"
-                  placeholder="Position Name"
-                  value={positionName}
-                  onChange={(e) => setPositionName(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 focus:outline-none  w-full"
-                  required
-                />
-                <textarea
-                  placeholder="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 h-24 focus:outline-none resize-none w-full"
-                  required></textarea>
-              </div>
-
-              {/* Submit and Cancel Buttons */}
-              <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
-                  type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto mb-4">
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-                  onClick={() => setShowEditForm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-        )}
-        {/* Add Position Form */}
-        {/* {showAddForm ? (
-          <form
-            className="mb-6 p-4 bg-white shadow-md rounded-lg max-w-4xl mx-auto"
-            onSubmit={handleAddPosition}>
-            <h2 className="text-lg font-semibold mb-4 text-center md:text-left">
-              Add New Position
-            </h2>
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex flex-col flex-1 gap-4">
-                <input
-                  type="text"
-                  placeholder="Position Name"
-                  value={positionName}
-                  onChange={(e) => setPositionName(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 focus:outline-none  w-full"
-                  required
-                />
-                <textarea
-                  placeholder="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="input border rounded-lg px-4 py-2 h-24 focus:outline-none  resize-none w-full"
-                  required></textarea>
-              </div>
-
-              <div className="flex flex-col md:w-1/4 justify-end md:justify-start">
-                <button
-                  type="submit"
-                  className="button bg-bgprimary text-white rounded-lg px-6 py-2 hover:bg-bgprimaryhover transition w-full md:w-auto">
-                  Add Position
-                </button>
-              </div>
-            </div>
-          </form>
-        ) : ( */}
-        {/* Table Section */}
         <div className="bg-white rounded-lg p-2">
           <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
             <Table aria-label="Position Table " className="">

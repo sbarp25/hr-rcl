@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaRegEye } from "react-icons/fa";
 import {
   Table,
   TableBody,
@@ -25,8 +25,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
-import { useForm, FormProvider } from "react-hook-form";
-import TextAreaComp from "../../../components/TextAreaComp";
+import { useForm } from "react-hook-form";
 
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +43,7 @@ const AttendanceRequest = () => {
   const navigate = useNavigate();
 
   // Create a form methods object using useForm hook
-  const methods = useForm();
-  const { reset, handleSubmit, control } = methods;
+  const { reset } = useForm();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -237,7 +235,7 @@ const AttendanceRequest = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        "/api/v1/attendance/late-check-in/all-reviews",
+        "/api/v1/late_attendance/list",
         {
           // const response = await axiosInstance.post("/api/v1/auth/get/all", {
           pageIndex: currentPage,
@@ -268,10 +266,10 @@ const AttendanceRequest = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
-  useEffect(() => {
-    onRejectOpen();
-    onOpen();
-  }, []);
+  // useEffect(() => {
+  //   onRejectOpen();
+  //   onOpen();
+  // }, []);
   // const selectedData = {
   //   fullName: "John Doe",
   //   rclId: "RCL123",
@@ -293,11 +291,17 @@ const AttendanceRequest = () => {
             <span className="page-title">Late Check in</span>
           </div>
           <div className="flex gap-x-2 w-full sm:w-auto">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-              <Search className="w-full sm:w-auto" />
+            <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+              <Search />
               <Filter
                 onApplyFilters={handleApplyFilters}
-                url="/api/v1/users/list"
+                url="api/v1/attendance/late-check-in/all-reviews"
+                fieldNames={{
+                  departmentField: "departmentId",
+                  fromDateField: "createdAt",
+                  toDateField: "createdto",
+                  positionField: "positionId",
+                }}
                 className="w-full sm:w-auto"
               />
             </div>
@@ -312,7 +316,7 @@ const AttendanceRequest = () => {
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
                 <TableColumn>RCL-ID</TableColumn>
-                <TableColumn>Name</TableColumn>
+                {/* <TableColumn>Name</TableColumn> */}
                 <TableColumn>Email</TableColumn>
                 <TableColumn>Attendance Date</TableColumn>
                 <TableColumn>Expected CheckInTime</TableColumn>
@@ -322,51 +326,87 @@ const AttendanceRequest = () => {
                 <TableColumn>Actions</TableColumn>
               </TableHeader>
               <TableBody>
-                {lateCheckinData.map((late, index) => (
-                  <TableRow
-                    key={late.lateCheckInId}
-                    className="h-14 border-b-2 border-gray-300">
-                    <TableCell>
-                      {(currentPage - 1) * lateCheckInDataPerPage + index + 1}
-                    </TableCell>
-                    <TableCell>{late.rclId}</TableCell>
-                    <TableCell>{late.fullName}</TableCell>
-                    <TableCell>{late.email}</TableCell>
-                    <TableCell>{late.attendanceDate}</TableCell>
-                    <TableCell>{late.expectedCheckInTime}</TableCell>
-                    <TableCell>{late.status}</TableCell>
-                    <TableCell>{late.checkInTime}</TableCell>
-                    <TableCell>{late.lateReason}</TableCell>
-                    <TableCell>
-                      {late.status === "Pending" && (
-                        <div className="flex justify-center gap-4">
-                          <FaCheck
-                            className={`${
-                              hasEmployeeEditAccess
-                                ? "text-green-500 hover:text-green-700 cursor-pointer"
-                                : ""
-                            }`}
-                            title="Edit"
-                            onClick={() =>
-                              handleAction("Approve", late.lateCheckInId)
-                            }
-                          />
-                          <MdDelete
-                            className={`${
-                              hasEmployeeDeleteAccess
-                                ? "text-red-500 cursor-pointer hover:text-red-700"
-                                : ""
-                            }`}
-                            title="Delete"
-                            onClick={() =>
-                              handleAction("Reject", late.lateCheckInId)
-                            }
-                          />
+                {lateCheckinData
+                  .filter((lateCHeckin) => lateCHeckin.status !== "APPROVED")
+                  .map((late, index) => (
+                    <TableRow
+                      key={late.lateCheckInId}
+                      className="h-14 border-b-2 border-gray-300">
+                      <TableCell>
+                        {(currentPage - 1) * lateCheckInDataPerPage + index + 1}
+                      </TableCell>
+                      <TableCell>{late.rclId}</TableCell>
+                      {/* <TableCell>{late.fullName}</TableCell> */}
+                      <TableCell>{late.email}</TableCell>
+                      <TableCell>{late.attendanceDate}</TableCell>
+                      <TableCell>{late.expectedCheckInTime}</TableCell>
+
+                      <TableCell>
+                        {/* <div
+                          className={` rounded-md ${
+                            late.status === "APPROVED"
+                              ? "bg-green-100 border border-green-600 text-green-600"
+                              : late.status === "REJECTED"
+                              ? "bg-red-100 border border-red-600 text-red-600"
+                              : "bg-yellow-100 border border-yellow-500 text-yellow-500"
+                          } text-center p-2 w-fit`}> */}
+                        <div
+                          className={` rounded-full ${
+                            late.isApproved === true
+                              ? "bg-green-100 border border-green-600 text-green-600"
+                              : late.isApproved === false
+                              ? "bg-red-100 border border-red-600 text-red-600"
+                              : "bg-yellow-100 border border-yellow-500 text-yellow-500"
+                          } text-center p-2 w-fit`}>
+                          {late.isApproved === true ? (
+                            <span>APPROVED</span>
+                          ) : late.isApproved === true ? (
+                            <span>REJECTED</span>
+                          ) : (
+                            <span>PENDING</span>
+                          )}
                         </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        {/* {late.status} */}
+                      </TableCell>
+                      <TableCell>{late.checkInTime}</TableCell>
+                      <TableCell>{late.lateReason}</TableCell>
+                      <TableCell>
+                        <button
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() =>
+                            handleAction("view", late.lateCheckInId)
+                          }>
+                          <FaRegEye size={18} />
+                        </button>
+                        {late.status === "Pending" && (
+                          <div className="flex justify-center gap-4">
+                            <FaCheck
+                              className={`${
+                                hasEmployeeEditAccess
+                                  ? "text-green-500 hover:text-green-700 cursor-pointer"
+                                  : ""
+                              }`}
+                              title="Edit"
+                              onClick={() =>
+                                handleAction("Approve", late.lateCheckInId)
+                              }
+                            />
+                            <MdDelete
+                              className={`${
+                                hasEmployeeDeleteAccess
+                                  ? "text-red-500 cursor-pointer hover:text-red-700"
+                                  : ""
+                              }`}
+                              title="Delete"
+                              onClick={() =>
+                                handleAction("Reject", late.lateCheckInId)
+                              }
+                            />
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>
@@ -416,7 +456,7 @@ const AttendanceRequest = () => {
                           <FaCheck
                             className={`${
                               hasEmployeeEditAccess
-                                ? "text-green-500 hover:text-green-700 cursor-pointer"
+                                ? "text-orange-500 hover:text-orange-700 cursor-pointer"
                                 : ""
                             }`}
                             title="Edit"

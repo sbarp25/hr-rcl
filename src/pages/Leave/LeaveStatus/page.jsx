@@ -41,7 +41,7 @@ const LeaveStatus = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
-  // const [selectedLeave, setSelectedLeave] = useState(null);
+  const [selectedLeave, setSelectedLeave] = useState(null);
   const [originalLeaveData, setOriginalLeaveData] = useState([]);
 
   const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
@@ -116,7 +116,7 @@ const LeaveStatus = () => {
   };
 
   const handleAction = (action, data) => {
-    // setSelectedLeave(data);
+    setSelectedLeave(data);
     switch (action) {
       case "approve":
         onOpen();
@@ -230,19 +230,19 @@ const LeaveStatus = () => {
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
 
-  const selectedLeave = {
-    leaveId: 1,
-    leaveType: "Sick Leave",
-    leaveStartDate: "2023-10-01",
-    leaveEndDate: "2023-10-05",
-    Days: 5,
-    isHalfDay: false,
-    leaveStatus: "PENDING",
-    teamleadName: "John Doe",
-    associateteamleadName: "John Doe",
-    approvedBy: "Jane Smith",
-    rejectedBy: "John Doe",
-  };
+  // const selectedLeave = {
+  //   leaveId: 1,
+  //   leaveType: "Sick Leave",
+  //   leaveStartDate: "2023-10-01",
+  //   leaveEndDate: "2023-10-05",
+  //   Days: 5,
+  //   isHalfDay: false,
+  //   leaveStatus: "PENDING",
+  //   teamleadName: "John Doe",
+  //   associateteamleadName: "John Doe",
+  //   approvedBy: "Jane Smith",
+  //   rejectedBy: "John Doe",
+  // };
 
   return (
     <>
@@ -252,7 +252,7 @@ const LeaveStatus = () => {
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
-          <div className="flex flex-col sm:flex-row  items-start sm:items-center gap-2">
+          <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
               <h1 className="page-title">Leave Status</h1>
             </div>
@@ -330,7 +330,7 @@ const LeaveStatus = () => {
                             hasLeaveApproveAccess && (
                               <>
                                 <FaCheckCircle
-                                  className="text-xl text-green-600 hover:text-green-800 cursor-pointer"
+                                  className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
                                   onClick={() => handleAction("approve", item)}
                                 />
                                 <FaXmark

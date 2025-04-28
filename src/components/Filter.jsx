@@ -14,10 +14,32 @@ import {
 import { BsFilter } from "react-icons/bs";
 import SelectComp from "./Select";
 import { useForm } from "react-hook-form";
+import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 
-const Filter = ({ onApplyFilters, url }) => {
-  const { control } = useForm();
+const Filter = ({
+  onApplyFilters,
+  url,
+  fieldNames = {
+    departmentField: "departmentId",
+    positionField: "positionId",
+    fromDateField: "created_at",
+    toDateField: "toDate",
+  },
+}) => {
+  const { watch, control } = useForm();
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "FromDate" || name === "toDate") {
+        setFormData((prev) => ({ ...prev, [name]: value[name] }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch]);
   const [formData, setFormData] = useState({
+    FromDate: null,
+    toDate: null,
     department: "",
     position: "",
     roles: "",
@@ -86,6 +108,8 @@ const Filter = ({ onApplyFilters, url }) => {
 
   const resetFilters = () => {
     setFormData({
+      FromDate: null,
+      toDate: null,
       department: "",
       position: "",
     });
@@ -100,13 +124,30 @@ const Filter = ({ onApplyFilters, url }) => {
     }
 
     setIsLoading(true);
+    const filterCriteria = {};
+    if (formData.FromDate) {
+      filterCriteria[fieldNames.fromDateField] = formatDate(formData.FromDate);
+    }
+
+    if (formData.toDate) {
+      filterCriteria[fieldNames.toDateField] = formatDate(formData.toDate);
+    }
+
+    if (formData.department) {
+      filterCriteria[fieldNames.departmentField] = parseInt(
+        formData.department || ""
+      );
+    }
+
+    if (formData.position) {
+      filterCriteria[fieldNames.positionField] = parseInt(
+        formData.position || ""
+      );
+    }
     const requestBody = {
       pageIndex: 1,
       pageSize: 10,
-      filterCriteria: {
-        departmentId: parseInt(formData.department || ""),
-        positionId: parseInt(formData.position || ""),
-      },
+      filterCriteria: filterCriteria,
       // sortCriteria:{
       // }
     };
@@ -156,20 +197,26 @@ const Filter = ({ onApplyFilters, url }) => {
           <DrawerBody>
             <div className="p-4 space-y-6">
               <div className="flex gap-4">
-                <DatePicker
-                  variant="bordered"
-                  isRequired
-                  className="w-full"
+                <DatepickerComponent
+                  name="FromDate"
                   label="From Date"
-                  placeholder="Select from date"
+                  control={control}
+                  onChange={(date) => handleChange("FromDate", date)}
                 />
-                <DatePicker
+                <DatepickerComponent
+                  name="toDate"
+                  label="To Date"
+                  control={control}
+                  onChange={(date) => handleChange("toDate", date)}
+                />
+
+                {/* <DatePicker
                   variant="bordered"
                   isRequired
                   className="w-full"
                   label="To Date"
                   placeholder="Select to date"
-                />
+                /> */}
               </div>
 
               <Select

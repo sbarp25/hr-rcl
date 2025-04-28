@@ -154,8 +154,8 @@ const CheckIn = ({ checkedInStatus }) => {
   return (
     <>
       {isloading && <Loader />}
-      <div className="flex justify-end ">
-        <div className="hidden md:block">
+      <div className="flex justify-end items-center ">
+        <div className="">
           {checkedInStatus ? (
             <MdRadioButtonChecked className="text-green-700 h-8 w-8 md:h-10 md:w-10" />
           ) : (
@@ -180,6 +180,7 @@ const CheckIn = ({ checkedInStatus }) => {
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           isDismissable={true}
+          placement="center"
           isKeyboardDismissDisabled={false}>
           <ModalContent>
             {(onClose) => (
@@ -207,6 +208,7 @@ const CheckIn = ({ checkedInStatus }) => {
           isOpen={isSecondModalOpen}
           onOpenChange={onOpenChangeSecondModal}
           isDismissable={true}
+          placement="center"
           isKeyboardDismissDisabled={false}>
           <ModalContent>
             {() => (

@@ -47,22 +47,14 @@ const Department = () => {
   const navigate = useNavigate();
   const [originalDepartmentsData, setOriginalDepartmentsData] = useState([]);
 
-  const handleApplyFilters = (filters) => {
-    // If no filters, show all original data
-    if (!filters.department && !filters.position) {
+  const handleApplyFilters = (result) => {
+    if (result.data) {
+      setDepartmentsData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
       setDepartmentsData(originalDepartmentsData);
-      return;
     }
-
-    // Apply filtering
-    const filteredData = originalDepartmentsData.filter((dept) => {
-      return (
-        (!filters.department || dept.name === filters.department) &&
-        (!filters.position || dept.positionName === filters.position)
-      );
-    });
-
-    setDepartmentsData(filteredData);
   };
 
   // Fetch departments data
@@ -154,19 +146,21 @@ const Department = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check create status */
-  const hasDepartmentCreateAccess = menu.some((menu) =>
+  const hasDepartmentCreateAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 9)
   );
+
   /**To read the Data */
-  const hasaccess = menu.some((menu) =>
+  const hasaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 10)
   );
+  // const hasaccess = true;
   /**To check edit status */
-  const hasDepartmentEditAccess = menu.some((menu) =>
+  const hasDepartmentEditAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 11)
   );
   /**To check Delete Access */
-  const hasDepartmentDeleteAccess = menu.some((menu) =>
+  const hasDepartmentDeleteAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 12)
   );
 
@@ -210,6 +204,12 @@ const Department = () => {
                 <Filter
                   onApplyFilters={handleApplyFilters}
                   url="/api/v1/departments/list"
+                  fieldNames={{
+                    departmentField: "id",
+                    fromDateField: "createdAt",
+                    toDateField: "createdto",
+                    positionField: "positionId",
+                  }}
                   className="w-full sm:w-auto"
                 />
               </div>

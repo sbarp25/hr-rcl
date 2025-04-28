@@ -201,6 +201,12 @@ const Employees = () => {
 
   return (
     <>
+      {/* filterCriteria: {
+        created_at: formatDate(formData.FromDate),
+        toDate: formatDate(formData.toDate),
+        departmentId: parseInt(formData.department || ""),
+        positionId: parseInt(formData.position || ""),
+      }, */}
       {/* {isLoading && <Loader message="Loading employees..." />} */}
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/* Breadcrumbs and Header */}
@@ -219,6 +225,13 @@ const Employees = () => {
                 <Filter
                   onApplyFilters={handleApplyFilters}
                   url="/api/v1/users/list"
+                  fieldNames={{
+                    departmentField: "departmentId",
+                    fromDateField: "createdAt",
+                    toDateField: "createdto",
+                    positionField: "positionId",
+                  }}
+                  className="w-full sm:w-auto"
                 />
               </div>
               <Button
