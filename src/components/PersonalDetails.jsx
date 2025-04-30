@@ -169,7 +169,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               {/* Date of Birth */}
               <DatepickerComponent
                 name="dob"
-                label="Date of birth"
+                label="Date of birth in AD"
                 control={control}
                 rules={{
                   required: "Date of Birth is required",

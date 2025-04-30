@@ -125,22 +125,27 @@ const Filter = ({
 
     setIsLoading(true);
     const filterCriteria = {};
-    if (formData.FromDate) {
-      filterCriteria[fieldNames.fromDateField] = formatDate(formData.FromDate);
-    }
 
-    if (formData.toDate) {
-      filterCriteria[fieldNames.toDateField] = formatDate(formData.toDate);
+    if (formData.FromDate || formData.toDate) {
+      filterCriteria.createdAt = {};
+
+      if (formData.FromDate) {
+        filterCriteria.createdAt.from = formatDate(formData.FromDate);
+      }
+
+      if (formData.toDate) {
+        filterCriteria.createdAt.to = formatDate(formData.toDate);
+      }
     }
 
     if (formData.department) {
-      filterCriteria[fieldNames.departmentField] = parseInt(
+      filterCriteria.filterCriteria[fieldNames.departmentField] = parseInt(
         formData.department || ""
       );
     }
 
     if (formData.position) {
-      filterCriteria[fieldNames.positionField] = parseInt(
+      filterCriteria.filterCriteria[fieldNames.positionField] = parseInt(
         formData.position || ""
       );
     }
@@ -199,13 +204,13 @@ const Filter = ({
               <div className="flex gap-4">
                 <DatepickerComponent
                   name="FromDate"
-                  label="From Date"
+                  label="From Date in AD"
                   control={control}
                   onChange={(date) => handleChange("FromDate", date)}
                 />
                 <DatepickerComponent
                   name="toDate"
-                  label="To Date"
+                  label="To Date in AD"
                   control={control}
                   onChange={(date) => handleChange("toDate", date)}
                 />

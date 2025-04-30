@@ -16,6 +16,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { useState } from "react";
 
 const AttendanceReport = ({ attendanceData }) => {
+  // const AttendanceReport = () => {
   const [expandedRow, setExpandedRow] = useState(null);
 
   // Toggle expanded row for mobile view
@@ -23,6 +24,19 @@ const AttendanceReport = ({ attendanceData }) => {
     setExpandedRow(expandedRow === sn ? null : sn);
   };
 
+  // const attendanceData = [
+  //   {
+  //     SN: 1,
+  //     Day: "Tuedsay",
+  //     isDelay: true,
+  //     weekDays: "Sunday",
+  //     checkinType: "Office",
+  //     workLocation: "Office",
+  //     earlyDelayTime: "1.5hrs Early",
+  //     totaltimeOfWork: "2.5HOurs ",
+  //     attendanceStatus: "present",
+  //   },
+  // ];
   return (
     <div className="w-full px-2 sm:px-4">
       {/* Large screens - Full table */}
@@ -55,7 +69,18 @@ const AttendanceReport = ({ attendanceData }) => {
                 <TableCell>{data.weekDays || "N/A"}</TableCell>
                 <TableCell>{data.checkinType || "N/A"}</TableCell>
                 <TableCell>{data.workLocation || "N/A"}</TableCell>
-                <TableCell>{data.earlyDelayTime || "N/A"}</TableCell>
+                <TableCell>
+                  <div
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${
+                      data.attendanceStatus === "present"
+                        ? data.isDelay
+                          ? "border border-red-500 text-red-700 bg-red-100"
+                          : "border border-green-500 text-green-700 bg-green-100"
+                        : ""
+                    }`}>
+                    {data.earlyDelayTime || "N/A"}
+                  </div>
+                </TableCell>
                 <TableCell>{data.totaltimeOfWork || "N/A"}</TableCell>
                 <TableCell>
                   <div

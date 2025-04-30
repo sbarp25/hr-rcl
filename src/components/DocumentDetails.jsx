@@ -293,7 +293,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="panIssueDate"
-                  label="Pan Issue Date"
+                  label="Pan Issue Date in Ad"
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
@@ -424,7 +424,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="issuedDate"
-                  label="Citizenship Issue Date"
+                  label="Citizenship Issue Date in Ad"
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",

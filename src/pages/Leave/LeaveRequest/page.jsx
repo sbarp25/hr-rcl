@@ -236,7 +236,7 @@ const LeaveRequest = () => {
             <div>
               <DatepickerComponent
                 name="fromDate"
-                label="From Date"
+                label="From Date in AD"
                 control={control}
                 size="sm"
                 className="w-full"
@@ -260,7 +260,7 @@ const LeaveRequest = () => {
               <DatepickerComponent
                 name="ToDate"
                 control={control}
-                label="To Date"
+                label="To Date in AD"
                 size="sm"
                 className="w-full"
                 disabled={isToDateDisabled}

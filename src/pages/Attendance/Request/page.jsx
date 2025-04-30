@@ -235,7 +235,7 @@ const AttendanceRequest = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        "/api/v1/late_attendance/list",
+        "/api/v1/attendance/late-check-in/all-reviews",
         {
           // const response = await axiosInstance.post("/api/v1/auth/get/all", {
           pageIndex: currentPage,
@@ -295,6 +295,7 @@ const AttendanceRequest = () => {
               <Search />
               <Filter
                 onApplyFilters={handleApplyFilters}
+                // url="api/v1/attendance/late-check-in/all-reviews"
                 url="api/v1/attendance/late-check-in/all-reviews"
                 fieldNames={{
                   departmentField: "departmentId",
@@ -352,9 +353,9 @@ const AttendanceRequest = () => {
                           } text-center p-2 w-fit`}> */}
                         <div
                           className={` rounded-full ${
-                            late.isApproved === true
+                            late.isPending === true
                               ? "bg-green-100 border border-green-600 text-green-600"
-                              : late.isApproved === false
+                              : late.isPending === false
                               ? "bg-red-100 border border-red-600 text-red-600"
                               : "bg-yellow-100 border border-yellow-500 text-yellow-500"
                           } text-center p-2 w-fit`}>
@@ -371,19 +372,19 @@ const AttendanceRequest = () => {
                       <TableCell>{late.checkInTime}</TableCell>
                       <TableCell>{late.lateReason}</TableCell>
                       <TableCell>
-                        <button
-                          className="text-blue-600 hover:text-blue-800"
-                          onClick={() =>
-                            handleAction("view", late.lateCheckInId)
-                          }>
-                          <FaRegEye size={18} />
-                        </button>
-                        {late.status === "Pending" && (
+                        <div className="flex flex-col justify-between items-center">
+                          <button
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() =>
+                              handleAction("view", late.lateCheckInId)
+                            }>
+                            <FaRegEye size={18} />
+                          </button>
                           <div className="flex justify-center gap-4">
                             <FaCheck
                               className={`${
                                 hasEmployeeEditAccess
-                                  ? "text-green-500 hover:text-green-700 cursor-pointer"
+                                  ? "text-orange-500 hover:text-orange-700 cursor-pointer"
                                   : ""
                               }`}
                               title="Edit"
@@ -403,7 +404,7 @@ const AttendanceRequest = () => {
                               }
                             />
                           </div>
-                        )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

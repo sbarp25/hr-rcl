@@ -390,7 +390,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <DatepickerComponent
                 name={`startYear_${index}`}
-                label="Start Year"
+                label="Start Year in Ad"
                 control={control}
                 rules={{ required: "Start year is required" }}
               />
@@ -409,7 +409,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <DatepickerComponent
                 name={`endYear_${index}`}
-                label="End Year"
+                label="End Year in AD"
                 control={control}
                 rules={{
                   required:
