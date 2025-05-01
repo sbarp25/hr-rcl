@@ -74,9 +74,11 @@ const LeaveStatus = () => {
   const fetchLeave = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
-        `/api/leave/all?page=${currentPage}&size=${leaveDataPerPage}`,
-        {}
+      const response = await axiosInstance.post(
+        `/api/v1/leave_management/list`,
+        // const response = await axiosInstance.get(
+        //   `/api/leave/all?page=${currentPage}&size=${leaveDataPerPage}`,
+        { pageIndex: currentPage, pageSize: leaveDataPerPage }
       );
       if (response.data.responseCode === "200") {
         setLeaveData(response.data.datalist);
@@ -230,20 +232,6 @@ const LeaveStatus = () => {
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
 
-  // const selectedLeave = {
-  //   leaveId: 1,
-  //   leaveType: "Sick Leave",
-  //   leaveStartDate: "2023-10-01",
-  //   leaveEndDate: "2023-10-05",
-  //   Days: 5,
-  //   isHalfDay: false,
-  //   leaveStatus: "PENDING",
-  //   teamleadName: "John Doe",
-  //   associateteamleadName: "John Doe",
-  //   approvedBy: "Jane Smith",
-  //   rejectedBy: "John Doe",
-  // };
-
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -254,7 +242,7 @@ const LeaveStatus = () => {
           </div>
           <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Leave Status</h1>
+              <h1 className="page-title">Applied Leaves</h1>
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
@@ -274,7 +262,10 @@ const LeaveStatus = () => {
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
             <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
-              <Table bordered aria-label="Table of Leave">
+              <Table
+                bordered
+                aria-label="Table of Leave"
+                className="max-h-[75vh]">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>Full Name</TableColumn>

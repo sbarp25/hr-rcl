@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import Loader from "./Loader";
 import TextAreaComp from "./TextAreaComp";
 
-const CheckIn = ({ checkedInStatus }) => {
+const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   const [isloading, setIsloading] = useState(false);
   const { control, handleSubmit, reset } = useForm();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -66,6 +66,8 @@ const CheckIn = ({ checkedInStatus }) => {
 
         if (response.data.responseCode === "200") {
           toast.success(response?.data?.message || "Checked in successfully!");
+          // Update parent component's state via callback
+          onStatusChange(true);
         } else if (response.data.responseCode === "406") {
           lateCheckinCheck();
         } else {
@@ -101,6 +103,8 @@ const CheckIn = ({ checkedInStatus }) => {
 
         if (response?.data?.responseCode === "200") {
           toast.success("Checked out successfully!");
+          // Update parent component's state via callback
+          onStatusChange(false);
         } else {
           const error = response?.data?.error?.errorList?.[0]?.errorMessage;
           toast.error(error || "Check Out Failed");
@@ -127,6 +131,7 @@ const CheckIn = ({ checkedInStatus }) => {
         justification: data.reason,
       },
     };
+    setIsloading(true);
     try {
       const response = await axiosInstance.post(
         "/api/attendance/late_check_in",
@@ -140,17 +145,24 @@ const CheckIn = ({ checkedInStatus }) => {
       if (response?.data?.responseCode === "200") {
         toast.success("Late check-in processed successfully!");
         onOpenChangeSecondModal(false);
+        // Update parent component's state via callback
+        onStatusChange(true);
       } else {
         toast.error("Late Check In Failed");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Late Check In Failed");
+    } finally {
+      setIsloading(false);
     }
   };
+
   const closeRejectModal = () => {
     onOpenChangeSecondModal(false);
     reset();
   };
+
   return (
     <>
       {isloading && <Loader />}

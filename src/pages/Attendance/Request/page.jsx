@@ -26,6 +26,7 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
 import { useForm } from "react-hook-form";
+import TextAreaComp from "../../../components/TextAreaComp";
 
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,8 +43,7 @@ const AttendanceRequest = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const navigate = useNavigate();
 
-  // Create a form methods object using useForm hook
-  const { reset } = useForm();
+  const { reset, handleSubmit, control } = useForm();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -270,6 +270,7 @@ const AttendanceRequest = () => {
   //   onRejectOpen();
   //   onOpen();
   // }, []);
+
   // const selectedData = {
   //   fullName: "John Doe",
   //   rclId: "RCL123",
@@ -372,7 +373,7 @@ const AttendanceRequest = () => {
                       <TableCell>{late.checkInTime}</TableCell>
                       <TableCell>{late.lateReason}</TableCell>
                       <TableCell>
-                        <div className="flex flex-col justify-between items-center">
+                        <div className="flex justify-between items-center">
                           <button
                             className="text-blue-600 hover:text-blue-800"
                             onClick={() =>
@@ -717,80 +718,94 @@ const AttendanceRequest = () => {
           {(onClose) => (
             <>
               <ModalBody>
-                <h3 className="text-lg font-medium">
-                  <p>Are you sure you want to reject this late checkin?</p>
-                </h3>
-                {selectedData && (
-                  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
-                    {/**Personal details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
-                      <div className="flex  items-center">
-                        <span className="font-semibold text-gray-700">
-                          Employee:
-                        </span>
-                        <span className="text-gray-800">
-                          {selectedData?.fullName}
-                        </span>
+                <form onSubmit={handleSubmit(onReject)}>
+                  <h3 className="text-lg font-medium">
+                    <p>Are you sure you want to reject this late checkin?</p>
+                  </h3>
+                  {selectedData && (
+                    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                      {/**Personal details */}
+                      <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
+                        <div className="flex  items-center">
+                          <span className="font-semibold text-gray-700">
+                            Employee:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.fullName}
+                          </span>
+                        </div>
+                        <div className="flex  items-center">
+                          <span className="font-semibold text-gray-700">
+                            RCL-ID:
+                          </span>
+                          <span className="font-mono text-gray-800">
+                            {selectedData?.rclId}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex  items-center">
-                        <span className="font-semibold text-gray-700">
-                          RCL-ID:
-                        </span>
-                        <span className="font-mono text-gray-800">
-                          {selectedData?.rclId}
-                        </span>
-                      </div>
-                    </div>
-                    {/**Date and Time */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
-                      <div className="flex items-center">
-                        <span className="font-semibold text-gray-700">
-                          Date:
-                        </span>
-                        <span className="text-gray-800">
-                          {selectedData?.attendanceDate}
-                        </span>
-                      </div>
+                      {/**Date and Time */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Date:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.attendanceDate}
+                          </span>
+                        </div>
 
-                      <div className="flex items-center">
-                        <span className="font-semibold text-gray-700">
-                          Expected Time:
-                        </span>
-                        <span className="text-gray-800">
-                          {selectedData?.expectedCheckInTime || "N/A"}
-                        </span>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Expected Time:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.expectedCheckInTime || "N/A"}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-gray-700">
+                            Actual Time:
+                          </span>
+                          <span className="text-gray-800">
+                            {selectedData?.checkInTime}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold text-gray-700">
-                          Actual Time:
+                      {/**Justification  */}
+                      <div className="flex flex-col h-60">
+                        <span className="font-semibold text-gray-700 mb-2">
+                          Justification:
                         </span>
-                        <span className="text-gray-800">
-                          {selectedData?.checkInTime}
-                        </span>
+                        <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
+                          {selectedData?.lateReason ||
+                            "No justification provided"}
+                        </p>
                       </div>
                     </div>
-                    {/**Justification  */}
-                    <div className="flex flex-col h-60">
-                      <span className="font-semibold text-gray-700 mb-2">
-                        Justification:
-                      </span>
-                      <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
-                        {selectedData?.lateReason ||
-                          "No justification provided"}
-                      </p>
-                    </div>
+                  )}
+                  {/* <TextAreaComp
+                    control={control}
+                    name="RejectReason"
+                    label="Reason To Reject This leave"
+                    rules={{
+                      required: "reason is required",
+                      minLength: {
+                        value: 10,
+                        message: "Reason must be at least 10 characters long.",
+                      },
+                    }}
+                  /> */}
+                  <div className="flex gap-2 justify-end mt-4">
+                    <Button
+                      className="bg-black text-white"
+                      type="submit"
+                      // onPress={onReject}
+                    >
+                      Reject
+                    </Button>
+                    <Button onPress={onClose}>Cancel</Button>
                   </div>
-                )}
-                {/* Wrap form in FormProvider */}
-                <div className="flex gap-2 justify-end mt-4">
-                  <Button
-                    className="bg-black text-white"
-                    type="submit"
-                    onPress={onReject}>
-                    Reject
-                  </Button>
-                  <Button onPress={onClose}>Cancel</Button>
-                </div>
+                </form>
               </ModalBody>
             </>
           )}

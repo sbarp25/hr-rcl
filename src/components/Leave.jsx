@@ -116,7 +116,7 @@ const Leave = () => {
                           {data.fullName}
                         </h3>
                         <p className="text-sm text-gray-600">
-                          Team Lead: {data.teamLeaderName}
+                          Department: {data.departmentName}
                         </p>
                       </div>
                     </div>

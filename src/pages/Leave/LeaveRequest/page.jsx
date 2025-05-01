@@ -79,6 +79,7 @@ const LeaveRequest = () => {
 
     const applyleave = {
       data: {
+        title: data?.title,
         leaveType: data?.leaveType,
         leaveSubject: data?.description,
         leaveCategory: data?.leaveStatus,
@@ -236,7 +237,7 @@ const LeaveRequest = () => {
             <div>
               <DatepickerComponent
                 name="fromDate"
-                label="From Date in AD"
+                label="From Date(A.D)"
                 control={control}
                 size="sm"
                 className="w-full"
@@ -260,7 +261,7 @@ const LeaveRequest = () => {
               <DatepickerComponent
                 name="ToDate"
                 control={control}
-                label="To Date in AD"
+                label="To Date(A.D)"
                 size="sm"
                 className="w-full"
                 disabled={isToDateDisabled}

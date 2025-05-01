@@ -54,7 +54,6 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
-    mode: "onBlur",
   });
 
   const onSubmit = async (data) => {
@@ -169,7 +168,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               {/* Date of Birth */}
               <DatepickerComponent
                 name="dob"
-                label="Date of birth in AD"
+                label="Date of birth(A.D)"
                 control={control}
                 rules={{
                   required: "Date of Birth is required",
@@ -181,31 +180,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   },
                 }}
               />
-              {/* <InputComponent
-                name="dob"
-                control={control}
-                rules={{
-                  required: "Date of Birth is required",
-                  validate: (value) => {
-                    const birthdate = new Date(value);
-                    const today = new Date();
-                    const todayYear = today.getFullYear(); // add ()
-                    const birthYear = birthdate.getFullYear(); // add ()
 
-                    const age = todayYear - birthYear;
-
-                    const is18OrOlder = age > 18;
-                    return is18OrOlder || "You must be 18 or older";
-                  },
-                }}
-                label="Date of Birth"
-                variant="bordered"
-                type="date"
-                inputClassName="w-full rounded-xl"
-                icon={FaCalendar}
-              /> */}
-
-              {/* Blood Type */}
               <div>
                 <SelectComp
                   control={control}
@@ -216,32 +191,6 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   valueKey="key"
                   labelKey="label"
                 />
-                {/* <Controller
-                  name="bloodType"
-                  control={control}
-                  rules={{ required: "Blood Type is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      variant="bordered"
-                      label="Blood Group"
-                      isInvalid={!!errors.bloodType}
-                      errorMessage={errors.bloodType?.message}
-                      validationBehavior="aria"
-                      className="rounded-xl w-full"
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => {
-                        const selectedKey = Array.from(keys)[0];
-                        if (selectedKey) field.onChange(selectedKey);
-                      }}>
-                      {bloodGroupOptions.map((group) => (
-                        <SelectItem key={group} value={group}>
-                          {group}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
               </div>
 
               {/* Gender */}
@@ -255,32 +204,6 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   valueKey="key"
                   labelKey="label"
                 />
-                {/* <Controller
-                  name="gender"
-                  control={control}
-                  rules={{ required: "Gender is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      variant="bordered"
-                      label="Gender"
-                      isInvalid={!!errors.gender}
-                      errorMessage={errors.gender?.message}
-                      validationBehavior="aria"
-                      className="rounded-xl w-full"
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => {
-                        const selectedKey = Array.from(keys)[0];
-                        if (selectedKey) field.onChange(selectedKey);
-                      }}>
-                      {genderOptions.map((gender) => (
-                        <SelectItem key={gender} value={gender}>
-                          {gender}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
               </div>
 
               {/* Marital Status */}
@@ -294,34 +217,6 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   valueKey="key"
                   labelKey="label"
                 />
-                {/* <Controller
-                  name="married"
-                  control={control}
-                  rules={{ required: "Marital Status is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      variant="bordered"
-                      label="Marital Status"
-                      isInvalid={!!errors.married}
-                      errorMessage={errors.married?.message}
-                      validationBehavior="aria"
-                      className="rounded-xl w-full"
-                      selectedKeys={field.value !== "" ? [field.value] : []}
-                      onSelectionChange={(keys) => {
-                        const selectedKey = Array.from(keys)[0];
-                        if (selectedKey !== undefined)
-                          // field.onChange(selectedKey);
-                          field.onChange(selectedKey === "true");
-                      }}>
-                      {maritalOptions.map((status) => (
-                        <SelectItem key={status.key} value={status.key}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
               </div>
             </div>
           </div>
@@ -380,32 +275,6 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   valueKey="key"
                   labelKey="label"
                 />
-                {/* <Controller
-                  name="guardianRelation"
-                  control={control}
-                  rules={{ required: "Guardian Relation is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      variant="bordered"
-                      label="Guardian Relation"
-                      isInvalid={!!errors.guardianRelation}
-                      errorMessage={errors.guardianRelation?.message}
-                      validationBehavior="aria"
-                      className="rounded-xl w-full"
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) => {
-                        const selectedKey = Array.from(keys)[0];
-                        if (selectedKey) field.onChange(selectedKey);
-                      }}>
-                      {relationOptions.map((relation) => (
-                        <SelectItem key={relation} value={relation}>
-                          {relation}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
               </div>
             </div>
           </div>

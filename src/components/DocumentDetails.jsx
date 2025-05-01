@@ -14,7 +14,8 @@ import Loader from "./Loader";
 import InputComponent from "./InputComponent";
 import { useForm, Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
-
+import { CiImageOn } from "react-icons/ci";
+import { IoMdImage } from "react-icons/io";
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     citizenshipFrontDocumentUrl: null,
     citizenshipBackDocumentUrl: null,
   });
-
+  const MAX_FILE_SIZE = 1024 * 1024;
   const { control, handleSubmit, setValue, formState } = useForm({
     mode: "onBlur",
     defaultValues: {
@@ -216,6 +217,25 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   //   }
   // };
 
+  const validateFile = (file, existingUrl) => {
+    // If we already have a file URL from the API, skip validation
+    if (existingUrl) return true;
+
+    // If no file is selected, it will be handled by the required validator
+    if (!file) return true;
+
+    // Check file type
+    if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+      return "Only PNG or JPG allowed";
+    }
+
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      return "File size must be less than 1MB";
+    }
+
+    return true;
+  };
   // Function to render the document link
   const renderDocumentLink = (url, label, isOpen, onOpenChange) => {
     if (!url) return null;
@@ -293,7 +313,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="panIssueDate"
-                  label="Pan Issue Date in Ad"
+                  label="Pan Issue Date(A.D) "
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
@@ -317,7 +337,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
 
               {/* PAN photo */}
-              <div>
+              <div className="w-full">
                 <Controller
                   name="panCardDocumentFile"
                   control={control}
@@ -326,69 +346,96 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       value: !documentUrls.panCardDocumentUrl,
                       message: "Pan Card photo is required",
                     },
-                    validate: (file) => {
-                      if (documentUrls.panCardDocumentUrl) return true;
-
-                      return file
-                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
-                            file.type
-                          )
-                          ? true
-                          : "Only PNG or JPG allowed"
-                        : "Pan Card photo is required";
-                    },
+                    validate: (file) =>
+                      validateFile(file, documentUrls.panCardDocumentUrl),
                   }}
                   render={({ field: { onChange, value, ref } }) => (
-                    <>
-                      <label
-                        className={`relative flex items-center justify-left w-full h-14 border-2 ${
-                          formState.errors.panCardDocumentFile
-                            ? "border-danger"
-                            : "border-gray-300"
-                        } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
-                        <span
-                          className={` px-4 truncate ${
+                    <div className="space-y-2">
+                      <div className="relative">
+                        {/* Input styled like text input */}
+                        <div
+                          className={`relative flex items-center w-full ${
                             formState.errors.panCardDocumentFile
-                              ? "text-danger"
-                              : "text-gray-600"
-                          }`}>
-                          {value?.name || "Upload Front photo of Pan Card"}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".png,.jpg, .jpeg"
-                          ref={ref}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            onChange(file);
-                            setPhotoPAN(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              documents: {
-                                ...prev.documents,
-                                panCardDocumentFile: file,
-                              },
-                            }));
-                          }}
-                        />
-                      </label>
-                      {formState.errors.panCardDocumentFile && (
-                        <p className="text-danger text-sm mt-1">
-                          {formState.errors.panCardDocumentFile.message}
+                              ? "border-danger"
+                              : value?.name || documentUrls.panCardDocumentUrl
+                          } border-2 rounded-2xl p-2 overflow-hidden `}>
+                          {/* Left icon */}
+                          <CiImageOn className="text-3xl text-gray-400" />
+
+                          {/* Text area (fake input) */}
+                          <div className="flex-1 px-2 py-2.5">
+                            <span
+                              className={`text-sm ${
+                                value?.name || documentUrls.panCardDocumentUrl
+                                  ? "text-gray-700 font-medium"
+                                  : "text-gray-500"
+                              } truncate block`}>
+                              {value?.name
+                                ? value.name
+                                : documentUrls.panCardDocumentUrl
+                                ? "File uploaded successfully"
+                                : "Upload Front photo of Pan Card"}
+                            </span>
+                          </div>
+
+                          {/* Browse button */}
+                          <div className="pr-1">
+                            <button
+                              type="button"
+                              className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
+                              onClick={() => {
+                                // This is just for visual feedback, the actual input is below
+                              }}>
+                              Browse
+                            </button>
+                          </div>
+
+                          {/* Hidden file input */}
+                          <input
+                            type="file"
+                            accept=".png,.jpg,.jpeg"
+                            ref={ref}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              onChange(file);
+                              setPhotoPAN(false);
+                              setFormData((prev) => ({
+                                ...prev,
+                                documents: {
+                                  ...prev.documents,
+                                  panCardDocumentFile: file,
+                                },
+                              }));
+                            }}
+                          />
+                        </div>
+
+                        {/* Error message */}
+                        {formState.errors.panCardDocumentFile && (
+                          <p className="mt-1 text-sm text-danger">
+                            {formState.errors.panCardDocumentFile.message}
+                          </p>
+                        )}
+
+                        {/* Help text */}
+                        <p className="mt-1 text-xs text-gray-500">
+                          Please upload PNG or JPG image under 1 MB
                         </p>
-                      )}
-                      <label className="text-xs text-gray-500 mt-1">
-                        Please upload the image of type either PNG or JPG
-                      </label>
-                      {/* Add document link */}
-                      {renderDocumentLink(
-                        documentUrls.panCardDocumentUrl,
-                        "PAN Card",
-                        photoModalOpen,
-                        setPhotoModalOpen
-                      )}
-                    </>
+
+                        {/* Document link (if available) */}
+                        {documentUrls.panCardDocumentUrl && (
+                          <div className="mt-2">
+                            {renderDocumentLink(
+                              documentUrls.panCardDocumentUrl,
+                              "PAN Card",
+                              photoModalOpen,
+                              setPhotoModalOpen
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 />
               </div>
@@ -424,7 +471,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="issuedDate"
-                  label="Citizenship Issue Date in Ad"
+                  label="Citizenship Issue Date(A.D)"
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",
@@ -449,17 +496,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {/* Citizenship Front Photo */}
-              {/* validate: (file) => {
-                      if (!file && documentUrls?.panCardDocumentUrl !== null) {
-                        return true;
-                      }
 
-                      return file &&
-                        ["image/png", "image/jpg"].includes(file.type)
-                        ? true
-                        : "Only PNG or JPG allowed";
-                    }, */}
-              <div>
+              <div className="w-full">
                 <Controller
                   name="citizenshipFrontDocumentFile"
                   control={control}
@@ -468,78 +506,109 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       value: !documentUrls.citizenshipFrontDocumentUrl,
                       message: "Citizenship front photo is required",
                     },
-                    validate: (file) => {
-                      if (documentUrls.citizenshipFrontDocumentUrl) return true;
-
-                      return file
-                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
-                            file.type
-                          )
-                          ? true
-                          : "Only PNG or JPG allowed"
-                        : "Citizenship front photo is required";
-                    },
+                    validate: (file) =>
+                      validateFile(
+                        file,
+                        documentUrls.citizenshipFrontDocumentUrl
+                      ),
                   }}
                   render={({ field: { onChange, value, ref } }) => (
-                    <>
-                      <label
-                        className={`relative flex items-center justify-left w-full h-14 border-2 ${
-                          formState.errors.citizenshipFrontDocumentFile
-                            ? "border-danger"
-                            : "border-gray-300"
-                        } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
-                        <span
-                          className={`${
+                    <div className="space-y-2">
+                      <div className="relative">
+                        {/* Styled input */}
+                        <div
+                          className={`relative flex items-center w-full ${
                             formState.errors.citizenshipFrontDocumentFile
-                              ? "text-danger"
-                              : "text-gray-600"
-                          } px-4 truncate`}>
-                          {value?.name || "Upload front Photo of citizenship"}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".png,.jpg,.jpeg"
-                          ref={ref}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            onChange(file);
-                            setCitizenshipFront(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              documents: {
-                                ...prev.documents,
-                                citizenshipFrontDocumentFile: file,
-                              },
-                            }));
-                          }}
-                        />
-                      </label>
-                      {formState.errors.citizenshipFrontDocumentFile && (
-                        <p className="text-danger text-sm mt-1">
-                          {
-                            formState.errors.citizenshipFrontDocumentFile
-                              .message
-                          }
+                              ? "border-danger"
+                              : value?.name ||
+                                documentUrls.citizenshipFrontDocumentUrl
+                              ? "border-gray-300"
+                              : "border-gray-300"
+                          } border-2 rounded-2xl p-2 overflow-hidden`}>
+                          {/* Left icon */}
+                          <CiImageOn className="text-3xl text-gray-400" />
+
+                          {/* Text area */}
+                          <div className="flex-1 px-2 py-2.5">
+                            <span
+                              className={`text-sm ${
+                                value?.name ||
+                                documentUrls.citizenshipFrontDocumentUrl
+                                  ? "text-gray-700 font-medium"
+                                  : "text-gray-500"
+                              } truncate block`}>
+                              {value?.name
+                                ? value.name
+                                : documentUrls.citizenshipFrontDocumentUrl
+                                ? "File uploaded successfully"
+                                : "Upload Front photo of Citizenship"}
+                            </span>
+                          </div>
+
+                          {/* Browse button */}
+                          <div className="pr-1">
+                            <button
+                              type="button"
+                              className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none">
+                              Browse
+                            </button>
+                          </div>
+
+                          {/* Hidden input */}
+                          <input
+                            type="file"
+                            accept=".png,.jpg,.jpeg"
+                            ref={ref}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              onChange(file);
+                              setCitizenshipFront(false);
+                              setFormData((prev) => ({
+                                ...prev,
+                                documents: {
+                                  ...prev.documents,
+                                  citizenshipFrontDocumentFile: file,
+                                },
+                              }));
+                            }}
+                          />
+                        </div>
+
+                        {/* Error message */}
+                        {formState.errors.citizenshipFrontDocumentFile && (
+                          <p className="mt-1 text-sm text-danger">
+                            {
+                              formState.errors.citizenshipFrontDocumentFile
+                                .message
+                            }
+                          </p>
+                        )}
+
+                        {/* Help text */}
+                        <p className="mt-1 text-xs text-gray-500">
+                          Please upload PNG or JPG image under 1 MB
                         </p>
-                      )}
-                      <label className="text-xs text-gray-500 mt-1">
-                        Please upload the image of type either PNG or JPG
-                      </label>
-                      {/* Add document link */}
-                      {renderDocumentLink(
-                        documentUrls.citizenshipFrontDocumentUrl,
-                        "Citizenship Front",
-                        citizenshipFrontModalOpen,
-                        setCitizenshipFrontModalOpen
-                      )}
-                    </>
+
+                        {/* Document link */}
+                        {documentUrls.citizenshipFrontDocumentUrl && (
+                          <div className="mt-2">
+                            {renderDocumentLink(
+                              documentUrls.citizenshipFrontDocumentUrl,
+                              "Citizenship Front",
+                              citizenshipFrontModalOpen,
+                              setCitizenshipFrontModalOpen
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 />
               </div>
 
               {/* Citizenship Back Photo */}
-              <div>
+              <div className="w-full">
                 <Controller
                   name="citizenshipBackDocumentFile"
                   control={control}
@@ -548,69 +617,103 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       value: !documentUrls.citizenshipBackDocumentUrl,
                       message: "Citizenship back photo is required",
                     },
-                    validate: (file) => {
-                      if (documentUrls.citizenshipBackDocumentUrl) return true;
-
-                      return file
-                        ? ["image/png", "image/jpeg", "image/jpg"].includes(
-                            file.type
-                          )
-                          ? true
-                          : "Only PNG or JPG allowed"
-                        : "Citizenship back photo is required";
-                    },
+                    validate: (file) =>
+                      validateFile(
+                        file,
+                        documentUrls.citizenshipBackDocumentUrl
+                      ),
                   }}
                   render={({ field: { onChange, value, ref } }) => (
-                    <>
-                      <label
-                        className={`relative flex items-center justify-left w-full h-14 border-2 ${
-                          formState.errors.citizenshipBackDocumentFile
-                            ? "border-danger"
-                            : "border-gray-300"
-                        } rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
-                        <span
-                          className={`${
+                    <div className="space-y-2">
+                      <div className="relative">
+                        {/* Styled input container */}
+                        <div
+                          className={`relative flex items-center w-full ${
                             formState.errors.citizenshipBackDocumentFile
-                              ? "text-danger"
-                              : "text-gray-600"
-                          } px-4 truncate`}>
-                          {value?.name || "Upload back Photo of citizenship"}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".png,.jpg"
-                          ref={ref}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            onChange(file);
-                            setCitizenshipBack(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              documents: {
-                                ...prev.documents,
-                                citizenshipBackDocumentFile: file,
-                              },
-                            }));
-                          }}
-                        />
-                      </label>
-                      {formState.errors.citizenshipBackDocumentFile && (
-                        <p className="text-danger text-sm mt-1">
-                          {formState.errors.citizenshipBackDocumentFile.message}
+                              ? "border-danger"
+                              : value?.name ||
+                                documentUrls.citizenshipBackDocumentUrl
+                              ? "border-gray-300"
+                              : "border-gray-300"
+                          } border-2 rounded-2xl p-2 overflow-hidden`}>
+                          {/* Icon */}
+                          <CiImageOn className="text-3xl text-gray-400" />
+
+                          {/* Text display */}
+                          <div className="flex-1 px-2 py-2.5">
+                            <span
+                              className={`text-sm ${
+                                value?.name ||
+                                documentUrls.citizenshipBackDocumentUrl
+                                  ? "text-gray-700 font-medium"
+                                  : "text-gray-500"
+                              } truncate block`}>
+                              {value?.name
+                                ? value.name
+                                : documentUrls.citizenshipBackDocumentUrl
+                                ? "File uploaded successfully"
+                                : "Upload Back photo of Citizenship"}
+                            </span>
+                          </div>
+
+                          {/* Browse button (visual only) */}
+                          <div className="pr-1">
+                            <button
+                              type="button"
+                              className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none">
+                              Browse
+                            </button>
+                          </div>
+
+                          {/* Hidden file input */}
+                          <input
+                            type="file"
+                            accept=".png,.jpg"
+                            ref={ref}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              onChange(file);
+                              setCitizenshipBack(false);
+                              setFormData((prev) => ({
+                                ...prev,
+                                documents: {
+                                  ...prev.documents,
+                                  citizenshipBackDocumentFile: file,
+                                },
+                              }));
+                            }}
+                          />
+                        </div>
+
+                        {/* Error message */}
+                        {formState.errors.citizenshipBackDocumentFile && (
+                          <p className="mt-1 text-sm text-danger">
+                            {
+                              formState.errors.citizenshipBackDocumentFile
+                                .message
+                            }
+                          </p>
+                        )}
+
+                        {/* Help text */}
+                        <p className="mt-1 text-xs text-gray-500">
+                          Please upload PNG or JPG image under 1 MB
                         </p>
-                      )}
-                      <label className="text-xs text-gray-500 mt-1">
-                        Please upload the image of type either PNG or JPG
-                      </label>
-                      {/* Add document link */}
-                      {renderDocumentLink(
-                        documentUrls.citizenshipBackDocumentUrl,
-                        "Citizenship Back",
-                        citizenshipBackModalOpen,
-                        setCitizenshipBackModalOpen
-                      )}
-                    </>
+
+                        {/* Document link */}
+                        {documentUrls.citizenshipBackDocumentUrl && (
+                          <div className="mt-2">
+                            {renderDocumentLink(
+                              documentUrls.citizenshipBackDocumentUrl,
+                              "Citizenship Back",
+                              citizenshipBackModalOpen,
+                              setCitizenshipBackModalOpen
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 />
               </div>

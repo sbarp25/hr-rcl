@@ -5,23 +5,23 @@ import WorkFromHome from "../../components/WorkFromHome.jsx";
 import Leave from "../../components/Leave.jsx";
 import CheckIn from "../../components/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
-  // const [checkedInStatus, setCheckedInStatus] = useState(true);
   const [checkedInStatus, setCheckedInStatus] = useState(false);
   const [totalDelayTime, setTotalDelayTime] = useState("");
   const [totalEarlyTime, setTotalEarlyTime] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const username = localStorage.getItem("fullName");
 
   const getWeeklyAttendanceReport = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInstance.get(
         "/api/attendance/weekly_attendances"
       );
-
       if (response?.data?.responseCode === "200") {
         setAttendanceData(response?.data?.data?.weeklyAttendanceReport);
         setTotalDelayTime(response?.data?.data?.totalDelayTime);
@@ -35,18 +35,32 @@ const Page = () => {
     } catch (error) {
       const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
       toast.error(errorMessage || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
+  };
+  // Status change handler to refresh data
+  const handleStatusChange = (newStatus) => {
+    setCheckedInStatus(newStatus);
+    getWeeklyAttendanceReport();
   };
 
   useEffect(() => {
     getWeeklyAttendanceReport();
   }, [checkedInStatus]);
-
+  const email = localStorage.getItem("email");
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">
         <div className="hidden md:block">
-          <CheckIn checkedInStatus={checkedInStatus} />
+          {email === "superadmin@rebootedcl.com" ? (
+            ""
+          ) : (
+            <CheckIn
+              checkedInStatus={checkedInStatus}
+              onStatusChange={handleStatusChange}
+            />
+          )}
         </div>
 
         {/* Welcome Banner */}
@@ -63,7 +77,13 @@ const Page = () => {
               Weekly Attendance Report
             </h1>
             <div className="w-full ">
-              <Attendancereport attendanceData={attendanceData} />
+              {isLoading ? (
+                <div className="text-center py-4">
+                  Loading attendance data...
+                </div>
+              ) : (
+                <Attendancereport attendanceData={attendanceData} />
+              )}
             </div>
           </div>
           <div className="text-md font-bold text-right mt-1 mr-4 mb-3">

@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import InputComponent from "./InputComponent";
 import { Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
+import { CiImageOn } from "react-icons/ci";
 const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
@@ -187,20 +188,29 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
   }, [formData.education, setValue]);
 
-  const validateFileType = (file) => {
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-    return allowedTypes.includes(file.type);
-  };
+  // const validateFileType = (file) => {
+  //   const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  //   return allowedTypes.includes(file.type);
+  // };
 
-  const validateFile = (file) => {
-    const errors = [];
-    if (!validateFileType(file)) {
-      errors.push("Only PNG, JPEG, or JPG files are allowed.");
+  const validateFile = (file, existingUrl) => {
+    // If we already have a file URL from the API, skip validation
+    if (existingUrl) return true;
+
+    // If no file is selected, it will be handled by the required validator
+    if (!file) return true;
+
+    // Check file type
+    if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+      return "Only PNG or JPG allowed";
     }
+
+    // Check file size
     if (file.size > MAX_FILE_SIZE) {
-      errors.push("File size must be less than 5MB.");
+      return "File size must be less than 1MB";
     }
-    return errors;
+
+    return true;
   };
 
   const handleFileChange = (index, files) => {
@@ -390,11 +400,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <DatepickerComponent
                 name={`startYear_${index}`}
-                label="Start Year in Ad"
+                label="Start Year(A.D)"
                 control={control}
                 rules={{ required: "Start year is required" }}
               />
-              {/* <InputComponent
+              {/* <InputComponent)
                 name={`startYear_${index}`}
                 control={control}
                 label="Start Year"
@@ -409,7 +419,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
             <div>
               <DatepickerComponent
                 name={`endYear_${index}`}
-                label="End Year in AD"
+                label="End Year (A.D)"
                 control={control}
                 rules={{
                   required:
@@ -486,85 +496,82 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   control={control}
                   rules={{
                     validate: {
-                      requiredIfCompleted: (files) => {
+                      required: (files) => {
                         const currentStatus = getValues(`status_${index}`);
                         // Skip validation if we already have a file URL from the API
-                        if (
-                          education[index]?.file ||
-                          (files && files.length > 0)
-                        )
-                          return true;
+                        if (education[index]?.file) return true;
 
-                        // Otherwise validate as before
+                        // Otherwise check if file is required for COMPLETED status
                         if (currentStatus === "COMPLETED") {
-                          return files ? true : "File is required.";
+                          return files && files.length > 0
+                            ? true
+                            : "File is required.";
                         }
                         return true;
                       },
-                      type: (files) => {
-                        // Skip validation if we already have a file URL from the API
+                      fileValidation: (files) => {
+                        // Use the validateFile function to validate the file
                         if (
-                          education[index]?.file ||
                           !files ||
                           files === "existing_file" ||
                           files.length === 0
                         )
                           return true;
-
-                        const file = files[0];
-                        const allowedTypes = [
-                          "image/png",
-                          "image/jpeg",
-                          "image/jpg",
-                        ];
-                        return (
-                          allowedTypes.includes(file.type) ||
-                          "Invalid file type. Only PNG, JPEG or JPG."
-                        );
-                      },
-                      size: (files) => {
-                        // Skip validation if we already have a file URL from the API
-                        if (
-                          education[index]?.file ||
-                          !files ||
-                          files === "existing_file" ||
-                          files.length === 0
-                        )
-                          return true;
-
-                        const file = files[0];
-                        return (
-                          file.size <= MAX_FILE_SIZE ||
-                          "File size must be less than 5MB."
-                        );
+                        return validateFile(files[0], education[index]?.file);
                       },
                     },
                   }}
                   render={({ field: { onChange, value, ref } }) => (
-                    <div>
-                      <label
-                        className={`relative flex items-center justify-left w-full h-14 border-2
-                          ${
-                            errors[`files_${index}`]
-                              ? "border-danger"
-                              : "border-gray-300"
-                          }
-                          rounded-xl cursor-pointer bg-white hover:bg-gray-200`}>
-                        <span className="text-gray-600 px-4">
-                          {education[index]?.file ? (
-                            "Document already uploaded"
-                          ) : value?.length > 0 && value !== "existing_file" ? (
-                            <div className="flex gap-2">
-                              <p>Selected: {value[0].name}</p>
-                            </div>
-                          ) : (
-                            "Upload Education Certificate"
+                    <div className="space-y-2">
+                      {/* Input styled like text input */}
+                      <div
+                        className={`relative flex items-center w-full ${
+                          errors[`files_${index}`]
+                            ? "border-danger"
+                            : education[index]?.file ||
+                              (value?.length > 0 && value !== "existing_file")
+                        } border-2 rounded-xl p-1 overflow-hidden `}>
+                        {/* Left icon */}
+                        <div className="pl-3 flex items-center">
+                          {education[index]?.file || (
+                            <CiImageOn className="text-3xl text-gray-400" />
                           )}
-                        </span>
+                        </div>
+
+                        {/* Text area (fake input) */}
+                        <div className="flex-1 px-2 py-2.5">
+                          <span
+                            className={`text-sm ${
+                              education[index]?.file ||
+                              (value?.length > 0 && value !== "existing_file")
+                                ? "text-gray-700 font-medium"
+                                : "text-gray-500"
+                            } truncate block`}>
+                            {education[index]?.file
+                              ? "Document already uploaded"
+                              : value?.length > 0 && value !== "existing_file"
+                              ? value[0].name
+                              : "Upload Education Certificate"}
+                          </span>
+                        </div>
+
+                        {/* Browse button */}
+                        <div className="pr-1">
+                          <button
+                            type="button"
+                            className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
+                            onClick={() => {
+                              // This is just for visual feedback, the actual input is below
+                            }}>
+                            Browse
+                          </button>
+                        </div>
+
+                        {/* Hidden file input */}
                         <input
                           type="file"
                           accept=".png,.jpg,.jpeg"
-                          className="absolute inset-0 opacity-0 cursor-pointer focus:outline-none"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer focus:outline-none"
                           ref={ref}
                           onChange={(e) => {
                             const files = Array.from(e.target.files);
@@ -572,113 +579,82 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                             handleFileChange(index, files);
                           }}
                         />
-                      </label>
+                      </div>
+
+                      {/* Error message */}
                       {errors[`files_${index}`] && (
-                        <p className="text-danger text-sm mt-1">
+                        <p className="text-danger text-sm">
                           {errors[`files_${index}`].message}
                         </p>
                       )}
+
+                      {/* Help text and view document section */}
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                        <p className="text-xs text-gray-500">
+                          Please upload the image of type either PNG or JPG
+                          under 1 MB
+                        </p>
+
+                        {educationalDocument &&
+                          education &&
+                          education[index] && (
+                            <div className="mt-1 sm:mt-0">
+                              {education[index]?.file ? (
+                                <div
+                                  onClick={onOpen}
+                                  className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
+                                  <svg
+                                    className="h-4 w-4 mr-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                  </svg>
+                                  View Certificate
+                                </div>
+                              ) : (
+                                <div className="text-xs text-red-500">
+                                  No Links Available
+                                </div>
+                              )}
+                            </div>
+                          )}
+                      </div>
+
+                      {/* Modal section - kept unchanged */}
+                      <Modal
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        isDismissable={true}
+                        isKeyboardDismissDisabled={false}>
+                        <ModalContent>
+                          {() => (
+                            <>
+                              <ModalBody>
+                                <div className="h-96 w-96">
+                                  <img
+                                    src={education[index].file}
+                                    alt="Education Certificate"
+                                  />
+                                </div>
+                              </ModalBody>
+                            </>
+                          )}
+                        </ModalContent>
+                      </Modal>
                     </div>
                   )}
                 />
-                <div className="flex gap-x-4 mt-2">
-                  <label className="text-xs text-gray-500 mt-1">
-                    Please upload the image of type either PNG or JPG
-                  </label>
-
-                  {educationalDocument &&
-                    education &&
-                    education[index] &&
-                    (education[index]?.file ? (
-                      <>
-                        {/* <a
-                          href={education[index].file}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-green-600 underline flex items-center gap-x-2">
-                          <FaRegEye />
-                          View Uploaded Document
-                        </a> */}
-                        <FaRegEye className="text-green-500 mr-2" />
-                        <div
-                          onClick={onOpen}
-                          className="text-green-500 hover:text-green-700 text-sm">
-                          View Certificate
-                        </div>
-                        <Modal
-                          isOpen={isOpen}
-                          onOpenChange={onOpenChange}
-                          // size="full"
-                          // placement="bottom"
-                          //  backdrop="blur">
-                          isDismissable={true}
-                          isKeyboardDismissDisabled={false}>
-                          <ModalContent>
-                            {() => (
-                              <>
-                                <ModalBody>
-                                  <div className="h-96 w-96">
-                                    <img src={education[index].file} />
-                                  </div>
-                                </ModalBody>
-                              </>
-                            )}
-                          </ModalContent>
-                        </Modal>
-                      </>
-                    ) : (
-                      <div className="text-xs text-red-500">
-                        No Links Available
-                      </div>
-                    ))}
-                </div>
-                {/* <div>
-                  <label className="text-xs text-gray-500 mt-1">
-                    Please upload the image of type either PNG or JPG
-                  </label>
-                  {educationalDocument &&
-                    education &&
-                    education[index] &&
-                    (education[index]?.file ? (
-                      <>
-                        <FaRegEye className="text-green-500 mr-2" />
-                        <div
-                          onClick={() => {
-                            // Set the selected image URL before opening the modal
-                            setSelectedImageUrl(education[index].file);
-                            onOpen();
-                          }}
-                          className="text-green-500 hover:text-green-700 text-sm">
-                          View Certificate
-                        </div>
-                      </>
-                    ) : (
-                      <div className="text-xs text-red-500">
-                        No Links Available
-                      </div>
-                    ))}
-                  {/* Then update your Modal to use the selectedImageUrl: 
-                  <Modal
-                    isOpen={isOpen}
-                    onOpenChange={onOpenChange}
-                    isDismissable={true}
-                    isKeyboardDismissDisabled={false}>
-                    <ModalContent>
-                      {() => (
-                        <>
-                          <ModalBody>
-                            <div className="h-96 w-96">
-                              <img
-                                src={selectedImageUrl}
-                                alt="Education Certificate"
-                              />
-                            </div>
-                          </ModalBody>
-                        </>
-                      )}
-                    </ModalContent>
-                  </Modal>
-                </div> */}
               </div>
             </div>
           </div>

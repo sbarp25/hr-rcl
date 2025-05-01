@@ -705,7 +705,8 @@ const AddressDetails = ({
                       <Select
                         variant="bordered"
                         scrollShadowProps={{ isEnabled: true }}
-                        isInvalid={!!errors.temporary?.id}
+                        isInvalid={!!errors.permanent?.districtId}
+                        // isInvalid={!!errors.temporary?.id}
                         className={`w-full rounded-xl`}
                         label="Select A District"
                         selectedKeys={field.value ? [field.value] : []}

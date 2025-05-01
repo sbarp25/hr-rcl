@@ -58,7 +58,7 @@ function App() {
   return (
     <>
       <LocationComponent />
-      <ToastContainer />
+      <ToastContainer autoClose={1500} />
       {isAuthRoute ? (
         <AuthLayout>
           <Routes>

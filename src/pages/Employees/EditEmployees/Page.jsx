@@ -289,7 +289,7 @@ const EditEmployees = () => {
 
               <DatepickerComponent
                 name="DOB"
-                label="Date of birth in AD"
+                label="Date of birth(A.D)"
                 control={control}
                 rules={{
                   required: "Date of Birth is required",

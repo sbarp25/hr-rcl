@@ -130,9 +130,7 @@ const LeaveView = () => {
             <div>
               <span className="text-gray-600 text-sm">Leave Title</span>
               <p className="text-gray-800 font-semibold">
-                {leaveByIdData?.leaveTitle
-                  ? leaveByIdData.leaveCategory
-                  : "N/A"}
+                {leaveByIdData?.title ? leaveByIdData.title : "N/A"}
               </p>
             </div>
           </div>
