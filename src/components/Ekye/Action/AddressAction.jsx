@@ -14,7 +14,7 @@ const AddressAction = ({ employeeData }) => {
     <div className="relative flex flex-col bg-white mt-16 border border-black rounded-b-lg shadow-lg px-8 py-4">
       {/* Header Section */}
       <div className="absolute bg-black w-auto rounded-t-2xl -top-12 -left-0.5 px-6 py-2">
-        <h1 className="text-2xl font-semibold text-white">Address Detail</h1>
+        <h1 className="text-2xl font-semibold text-white">Address Details</h1>
       </div>
 
       {/* Address Form */}

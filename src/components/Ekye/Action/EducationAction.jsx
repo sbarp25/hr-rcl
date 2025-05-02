@@ -72,7 +72,7 @@ const EducationAction = ({ employeeData }) => {
         {/* Header Section */}
         <div className="absolute bg-black w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
           <h1 className="text-2xl font-semibold text-white">
-            Education Detail
+            Education Details
           </h1>
         </div>
 
@@ -88,7 +88,7 @@ const EducationAction = ({ employeeData }) => {
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
               <div key={index} className="mb-6 p-4 rounded-md ">
-                <Form className="py-6 gap-6">
+                <Form className="w-full py-6 gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <EkyeDetailsComponent
                       label="Level"
@@ -143,6 +143,7 @@ const EducationAction = ({ employeeData }) => {
                     </div>
                   </div>
                 </Form>
+                <Divider />
               </div>
             ))
           ) : (

@@ -75,8 +75,11 @@ const Login = () => {
         toast.error(errorMessage || "Log In Failed");
       }
     } catch (error) {
-      toast.error("Login failed. Try again.");
-      console.error("Error logging in:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Login failed. Try again.";
+      toast.error(errorMessage);
+      // toast.error("Login failed. Try again.");
     } finally {
       setIsLoading(false);
     }
@@ -151,7 +154,7 @@ const Login = () => {
                 />
               </div>
               <a
-                href="/"
+                href="/forgetPassword"
                 className="text-xl text-black font-medium text-center">
                 Forgot Password?
               </a>

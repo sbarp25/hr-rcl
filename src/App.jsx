@@ -36,6 +36,10 @@ import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
 import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
 import LeaveView from "./pages/Leave/LeaveView/Page.jsx";
 import MobileNavigation from "./components/MobileNavigation.jsx";
+import ForgetPassword from "./pages/ForgetPassword/Page.jsx";
+import ResetForGetPassword from "./pages/ForgetPassword/ValidatePassword/Page.jsx";
+import ChangePassword from "./pages/Setting/ChangePassword/Page.jsx";
+import ViewEKYE from "./pages/Setting/ViewEKYE/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -52,7 +56,15 @@ function App() {
     }
   }, []);
   const location = useLocation();
-  const authRoutes = ["/login", "/", "/rstpwd", "/resetpwd", "/EKYE"];
+  const authRoutes = [
+    "/login",
+    "/",
+    "/rstpwd",
+    "/resetpwd",
+    "/EKYE",
+    "/forgetPassword",
+    "/forget-password",
+  ];
   const isAuthRoute = authRoutes.includes(location.pathname);
 
   return (
@@ -68,6 +80,8 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route path="/EKYE" element={<Ekye />} />
             </Route>
+            <Route path="/forgetPassword" element={<ForgetPassword />} />
+            <Route path="/forget-password" element={<ResetForGetPassword />} />
           </Routes>
         </AuthLayout>
       ) : (
@@ -113,6 +127,8 @@ function App() {
               <Route path="/Leave/apprej/:id" element={<LeaveApprove />} />
               <Route path="/Leave/view/:id" element={<LeaveView />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
+              <Route path="/settings/Change" element={<ChangePassword />} />
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
               <Route path="/View/:rclId" element={<View />} />

@@ -7,7 +7,7 @@ import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from "react-toastify";
@@ -30,8 +30,10 @@ import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import CheckIn from "./CheckIn";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
+import axiosInstance from "../lib/axios-Instance";
 
 const MobileNavigation = () => {
+  const [imageURL, setImageURL] = useState("");
   const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const username = localStorage.getItem("fullName");
@@ -186,6 +188,30 @@ const MobileNavigation = () => {
     onClose();
   };
 
+  const fetchProfilephoto = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        "/api/v1/profilePicture/getById"
+      );
+      if (response.data.responseCode === "200") {
+        setImageURL(response.data.data?.profilePicture);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfilephoto();
+  }, []);
+
   return (
     <>
       <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
@@ -211,7 +237,7 @@ const MobileNavigation = () => {
             className={"mt-1"}
             size="md"
             // onClick={handleProfileChange}
-            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+            src={imageURL}
           />
         </Tooltip>
       </div>
@@ -229,10 +255,7 @@ const MobileNavigation = () => {
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">
-                <Avatar
-                  size="md"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                />
+                <Avatar size="md" src={imageURL} />
 
                 <div>
                   <p className="text-sm">

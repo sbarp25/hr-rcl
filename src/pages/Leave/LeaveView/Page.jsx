@@ -2,16 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/react";
 import GoBack from "../../../components/GoBack";
-import { FaArrowLeft } from "react-icons/fa";
 
 const LeaveView = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,27 +10,26 @@ const LeaveView = () => {
   const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
 
-  useEffect(() => {
-    const fetchLeaveById = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/leave/leaveId", {
-          data: { rclId: id },
-        });
-        if (response.data.responseCode === "200") {
-          setLeaveByIdData(response.data.datalist[0]);
-          toast.success(response.data.message);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching Leave:", error);
-        toast.error("Error fetching Leave.");
-      } finally {
-        setIsLoading(false);
+  const fetchLeaveById = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/leave/leaveId", {
+        data: { rclId: id },
+      });
+      if (response.data.responseCode === "200") {
+        setLeaveByIdData(response.data.datalist[0]);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching Leave:", error);
+      toast.error("Error fetching Leave.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchLeaveById();
   }, [id]);
 
@@ -63,25 +53,6 @@ const LeaveView = () => {
     if (!status) return "PENDING";
     return status.replace(/_/g, " ");
   };
-  // const leaveByIdData = {
-  //   leaveId: "12345",
-  //   rclId: "67890",
-  //   leaveType: "Sick Leave",
-  //   leaveCategory: "Medical",
-  //   leaveSubject:
-  //     "happy dozen essential according perhaps tears castle dress motor spring month old straight whom recent force shoot curious creature grown dead condition gently begunFlu Symptoms happy dozen essential according perhaps tears castle dress motor spring month old straight whom recent force shoot curious creature grown dead condition gently begunFlu Symptoms",
-  //   leaveStartDate: "2023-10-01",
-  //   leaveEndDate: "2023-10-05",
-  //   requestDate: "2023-09-30",
-  //   approvedDate: "2023-10-02",
-  //   rejectedData: "2023-10-23",
-  //   teamLeaderName: "John Doe",
-  //   associateTeamLeadName: "Jane Smith",
-  //   approvedBy: null,
-  //   rejectedBy: "Alice Johnson",
-  //   rejectionRemark: "Odinson drinks bear",
-  //   leaveStatus: "REJECTED",
-  // };
 
   return (
     <div className=" mx-auto p-4">
@@ -100,10 +71,8 @@ const LeaveView = () => {
             </h2>
             <div className="flex items-center gap-3">
               <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                ID: {leaveByIdData?.leaveId || "N/A"}
-              </span>
-              <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-                RCL: {leaveByIdData?.rclId || "N/A"}
+                ID:
+                {leaveByIdData?.rclId || "N/A"}
               </span>
             </div>
           </div>
@@ -138,7 +107,7 @@ const LeaveView = () => {
           {/* Subject */}
           <div className="pb-3 border-b border-gray-300">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-gray-600 text-sm">Subject</span>
+              <span className="text-gray-600 text-sm">Body</span>
             </div>
             <p className="text-gray-800 ">
               {leaveByIdData?.leaveSubject || "N/A"}

@@ -9,7 +9,7 @@ import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { Avatar } from "@nextui-org/avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { CiLogout } from "react-icons/ci";
@@ -18,8 +18,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
+import axiosInstance from "../lib/axios-Instance";
 
 const Sidebar = () => {
+  const [imageURL, setImageURL] = useState("");
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
 
@@ -168,7 +170,29 @@ const Sidebar = () => {
       setIsLoading(false);
     }
   };
+  const fetchProfilephoto = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        "/api/v1/profilePicture/getById"
+      );
+      if (response.data.responseCode === "200") {
+        setImageURL(response.data.data?.profilePicture);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchProfilephoto();
+  }, []);
   return (
     <>
       {isLoading && <Loader />}
@@ -246,10 +270,7 @@ const Sidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              <Avatar
-                size="md"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-              />
+              <Avatar size="lg" src={imageURL} />
               {isSidebarExpanded && (
                 <div>
                   <p className="text-xl" title={username}>

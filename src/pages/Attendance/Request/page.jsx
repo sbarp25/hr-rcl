@@ -177,7 +177,10 @@ const AttendanceRequest = () => {
         fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
         onClose();
       } else {
-        toast.error(response?.data?.error || "Something went wrong");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
@@ -220,7 +223,10 @@ const AttendanceRequest = () => {
         onRejectClose();
         reset();
       } else {
-        toast.error(response?.data?.error || "Something went wrong");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =

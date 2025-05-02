@@ -37,7 +37,6 @@ const EkyeAction = () => {
         if (response.data.responseCode === "200") {
           const data = response?.data?.data;
           setEmployeeData(data);
-          console.log(data);
         } else {
           toast.error(response?.data?.Message);
         }

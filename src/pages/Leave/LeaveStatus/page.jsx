@@ -166,7 +166,10 @@ const LeaveStatus = () => {
         fetchLeave();
         onClose();
       } else {
-        toast.error(response?.data?.error || "Something went wrong");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
@@ -210,7 +213,10 @@ const LeaveStatus = () => {
         onRejectClose();
         reset();
       } else {
-        toast.error(response?.data?.error || "Something went wrong");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
@@ -276,9 +282,6 @@ const LeaveStatus = () => {
                   {/* <TableColumn>Status</TableColumn> */}
                   <TableColumn>Approved by</TableColumn>
                   <TableColumn>Action</TableColumn>
-                  {/* <TableColumn>Employee Name</TableColumn> */}
-                  {/* <TableColumn>Approver</TableColumn>
-                  <TableColumn>Action</TableColumn> */}
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -294,6 +297,15 @@ const LeaveStatus = () => {
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>
                       <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
+                      {/* <TableCell>
+                        {" "}
+                        <div
+                          className={`flex items-center justify-center w-fit px-4 h-10 rounded-full  shadow-md text-lg ${getStatusClass(
+                            item?.leaveStatus
+                          )}`}>
+                          {item?.leaveStatus || "N/A"}
+                        </div>
+                      </TableCell> */}
 
                       <TableCell>
                         <div className="flex items-center gap-3 p-2 rounded-lg">
@@ -577,10 +589,6 @@ const LeaveStatus = () => {
                         <span className="font-medium">End Date:</span>
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
-                      <div className="flex ">
-                        <span className="font-medium">Days:</span>
-                        <span>{selectedLeave?.Days}</span>
-                      </div>
                     </div>
                   )}
                 </div>
@@ -627,15 +635,10 @@ const LeaveStatus = () => {
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
                       <div className="flex ">
-                        {selectedLeave.isHalfDay ? (
+                        {selectedLeave.isHalfDay && (
                           <div>
                             <span className="font-medium">Half Day</span>
                             <span>{selectedLeave?.isHalfDay}</span>
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="font-medium">Days:</span>
-                            <span>{selectedLeave?.Days}</span>
                           </div>
                         )}
                       </div>
@@ -645,6 +648,7 @@ const LeaveStatus = () => {
                 <form onSubmit={handleSubmit(onReject)}>
                   <TextAreaComp
                     name="reason"
+                    label="Rejection Reason"
                     control={control}
                     placeholder="Enter reason for rejection"
                     rules={{
