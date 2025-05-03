@@ -51,109 +51,123 @@ const ChangePassword = () => {
     }
   };
   return (
-    <div className="mx-auto bg-white p-8 rounded-xl shadow-lg">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-gray-800 ">
-        Change Password
+    <div className="mx-auto bg-white   rounded-xl shadow-lg">
+      <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800 ">
+        Security
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-gray-300 rounded-2xl p-4">
-          <p>
-            <h1 className="font-bold">Your Password must </h1>
-            <ul>
-              <div className="flex items-center">
-                <GoDotFill /> <li>Be between 8 and 20 characters long</li>
-              </div>
-              <li>
-                <div className="flex items-center">
-                  <GoDotFill />
-                  Only contain letters (a-z, A-Z), numbers (0-9), and these
-                  special characters:
-                  <span className="font-mono bg-gray-100 px-1 mx-1 rounded">
-                    !@#$%^&amp;*()_+={}[]:.;&quot;&#39;&lt;&gt;,.?\|
-                  </span>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-xl">
+        {/* Change Password Form */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 bg-white border border-gray-200 shadow-sm p-6 rounded-2xl">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
+            Change Password
+          </h2>
+
+          {/* Password Guidelines */}
+          <div className="bg-gray-100 rounded-xl p-4 text-sm text-gray-700">
+            <h3 className="font-semibold text-base mb-2">
+              Your password must:
+            </h3>
+            <ul className="space-y-2 pl-2">
+              <li className="flex items-start gap-2">
+                <GoDotFill className="mt-1 text-gray-600" />
+                Be between 8 and 20 characters long
               </li>
-              <div className="flex items-center">
-                <GoDotFill />
-                <li>Not consist solely of spaces</li>
-              </div>
-
-              <div className="flex items-center">
-                <GoDotFill />
-                <li>Not contain 2 or more consecutive spaces</li>
-              </div>
+              <li className="flex items-start gap-2">
+                <GoDotFill className="mt-1 text-gray-600" />
+                Only contain letters, numbers, and special characters:
+                <span className="font-mono bg-white px-1 rounded text-xs">
+                  !@#$%^&amp;*()_+={}[]:.;&quot;&#39;&lt;&gt;,.?\|
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <GoDotFill className="mt-1 text-gray-600" />
+                Not consist solely of spaces
+              </li>
+              <li className="flex items-start gap-2">
+                <GoDotFill className="mt-1 text-gray-600" />
+                Not contain 2 or more consecutive spaces
+              </li>
             </ul>
-          </p>
+          </div>
+
+          {/* Inputs */}
+          <InputComponent
+            type="password"
+            name="oldpassword"
+            control={control}
+            variant="bordered"
+            className="w-full"
+            label="Old Password"
+            rules={{
+              required: "Password is required",
+              pattern: {
+                value:
+                  /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                message: "Password must be 8 characters long.",
+              },
+            }}
+          />
+
+          <InputComponent
+            type="password"
+            name="password"
+            control={control}
+            variant="bordered"
+            className="w-full"
+            label="New Password"
+            rules={{
+              required: "Password is required",
+              pattern: {
+                value:
+                  /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                message: "Password must be 8 characters long.",
+              },
+            }}
+          />
+
+          <InputComponent
+            type="password"
+            name="confirmPassword"
+            control={control}
+            variant="bordered"
+            className="w-full"
+            label="Confirm Password"
+            rules={{
+              required: "Password is required",
+              validate: (value) =>
+                value === password || "Passwords do not match",
+              pattern: {
+                value:
+                  /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                message:
+                  "Password must be 8 characters long and include special characters.",
+              },
+            }}
+          />
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition duration-200 ${
+              isLoading || errors.password || errors.confirmPassword
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black"
+            }`}>
+            {isLoading ? "Loading..." : "Submit"}
+          </Button>
+        </form>
+
+        {/* Two Factor Auth Section */}
+        <div className="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            Two-Factor Authentication
+          </h2>
+          <p className="text-lg text-gray-600">Currently Unavailable</p>
         </div>
-        {/* Old Password */}
-        <InputComponent
-          type="password"
-          name="oldpassword"
-          control={control}
-          variant="bordered"
-          className="w-full"
-          label="Old Password"
-          rules={{
-            required: "Password is required",
-            pattern: {
-              value:
-                /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-              message: "Password must be 8 characters long.",
-            },
-          }}
-        />
-
-        {/* New Password */}
-        <InputComponent
-          type="password"
-          name="password"
-          control={control}
-          variant="bordered"
-          className="w-full"
-          label="New Password"
-          rules={{
-            required: "Password is required",
-            pattern: {
-              value:
-                /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-              message: "Password must be 8 characters long.",
-            },
-          }}
-        />
-
-        {/* Confirm Password */}
-        <InputComponent
-          type="password"
-          name="confirmPassword"
-          control={control}
-          variant="bordered"
-          className="w-full"
-          label="Confirm Password"
-          rules={{
-            required: "Password is required",
-            validate: (value) => value === password || "Passwords do not match",
-            pattern: {
-              value:
-                /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-              message:
-                "Password must be 8 characters long and include special characters.",
-            },
-          }}
-        />
-
-        {/* Submit Button */}
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className={`py-3 rounded-lg text-white font-medium transition duration-200 ${
-            isLoading || errors.password || errors.confirmPassword
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-bgprimary hover:bg-bgprimary/90"
-          }`}>
-          {isLoading ? "Loading..." : "Submit"}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 };

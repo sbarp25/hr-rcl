@@ -82,6 +82,7 @@ const Employees = () => {
     menu.actionList.some((action) => action.actionId === 1)
   );
   /**To read the Data */
+  // const hasaccess = false;
   const hasaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 2)
   );

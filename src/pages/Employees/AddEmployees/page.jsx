@@ -170,7 +170,10 @@ const AddEmployeeForm = () => {
         navigate("/Employees");
         toast.success(response?.data?.message);
       } else {
-        toast.error(response?.data?.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =

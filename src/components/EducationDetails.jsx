@@ -306,7 +306,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         toast.success(response.data.message);
         navigate("/dashboard");
       } else {
-        toast.error("Failed to save educational details.");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error(error);

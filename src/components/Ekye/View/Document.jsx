@@ -72,7 +72,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-teal-400 underline mb-2">
+                    className="block text-sm text-green-500 underline mb-2">
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       <div className="flex  flex-col">
@@ -98,7 +98,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-teal-400 underline mb-2">
+                    className="block text-sm text-green-500 underline mb-2">
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       <div className="flex  flex-col">
@@ -159,7 +159,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                     href={employeeData?.userDocument?.panCardDocumentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-sm text-teal-400 underline mb-2">
+                    className="block text-sm text-green-500 underline mb-2">
                     <span className="flex items-center gap-x-2">
                       <FaRegEye />
                       View Photo

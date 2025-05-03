@@ -5,12 +5,65 @@ import GoBack from "../../../components/GoBack";
 
 import { useNavigate } from "react-router-dom";
 import EkyeDocumentDetail from "../../../components/Ekye/View/Document";
-import AddressAction from "../../../components/Ekye/Action/AddressAction";
-import PersonalAction from "../../../components/Ekye/Action/PersonalAction";
-import DocumentAction from "../../../components/Ekye/Action/DocumentAction";
-import EducationAction from "../../../components/Ekye/Action/EducationAction";
+// import Personal from "../../../../components/Ekye/View/Personal";
+import Personal from "../../../components/Ekye/View/Personal";
+import EkyeAddress from "../../../components/Ekye/View/Address";
+import UserEducation from "../../../components/Ekye/View/UserEducation";
+
+const tabData = [
+  {
+    name: "Personal Information",
+    component: Personal,
+    panelClass: "panel-success",
+  },
+  {
+    name: "Address Details",
+    component: EkyeAddress,
+    panelClass: "panel-warning",
+  },
+  {
+    name: "Document Details",
+    component: EkyeDocumentDetail,
+    panelClass: "panel-danger",
+  },
+  {
+    name: "Education Details",
+    component: UserEducation,
+    panelClass: "panel-info",
+  },
+];
+
+const Tabs = ({ activeTab, changeTab }) => (
+  <ul className="nav nav-tabs flex  border">
+    {tabData?.map((tab) => (
+      <li
+        key={tab.name}
+        onClick={(e) => {
+          e.preventDefault();
+          changeTab(tab);
+        }}
+        className={` cursor-pointer py-2 px-8 text-center w-40 font-semibold rounded-t-2xl border  transition-all duration-300 ${
+          activeTab.name === tab.name
+            ? " bg-gray-50 border border-gray-300 "
+            : "hover:border-gray-300 hover:bg-gray-100"
+        }`}>
+        <span>{tab.name}</span>
+      </li>
+    ))}
+  </ul>
+);
+
+const Content = ({ activeTab, employeeData }) => {
+  const ActiveComponent = activeTab.component;
+  return (
+    <section className={`panel ${activeTab.panelClass}`}>
+      <ActiveComponent employeeData={employeeData} />
+    </section>
+  );
+};
 const ViewEKYE = () => {
   const [employeeData, setEmployeeData] = useState();
+  const [activeTab, setActiveTab] = useState(tabData[0]);
   const [rclId, setRclId] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -68,12 +121,12 @@ const ViewEKYE = () => {
   }, [rclId]);
 
   return (
-    <div className="max-h-[95vh] overflow-y-auto">
-      <GoBack />
+    <div className="container">
+      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+      <h1 className="page-title my-3 ml-6">EKYE</h1>
+      <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
-      <AddressAction employeeData={employeeData} />
-      <DocumentAction employeeData={employeeData} />
-      <EducationAction employeeData={employeeData} />
+      <Content activeTab={activeTab} employeeData={employeeData} />
     </div>
   );
 };

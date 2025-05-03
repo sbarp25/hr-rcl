@@ -1,144 +1,68 @@
-import Logo from "../assets/Images/Logo.png";
-import { GiHamburgerMenu } from "react-icons/gi";
+import React, { useEffect, useState } from "react";
+import Logo from "../../assets/Images/Logo.png";
 import { MdDashboard } from "react-icons/md";
-import { IoAlarm } from "react-icons/io5";
-import { FcLeave } from "react-icons/fc";
-import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
-import { GoGear } from "react-icons/go";
-import { BiData } from "react-icons/bi";
+import Loader from "../Loader";
 import { IoIosPeople } from "react-icons/io";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import { Avatar } from "@nextui-org/avatar";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { CiLogout } from "react-icons/ci";
+import { Avatar } from "@nextui-org/avatar";
+import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Loader from "../components/Loader";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import axiosInstance from "../lib/axios-Instance";
-
-const Sidebar = () => {
+import { GoGear } from "react-icons/go";
+import { CiLogout } from "react-icons/ci";
+import { CiBank } from "react-icons/ci";
+import { FaCoins } from "react-icons/fa6";
+import { IoShieldCheckmark } from "react-icons/io5";
+const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [expandedDropdown, setExpandedDropdown] = useState(null);
+
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
-
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-  const [expandedDropdown, setExpandedDropdown] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const location = useLocation();
-
-  const navigate = useNavigate();
-
-  const menu = LocalStorageUtil.getItem("menu");
-
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
-  /**To check Dashboard see status */
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 6)
-  );
-  /**To check Department see status */
-  const seeDepartment = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 10)
-  );
-  /**To check Position see status */
-  const seePosition = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const seeRole = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const seeAttendance = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const seeHandbook = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const seeNotices = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const seeLeave = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
-  );
-  const navbarElements = [
-    // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
-    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
-    {
-      icon: IoAlarm,
-      label: "Attendance",
-      view: true,
-      children: [
-        { label: "My Attendence", to: "/Attendance", view: true },
-        { label: "Late Checkin ", to: "/Attendance/Request", view: true },
-      ],
-    },
-    {
-      icon: IoIosPeople,
-      label: "Employees",
-      to: "/Employees",
-      view: seeEmployee,
-    },
-
-    {
-      icon: BiData,
-      label: "Master Data",
-      view: true,
-      children: [
-        {
-          label: "Department",
-          to: "/master-data/Department",
-          view: seeDepartment,
-        },
-        { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: true },
-      ],
-    },
-    { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: true },
-    {
-      icon: FcLeave,
-      label: "Leave",
-      view: true,
-      children: [
-        { label: "Leave Status", to: "/Leave/Status", view: true },
-        { label: "Leave Request", to: "/Leave/Request", view: true },
-      ],
-    },
-    // {
-    //   icon: FcLeave,
-    //   label: "Salary",
-    //   view: true,
-    //   children: [
-    //     { label: "Salary Details", to: "/Salary", view: true },
-    //     { label: "Salary Breakdown", to: "/salaryEdit", view: true },
-    //     { label: "Advance", to: "/AdvanceSalary", view: true },
-    //   ],
-    // },
-
-    {
-      icon: IoIosPeople,
-      label: "Ekye",
-      to: "/AdminEkye",
-      view: true,
-    },
-  ];
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
+  const navbarElements = [
+    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
+    {
+      icon: MdDashboard,
+      label: "Profile",
+      to: "/settings",
+      view: true,
+    },
+    {
+      icon: IoIosPeople,
+      label: "My EKYE",
+      to: "/settings/ViewEKYE",
+      view: true,
+    },
+    {
+      icon: IoShieldCheckmark,
+      label: "Security",
+      to: "/settings/Change",
+      view: true,
+    },
+    // {
+    //   icon: FaCoins,
+    //   label: "Salary Details",
+    //   to: "/dashboard",
+    //   view: true,
+    // },
+    {
+      icon: CiBank,
+      label: "Bank Details",
+      to: "/Bank",
+      view: true,
+    },
+  ];
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
-
   const handleLogOut = async () => {
     try {
       setIsLoading(true);
@@ -179,10 +103,7 @@ const Sidebar = () => {
       if (response.data.responseCode === "200") {
         setImageURL(response.data.data?.profilePicture);
       } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
+        toast.error(response.data.message);
       }
     } catch (error) {
       const errorMessage =
@@ -196,6 +117,9 @@ const Sidebar = () => {
   useEffect(() => {
     fetchProfilephoto();
   }, []);
+
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
     <>
       {isLoading && <Loader />}
@@ -307,4 +231,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default UserSidebar;

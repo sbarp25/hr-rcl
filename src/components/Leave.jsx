@@ -61,7 +61,10 @@ const Leave = () => {
         setUpComingLeave(upcomingData);
         setLeaveList(isToday ? todayData : upcomingData);
       } else {
-        toast.error(response?.data?.data?.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;

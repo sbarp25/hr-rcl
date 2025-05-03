@@ -32,7 +32,10 @@ const ForgetPassword = () => {
       if (response.data?.responseCode === "200") {
         toast.success(response?.data?.message);
       } else {
-        toast.success(response?.data?.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =

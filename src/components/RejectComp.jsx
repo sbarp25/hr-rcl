@@ -31,7 +31,7 @@ const RejectComp = ({ employeeData }) => {
   const { rclId } = useParams();
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasApproveAccess = menu.some((menu) =>
+  const hasApproveAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 18)
   );
   const onReject = async (data) => {
@@ -60,7 +60,10 @@ const RejectComp = ({ employeeData }) => {
           toast.success(response?.data?.message);
           navigate("/AdminEkye");
         } else {
-          toast.error(response?.data?.message);
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
       } else {
         toast.reject("Access Denied");

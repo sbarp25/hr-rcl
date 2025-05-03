@@ -38,7 +38,10 @@ const EkyeAction = () => {
           const data = response?.data?.data;
           setEmployeeData(data);
         } else {
-          toast.error(response?.data?.Message);
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
       } catch (error) {
         console.error("Error fetching employee data:", error);

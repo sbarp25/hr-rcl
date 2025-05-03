@@ -92,7 +92,10 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
         toast.success(response?.data?.message);
         handleNext();
       } else {
-        toast.error(response.data.data.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error adding Personal Data", error);

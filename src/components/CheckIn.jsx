@@ -72,8 +72,9 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           lateCheckinCheck();
         } else {
           const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage;
-          toast.error(errorMessage || "Check In Failed");
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
       } catch (error) {
         const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
@@ -106,8 +107,10 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           // Update parent component's state via callback
           onStatusChange(false);
         } else {
-          const error = response?.data?.error?.errorList?.[0]?.errorMessage;
-          toast.error(error || "Check Out Failed");
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
       } catch (error) {
         console.error("Error during checkout", error);
@@ -148,7 +151,10 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         // Update parent component's state via callback
         onStatusChange(true);
       } else {
-        toast.error("Late Check In Failed");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.log(error);

@@ -391,7 +391,10 @@ const AddressDetails = ({
         toast.success(response?.data?.message);
         handleNext();
       } else {
-        toast.error(response.data.message || "Failed to save address data");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error saving address data:", error);

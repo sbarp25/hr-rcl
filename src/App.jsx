@@ -40,6 +40,9 @@ import ForgetPassword from "./pages/ForgetPassword/Page.jsx";
 import ResetForGetPassword from "./pages/ForgetPassword/ValidatePassword/Page.jsx";
 import ChangePassword from "./pages/Setting/ChangePassword/Page.jsx";
 import ViewEKYE from "./pages/Setting/ViewEKYE/Page.jsx";
+import UserLayout from "./components/Layout/UserLayout.jsx";
+import Bank from "./pages/Bank/Page.jsx";
+import GetBankDetails from "./pages/Bank/GetBank/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -65,6 +68,17 @@ function App() {
     "/forgetPassword",
     "/forget-password",
   ];
+  const userRoutes = [
+    "/settings",
+    "/settings/ViewEKYE",
+    "/settings/Change",
+    "/Salary",
+    "/SalaryEdit",
+    "/AdvanceSalary",
+    "/Bank",
+    "/Bank/AddBank",
+  ];
+  const isUserRoutes = userRoutes.includes(location.pathname);
   const isAuthRoute = authRoutes.includes(location.pathname);
 
   return (
@@ -84,6 +98,21 @@ function App() {
             <Route path="/forget-password" element={<ResetForGetPassword />} />
           </Routes>
         </AuthLayout>
+      ) : isUserRoutes ? (
+        <UserLayout>
+          <Routes>
+            <Route element={<PrivateRoutes />}>
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
+              <Route path="/settings/Change" element={<ChangePassword />} />
+              <Route path="/Salary" element={<SalaryDetails />} />
+              <Route path="/SalaryEdit" element={<SalaryEdit />} />
+              <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
+              <Route path="/Bank" element={<GetBankDetails />} />
+              <Route path="/Bank/AddBank" element={<Bank />} />
+            </Route>
+          </Routes>
+        </UserLayout>
       ) : (
         <Layout>
           <div className="flex md:hidden mb-1">
@@ -126,15 +155,9 @@ function App() {
               <Route path="/Leave/Request" element={<LeaveRequest />} />
               <Route path="/Leave/apprej/:id" element={<LeaveApprove />} />
               <Route path="/Leave/view/:id" element={<LeaveView />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
-              <Route path="/settings/Change" element={<ChangePassword />} />
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
               <Route path="/View/:rclId" element={<View />} />
-              <Route path="/Salary" element={<SalaryDetails />} />
-              <Route path="/SalaryEdit" element={<SalaryEdit />} />
-              <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
             </Route>
           </Routes>
         </Layout>
