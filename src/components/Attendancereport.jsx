@@ -24,19 +24,6 @@ const AttendanceReport = ({ attendanceData }) => {
     setExpandedRow(expandedRow === sn ? null : sn);
   };
 
-  // const attendanceData = [
-  //   {
-  //     SN: 1,
-  //     Day: "Tuedsay",
-  //     isDelay: true,
-  //     weekDays: "Sunday",
-  //     checkinType: "Office",
-  //     workLocation: "Office",
-  //     earlyDelayTime: "1.5hrs Early",
-  //     totaltimeOfWork: "2.5HOurs ",
-  //     attendanceStatus: "present",
-  //   },
-  // ];
   return (
     <div className="w-full px-2 sm:px-4">
       {/* Large screens - Full table */}
@@ -55,6 +42,8 @@ const AttendanceReport = ({ attendanceData }) => {
             <TableColumn>Is Delayed</TableColumn>
             <TableColumn>Date</TableColumn>
             <TableColumn>CheckIn type</TableColumn>
+            <TableColumn>CheckIn Time</TableColumn>
+            <TableColumn>Checkout Time</TableColumn>
             <TableColumn>Location</TableColumn>
             <TableColumn>Early/Delay time</TableColumn>
             <TableColumn>Total Time of work</TableColumn>
@@ -68,11 +57,14 @@ const AttendanceReport = ({ attendanceData }) => {
                 <TableCell>{data.isDelay ? "Yes" : "No"}</TableCell>
                 <TableCell>{data.weekDays || "N/A"}</TableCell>
                 <TableCell>{data.checkinType || "N/A"}</TableCell>
+                <TableCell>{data.checkInTime || "N/A"}</TableCell>
+                <TableCell>{data.checkOutTime || "N/A"}</TableCell>
                 <TableCell>{data.workLocation || "N/A"}</TableCell>
                 <TableCell>
                   <div
                     className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${
-                      data.attendanceStatus === "present"
+                      data.attendanceStatus === "present" ||
+                      data.attendanceStatus === "pending"
                         ? data.isDelay
                           ? "border border-red-500 text-red-700 bg-red-100"
                           : "border border-green-500 text-green-700 bg-green-100"

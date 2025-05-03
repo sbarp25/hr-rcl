@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 const Bank = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, reset } = useForm({
@@ -66,6 +67,13 @@ const Bank = () => {
       setIsLoading(false);
     }
   };
+
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   return (
     <>
       <div className="flex justify-between mb-8 text-center">

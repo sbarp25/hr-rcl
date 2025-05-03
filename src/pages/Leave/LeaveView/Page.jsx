@@ -3,12 +3,20 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import GoBack from "../../../components/GoBack";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const LeaveView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
+
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
 
   const fetchLeaveById = async () => {
     setIsLoading(true);

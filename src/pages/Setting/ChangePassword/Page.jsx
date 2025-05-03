@@ -5,6 +5,7 @@ import { Button } from "@nextui-org/react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { GoDotFill } from "react-icons/go";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const ChangePassword = () => {
   const {
     control,
@@ -50,6 +51,12 @@ const ChangePassword = () => {
       setIsLoading(false);
     }
   };
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   return (
     <div className="mx-auto bg-white   rounded-xl shadow-lg">
       <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800 ">

@@ -9,6 +9,7 @@ import EkyeDocumentDetail from "../../../components/Ekye/View/Document";
 import Personal from "../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../components/Ekye/View/Address";
 import UserEducation from "../../../components/Ekye/View/UserEducation";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const tabData = [
   {
@@ -120,6 +121,12 @@ const ViewEKYE = () => {
     }
   }, [rclId]);
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   return (
     <div className="container">
       {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}

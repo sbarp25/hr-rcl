@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { Switch } from "@nextui-org/react";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const EditEmployees = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -184,6 +185,12 @@ const EditEmployees = () => {
   const onCancel = () => {
     navigate("/Employees");
   };
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

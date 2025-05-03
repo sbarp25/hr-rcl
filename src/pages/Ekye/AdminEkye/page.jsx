@@ -18,6 +18,7 @@ import { FaEdit } from "react-icons/fa";
 import DropDownComp from "../../../components/Dropdown";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
@@ -100,8 +101,13 @@ const Page = () => {
     fetchDepartments();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
+  const menu = LocalStorageUtil.getItem("menu");
   const hasaccess = true;
 
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

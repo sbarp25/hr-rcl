@@ -8,6 +8,7 @@ import ButtonComponent from "../../../../components/ButtonComp";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const AddPosition = () => {
   const navigate = useNavigate();
@@ -52,6 +53,13 @@ const AddPosition = () => {
       setIsloading(false);
     }
   };
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+
   const breadcrumbItems = [
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },

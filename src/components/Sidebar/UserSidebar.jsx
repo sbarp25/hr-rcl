@@ -14,6 +14,7 @@ import { CiLogout } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
 import { FaCoins } from "react-icons/fa6";
 import { IoShieldCheckmark } from "react-icons/io5";
+import { IoPersonSharp } from "react-icons/io5";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -30,7 +31,7 @@ const UserSidebar = () => {
   const navbarElements = [
     { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
     {
-      icon: MdDashboard,
+      icon: IoPersonSharp,
       label: "Profile",
       to: "/settings",
       view: true,

@@ -11,6 +11,7 @@ import { Checkbox } from "@nextui-org/checkbox";
 import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { useNavigate } from "react-router-dom";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const Roles = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [addRole, setAddRole] = useState(false);
@@ -91,7 +92,7 @@ const Roles = () => {
 
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post("/api/role/register", newRole, {
+      const response = await axiosInstance.post("/api/v1/role/save", newRole, {
         // const response = await axiosInstance.post("/api/v1/role/save", newRole, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -174,13 +175,13 @@ const Roles = () => {
     switch (action) {
       // Start Of Edit Operation
       case "edit":
-        if (hasRoleEditAccess) {
-          console.log(`Editing position ID: ${role.roleId}`);
-          setShowEditForm(true);
-          setRoleName(role.roleName || "");
-          setRoleDescription(role.roleDescription || "");
-          setEditingRoleId(role.roleId);
-        }
+        // if (hasRoleEditAccess) {
+        console.log(`Editing position ID: ${role.roleId}`);
+        setShowEditForm(true);
+        setRoleName(role.roleName || "");
+        setRoleDescription(role.roleDescription || "");
+        setEditingRoleId(role.roleId);
+        // }
         break;
       // End Of Edit Operation
       //start of delete
@@ -209,7 +210,15 @@ const Roles = () => {
   };
   const navigate = useNavigate();
   const hasaccess = true;
+  const menu = LocalStorageUtil.getItem("menu");
 
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+  const hasRoleAddAccess = false;
+  const hasRoleEditAccess = false;
+  const hasRoleDeleteAccess = false;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -219,9 +228,7 @@ const Roles = () => {
     { label: "MasterData", href: "" },
     { label: "Roles", href: "/master-data/Roles" },
   ];
-  const hasRoleAddAccess = false;
-  const hasRoleEditAccess = false;
-  const hasRoleDeleteAccess = false;
+
   return (
     <>
       <ValidationComponent>
@@ -233,7 +240,7 @@ const Roles = () => {
               <h2 className="page-title">Roles</h2>
             </div>
             <Button
-              isDisabled={!hasRoleAddAccess}
+              // isDisabled={!hasRoleAddAccess}
               className="button bg-green-700 tracking-normal
   hover:bg-green-900"
               onPress={() => setAddRole(!addRole)}>
@@ -429,11 +436,11 @@ const Roles = () => {
                   )}
                 </div>
               </div>
-              <b
+              <button
                 type="submit"
                 className="button bg-bgprimary text-white rounded-lg px-6  hover:bg-bgprimaryhover transition w-full md:w-auto mt-6">
                 Add
-              </b>
+              </button>
             </Form>
           ) : (
             <div className="container mx-auto mt-8">

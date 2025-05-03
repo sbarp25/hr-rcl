@@ -4,7 +4,11 @@ import { toast } from "react-toastify";
 import ButtonComponent from "../../../components/ButtonComp";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loader";
-
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { CiLocationOn } from "react-icons/ci";
+import { CiBank } from "react-icons/ci";
+import { CiCreditCard2 } from "react-icons/ci";
+import { IoPersonSharp } from "react-icons/io5";
 const GetBankDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bankData, setBankData] = useState(null);
@@ -40,6 +44,12 @@ const GetBankDetails = () => {
     navigate("/Bank/AddBank");
   };
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   return (
     <div className="p-6">
       <div className="flex justify-between items-center">
@@ -55,28 +65,58 @@ const GetBankDetails = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-white shadow-md w-full rounded-2xl p-4 border border-gray-200">
-            <p className="mb-2">
-              <span className="font-semibold">Account Number:</span>{" "}
-              {bankData?.accountNumber || "N/A"}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Account Name:</span>{" "}
-              {bankData?.accountName || "N/A"}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Account Type:</span>{" "}
-              {bankData?.accountType || "N/A"}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Bank Name:</span>{" "}
-              {bankData?.bankName || "N/A"}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Branch Name:</span>{" "}
-              {bankData?.branchName || "N/A"}
-            </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+          <div className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2 border-gray-300">
+              Bank Details
+            </h2>
+            <ul className="space-y-4 text-sm text-gray-700">
+              <li>
+                <div className="flex items-center gap-3 font-medium mb-1">
+                  <CiCreditCard2 className="text-xl" />
+                  Account Number
+                </div>
+                <div className="ml-8 text-gray-600">
+                  {bankData?.accountNumber || "N/A"}
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 font-medium mb-1">
+                  <IoPersonSharp className="text-xl" />
+                  Account Holder Name
+                </div>
+                <div className="ml-8 text-gray-600">
+                  {bankData?.accountName || "N/A"}
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 font-medium mb-1">
+                  <CiCreditCard2 className="text-xl" />
+                  Account Type
+                </div>
+                <div className="ml-8 text-gray-600">
+                  {bankData?.accountType || "N/A"}
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 font-medium mb-1">
+                  <CiBank className="text-xl" />
+                  Bank Name
+                </div>
+                <div className="ml-8 text-gray-600">
+                  {bankData?.bankName || "N/A"}
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 font-medium mb-1">
+                  <CiLocationOn className="text-xl" />
+                  Branch Name
+                </div>
+                <div className="ml-8 text-gray-600">
+                  {bankData?.branchName || "N/A"}
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       )}

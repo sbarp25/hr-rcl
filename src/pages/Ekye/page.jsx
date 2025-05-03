@@ -11,6 +11,7 @@ import Before from "../../assets/svgs/Before.svg";
 import { Button } from "@nextui-org/react";
 import FormStepper from "../../components/FormStepIndicator.jsx";
 import { useNavigate } from "react-router-dom";
+import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -133,6 +134,12 @@ const Ekye = () => {
     "Document Details",
     "Educational Details",
   ];
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
@@ -197,7 +204,7 @@ const Ekye = () => {
         </ValidationComponent>
 
         {/* Navigation Buttons */}
-        <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        {/* <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -212,7 +219,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

@@ -75,14 +75,20 @@ const Personal = ({ employeeData }) => {
                   employeeData?.personalDetails?.postionName || "N/A"
                 }
               />
-            </div>
-            <Divider />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-20">
               <EkyeDetailsComponent
-                label="Maritial Status"
-                placeholder={employeeData?.personalDetails?.married || "N/A"}
+                label="Marital Status"
+                placeholder={
+                  employeeData?.personalDetails?.married === true
+                    ? "Married"
+                    : employeeData?.personalDetails?.married === false
+                    ? "Unmarried"
+                    : "N/A"
+                }
               />
             </div>
+            <Divider />
+            {/* 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-20"></div> */}
           </form>
         </div>
         {/**Guardians && Emergency Details */}

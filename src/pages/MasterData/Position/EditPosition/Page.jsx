@@ -8,6 +8,7 @@ import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/InputComponent";
 import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ButtonComp";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const EditPosition = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -117,6 +118,12 @@ const EditPosition = () => {
       setIsLoading(false);
     }
   };
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

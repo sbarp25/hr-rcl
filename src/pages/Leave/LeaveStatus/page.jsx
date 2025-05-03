@@ -62,12 +62,6 @@ const LeaveStatus = () => {
     { label: "Leave", href: "" },
     { label: "Leave Status", href: "/Leave/Status" },
   ];
-  // useEffect(() => {
-  //   onOpen();
-  // }, []);
-  // useEffect(() => {
-  //   isRejectOpen();
-  // }, []);
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -76,8 +70,6 @@ const LeaveStatus = () => {
     try {
       const response = await axiosInstance.post(
         `/api/v1/leave_management/list`,
-        // const response = await axiosInstance.get(
-        //   `/api/leave/all?page=${currentPage}&size=${leaveDataPerPage}`,
         { pageIndex: currentPage, pageSize: leaveDataPerPage }
       );
       if (response.data.responseCode === "200") {
@@ -103,7 +95,8 @@ const LeaveStatus = () => {
   // }, []);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasLeaveApproveAccess = true; // This is set to true in original code
+  const hasLeaveApproveAccess = false;
+  const hasLeaveViewAccess = false;
 
   const handleApplyFilters = (result) => {
     if (result.data) {
@@ -279,8 +272,8 @@ const LeaveStatus = () => {
                   <TableColumn>Leave Type</TableColumn>
                   <TableColumn>Leave Start Date</TableColumn>
                   <TableColumn>Leave End Date</TableColumn>
-                  {/* <TableColumn>Status</TableColumn> */}
-                  <TableColumn>Approved by</TableColumn>
+                  <TableColumn>Status</TableColumn>
+                  {/* <TableColumn>Approved by</TableColumn> */}
                   <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
@@ -297,17 +290,23 @@ const LeaveStatus = () => {
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>
                       <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
-                      {/* <TableCell>
+                      <TableCell>
                         {" "}
                         <div
-                          className={`flex items-center justify-center w-fit px-4 h-10 rounded-full  shadow-md text-lg ${getStatusClass(
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
                             item?.leaveStatus
                           )}`}>
-                          {item?.leaveStatus || "N/A"}
+                          {item?.leaveStatus === "PENDING"
+                            ? "Pending"
+                            : item?.leaveStatus === "APPROVED"
+                            ? "Approved"
+                            : item?.leaveStatus === "REJECTED"
+                            ? "Rejected"
+                            : "N/A"}{" "}
                         </div>
-                      </TableCell> */}
+                      </TableCell>
 
-                      <TableCell>
+                      {/* <TableCell>
                         <div className="flex items-center gap-3 p-2 rounded-lg">
                           <div
                             className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
@@ -321,7 +320,7 @@ const LeaveStatus = () => {
                             {item?.approvedBy || item?.rejectedBy || "N/A"}
                           </div>
                         </div>
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         <div className="flex gap-2">
                           <button
@@ -409,6 +408,7 @@ const LeaveStatus = () => {
                           </div>
                         </div>
                       </TableCell>
+
                       <TableCell>
                         <div className="flex gap-2">
                           {item?.leaveStatus === "PENDING" &&

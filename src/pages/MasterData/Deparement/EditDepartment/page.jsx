@@ -4,11 +4,11 @@ import InputComponent from "../../../../components/InputComponent";
 import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ButtonComp";
 import axiosInstance from "../../../../lib/axios-Instance";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectComp from "../../../../components/Select";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -150,7 +150,12 @@ const EditDepartment = () => {
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
+  const menu = LocalStorageUtil.getItem("menu");
 
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

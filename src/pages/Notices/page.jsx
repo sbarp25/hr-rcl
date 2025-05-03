@@ -2,6 +2,7 @@ import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
 import { useState } from "react";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -180,6 +181,12 @@ const Page = () => {
 
   const breadcrumbItems = [{ label: "Notice", href: "/notice" }];
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Notice Heading section */}

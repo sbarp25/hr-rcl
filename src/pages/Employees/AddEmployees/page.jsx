@@ -184,6 +184,10 @@ const AddEmployeeForm = () => {
     }
   };
 
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
 
   useEffect(() => {

@@ -272,20 +272,6 @@ const AttendanceRequest = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
-  // useEffect(() => {
-  //   onRejectOpen();
-  //   onOpen();
-  // }, []);
-
-  // const selectedData = {
-  //   fullName: "John Doe",
-  //   rclId: "RCL123",
-  //   attendanceDate: "2023-10-01",
-  //   expectedCheckInTime: "09:00 AM",
-  //   checkInTime: "09:30 AM",
-  //   lateReason: "",
-  // };
-
   return (
     <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex flex-col space-y-4">
@@ -350,16 +336,8 @@ const AttendanceRequest = () => {
                       <TableCell>{late.expectedCheckInTime}</TableCell>
 
                       <TableCell>
-                        {/* <div
-                          className={` rounded-md ${
-                            late.status === "APPROVED"
-                              ? "bg-green-100 border border-green-600 text-green-600"
-                              : late.status === "REJECTED"
-                              ? "bg-red-100 border border-red-600 text-red-600"
-                              : "bg-yellow-100 border border-yellow-500 text-yellow-500"
-                          } text-center p-2 w-fit`}> */}
                         <div
-                          className={` rounded-full ${
+                          className={`px-3 py-1.5 text-xs font-medium rounded-full text-center inline-flex items-center justify-center shadow-sm ${
                             late.isPending === true
                               ? "bg-green-100 border border-green-600 text-green-600"
                               : late.isPending === false
@@ -367,11 +345,11 @@ const AttendanceRequest = () => {
                               : "bg-yellow-100 border border-yellow-500 text-yellow-500"
                           } text-center p-2 w-fit`}>
                           {late.isApproved === true ? (
-                            <span>APPROVED</span>
+                            <span>Approved</span>
                           ) : late.isApproved === true ? (
-                            <span>REJECTED</span>
+                            <span>Rejected</span>
                           ) : (
-                            <span>PENDING</span>
+                            <span>Pending</span>
                           )}
                         </div>
                         {/* {late.status} */}

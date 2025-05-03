@@ -9,6 +9,7 @@ import ButtonComponent from "../../../../components/ButtonComp";
 import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import GoBack from "../../../../components/GoBack";
 import SelectComp from "../../../../components/Select";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -107,27 +108,13 @@ const AddDepartment = () => {
     }
   };
 
-  /**To fetch Team lead */
-  const fetchTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "/api/v1/departments/get_all_users_name_id"
-      );
-      if (response.data.responseCode === "200") {
-        setTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const menu = LocalStorageUtil.getItem("menu");
 
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Department", href: "/master-data/Department" },
-  ];
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+
   const teamLeadid = teamLead.map((item) => ({
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label

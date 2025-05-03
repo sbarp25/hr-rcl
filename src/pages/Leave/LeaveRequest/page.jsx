@@ -1,10 +1,3 @@
-import {
-  Checkbox,
-  DatePicker,
-  Select,
-  SelectItem,
-  Textarea,
-} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
@@ -13,14 +6,12 @@ import ButtonComponent from "../../../components/ButtonComp";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { getLocalTimeZone } from "@internationalized/date";
-import GoBack from "../../../components/GoBack";
 import SelectComp from "../../../components/Select";
 import DatepickerComponent, {
   formatDate,
 } from "../../../components/DatepickerComponent";
 import TextAreaComp from "../../../components/TextAreaComp";
-
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -129,33 +120,13 @@ const LeaveRequest = () => {
     }
   };
 
-  // Dynamic rows for textarea based on screen size
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const menu = LocalStorageUtil.getItem("menu");
 
-  useEffect(() => {
-    const handleResize = () => setScreenWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const getMaxRows = () => {
-    if (screenWidth >= 1536) return 12; // 2xl
-    if (screenWidth >= 1280) return 10; // xl
-    if (screenWidth >= 1024) return 8; // lg
-    if (screenWidth >= 768) return 6; // md
-    return 4; // default for smaller screens
-  };
-
-  const getRows = () => {
-    if (screenWidth >= 1536) return 10; // 2xl
-    if (screenWidth >= 1280) return 8; // xl
-    if (screenWidth >= 1024) return 6; // lg
-    if (screenWidth >= 768) return 4; // md
-    return 3; // default for smaller screens
-  };
-
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
-
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

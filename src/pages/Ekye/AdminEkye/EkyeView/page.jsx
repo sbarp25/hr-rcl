@@ -7,6 +7,7 @@ import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
 import { useNavigate, useParams } from "react-router-dom";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const tabData = [
   {
@@ -94,6 +95,13 @@ const Page = () => {
       navigate("/dashboard");
     }
   }, []);
+
+  const menu = LocalStorageUtil.getItem("menu");
+
+  /**To check Employee see status */
+  const seeEmployee = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
 
   return (
     <div className="container">
