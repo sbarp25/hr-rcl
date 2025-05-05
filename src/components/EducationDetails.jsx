@@ -13,7 +13,6 @@ import {
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
-import { FaRegEye } from "react-icons/fa";
 import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./InputComponent";
@@ -28,7 +27,6 @@ const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
 const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectedImageUrl, setSelectedImageUrl] = useState("");
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
@@ -187,11 +185,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       });
     }
   }, [formData.education, setValue]);
-
-  // const validateFileType = (file) => {
-  //   const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-  //   return allowedTypes.includes(file.type);
-  // };
 
   const validateFile = (file, existingUrl) => {
     // If we already have a file URL from the API, skip validation
@@ -407,16 +400,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 control={control}
                 rules={{ required: "Start year is required" }}
               />
-              {/* <InputComponent)
-                name={`startYear_${index}`}
-                control={control}
-                label="Start Year"
-                rules={{ required: "Start year is required" }}
-                type="date"
-                variant="bordered"
-                inputClassName="w-full rounded-xl"
-                value={education[index]?.startYear || ""}
-              /> */}
             </div>
             {/**End Year */}
             <div>
@@ -431,21 +414,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       : false,
                 }}
               />
-              {/* <InputComponent
-                name={`endYear_${index}`}
-                control={control}
-                label="End Year"
-                rules={{
-                  required:
-                    education[index]?.status !== "IN_PROGRESS"
-                      ? "End year is required"
-                      : false,
-                }}
-                type="date"
-                variant="bordered"
-                inputClassName="w-full rounded-xl"
-                value={education[index]?.endYear || ""}
-              /> */}
             </div>
             {/**Status */}
             <div>

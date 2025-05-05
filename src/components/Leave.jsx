@@ -152,47 +152,6 @@ const Leave = () => {
             )}
           </div>
         </div>
-        {/* <div className="w-full overflow-x-auto">
-          <div className="  ">
-            <Table
-              bordered
-              isHeaderSticky
-              aria-label="Dynamic Attendance Table"
-              className="min-w-full h-auto max-h-[50vh] overflow-auto">
-              <TableHeader className="Capitalize gap-4  ">
-                <TableColumn>S.N</TableColumn>
-                <TableColumn>Name</TableColumn>
-                <TableColumn>Team Leader</TableColumn>
-                <TableColumn>From Date</TableColumn>
-                <TableColumn>To Date</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {leaveList.map((data, index) => (
-                  <TableRow
-                    key={index + 1}
-                    className="h-20 justify-center items-center border-b-2 border-gray-300">
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <div
-                        className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base bg-teal-100 border border-teal-600 text-teal-600`}>
-                        {data?.fullName?.charAt(0) || "?"}
-                      </div>
-                      {data.fullName}
-                    </TableCell>
-                    <TableCell>{data.teamLeaderName}</TableCell>
-                    <TableCell>{data.leaveStartDate}</TableCell>
-                    <TableCell>{data.leaveEndDate}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {(!leaveList || leaveList.length === 0) && (
-            <div className="p-8 text-center text-gray-500">
-              No Data available
-            </div>
-          )}
-        </div> */}
       </div>
     </>
   );

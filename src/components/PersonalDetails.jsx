@@ -62,9 +62,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       data: {
         email: data.email,
         dateOfBirthAd: formatDate(data.dob),
-        // dateOfBirthAd: data.dob,
         gender: data.gender,
-        // married: marriedstatus,
         married: Boolean(data.married),
         bloodGroup: data.bloodType,
         emergencyNumber: data.emergencyNumber,

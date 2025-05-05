@@ -1,5 +1,5 @@
 import { Controller } from "react-hook-form";
-import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+import { getLocalTimeZone, parseDate } from "@internationalized/date";
 import { DatePicker } from "@nextui-org/react";
 
 // Helper function to convert string date to CalendarDate
@@ -61,7 +61,6 @@ const DatepickerComponent = ({
   compareErrorMessage = "",
   placeholderDate = null,
   disabled,
-  formatDateFn = formatDate,
 }) => {
   const validationRules = {
     ...rules,

@@ -26,7 +26,6 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import TextAreaComp from "../../../components/TextAreaComp";
 
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +42,7 @@ const AttendanceRequest = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const navigate = useNavigate();
 
-  const { reset, handleSubmit, control } = useForm();
+  const { reset, handleSubmit } = useForm();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -80,8 +79,11 @@ const AttendanceRequest = () => {
     setCurrentPage(page);
   };
   const menu = LocalStorageUtil.getItem("menu");
-  /**To check create status */
-  const hasemployeecreateaccess = menu?.some((menu) =>
+  /**To Update Late Check   */
+  const hasAttendanceEditAccess = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 1)
+  );
+  const hasAttendanceViewAccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 1)
   );
   /**To read the Data */
@@ -89,15 +91,6 @@ const AttendanceRequest = () => {
   //   menu.actionList.some((action) => action.actionId === 2)
   // );
   const hasaccess = true;
-  const hasEmployeeEditAccess = true;
-  /**To check edit status */
-  // const hasEmployeeEditAccess = menu?.some((menu) =>
-  //   menu.actionList.some((action) => action.actionId === 3)
-  // );
-  /**To check Delete Access */
-  const hasEmployeeDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 4)
-  );
 
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
@@ -368,7 +361,7 @@ const AttendanceRequest = () => {
                           <div className="flex justify-center gap-4">
                             <FaCheck
                               className={`${
-                                hasEmployeeEditAccess
+                                hasAttendanceEditAccess
                                   ? "text-orange-500 hover:text-orange-700 cursor-pointer"
                                   : ""
                               }`}
@@ -379,7 +372,7 @@ const AttendanceRequest = () => {
                             />
                             <MdDelete
                               className={`${
-                                hasEmployeeDeleteAccess
+                                hasAttendanceEditAccess
                                   ? "text-red-500 cursor-pointer hover:text-red-700"
                                   : ""
                               }`}
@@ -410,7 +403,7 @@ const AttendanceRequest = () => {
                 <TableColumn>Actions</TableColumn>
               </TableHeader>
               <TableBody>
-                {lateCheckinData.map((late, index) => (
+                {lateCheckinData.map((late) => (
                   <TableRow
                     key={late.lateCheckInId}
                     className="hover:bg-gray-50">
@@ -441,7 +434,7 @@ const AttendanceRequest = () => {
                         <div className="flex justify-center gap-4">
                           <FaCheck
                             className={`${
-                              hasEmployeeEditAccess
+                              hasAttendanceEditAccess
                                 ? "text-orange-500 hover:text-orange-700 cursor-pointer"
                                 : ""
                             }`}
@@ -452,7 +445,7 @@ const AttendanceRequest = () => {
                           />
                           <MdDelete
                             className={`${
-                              hasEmployeeDeleteAccess
+                              hasAttendanceEditAccess
                                 ? "text-red-500 cursor-pointer hover:text-red-700"
                                 : ""
                             }`}
@@ -474,7 +467,7 @@ const AttendanceRequest = () => {
         {/* Small screens - Card-like view */}
         <div className="block md:hidden">
           <div className="space-y-4">
-            {lateCheckinData.map((late, index) => (
+            {lateCheckinData.map((late) => (
               <div
                 key={late.lateCheckInId}
                 className="border rounded-lg overflow-hidden shadow-sm">
@@ -526,30 +519,30 @@ const AttendanceRequest = () => {
                         size="sm"
                         color="success"
                         className={`${
-                          !hasEmployeeEditAccess
+                          !hasAttendanceEditAccess
                             ? "opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                         onPress={() =>
-                          hasEmployeeEditAccess &&
+                          hasAttendanceEditAccess &&
                           handleAction("Approve", late.lateCheckInId)
                         }
-                        disabled={!hasEmployeeEditAccess}>
+                        disabled={!hasAttendanceEditAccess}>
                         Approve
                       </Button>
                       <Button
                         size="sm"
                         color="danger"
                         className={`${
-                          !hasEmployeeDeleteAccess
+                          !hasAttendanceEditAccess
                             ? "opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                         onPress={() =>
-                          hasEmployeeDeleteAccess &&
+                          hasAttendanceEditAccess &&
                           handleAction("Reject", late.lateCheckInId)
                         }
-                        disabled={!hasEmployeeDeleteAccess}>
+                        disabled={!hasAttendanceEditAccess}>
                         Reject
                       </Button>
                     </div>

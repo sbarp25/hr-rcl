@@ -16,7 +16,6 @@ const EducationAction = ({ employeeData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [educationDocument, setEducationDocument] = useState(false);
   const { rclId } = useParams();
-  const educationalDetail = employeeData?.educationalDetails?.[0];
 
   useEffect(() => {
     if (employeeData?.educationalDetails) {

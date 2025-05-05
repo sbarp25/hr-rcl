@@ -1,4 +1,3 @@
-import { FaDiamond } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import { Divider } from "@nextui-org/react";
 import UnderlineComponent from "../../underlinecomponent";

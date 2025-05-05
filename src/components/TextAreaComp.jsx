@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { Textarea } from "@nextui-org/react";
 
@@ -10,7 +10,6 @@ const TextAreaComp = ({
   className,
   variant = "bordered",
   defaultValue,
-  errors = {}, // Add default empty object for errors
 }) => {
   const [screenWidth, setScreenWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1024

@@ -88,6 +88,15 @@ const Page = () => {
     { label: activeTab.name, href: "" },
   ];
   const navigate = useNavigate();
+
+  const menu = LocalStorageUtil.getItem("menu");
+
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+  const ApproveEKYE = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
   const hasaccess = true;
 
   useEffect(() => {
@@ -95,14 +104,6 @@ const Page = () => {
       navigate("/dashboard");
     }
   }, []);
-
-  const menu = LocalStorageUtil.getItem("menu");
-
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
-
   return (
     <div className="container">
       <BreadcrumbsComponent items={breadcrumbItems} />

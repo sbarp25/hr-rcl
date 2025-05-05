@@ -4,11 +4,12 @@ import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import ButtonComponent from "../../components/ButtonComp";
-import { Input, Avatar, Divider, Button } from "@nextui-org/react";
+import { Input, Avatar, Divider } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import UnderlineComponent from "../../components/underlinecomponent";
 import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import getInitials from "../../utils/getInitials";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
@@ -31,6 +32,9 @@ const Settings = () => {
 
   const breadcrumbItems = [{ label: "Setting", href: "/settings" }];
   const navigate = useNavigate();
+
+  const name = localStorage.getItem("fullName");
+  const menu = LocalStorageUtil.getItem("menu");
 
   const fetchProfilephoto = async () => {
     setIsLoading(true);
@@ -84,34 +88,38 @@ const Settings = () => {
   }, [imageURL]);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
+    if (editProfile) {
+      setIsLoading(true);
 
-    const formData = new FormData();
-    formData.append("profilePicture", data.profilePicture);
+      const formData = new FormData();
+      formData.append("profilePicture", data.profilePicture);
 
-    try {
-      const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/profilePicture/save`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      if (response.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        setValue(null);
-        navigate(0);
-      } else {
+      try {
+        const response = await axiosInstance.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/profilePicture/save`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        if (response.data?.responseCode === "201") {
+          toast.success(response?.data?.message);
+          setValue(null);
+          navigate(0);
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("You currently dont have access to this setting ");
     }
   };
 
@@ -183,12 +191,11 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const seeProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
+  const seeProfile = true;
+  // const seeProfile = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
   const editProfile = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
@@ -198,6 +205,13 @@ const Settings = () => {
   const deleteProfile = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+
+  useEffect(() => {
+    if (!seeProfile) {
+      navigate("/dashboard");
+    }
+  }, []);
+
   return (
     <div className=" overflow-x-auto mx-auto px-4 sm:px-6 lg:px-8">
       {/* Breadcrumbs */}
@@ -218,7 +232,13 @@ const Settings = () => {
           <div
             className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
             onClick={handleIconClick}>
-            <Avatar className="h-full w-full object-cover" src={imageURL} />
+            {imageURL ? (
+              <Avatar className="h-full w-full object-cover" src={imageURL} />
+            ) : (
+              <div className="flex items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-9xl ">
+                {getInitials(name)}
+              </div>
+            )}
             <Input
               type="file"
               {...register("profilePicture", {

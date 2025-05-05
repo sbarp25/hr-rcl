@@ -1,87 +1,43 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import InputComponent from "../../../components/InputComponent";
+import DatepickerComponent, {
+  formatDate,
+} from "../../../components/DatepickerComponent";
+import { useState } from "react";
+import TextAreaComp from "../../../components/TextAreaComp";
 import ButtonComponent from "../../../components/ButtonComp";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import SelectComp from "../../../components/Select";
-import DatepickerComponent, {
-  formatDate,
-} from "../../../components/DatepickerComponent";
-import TextAreaComp from "../../../components/TextAreaComp";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-const LeaveRequest = () => {
-  const { control, reset, setValue, handleSubmit, watch } = useForm({
-    defaultValues: {
-      title: "",
-      description: "",
-      leaveType: "",
-      teamlead: "",
-      fromDate: null,
-      ToDate: null,
-      isHalfDay: false,
-    },
-  });
+import { getIpAddress } from "../../../utils/getIpAddress";
 
+const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isToDateDisabled, setIsToDateDisabled] = useState(false);
-  const navigate = useNavigate();
-
+  const { control, handleSubmit, watch, reset } = useForm();
   const breadcrumbItems = [
     { label: "Leave", href: "" },
     { label: "Leave Request", href: "/Leave/Request" },
   ];
 
-  const LeaveType = [
-    { key: "CASUAL", label: "Casual Leave" },
-    { key: "VACATION", label: "Vacation" },
-    { key: "SICK", label: "Sick Leave" },
-    { key: "EXAM", label: "Exam Leave" },
-    { key: "UNPAID", label: "Unpaid Leave" },
-  ];
-  const leaveStatus = [
-    { key: "FULL_DAY", label: "Full day" },
-    { key: "FIRST_HALF", label: "First half" },
-    { key: "SECOND_HALF", label: "Second half" },
-  ];
-
   const fromDate = watch("fromDate");
-  const leaveCategory = watch("leaveStatus");
-
-  useEffect(() => {
-    if (leaveCategory === "FIRST_HALF" || leaveCategory === "SECOND_HALF") {
-      // Copy fromDate to ToDate and disable ToDate field
-      if (fromDate) {
-        setValue("ToDate", fromDate);
-      }
-      setIsToDateDisabled(true);
-    } else {
-      // Enable ToDate field when FULL_DAY is selected
-      setIsToDateDisabled(false);
-    }
-  }, [leaveCategory, fromDate, setValue]);
-
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
+    const ipAddress = await getIpAddress();
     setIsLoading(true);
 
     const today = new Date();
-
-    const applyleave = {
+    const applyWorkFromHome = {
       data: {
         title: data?.title,
-        leaveType: data?.leaveType,
-        leaveSubject: data?.description,
-        leaveCategory: data?.leaveStatus,
-        leaveStatus: "PENDING",
-        isHalfDay: data.isHalfDay,
-        leaveStartDate: formatDate(data.fromDate),
-        leaveEndDate: formatDate(data.ToDate),
+        reason: data?.description,
+        approvalStatus: "PENDING",
+        workFromHomeStartDate: formatDate(data.fromDate),
+        workFromHomeEndDate: formatDate(data.ToDate),
         requestDate: formatDate(today),
+        requestIp: ipAddress,
       },
     };
-
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -91,8 +47,8 @@ const LeaveRequest = () => {
       }
 
       const response = await axiosInstance.post(
-        "/api/leave/apply_leave",
-        applyleave,
+        "/api/work_from_home/apply_work_from_home",
+        applyWorkFromHome,
         {
           headers: {
             "Content-Type": "application/json",
@@ -103,7 +59,7 @@ const LeaveRequest = () => {
 
       if (response?.data?.responseCode === "200") {
         reset();
-        navigate("/dashboard");
+        navigate("/WFH/Status");
         toast.success(response?.data?.message);
       } else {
         const errorMessage = response?.data?.error || "Something went wrong";
@@ -120,26 +76,15 @@ const LeaveRequest = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
-  const hasaccess = true;
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, []);
-
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
       <div className="hidden md:block">
         <BreadcrumbsComponent items={breadcrumbItems} />
       </div>
       <div>
-        <h1 className="text-xl sm:text-md font-semibold">Leave Request</h1>
+        <h1 className="text-xl sm:text-md font-semibold">
+          Work From Home Request
+        </h1>
       </div>
 
       <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
@@ -168,36 +113,7 @@ const LeaveRequest = () => {
               }}
             />
           </div>
-
-          <div className="grid grid-cols-1 gap-y-4 sm:gap-y-6 md:grid-cols-2 md:gap-x-4 md:gap-y-8">
-            {/* Leave Type */}
-            <div>
-              <SelectComp
-                name="leaveType"
-                label="Leave Type"
-                control={control}
-                size="sm"
-                className="w-full"
-                rules={{ required: "Type of leave is required" }}
-                data={LeaveType}
-                valueKey="key"
-                labelKey="label"
-              />
-            </div>
-            <div>
-              <SelectComp
-                name="leaveStatus"
-                label="Leave Category"
-                control={control}
-                size="sm"
-                className="w-full"
-                rules={{ required: "Category of leave is required" }}
-                data={leaveStatus}
-                valueKey="key"
-                labelKey="label"
-              />
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* From Date */}
             <div>
               <DatepickerComponent
@@ -229,7 +145,6 @@ const LeaveRequest = () => {
                 label="To Date(A.D)"
                 size="sm"
                 className="w-full"
-                disabled={isToDateDisabled}
                 rules={{
                   required: "End date is required",
                   validate: (value) =>
@@ -267,7 +182,7 @@ const LeaveRequest = () => {
               type="submit"
               className="bg-black text-white w-full sm:w-auto"
               content={isLoading ? "Submitting..." : "Submit"}
-              disabled={isLoading}
+              //   disabled={isLoading}
               size="sm"
             />
           </div>
@@ -277,4 +192,4 @@ const LeaveRequest = () => {
   );
 };
 
-export default LeaveRequest;
+export default RequestWorkFromHome;

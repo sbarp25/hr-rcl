@@ -1,5 +1,3 @@
-import React from "react";
-
 const EkyeDetailsComponent = ({ label, placeholder }) => {
   return (
     <div>

@@ -8,9 +8,7 @@ import {
 } from "@nextui-org/table";
 
 const WorkFromHome = () => {
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
-  const WorkfromHomeDate = []; // This is your empty data array
+  const WorkfromHomeDate = [];
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };

@@ -21,59 +21,72 @@ const Bank = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const BankDetails = {
-      data: {
-        accountNumber: data.accountNumber,
-        accountName: data.accountName,
-        accountType: data.accountType,
-        bankName: data.bankName,
-        branchName: data.branchName,
-      },
-    };
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication token is missing.");
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await axiosInstance.post(
-        "/api/v1/banking/bank_details_create",
-        BankDetails,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+    if (AddBank) {
+      const BankDetails = {
+        data: {
+          accountNumber: data.accountNumber,
+          accountName: data.accountName,
+          accountType: data.accountType,
+          bankName: data.bankName,
+          branchName: data.branchName,
+        },
+      };
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          toast.error("Authentication token is missing.");
+          setIsLoading(false);
+          return;
         }
-      );
 
-      if (response?.data?.responseCode === "200") {
-        reset();
-        navigate("/settings");
-        toast.success(response?.data?.message);
-      } else {
+        const response = await axiosInstance.post(
+          "/api/v1/banking/bank_details_create",
+          BankDetails,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response?.data?.responseCode === "200") {
+          reset();
+          navigate("/settings");
+          toast.success(response?.data?.message);
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
+          error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    } else toast.error("You currently dont have access to this setting");
   };
 
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
+  const seeAddBank = true;
+  6;
+  // const seeAddBank = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+  const AddBank = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+
+  useEffect(() => {
+    if (!seeAddBank) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <>
       <div className="flex justify-between mb-8 text-center">

@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import After from "../assets/svgs/After.svg";
 import Before from "../assets/svgs/Before.svg";
 
@@ -56,12 +55,6 @@ const FormStepper = ({ steps, currentStep, onStepClick }) => {
       </div>
     </div>
   );
-};
-
-FormStepper.propTypes = {
-  steps: PropTypes.arrayOf(PropTypes.string).isRequired,
-  currentStep: PropTypes.number.isRequired,
-  onStepClick: PropTypes.func,
 };
 
 export default FormStepper;

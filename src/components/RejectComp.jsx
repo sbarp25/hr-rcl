@@ -35,15 +35,15 @@ const RejectComp = ({ employeeData }) => {
     menu.actionList.some((action) => action.actionId === 18)
   );
   const onReject = async (data) => {
-    const rejectData = {
-      userId: rclId,
-      status: "REJECTED",
-      remark: data.reject,
-    };
+    if (hasApproveAccess) {
+      const rejectData = {
+        userId: rclId,
+        status: "REJECTED",
+        remark: data.reject,
+      };
 
-    try {
-      setIsLoading(true);
-      if (hasApproveAccess) {
+      try {
+        setIsLoading(true);
         const accessToken = localStorage.getItem("accessToken");
         const response = await axiosInstance.post(
           "/api/v1/rejected/users",
@@ -65,16 +65,16 @@ const RejectComp = ({ employeeData }) => {
             "Something went wrong";
           toast.error(errorMessage);
         }
-      } else {
-        toast.reject("Access Denied");
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.reject("Access Denied");
     }
   };
 

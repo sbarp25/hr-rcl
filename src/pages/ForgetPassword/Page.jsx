@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../components/InputComponent";
 import ButtonComponent from "../../components/ButtonComp";
 import axios from "axios";
-import GoBack from "../../components/GoBack";
-import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ForgetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +46,7 @@ const ForgetPassword = () => {
 
   return (
     <div className="pt-10  bg-gray-200 h-screen">
-      <GoBack />
+      {/* <GoBack /> */}
       <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
         {/* Left Side - Logo and Tagline */}
         <div className="hidden md:flex flex-col items-center justify-center bg-bgprimary  rounded-3xl">
@@ -82,12 +81,15 @@ const ForgetPassword = () => {
                 },
               }}
             />
-            <div className=" flex gap-4">
+            <div className=" flex justify-between items-center gap-4">
               <ButtonComponent
                 type="submit"
                 content="Send Reset Link"
                 className="bg-black text-white "
               />
+              <Link to="/login" className="text-xs underline ">
+                Return to Login Screen?
+              </Link>
             </div>
           </form>
         </div>

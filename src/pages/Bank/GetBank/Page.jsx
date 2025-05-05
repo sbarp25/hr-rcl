@@ -41,15 +41,28 @@ const GetBankDetails = () => {
   }, []);
 
   const navigateTo = () => {
-    navigate("/Bank/AddBank");
+    if (AddBankDetailsAccess) {
+      navigate("/Bank/AddBank");
+    } else {
+      toast.error("You currently Don't have access to this Setting");
+    }
   };
 
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
+  const seeBankDetailsAccess = true;
+  // const seeBankDetailsAccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+  const AddBankDetailsAccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+  useEffect(() => {
+    if (!seeBankDetailsAccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <div className="p-6">
       <div className="flex justify-between items-center">

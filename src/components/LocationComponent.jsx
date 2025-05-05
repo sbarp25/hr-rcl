@@ -60,18 +60,7 @@ const LocationComponent = () => {
     };
   }, []);
 
-  return (
-    <div></div>
-    // <div className="hidden">
-    //   {/* Hidden component that handles location tracking */}
-    //   {accuracy !== null && accuracy > 50 && (
-    //     <div className="sr-only" aria-live="polite">
-    //       Location accuracy is currently {accuracy.toFixed(1)} meters. Trying to
-    //       improve accuracy...
-    //     </div>
-    //   )}
-    // </div>
-  );
+  return <div></div>;
 };
 
 export default LocationComponent;

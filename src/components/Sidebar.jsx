@@ -1,6 +1,6 @@
 import Logo from "../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm } from "react-icons/io5";
 import { FcLeave } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import axiosInstance from "../lib/axios-Instance";
+import getInitials from "../utils/getInitials";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -112,17 +113,15 @@ const Sidebar = () => {
         { label: "Leave Request", to: "/Leave/Request", view: true },
       ],
     },
-    // {
-    //   icon: FcLeave,
-    //   label: "Salary",
-    //   view: true,
-    //   children: [
-    //     { label: "Salary Details", to: "/Salary", view: true },
-    //     { label: "Salary Breakdown", to: "/salaryEdit", view: true },
-    //     { label: "Advance", to: "/AdvanceSalary", view: true },
-    //   ],
-    // },
-
+    {
+      icon: MdMapsHomeWork,
+      label: "Work From Home",
+      view: true,
+      children: [
+        { label: "WFH Status", to: "/WFH/Status", view: true },
+        { label: "WFH Request", to: "/WFH", view: true },
+      ],
+    },
     {
       icon: IoIosPeople,
       label: "Ekye",
@@ -196,6 +195,7 @@ const Sidebar = () => {
   useEffect(() => {
     fetchProfilephoto();
   }, []);
+
   return (
     <>
       {isLoading && <Loader />}
@@ -273,7 +273,14 @@ const Sidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              <Avatar size="lg" src={imageURL} />
+              {imageURL ? (
+                <Avatar className="h-full w-full object-cover" src={imageURL} />
+              ) : (
+                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                  {getInitials(username)}
+                </div>
+              )}
+
               {isSidebarExpanded && (
                 <div>
                   <p className="text-xl" title={username}>

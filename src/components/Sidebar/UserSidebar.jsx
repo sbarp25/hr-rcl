@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../assets/Images/Logo.png";
 import { MdDashboard } from "react-icons/md";
 import Loader from "../Loader";
 import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { Avatar } from "@nextui-org/avatar";
 import axiosInstance from "../../lib/axios-Instance";
@@ -12,9 +12,10 @@ import { toast } from "react-toastify";
 import { GoGear } from "react-icons/go";
 import { CiLogout } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
-import { FaCoins } from "react-icons/fa6";
 import { IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
+import getInitials from "../../utils/getInitials";
+import axios from "axios";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -23,7 +24,7 @@ const UserSidebar = () => {
 
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
@@ -48,12 +49,6 @@ const UserSidebar = () => {
       to: "/settings/Change",
       view: true,
     },
-    // {
-    //   icon: FaCoins,
-    //   label: "Salary Details",
-    //   to: "/dashboard",
-    //   view: true,
-    // },
     {
       icon: CiBank,
       label: "Bank Details",
@@ -156,7 +151,6 @@ const UserSidebar = () => {
                         : "hover:bg-gray-700"
                     }`}
                     onClick={() => service.children && toggleDropdown(index)}>
-                    {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
                     <service.icon className="text-2xl" />
                     {isSidebarExpanded && (
                       <span className="text-base">{service.label}</span>
@@ -198,7 +192,13 @@ const UserSidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              <Avatar size="lg" src={imageURL} />
+              {imageURL ? (
+                <Avatar className="h-full w-full object-cover" src={imageURL} />
+              ) : (
+                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                  {getInitials(username)}
+                </div>
+              )}
               {isSidebarExpanded && (
                 <div>
                   <p className="text-xl" title={username}>

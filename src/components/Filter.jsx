@@ -4,7 +4,6 @@ import axiosInstance from "../lib/axios-Instance";
 import { Select, SelectItem } from "@nextui-org/select";
 import {
   Button,
-  DatePicker,
   Drawer,
   DrawerContent,
   DrawerHeader,
@@ -12,7 +11,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
-import SelectComp from "./Select";
+
 import { useForm } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 
@@ -58,10 +57,7 @@ const Filter = ({
   const handleChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
-  const sortData = [
-    { key: "descending ", label: "Descending Order" },
-    { key: "ascending ", label: "Ascending Order" },
-  ];
+
   /**Department Fetch */
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -139,13 +135,13 @@ const Filter = ({
     }
 
     if (formData.department) {
-      filterCriteria.filterCriteria[fieldNames.departmentField] = parseInt(
+      filterCriteria.filterCriteria[fieldNames?.departmentField] = parseInt(
         formData.department || ""
       );
     }
 
     if (formData.position) {
-      filterCriteria.filterCriteria[fieldNames.positionField] = parseInt(
+      filterCriteria.filterCriteria[fieldNames?.positionField] = parseInt(
         formData.position || ""
       );
     }
@@ -153,8 +149,6 @@ const Filter = ({
       pageIndex: 1,
       pageSize: 10,
       filterCriteria: filterCriteria,
-      // sortCriteria:{
-      // }
     };
 
     try {
@@ -217,14 +211,6 @@ const Filter = ({
                   control={control}
                   onChange={(date) => handleChange("toDate", date)}
                 />
-
-                {/* <DatePicker
-                  variant="bordered"
-                  isRequired
-                  className="w-full"
-                  label="To Date"
-                  placeholder="Select to date"
-                /> */}
               </div>
 
               <Select
@@ -270,14 +256,6 @@ const Filter = ({
                   ))
                 )}
               </Select>
-              {/* <SelectComp
-                control={control}
-                name="sort"
-                label="Sort"
-                data={sortData}
-                valueKey="key"
-                labelKey="label"
-              /> */}
 
               <div className="flex justify-between">
                 <Button

@@ -5,7 +5,7 @@ import WorkFromHome from "../../components/WorkFromHome.jsx";
 import Leave from "../../components/Leave.jsx";
 import CheckIn from "../../components/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Page = () => {

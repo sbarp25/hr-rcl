@@ -7,14 +7,7 @@ import Loader from "./Loader";
 import { useForm, Controller } from "react-hook-form";
 import InputComponent from "./InputComponent";
 
-const AddressDetails = ({
-  formData,
-  handleChange,
-  handleNestedChange,
-  handleNext,
-  handleBack,
-  setFormData,
-}) => {
+const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -32,8 +25,6 @@ const AddressDetails = ({
     setValue,
     formState: { errors },
     watch,
-    trigger,
-    reset,
     clearErrors,
   } = useForm({
     defaultValues: {

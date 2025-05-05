@@ -1,10 +1,7 @@
-import Logo from "../assets/Images/Logo.png";
-import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { IoAlarm } from "react-icons/io5";
 import { FcLeave } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
-import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
@@ -12,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from "react-toastify";
 import axios from "axios";
-import Loader from "../components/Loader";
+
 import {
   Drawer,
   DrawerContent,
@@ -22,15 +19,15 @@ import {
   Avatar,
   Input,
   Tooltip,
-  Button,
 } from "@nextui-org/react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import CheckIn from "./CheckIn";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import axiosInstance from "../lib/axios-Instance";
+import getInitials from "../utils/getInitials";
 
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
@@ -38,9 +35,6 @@ const MobileNavigation = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
@@ -144,10 +138,6 @@ const MobileNavigation = () => {
     },
   ];
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
-
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
@@ -212,10 +202,13 @@ const MobileNavigation = () => {
     fetchProfilephoto();
   }, []);
 
+  const handleProfileChange = () => {
+    navigate("/settings");
+  };
   return (
     <>
       <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           <button
             onClick={onOpen}
             className="p-2 rounded-lg hover:bg-gray-600 transition">
@@ -223,22 +216,24 @@ const MobileNavigation = () => {
           </button>
           <Input
             isClearable
-            className="max-w-full mb-4 mt-2"
+            className="max-w-full  mt-2"
             placeholder="Search in emails"
             radius="lg"
             variant="underlined"
-            // startContent={
-            //   <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
-            // }
           />
         </div>
         <Tooltip content={email}>
-          <Avatar
-            className={"mt-1"}
-            size="md"
-            // onClick={handleProfileChange}
-            src={imageURL}
-          />
+          <div
+            className="h-10 w-10 overflow-hidden rounded-full"
+            onClick={handleProfileChange}>
+            {imageURL ? (
+              <Avatar className="h-full w-full object-cover" src={imageURL} />
+            ) : (
+              <div className="flex rounded-full items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-lg font-medium">
+                {getInitials(username)}
+              </div>
+            )}
+          </div>
         </Tooltip>
       </div>
 

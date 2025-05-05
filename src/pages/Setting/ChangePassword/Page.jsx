@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputComponent from "../../../components/InputComponent";
 import { useForm } from "react-hook-form";
 import { Button } from "@nextui-org/react";
@@ -6,6 +6,8 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { GoDotFill } from "react-icons/go";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { useNavigate } from "react-router-dom";
+
 const ChangePassword = () => {
   const {
     control,
@@ -14,41 +16,45 @@ const ChangePassword = () => {
     watch,
   } = useForm();
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const password = watch("password");
   const onSubmit = async (data) => {
-    try {
-      setIsLoading(true);
-      const resetData = {
-        data: {
-          currentPassword: data.oldpassword,
-          newPassword: data.password,
-        },
-      };
-      const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/change-password`,
-        resetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
+    if (changePasswordAccess) {
+      try {
+        setIsLoading(true);
+        const resetData = {
+          data: {
+            currentPassword: data.oldpassword,
+            newPassword: data.password,
           },
+        };
+        const response = await axiosInstance.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/change-password`,
+          resetData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data?.responseCode === "200") {
+          toast.success(response?.data?.message);
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
-      );
-      if (response.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-      } else {
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("You currently dont have access to this setting ");
     }
   };
   const menu = LocalStorageUtil.getItem("menu");
@@ -57,6 +63,17 @@ const ChangePassword = () => {
   const seeEmployee = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+  const hasaccess = true;
+
+  const changePasswordAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
+
   return (
     <div className="mx-auto bg-white   rounded-xl shadow-lg">
       <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800 ">
@@ -157,7 +174,12 @@ const ChangePassword = () => {
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={
+              isLoading ||
+              errors.password ||
+              errors.confirmPassword ||
+              !changePasswordAccess
+            }
             className={`w-full py-3 rounded-lg text-white font-semibold transition duration-200 ${
               isLoading || errors.password || errors.confirmPassword
                 ? "bg-gray-400 cursor-not-allowed"

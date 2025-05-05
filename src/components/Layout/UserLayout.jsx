@@ -1,4 +1,3 @@
-import React from "react";
 import UserSidebar from "../Sidebar/UserSidebar";
 
 const UserLayout = ({ className, children }) => {

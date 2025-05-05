@@ -17,7 +17,7 @@ const Attendance = () => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */

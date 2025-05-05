@@ -187,6 +187,7 @@ const Page = () => {
   const seeEmployee = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Notice Heading section */}

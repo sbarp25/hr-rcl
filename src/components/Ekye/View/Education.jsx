@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Divider, Form } from "@nextui-org/react";
-import { FaDiamond, FaRegEye } from "react-icons/fa6";
+import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import RejectComp from "../../RejectComp";
 import { toast } from "react-toastify";
@@ -51,7 +51,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
           toast.error(response?.data?.data?.message);
         }
       } else {
-        toast.error("Access denied");
+        toast.error("You currently dont have access to this setting ");
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong");

@@ -124,9 +124,16 @@ const ViewEKYE = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
+  const seeEKYEAccess = true;
+  // const seeEKYEAccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+
+  useEffect(() => {
+    if (!seeEKYEAccess) {
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <div className="container">
       {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}

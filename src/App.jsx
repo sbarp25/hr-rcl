@@ -43,6 +43,8 @@ import ViewEKYE from "./pages/Setting/ViewEKYE/Page.jsx";
 import UserLayout from "./components/Layout/UserLayout.jsx";
 import Bank from "./pages/Bank/Page.jsx";
 import GetBankDetails from "./pages/Bank/GetBank/Page.jsx";
+import RequestWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/Page.jsx";
+import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -100,6 +102,9 @@ function App() {
         </AuthLayout>
       ) : isUserRoutes ? (
         <UserLayout>
+          <div className="flex md:hidden mb-1">
+            <MobileNavigation />
+          </div>
           <Routes>
             <Route element={<PrivateRoutes />}>
               <Route path="/settings" element={<Settings />} />
@@ -158,6 +163,8 @@ function App() {
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
               <Route path="/View/:rclId" element={<View />} />
+              <Route path="/WFH" element={<RequestWorkFromHome />} />
+              <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
             </Route>
           </Routes>
         </Layout>

@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
@@ -15,9 +9,8 @@ import InputComponent from "./InputComponent";
 import { useForm, Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
 import { CiImageOn } from "react-icons/ci";
-import { IoMdImage } from "react-icons/io";
+
 const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
@@ -194,32 +187,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     }
   };
 
-  // // Custom file input handler
-  // const handleFileChange = (e, fieldName) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setValue(fieldName, file, { shouldValidate: true });
-
-  //     // Reset file view states
-  //     if (fieldName === "panCardDocumentFile") {
-  //       setPhotoPAN(false);
-  //     } else if (fieldName === "citizenshipFrontDocumentFile") {
-  //       setCitizenshipFront(false);
-  //     } else if (fieldName === "citizenshipBackDocumentFile") {
-  //       setCitizenshipBack(false);
-  //     }
-
-  //     // Update formData to maintain state consistency
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       documents: {
-  //         ...prev.documents,
-  //         [fieldName]: file,
-  //       },
-  //     }));
-  //   }
-  // };
-
   const validateFile = (file, existingUrl) => {
     // If we already have a file URL from the API, skip validation
     if (existingUrl) return true;
@@ -251,13 +218,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           className="text-green-500 hover:text-green-700 text-sm">
           View {label}
         </p>
-        {/* <Button onPress={onOpen}>Open Modal</Button> */}
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          // size="5xl"
-          // placement="bottom"
-          //  backdrop="blur">
           isDismissable={true}
           isKeyboardDismissDisabled={false}>
           <ModalContent>
@@ -272,13 +235,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             )}
           </ModalContent>
         </Modal>
-        {/* <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-green-500 hover:text-green-700 text-sm">
-          View {label}
-        </a> */}
       </div>
     );
   };

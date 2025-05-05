@@ -95,7 +95,7 @@ const LeaveStatus = () => {
   // }, []);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasLeaveApproveAccess = false;
+  const hasLeaveApproveAccess = true;
   const hasLeaveViewAccess = false;
 
   const handleApplyFilters = (result) => {

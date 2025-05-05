@@ -40,8 +40,6 @@ const Page = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const hasViewAccess = true;
-  const hasActionAccess = true;
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -102,12 +100,20 @@ const Page = () => {
   }, [currentPage, ekyeDashboardDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasaccess = true;
 
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
-  );
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+  const hasaccess = true;
+  const hasViewAccess = true;
+  const hasActionAccess = true;
+  // const hasViewAccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+  // const hasActionAccess = menu?.some((menu) =>
+  //   menu?.actionList?.some((action) => action.actionId === 2)
+  // );
+
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
