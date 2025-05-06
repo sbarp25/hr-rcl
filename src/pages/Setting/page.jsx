@@ -191,13 +191,12 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  /**To check Employee see status */
   const seeProfile = true;
   // const seeProfile = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
+  //   menu?.actionList?.some((action) => action.actionId === 64)
   // );
   const editProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actionList?.some((action) => action.actionId === 63)
   );
   const createProfile = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 50)

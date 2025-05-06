@@ -81,57 +81,63 @@ const LeaveRequest = () => {
         requestDate: formatDate(today),
       },
     };
-
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication token is missing.");
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await axiosInstance.post(
-        "/api/leave/apply_leave",
-        applyleave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+    if (hasRequestaccess) {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          toast.error("Authentication token is missing.");
+          setIsLoading(false);
+          return;
         }
-      );
 
-      if (response?.data?.responseCode === "200") {
-        reset();
-        navigate("/dashboard");
-        toast.success(response?.data?.message);
-      } else {
-        const errorMessage = response?.data?.error || "Something went wrong";
+        const response = await axiosInstance.post(
+          "/api/leave/apply_leave",
+          applyleave,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response?.data?.responseCode === "200") {
+          reset();
+          navigate("/dashboard");
+          toast.success(response?.data?.message);
+        } else {
+          const errorMessage = response?.data?.error || "Something went wrong";
+          console.log(errorMessage);
+          toast.error(errorMessage);
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
         console.log(errorMessage);
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
 
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 60)
   );
-  const hasaccess = true;
+  const hasRequestaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 59)
+  );
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">

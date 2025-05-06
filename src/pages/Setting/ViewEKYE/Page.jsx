@@ -124,10 +124,10 @@ const ViewEKYE = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEKYEAccess = true;
-  // const seeEKYEAccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
+  // const seeEKYEAccess = true;
+  const seeEKYEAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 68)
+  );
 
   useEffect(() => {
     if (!seeEKYEAccess) {

@@ -57,22 +57,22 @@ const MobileNavigation = () => {
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeRole = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 52)
   );
   const seeAttendance = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeHandbook = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeNotices = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeLeave = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
 
   const navbarElements = [
@@ -105,7 +105,7 @@ const MobileNavigation = () => {
           view: seeDepartment,
         },
         { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: true },
+        { label: "Roles", to: "/master-data/Roles", view: seeRole },
       ],
     },
     { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },

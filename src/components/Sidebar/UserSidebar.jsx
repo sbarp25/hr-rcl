@@ -16,6 +16,7 @@ import { IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -29,31 +30,53 @@ const UserSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  const seeProfile = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 64)
+  );
+  const seeDashboard = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 2)
+  );
+  const seeEKYE = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 68)
+  );
+  const seeSecurity = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 72)
+  );
+  const seeBank = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 76)
+  );
   const navbarElements = [
-    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
+    {
+      icon: MdDashboard,
+      label: "Dashboard",
+      to: "/dashboard",
+      view: seeDashboard,
+    },
     {
       icon: IoPersonSharp,
       label: "Profile",
       to: "/settings",
-      view: true,
+      view: seeProfile,
     },
     {
       icon: IoIosPeople,
       label: "My EKYE",
       to: "/settings/ViewEKYE",
-      view: true,
+      view: seeEKYE,
     },
     {
       icon: IoShieldCheckmark,
       label: "Security",
       to: "/settings/Change",
-      view: true,
+      view: seeSecurity,
     },
     {
       icon: CiBank,
       label: "Bank Details",
       to: "/Bank",
-      view: true,
+      view: seeBank,
     },
   ];
   const toggleDropdown = (index) => {

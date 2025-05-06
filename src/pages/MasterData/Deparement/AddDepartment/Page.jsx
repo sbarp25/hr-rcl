@@ -62,6 +62,25 @@ const AddDepartment = () => {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
+  /**To fetch Team lead */
+  const fetchTeamLead = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        "/api/v1/departments/get_all_users_name_id"
+      );
+      if (response.data.responseCode === "200") {
+        setTeamLead(response.data.datalist);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchTeamLead();
+  }, []);
 
   const onSubmit = async (data) => {
     const AddDepartment = {

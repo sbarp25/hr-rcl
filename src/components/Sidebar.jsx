@@ -38,13 +38,12 @@ const Sidebar = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  /**To check Employee see status */
   const seeEmployee = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
   const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 6)
+    menu?.actionList?.some((action) => action.actionId === 2)
   );
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
@@ -52,33 +51,61 @@ const Sidebar = () => {
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeRole = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 52)
+  );
+  const seeMasterData = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 14)
   );
   const seeAttendance = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 6)
+  );
+  const seeMyAttendance = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 36)
+  );
+  const seeLateCheckIn = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 40)
   );
   const seeHandbook = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 20)
   );
   const seeNotices = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 24)
   );
   const seeLeave = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList?.some((action) => action.actionId === 28)
+  );
+
+  const seeLeaveStatus = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 56)
+  );
+  const seeLeaveRequest = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 60)
+  );
+  const seeEKYE = menu?.some((menu) =>
+    menu.actionList?.some((action) => action.actionId === 32)
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
-    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
+    {
+      icon: MdDashboard,
+      label: "Dashboard",
+      to: "/dashboard",
+      view: seeDashboard,
+    },
     {
       icon: IoAlarm,
       label: "Attendance",
-      view: true,
+      view: seeAttendance,
       children: [
-        { label: "My Attendence", to: "/Attendance", view: true },
-        { label: "Late Checkin ", to: "/Attendance/Request", view: true },
+        { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        {
+          label: "Late Checkin ",
+          to: "/Attendance/Request",
+          view: seeLateCheckIn,
+        },
       ],
     },
     {
@@ -91,7 +118,7 @@ const Sidebar = () => {
     {
       icon: BiData,
       label: "Master Data",
-      view: true,
+      view: seeMasterData,
       children: [
         {
           label: "Department",
@@ -99,18 +126,24 @@ const Sidebar = () => {
           view: seeDepartment,
         },
         { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: true },
+        { label: "Roles", to: "/master-data/Roles", view: seeRole },
       ],
     },
-    { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: true },
+    {
+      icon: FaBookBookmark,
+      label: "HandBook",
+      to: "/handbook",
+      view: seeHandbook,
+    },
+    { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",
-      view: true,
+      // view: seeLeave,
+      view: seeLeave,
       children: [
-        { label: "Leave Status", to: "/Leave/Status", view: true },
-        { label: "Leave Request", to: "/Leave/Request", view: true },
+        { label: "Leave Status", to: "/Leave/Status", view: seeLeaveStatus },
+        { label: "Leave Request", to: "/Leave/Request", view: seeLeaveRequest },
       ],
     },
     {
@@ -126,7 +159,7 @@ const Sidebar = () => {
       icon: IoIosPeople,
       label: "Ekye",
       to: "/AdminEkye",
-      view: true,
+      view: seeEKYE,
     },
   ];
 

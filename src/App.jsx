@@ -45,6 +45,7 @@ import Bank from "./pages/Bank/Page.jsx";
 import GetBankDetails from "./pages/Bank/GetBank/Page.jsx";
 import RequestWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/Page.jsx";
 import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx";
+import ViewWorkFromHome from "./pages/WorkFromHome/ViewWorkFromHome/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -165,6 +166,7 @@ function App() {
               <Route path="/View/:rclId" element={<View />} />
               <Route path="/WFH" element={<RequestWorkFromHome />} />
               <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
+              <Route path="/WRH/view/:rclId" element={<ViewWorkFromHome />} />
             </Route>
           </Routes>
         </Layout>

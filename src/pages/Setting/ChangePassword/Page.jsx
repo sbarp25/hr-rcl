@@ -18,6 +18,7 @@ const ChangePassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const password = watch("password");
+
   const onSubmit = async (data) => {
     if (changePasswordAccess) {
       try {
@@ -60,13 +61,12 @@ const ChangePassword = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 72)
   );
-  const hasaccess = true;
 
   const changePasswordAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actionList?.some((action) => action.actionId === 71)
   );
   useEffect(() => {
     if (!hasaccess) {

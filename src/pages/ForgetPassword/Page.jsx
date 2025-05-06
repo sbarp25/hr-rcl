@@ -30,6 +30,8 @@ const ForgetPassword = () => {
       );
       if (response.data?.responseCode === "200") {
         toast.success(response?.data?.message);
+      } else if (response?.data?.error?.errorList?.[0]?.errorCode === 200) {
+        toast.success(response?.data?.error?.errorList?.[0]?.errorMessage);
       } else {
         const errorMessage =
           response?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -87,8 +89,21 @@ const ForgetPassword = () => {
                 content="Send Reset Link"
                 className="bg-black text-white "
               />
-              <Link to="/login" className="text-xs underline ">
-                Return to Login Screen?
+              <Link
+                to="/login"
+                className="text-sm font-semibold text-slate-600 hover:text-slate-800 transition-colors duration-200 flex items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Return to Login
               </Link>
             </div>
           </form>

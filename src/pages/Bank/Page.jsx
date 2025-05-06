@@ -73,13 +73,13 @@ const Bank = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeAddBank = true;
-  6;
-  // const seeAddBank = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
+  // const seeAddBank = true;
+
+  const seeAddBank = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 76)
+  );
   const AddBank = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actionList?.some((action) => action.actionId === 75)
   );
 
   useEffect(() => {

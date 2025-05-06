@@ -95,9 +95,19 @@ const LeaveStatus = () => {
   // }, []);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasLeaveApproveAccess = true;
-  const hasLeaveViewAccess = false;
+  const hasLeaveApproveAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 57)
+  );
 
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 56)
+  );
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   const handleApplyFilters = (result) => {
     if (result.data) {
       // Filter component returned filtered data

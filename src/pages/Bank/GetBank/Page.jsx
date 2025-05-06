@@ -51,12 +51,11 @@ const GetBankDetails = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeBankDetailsAccess = true;
-  // const seeBankDetailsAccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
+  const seeBankDetailsAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 76)
+  );
   const AddBankDetailsAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actionList?.some((action) => action.actionId === 75)
   );
   useEffect(() => {
     if (!seeBankDetailsAccess) {

@@ -26,6 +26,7 @@ import DropDownComp from "../../../components/Dropdown";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/TextAreaComp";
+import axios from "axios";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -92,8 +93,8 @@ const WorkFromHomeStatus = () => {
     setIsLoading(true);
     const updateWFH = {
       data: {
-        leaveId: selectedWorkFromHome.leaveId,
-        approvalStatus: "APPROVED",
+        workFromHomeId: selectedWorkFromHome.workFromHomeId,
+        isApproved: true,
       },
     };
 
@@ -138,8 +139,8 @@ const WorkFromHomeStatus = () => {
     setIsLoading(true);
     const RejectLeave = {
       data: {
-        leaveId: selectedWorkFromHome.leaveId,
-        approvalStatus: "REJECTED",
+        workFromHomeId: selectedWorkFromHome.workFromHomeId,
+        isApproved: false,
         remark: formData.reason,
       },
     };
@@ -280,7 +281,7 @@ const WorkFromHomeStatus = () => {
                         key={item.rclId}
                         className="h-14 border-b-2 border-gray-300">
                         <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                        <TableCell>{item?.userName || "N/A"}</TableCell>
+                        <TableCell>{item?.fullName || "N/A"}</TableCell>
                         <TableCell>{item?.requestDate || "N/A"}</TableCell>
 
                         <TableCell>
@@ -355,7 +356,7 @@ const WorkFromHomeStatus = () => {
                       <TableRow
                         key={Math.random()}
                         className="hover:bg-gray-50">
-                        <TableCell>{item?.userName}</TableCell>
+                        <TableCell>{item?.fullName}</TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span>{item?.workFromHomeStartDate || "N/A"}</span>
@@ -414,7 +415,7 @@ const WorkFromHomeStatus = () => {
                     <div
                       className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
                       onClick={() => toggleExpandedRow(WFH.rclId)}>
-                      <div className="font-medium">{WFH.userName || "N/A"}</div>
+                      <div className="font-medium">{WFH.fullName || "N/A"}</div>
                       <div className="flex items-center gap-2">
                         <div
                           className={`${getStatusClass(
