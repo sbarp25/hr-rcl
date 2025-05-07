@@ -191,10 +191,10 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  const seeProfile = true;
-  // const seeProfile = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 64)
-  // );
+  // const seeProfile = true;
+  const seeProfile = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 64)
+  );
   const editProfile = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 63)
   );

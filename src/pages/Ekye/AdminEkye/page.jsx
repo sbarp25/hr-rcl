@@ -101,19 +101,27 @@ const Page = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
-  const hasaccess = true;
-  const hasViewAccess = true;
-  const hasActionAccess = true;
-  // const hasViewAccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
-  // const hasActionAccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
-  // );
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 32)
+  );
 
+  const hasViewAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 32)
+  );
+  const hasActionAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 32)
+  );
+
+  const hasUpdateAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 33)
+  );
+  const hasCreateAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 31)
+  );
+  const hasDeleteAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 34)
+  );
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

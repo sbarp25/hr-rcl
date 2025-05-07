@@ -650,6 +650,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           <TimeInput
             label="Expected Checking Time"
             value={selectedTime}
+            variant="bordered"
             onChange={setSelectedTime}
             minValue={new Time(10)}
             maxValue={new Time(16)}

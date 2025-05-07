@@ -188,15 +188,15 @@ const EditEmployees = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 11)
   );
-  const hasaccess = true;
+
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   return (
     <div className="px-4 flex flex-col space-y-4">
       {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}

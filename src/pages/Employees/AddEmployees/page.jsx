@@ -127,68 +127,70 @@ const AddEmployeeForm = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    const sanitizeddepartmentId = data.department.replace(/[^0-9]/g, "");
-    const sanitizedpositionId = data.position.replace(/[^0-9]/g, "");
-    const sanitizedroleId = data.roles.replace(/[^0-9]/g, "");
-    const formatDate = (date) =>
-      date
-        ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0]
-        : null;
-    const newEmployee = {
-      data: {
-        fullName: data.fullname,
-        phone: data.phone,
-        email: data.email,
-        departmentId: sanitizeddepartmentId,
-        positionId: sanitizedpositionId,
-        password: "Xlsnx$c$wi&3MptW$",
-        roleId: sanitizedroleId,
-        performEkye: data.performEKYC,
-        grossSalary: data.salary,
-        hiringDate: formatDate(data.fromDate),
-        isTeamLead: data.isteamLead,
-        isAssociateTeamLead: data.isAssociateteamLead,
-      },
-    };
-    // console.log("Hiring Date", data.HireDate);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.post(
-        "/api/v1/auth/register",
-        newEmployee,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+    if (hasaccess) {
+      setIsLoading(true);
+      const sanitizeddepartmentId = data.department.replace(/[^0-9]/g, "");
+      const sanitizedpositionId = data.position.replace(/[^0-9]/g, "");
+      const sanitizedroleId = data.roles.replace(/[^0-9]/g, "");
+      const formatDate = (date) =>
+        date
+          ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0]
+          : null;
+      const newEmployee = {
+        data: {
+          fullName: data.fullname,
+          phone: data.phone,
+          email: data.email,
+          departmentId: sanitizeddepartmentId,
+          positionId: sanitizedpositionId,
+          password: "Xlsnx$c$wi&3MptW$",
+          roleId: sanitizedroleId,
+          performEkye: data.performEKYC,
+          grossSalary: data.salary,
+          hiringDate: formatDate(data.fromDate),
+          isTeamLead: data.isteamLead,
+          isAssociateTeamLead: data.isAssociateteamLead,
+        },
+      };
+      // console.log("Hiring Date", data.HireDate);
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axiosInstance.post(
+          "/api/v1/auth/register",
+          newEmployee,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-      if (response.data.responseCode === "200") {
-        reset();
-        navigate("/Employees");
-        toast.success(response?.data?.message);
-      } else {
+        if (response.data.responseCode === "200") {
+          reset();
+          navigate("/Employees");
+          toast.success(response?.data?.message);
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
+          error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
 
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu.actionList.some((action) => action.actionId === 9)
   );
-  const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {

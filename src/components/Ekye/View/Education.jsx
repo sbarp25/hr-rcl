@@ -28,7 +28,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasApproveAccess = menu.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 17)
+    menu?.actionList?.some((action) => action.actionId === 17)
   );
   const onApprove = async () => {
     const approve = {

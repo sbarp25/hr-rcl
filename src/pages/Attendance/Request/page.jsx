@@ -65,10 +65,14 @@ const AttendanceRequest = () => {
     setSelectedData(selectedItem);
     switch (action) {
       case "Approve":
-        onOpen();
+        if (hasAttendanceEditAccess) {
+          onOpen();
+        }
         break;
       case "Reject":
-        onRejectOpen();
+        if (hasAttendanceEditAccess) {
+          onRejectOpen();
+        }
         break;
       default:
         console.log("Unknown action");
@@ -81,16 +85,13 @@ const AttendanceRequest = () => {
   const menu = LocalStorageUtil.getItem("menu");
   /**To Update Late Check   */
   const hasAttendanceEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 1)
-  );
-  const hasAttendanceViewAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 1)
+    menu?.actionList?.some((action) => action.actionId === 41)
   );
   /**To read the Data */
-  // const hasaccess = menu?.some((menu) =>
-  //   menu.actionList.some((action) => action.actionId === 2)
-  // );
-  const hasaccess = true;
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 40)
+  );
 
   const breadcrumbItems = [
     { label: "Attendance", href: "" },

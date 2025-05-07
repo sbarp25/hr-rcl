@@ -102,9 +102,13 @@ const Department = () => {
         break;
       // End Of Edit Operation
       case "delete":
-        setDepartmentId(department.id);
-        console.log(`Deleting position ID: ${department.id}`);
-        onOpen();
+        if (hasDepartmentDeleteAccess) {
+          setDepartmentId(department.id);
+          console.log(`Deleting position ID: ${department.id}`);
+          onOpen();
+        } else {
+          toast.error("Currently You dont have access to this setting.");
+        }
         break;
       default:
         console.log("Unknown action");
@@ -147,21 +151,21 @@ const Department = () => {
 
   /**To check create status */
   const hasDepartmentCreateAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 9)
+    menu.actionList.some((action) => action.actionId === 43)
   );
 
   /**To read the Data */
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 10)
+    menu.actionList.some((action) => action.actionId === 44)
   );
   // const hasaccess = true;
   /**To check edit status */
   const hasDepartmentEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 11)
+    menu.actionList.some((action) => action.actionId === 45)
   );
   /**To check Delete Access */
   const hasDepartmentDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 12)
+    menu.actionList.some((action) => action.actionId === 46)
   );
 
   useEffect(() => {

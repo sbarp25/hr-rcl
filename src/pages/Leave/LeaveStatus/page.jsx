@@ -92,15 +92,20 @@ const LeaveStatus = () => {
   useEffect(() => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
-  // }, []);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasLeaveApproveAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 57)
-  );
 
   const hasaccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 56)
+  );
+  const hasLeaveUpdateAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 57)
+  );
+  const hasLeaveDeleteAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 58)
+  );
+  const hasLeaveCreateAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 55)
   );
 
   useEffect(() => {
@@ -138,95 +143,103 @@ const LeaveStatus = () => {
   };
 
   const onApprove = async () => {
-    if (!selectedLeave) return;
+    if (hasLeaveUpdateAccess) {
+      if (!selectedLeave) return;
 
-    setIsLoading(true);
-    const updateLeave = {
-      data: {
-        leaveId: selectedLeave.leaveId,
-        leaveStatus: "APPROVED",
-      },
-    };
+      setIsLoading(true);
+      const updateLeave = {
+        data: {
+          leaveId: selectedLeave.leaveId,
+          leaveStatus: "APPROVED",
+        },
+      };
 
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.put(
-        "/api/leave/status",
-        updateLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          toast.error("Authentication is missing.");
+          return;
         }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLeave();
-        onClose();
-      } else {
+        const response = await axiosInstance.put(
+          "/api/leave/status",
+          updateLeave,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response?.data?.responseCode === "200") {
+          toast.success(response?.data?.message);
+          fetchLeave();
+          onClose();
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
+          error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
 
   const onReject = async (formData) => {
-    if (!selectedLeave) return;
+    if (hasLeaveUpdateAccess) {
+      if (!selectedLeave) return;
 
-    setIsLoading(true);
-    const RejectLeave = {
-      data: {
-        leaveId: selectedLeave.leaveId,
-        leaveStatus: "REJECTED",
-        remark: formData.reason,
-      },
-    };
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.put(
-        "/api/leave/status",
-        RejectLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+      setIsLoading(true);
+      const RejectLeave = {
+        data: {
+          leaveId: selectedLeave.leaveId,
+          leaveStatus: "REJECTED",
+          remark: formData.reason,
+        },
+      };
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          toast.error("Authentication is missing.");
+          return;
         }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLeave();
-        onRejectClose();
-        reset();
-      } else {
+        const response = await axiosInstance.put(
+          "/api/leave/status",
+          RejectLeave,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response?.data?.responseCode === "200") {
+          toast.success(response?.data?.message);
+          fetchLeave();
+          onRejectClose();
+          reset();
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
+          error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
 
@@ -333,13 +346,15 @@ const LeaveStatus = () => {
                       </TableCell> */}
                       <TableCell>
                         <div className="flex gap-2">
-                          <button
-                            className="text-blue-600 hover:text-blue-800"
-                            onClick={() => handleAction("view", item)}>
-                            <FaRegEye size={18} />
-                          </button>
+                          {hasaccess && (
+                            <button
+                              className="text-blue-600 hover:text-blue-800"
+                              onClick={() => handleAction("view", item)}>
+                              <FaRegEye size={18} />
+                            </button>
+                          )}
                           {item?.leaveStatus === "PENDING" &&
-                            hasLeaveApproveAccess && (
+                            hasLeaveUpdateAccess && (
                               <>
                                 <FaCheckCircle
                                   className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
@@ -422,7 +437,7 @@ const LeaveStatus = () => {
                       <TableCell>
                         <div className="flex gap-2">
                           {item?.leaveStatus === "PENDING" &&
-                            hasLeaveApproveAccess && (
+                            hasLeaveUpdateAccess && (
                               <>
                                 <FaCheckCircle
                                   className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
@@ -501,7 +516,7 @@ const LeaveStatus = () => {
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
                       {leave?.leaveStatus === "PENDING" &&
-                        hasLeaveApproveAccess && (
+                        hasLeaveUpdateAccess && (
                           <>
                             <Button
                               size="sm"

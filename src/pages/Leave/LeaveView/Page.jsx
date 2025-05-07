@@ -14,8 +14,8 @@ const LeaveView = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 56)
   );
 
   const fetchLeaveById = async () => {
@@ -41,7 +41,6 @@ const LeaveView = () => {
     fetchLeaveById();
   }, [id]);
 
-  const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

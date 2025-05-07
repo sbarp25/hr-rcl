@@ -86,45 +86,48 @@ const EditPosition = () => {
     { label: "Position", href: "/master-data/Position" },
   ];
   const onSubmit = async (data) => {
-    const updatePosition = {
-      data: {
-        positionName: data.title,
-        description: data.description,
-      },
-    };
-    setIsLoading(true);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.put(
-        `/api/v1/positions/update/${id}`,
-        updatePosition,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+    if (hasaccess) {
+      const updatePosition = {
+        data: {
+          positionName: data.title,
+          description: data.description,
+        },
+      };
+      setIsLoading(true);
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axiosInstance.put(
+          `/api/v1/positions/update/${id}`,
+          updatePosition,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response?.data?.responseCode === "200") {
+          navigate("/master-data/Position");
+          toast.success(response?.data?.message);
+          reset();
         }
-      );
-      if (response?.data?.responseCode === "200") {
-        navigate("/master-data/Position");
-        toast.success(response?.data?.message);
-        reset();
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 49)
   );
-  const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -186,26 +189,6 @@ const EditPosition = () => {
                 {errors.description.message}
               </p>
             )}
-            {/* <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className={` rounded-xl `}
-              label="Description"
-              {...register("description", {
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-              })}
-              variant="bordered"
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )} */}
           </div>
 
           <ButtonComponent

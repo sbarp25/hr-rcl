@@ -40,6 +40,9 @@ const LeaveRequest = () => {
     { key: "SICK", label: "Sick Leave" },
     { key: "EXAM", label: "Exam Leave" },
     { key: "UNPAID", label: "Unpaid Leave" },
+    { key: "PATERNITY", label: "Paternity Leave" },
+    { key: "MATERNITY", label: "Maternity Leave" },
+    { key: "PAID", label: "Paid Leave" },
   ];
   const leaveStatus = [
     { key: "FULL_DAY", label: "Full day" },
@@ -81,7 +84,7 @@ const LeaveRequest = () => {
         requestDate: formatDate(today),
       },
     };
-    if (hasRequestaccess) {
+    if (hasLeaveRequestaccess) {
       try {
         const accessToken = localStorage.getItem("accessToken");
         if (!accessToken) {
@@ -125,13 +128,17 @@ const LeaveRequest = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  /**To check Employee see status */
-  // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 60)
   );
-  const hasRequestaccess = menu?.some((menu) =>
+  const hasLeaveRequestaccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 59)
+  );
+  const hasLeaveEditaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 61)
+  );
+  const hasLeavedeleteaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 62)
   );
   useEffect(() => {
     if (!hasaccess) {

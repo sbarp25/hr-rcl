@@ -25,7 +25,7 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
               Leave
             </span>
           </div>
-          <div className="w-1/2 text-center py-2">
+          <div className="w-1/2 text-center py-2 ">
             <span
               className={`transition-colors duration-300 ${
                 !isSelected ? "text-gray-900" : "text-gray-400"

@@ -102,19 +102,19 @@ const Position = () => {
 
   /**To check create status */
   const hasPositioncreateaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 13)
+    menu.actionList.some((action) => action.actionId === 47)
   );
   /**To read the Data */
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 14)
+    menu.actionList.some((action) => action.actionId === 48)
   );
   /**To check edit status */
   const hasPositionEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 15)
+    menu.actionList.some((action) => action.actionId === 49)
   );
   /**To check Delete Access */
   const hasPositionDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 16)
+    menu.actionList.some((action) => action.actionId === 50)
   );
 
   useEffect(() => {
@@ -137,8 +137,12 @@ const Position = () => {
 
       // Start Of Delete Operation
       case "delete":
-        setPositionId(position.id);
-        onOpen();
+        if (hasPositionDeleteAccess) {
+          setPositionId(position.id);
+          onOpen();
+        } else {
+          toast.error("Access denied");
+        }
         break;
       // End Of Delete Operation
       default:

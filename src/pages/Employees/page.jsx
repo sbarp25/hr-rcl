@@ -101,7 +101,11 @@ const Employees = () => {
     }
   }, []);
   const handleRedirect = () => {
-    navigate("/AddEmployees");
+    if (hasemployeecreateaccess) {
+      navigate("/AddEmployees");
+    } else {
+      toast.error("Currently You dont have access to this setting.");
+    }
   };
   const onDelete = async () => {
     try {
@@ -127,21 +131,22 @@ const Employees = () => {
       case "edit":
         try {
           if (hasEmployeeEditAccess) {
-            toast.success("You have edit access");
             navigate(`/Employees/Edit/${employeeId}`);
           } else {
-            toast.error("Access Denied");
-            return;
+            toast.error("Currently You dont have access to this setting.");
           }
         } catch (error) {
           toast.error(error);
           return;
         }
-        console.log(`Editing employee ID: ${employeeId}`);
         break;
       case "delete":
-        setDeletingId(employeeId);
-        onOpen();
+        if (hasEmployeeDeleteAccess) {
+          setDeletingId(employeeId);
+          onOpen();
+        } else {
+          toast.error("Currently You dont have access to this setting.");
+        }
         break;
       default:
         console.log("Unknown action");
@@ -189,25 +194,9 @@ const Employees = () => {
       fetchEmployees();
     }
   };
-  const employeData = [
-    {
-      rclId: "Odinson",
-      fullName: "Odinson",
-      email: "odinson@gmail.com",
-      departmentName: "Odinson",
-      postionName: "odinson",
-      isActive: true,
-    },
-  ];
 
   return (
     <>
-      {/* filterCriteria: {
-        created_at: formatDate(formData.FromDate),
-        toDate: formatDate(formData.toDate),
-        departmentId: parseInt(formData.department || ""),
-        positionId: parseInt(formData.position || ""),
-      }, */}
       {/* {isLoading && <Loader message="Loading employees..." />} */}
       <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
         {/* Breadcrumbs and Header */}
@@ -352,7 +341,7 @@ const Employees = () => {
                   <Button
                     className="bg-black text-white"
                     onPress={() => onDelete()}>
-                    Approve
+                    Delete
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
                 </div>

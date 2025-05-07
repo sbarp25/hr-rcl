@@ -112,38 +112,42 @@ const EditDepartment = () => {
   ];
 
   const onSubmit = async (data) => {
-    const updatedDepartment = {
-      data: {
-        departmentName: data.title,
-        description: data.description,
-        associateTeamLeadId: parseFloat(data.Associateteamlead),
-        teamLeadId: parseFloat(data.teamlead),
-      },
-    };
-    setIsLoading(true);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axiosInstance.put(
-        `/api/v1/departments/update/${id}`,
-        updatedDepartment,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+    if (hasaccess) {
+      const updatedDepartment = {
+        data: {
+          departmentName: data.title,
+          description: data.description,
+          associateTeamLeadId: parseFloat(data.Associateteamlead),
+          teamLeadId: parseFloat(data.teamlead),
+        },
+      };
+      setIsLoading(true);
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await axiosInstance.put(
+          `/api/v1/departments/update/${id}`,
+          updatedDepartment,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (response?.data?.responseCode === "200") {
+          navigate("/master-data/Department");
+          toast.success(response?.data?.message);
+          reset();
         }
-      );
-      if (response?.data?.responseCode === "200") {
-        navigate("/master-data/Department");
-        toast.success(response?.data?.message);
-        reset();
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
   const teamLeadid = teamLead.map((item) => ({
@@ -152,11 +156,9 @@ const EditDepartment = () => {
   }));
   const menu = LocalStorageUtil.getItem("menu");
 
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 45)
   );
-  const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

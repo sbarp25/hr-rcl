@@ -55,13 +55,6 @@ const AddDepartment = () => {
     return 4; // default for smaller screens
   };
 
-  const hasaccess = true;
-
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [hasaccess, navigate]);
   /**To fetch Team lead */
   const fetchTeamLead = async () => {
     setIsLoading(true);
@@ -83,67 +76,70 @@ const AddDepartment = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    const AddDepartment = {
-      data: {
-        departmentName: data?.title,
-        description: data?.description,
-        teamLeadId: parseFloat(data?.teamlead),
-        associateTeamLeadId: parseFloat(data?.Associateteamlead),
-      },
-    };
+    if (hasaccess) {
+      const AddDepartment = {
+        data: {
+          departmentName: data?.title,
+          description: data?.description,
+          teamLeadId: parseFloat(data?.teamlead),
+          associateTeamLeadId: parseFloat(data?.Associateteamlead),
+        },
+      };
 
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication token is missing.");
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await axiosInstance.post(
-        "/api/v1/departments/register",
-        AddDepartment,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          toast.error("Authentication token is missing.");
+          setIsLoading(false);
+          return;
         }
-      );
 
-      if (response?.data.responseCode === "201") {
-        navigate("/master-data/Department");
-        toast.success(response?.data?.message);
-        reset();
-      } else {
-        toast.error(response?.data?.message);
+        const response = await axiosInstance.post(
+          "/api/v1/departments/register",
+          AddDepartment,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response?.data.responseCode === "201") {
+          navigate("/master-data/Department");
+          toast.success(response?.data?.message);
+          reset();
+        } else {
+          toast.error(response?.data?.message);
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
 
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 43)
   );
-
-  const teamLeadid = teamLead.map((item) => ({
-    key: item.userId, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
+  const teamLeadid = teamLead.map((item) => ({
+    key: item.userId, // Using id as the key
+    label: item.fullName, // Using fullName as the display label
+  }));
 
   return (
     <div className="px-4 flex flex-col space-y-4">

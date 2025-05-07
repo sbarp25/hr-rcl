@@ -24,7 +24,6 @@ import AdminEkye from "../src/pages/Ekye/AdminEkye/page.jsx";
 import EkyeAction from "./components/Ekye/EkyeAction.jsx";
 import View from "../src/pages/Ekye/AdminEkye/EkyeView/page.jsx";
 import LocationComponent from "./components/LocationComponent.jsx";
-import LeaveApprove from "./pages/Leave/LeaveApprove/Page.jsx";
 import SalaryDetails from "./pages/Salary/page.jsx";
 import SalaryEdit from "./pages/Salary/SalaryDetail/Page.jsx";
 import AdvanceSalary from "./pages/Salary/AdvanceSalary/Page.jsx";
@@ -46,6 +45,8 @@ import GetBankDetails from "./pages/Bank/GetBank/Page.jsx";
 import RequestWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/Page.jsx";
 import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx";
 import ViewWorkFromHome from "./pages/WorkFromHome/ViewWorkFromHome/Page.jsx";
+import AddRoles from "./pages/MasterData/Roles/AddRoles/Page.jsx";
+import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
 
 function App() {
   useEffect(() => {
@@ -155,11 +156,15 @@ function App() {
                 element={<EditPosition />}
               />
               <Route path="/master-data/Roles" element={<Roles />} />
+              <Route path="/master-data/Roles/add" element={<AddRoles />} />
+              <Route
+                path="/master-data/Roles/edit/:id"
+                element={<EditRole />}
+              />
               <Route path="/HandBook" element={<HandBook />} />
               <Route path="/Notice" element={<Notices />} />
               <Route path="/Leave/status" element={<LeaveStatus />} />
               <Route path="/Leave/Request" element={<LeaveRequest />} />
-              <Route path="/Leave/apprej/:id" element={<LeaveApprove />} />
               <Route path="/Leave/view/:id" element={<LeaveView />} />
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />

@@ -20,46 +20,53 @@ const AddPosition = () => {
   } = useForm();
   const [isLoading, setIsloading] = useState(false);
   const onSubmit = async (data) => {
-    setIsloading(true);
-    const newPosition = {
-      data: {
-        positionName: data.title,
-        description: data.description,
-      },
-    };
+    if (hasaccess) {
+      setIsloading(true);
+      const newPosition = {
+        data: {
+          positionName: data.title,
+          description: data.description,
+        },
+      };
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/positions/save",
-        newPosition,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      try {
+        const response = await axiosInstance.post(
+          "/api/v1/positions/save",
+          newPosition,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data.responseCode === "201") {
+          toast.success("Position added successfully!");
+          navigate("/master-data/Position");
+        } else {
+          toast.error(response.data.message);
         }
-      );
-      if (response.data.responseCode === "201") {
-        toast.success("Position added successfully!");
-        navigate("/master-data/Position");
-      } else {
-        toast.error(response.data.message);
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      } finally {
+        setIsloading(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsloading(false);
+    } else {
+      toast.error("Currently You dont have access to this setting.");
     }
   };
   const menu = LocalStorageUtil.getItem("menu");
 
-  /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 47)
   );
-
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   const breadcrumbItems = [
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
@@ -89,12 +96,6 @@ const AddPosition = () => {
     return 4; // default for smaller screens
   };
 
-  const hasaccess = true;
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [hasaccess, navigate]);
   return (
     <div className="px-4 flex flex-col space-y-4">
       {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
@@ -105,7 +106,7 @@ const AddPosition = () => {
       </div>
       <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
-          {/* Department Title */}
+          {/* position Title */}
           <div>
             <InputComponent
               name="title"
@@ -122,7 +123,7 @@ const AddPosition = () => {
             />
           </div>
 
-          {/* Department description*/}
+          {/* Position description*/}
           <div>
             <Textarea
               minRows={getRows()}

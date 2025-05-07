@@ -7,6 +7,7 @@ import CheckIn from "../../components/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -49,6 +50,13 @@ const Page = () => {
     getWeeklyAttendanceReport();
   }, [checkedInStatus]);
   const email = localStorage.getItem("email");
+
+  const menu = LocalStorageUtil.getItem("menu");
+
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 52)
+  );
+
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">

@@ -1,14 +1,16 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import { useNavigate } from "react-router-dom";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const noticesPerPage = 3;
   const startIndex = (currentPage - 1) * noticesPerPage;
   const endIndex = startIndex + noticesPerPage;
+  const navigate = useNavigate();
 
   const Notice = [
     {
@@ -182,12 +184,25 @@ const Page = () => {
   const breadcrumbItems = [{ label: "Notice", href: "/notice" }];
 
   const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+  const hasaccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 20)
+  );
+  const hasHandBookCreateAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 19)
+  );
+  const hasHandBookEditAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 21)
+  );
+  const hasHandBookDeleteAccess = menu?.some((menu) =>
+    menu?.actionList?.some((action) => action.actionId === 22)
   );
 
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
       {/* Notice Heading section */}
