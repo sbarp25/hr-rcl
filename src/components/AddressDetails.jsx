@@ -583,7 +583,14 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <InputComponent
                   name="permanent.pinCode"
                   control={control}
-                  rules={{ required: "Permanent Pin Code is required" }}
+                  rules={{
+                    required: "Permanent Pin Code is required",
+                    pattern: {
+                      value: /^[1-9]\d{5}$/,
+                      message:
+                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                    },
+                  }}
                   label="Pin Code"
                   variant="bordered"
                   type="text"
@@ -781,6 +788,11 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     required: !watchedSameAsPermanent
                       ? "Temporary Pin Code is required"
                       : false,
+                    pattern: {
+                      value: /^[1-9]\d{5}$/,
+                      message:
+                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                    },
                   }}
                   label="Pin Code"
                   variant="bordered"

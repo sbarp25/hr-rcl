@@ -141,7 +141,13 @@ const Bank = () => {
               variant="bordered"
               label="Account-holder Name"
               name="accountName"
-              rules={{ required: "Account Holder Name is required" }}
+              rules={{
+                required: "Account Holder Name is required",
+                minLength: {
+                  value: 3,
+                  message: "Full name must be at least 3 characters",
+                },
+              }}
             />
             <InputComponent
               control={control}

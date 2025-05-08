@@ -520,7 +520,7 @@ const LeaveStatus = () => {
                           <>
                             <Button
                               size="sm"
-                              color="success"
+                              className="bg-black text-white"
                               onPress={() => handleAction("approve", leave)}>
                               Approve
                             </Button>

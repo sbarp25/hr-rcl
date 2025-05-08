@@ -11,7 +11,7 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
         {/* Sliding toggle */}
         <div
           className={`absolute h-10 w-1/2 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-            isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-1"
+            isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-3"
           }`}
         />
         {/* Labels */}

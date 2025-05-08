@@ -34,7 +34,7 @@ const AdvanceSalary = () => {
     <div className="flex flex-col space-y-10">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <div className="bg-white rounded-lg h-[85vh] m-3">
-        <form className="p-7">
+        <form className="p-7" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex  justify-between text-center place-items-center gap-7 h-16  py-5">
             <InputComponent
               name="Description"

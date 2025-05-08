@@ -12,16 +12,9 @@ import LocalStorageUtil from "../../utils/LocalStorageUtil";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(true);
   const navigate = useNavigate();
-  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm();
+  const { handleSubmit, control } = useForm();
 
   const handleLogin = async (formState) => {
     setIsLoading(true);
@@ -88,7 +81,7 @@ const Login = () => {
     if (location.pathname === "/login" || location.pathname === "/") {
       LocalStorageUtil.removeItem("accessToken");
     }
-  }, [location.pathname]);
+  }, []);
   return (
     <>
       <LocationComponent />
@@ -135,8 +128,8 @@ const Login = () => {
                 rules={{
                   required: "Password is required",
                   minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
+                    value: 8,
+                    message: "Password must be at least 8 characters",
                   },
                 }}
               />

@@ -4,7 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-
+import { FaCircleCheck } from "react-icons/fa6";
+import { IoIosRemoveCircle } from "react-icons/io";
 const LeaveView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -41,11 +42,11 @@ const LeaveView = () => {
     fetchLeaveById();
   }, [id]);
 
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   if (!hasaccess) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [navigate]);
 
   if (isLoading) {
     return (
@@ -227,13 +228,45 @@ const LeaveView = () => {
         {/* Footer with status */}
         <div className="bg-gray-50 px-6 py-4">
           <div className="flex justify-end">
+            <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-sm text-gray-700">
+                  Team Lead:
+                </span>
+                {leaveByIdData?.isTeamLeadApproved === true ? (
+                  <FaCircleCheck className="text-green-500 w-5 h-5" />
+                ) : leaveByIdData?.isTeamLeadApproved === false ? (
+                  <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                ) : (
+                  <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                    Pending
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-sm text-gray-700">
+                  Associate Team Lead:
+                </span>
+                {leaveByIdData?.isAssociateTeamLeadApproved === true ? (
+                  <FaCircleCheck className="text-green-500 w-5 h-5" />
+                ) : leaveByIdData?.isAssociateTeamLeadApproved === false ? (
+                  <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                ) : (
+                  <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                    Pending
+                  </span>
+                )}
+              </div>
+            </div>
+
             <div
-              className={`px-3 py-1 rounded text-sm font-medium ${
+              className={`flex justify-center items-center px-3 py-1 rounded-2xl text-sm  border-2  ${
                 leaveByIdData?.leaveStatus === "APPROVED"
-                  ? "bg-green-100 text-green-800"
+                  ? "bg-green-100 text-green-800 border-green-300"
                   : leaveByIdData?.leaveStatus === "REJECTED"
-                  ? "bg-red-100 text-red-800"
-                  : "bg-yellow-100 text-yellow-800"
+                  ? "bg-red-100 text-red-800 border-red-300"
+                  : "bg-yellow-100 text-yellow-800 border-yellow-300"
               }`}>
               {formatStatus(leaveByIdData?.leaveStatus)}
             </div>

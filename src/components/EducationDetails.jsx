@@ -19,6 +19,7 @@ import InputComponent from "./InputComponent";
 import { Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
 import { CiImageOn } from "react-icons/ci";
+
 const MAX_FILE_SIZE = 1024 * 1024;
 
 const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
@@ -31,7 +32,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const [educationalDocument, setEducationalDocument] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Time(10, 10, 45));
   const [numberOfItems, setNumberOfItems] = useState(1);
   const navigate = useNavigate();
 
@@ -40,8 +40,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm();
+
+  // Watch the currently studying checkbox to conditionally require time input
+  const watchIsCurrentlyStudying = watch("isCurrentlyStudying", false);
 
   const handleDegreeSelection = (selected) => {
     setSelectedDegree(selected);
@@ -99,17 +103,18 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           // Check if user is currently studying
           if (response.data.data?.expectedCheckingTime) {
             setIsCurrentlyStudying(true);
+            setValue("isCurrentlyStudying", true);
+
             // Parse the time from string if needed
             const timeParts =
               response.data.data.expectedCheckingTime.split(":");
             if (timeParts.length >= 3) {
-              setSelectedTime(
-                new Time(
-                  parseInt(timeParts[0]),
-                  parseInt(timeParts[1]),
-                  parseInt(timeParts[2])
-                )
+              const timeObj = new Time(
+                parseInt(timeParts[0]),
+                parseInt(timeParts[1]),
+                parseInt(timeParts[2])
               );
+              setValue("expectedCheckingTime", timeObj);
             }
           }
 
@@ -170,7 +175,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     };
 
     fetchEducationDetails();
-  }, [setFormData]);
+  }, [setFormData, setValue]);
 
   // Set form values when education data is loaded
   useEffect(() => {
@@ -280,9 +285,10 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       );
     }
 
-    formDataToSend.append("isCurrentlyStudying", isCurrentlyStudying);
-    if (isCurrentlyStudying) {
-      const formattedTime = `${selectedTime.hour}:${selectedTime.minute}:${selectedTime.second}`;
+    formDataToSend.append("isCurrentlyStudying", data.isCurrentlyStudying);
+    if (data.isCurrentlyStudying && data.expectedCheckingTime) {
+      const timeValue = data.expectedCheckingTime;
+      const formattedTime = `${timeValue.hour}:${timeValue.minute}:${timeValue.second}`;
       formDataToSend.append("expectedCheckingTime", formattedTime);
     }
 
@@ -412,6 +418,16 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                     education[index]?.status !== "IN_PROGRESS"
                       ? "End year is required"
                       : false,
+                  validate: (value) => {
+                    const startDate = getValues(`startYear_${index}`);
+                    if (!startDate || !value) return true;
+                    const startDateObj = startDate.toDate(getLocalTimeZone());
+                    const endDateObj = value.toDate(getLocalTimeZone());
+                    return (
+                      endDateObj >= startDateObj ||
+                      "End date cannot be before start date"
+                    );
+                  },
                 }}
               />
             </div>
@@ -570,7 +586,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                           education &&
                           education[index] && (
                             <div className="mt-1 sm:mt-0">
-                              {education[index]?.file ? (
+                              {education[index]?.file && (
                                 <div
                                   onClick={onOpen}
                                   className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
@@ -593,16 +609,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                                   </svg>
                                   View Certificate
                                 </div>
-                              ) : (
-                                <div className="text-xs text-red-500">
-                                  No Links Available
-                                </div>
                               )}
                             </div>
                           )}
                       </div>
 
-                      {/* Modal section - kept unchanged */}
                       <Modal
                         isOpen={isOpen}
                         onOpenChange={onOpenChange}
@@ -633,27 +644,69 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ))}
 
       <div className="flex flex-col gap-3">
-        <Checkbox
-          checked={isCurrentlyStudying}
-          onChange={(e) => {
-            const checked = e.target.checked;
-            setIsCurrentlyStudying(checked);
-            setFormData((prev) => ({
-              ...prev,
-              currentlyStudying: checked,
-            }));
-          }}>
-          {" "}
-          Are you currently a student?
-        </Checkbox>
-        {isCurrentlyStudying && (
-          <TimeInput
-            label="Expected Checking Time"
-            value={selectedTime}
-            variant="bordered"
-            onChange={setSelectedTime}
-            minValue={new Time(10)}
-            maxValue={new Time(16)}
+        <Controller
+          name="isCurrentlyStudying"
+          control={control}
+          defaultValue={isCurrentlyStudying}
+          render={({ field }) => (
+            <Checkbox
+              checked={field.value}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                field.onChange(checked);
+                setIsCurrentlyStudying(checked);
+                setFormData((prev) => ({
+                  ...prev,
+                  currentlyStudying: checked,
+                }));
+              }}>
+              {" "}
+              Are you currently a student?
+            </Checkbox>
+          )}
+        />
+
+        {watchIsCurrentlyStudying && (
+          <Controller
+            name="expectedCheckingTime"
+            control={control}
+            rules={{
+              required: watchIsCurrentlyStudying
+                ? "Please select a time"
+                : false,
+              validate: (value) => {
+                if (!watchIsCurrentlyStudying) return true;
+                if (!value) return "Please select a valid time";
+
+                // Additional time validation if needed
+                if (
+                  value.hour < 10 ||
+                  (value.hour === 18 && value.minute > 30) ||
+                  value.hour > 18
+                ) {
+                  return "Time must be between 10:00 AM and 6:30 PM";
+                }
+
+                return true;
+              },
+            }}
+            defaultValue={new Time(10, 0, 0)}
+            render={({ field }) => (
+              <div>
+                <TimeInput
+                  label="Expected Checking Time"
+                  value={field.value}
+                  variant="bordered"
+                  onChange={(time) => {
+                    field.onChange(time);
+                  }}
+                  minValue={new Time(10, 0, 0)}
+                  maxValue={new Time(18, 30, 0)}
+                  isInvalid={!!errors.expectedCheckingTime}
+                  errorMessage={errors.expectedCheckingTime?.message}
+                />
+              </div>
+            )}
           />
         )}
       </div>

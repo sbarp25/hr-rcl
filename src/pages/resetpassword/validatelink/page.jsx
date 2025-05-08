@@ -180,7 +180,8 @@ const ValidateLink = () => {
                       pattern: {
                         value:
                           /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-                        message: "password must be 8 characters long.",
+                        message:
+                          "Password must be 8 characters long. And can include letters, numbers, and special characters.",
                       },
                     }}
                   />
@@ -203,7 +204,7 @@ const ValidateLink = () => {
                         value:
                           /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
                         message:
-                          "Password must be 8 characters long and have special characters.",
+                          "Password must be 8 characters long. And can include letters, numbers, and special characters.",
                       },
                     }}
                   />

@@ -3,6 +3,8 @@ import GoBack from "../../../components/GoBack";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { FaCircleCheck } from "react-icons/fa6";
+import { IoIosRemoveCircle } from "react-icons/io";
 
 const ViewWorkFromHome = () => {
   const [workFromHomeByIdData, setWorkFromHomeByIdData] = useState({});
@@ -192,6 +194,38 @@ const ViewWorkFromHome = () => {
 
         {/* Footer with status */}
         <div className="bg-gray-50 px-6 py-4">
+          <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-sm text-gray-700">
+                Team Lead:
+              </span>
+              {workFromHomeByIdData?.isTeamLeadApproved === true ? (
+                <FaCircleCheck className="text-green-500 w-5 h-5" />
+              ) : workFromHomeByIdData?.isTeamLeadApproved === false ? (
+                <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+              ) : (
+                <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                  Pending
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-sm text-gray-700">
+                Associate Team Lead:
+              </span>
+              {workFromHomeByIdData?.isAssociateTeamLeadApproved === true ? (
+                <FaCircleCheck className="text-green-500 w-5 h-5" />
+              ) : workFromHomeByIdData?.isAssociateTeamLeadApproved ===
+                false ? (
+                <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+              ) : (
+                <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                  Pending
+                </span>
+              )}
+            </div>
+          </div>
           <div className="flex justify-end">
             <div
               className={`px-3 py-1 rounded text-sm font-medium ${

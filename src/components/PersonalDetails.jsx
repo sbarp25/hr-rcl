@@ -152,18 +152,15 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               <InputComponent
                 name="email"
                 control={control}
+                variant="bordered"
+                label="Personal Email"
                 rules={{
                   required: "Email is required",
                   pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Invalid email format",
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Enter a valid email address",
                   },
                 }}
-                label="Personal Email"
-                variant="bordered"
-                type="email"
-                inputClassName="w-full rounded-xl"
-                icon={FaEnvelope}
               />
 
               {/* Date of Birth */}
@@ -177,7 +174,13 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                     const birthdate = new Date(value);
                     const today = new Date();
                     const age = today.getFullYear() - birthdate.getFullYear();
-                    return age > 18 || "You must be 18 or older";
+                    if (age < 18) {
+                      return "You must be at least 18 years old";
+                    }
+                    if (age >= 100) {
+                      return "Age must be less than 100 years";
+                    }
+                    return true;
                   },
                 }}
               />
@@ -327,7 +330,14 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               <InputComponent
                 name="emergencyRelation"
                 control={control}
-                rules={{ required: "Emergency Relation is required" }}
+                rules={{
+                  required: "Emergency Relation is required",
+                  minLength: {
+                    value: 3,
+                    message:
+                      "Emergency Relation must atleast be 3 character long",
+                  },
+                }}
                 label="Emergency Relationship"
                 variant="bordered"
                 type="text"

@@ -258,8 +258,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "PAN Number is Required",
                     pattern: {
-                      value: /^[0-9]{0,16}$/,
-                      message: "Invalid format",
+                      value: /^[1-9]\d{8}$/,
+                      message:
+                        "Invalid PAN number. Must be a 9-digit number starting with 1-9.",
                     },
                   }}
                   variant="bordered"
@@ -287,6 +288,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "PAN Issue place is required",
+                    minLength: {
+                      value: 3,
+                      message:
+                        "PAN Issue place must atleast be 3 character long",
+                    },
                   }}
                   variant="bordered"
                   label="Enter PAN issued place"
@@ -415,8 +421,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "Citizenship Number is required",
                     pattern: {
-                      value: /^[0-9]{0,16}$/,
-                      message: "Invalid format",
+                      value: /^[0-9]{4,12}$/,
+                      message:
+                        "Invalid Citizenship number. Must be up to 11 digits starting with 1-9.",
                     },
                   }}
                   variant="bordered"
@@ -444,6 +451,11 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "Citizenship Issue place is required",
+                    minLength: {
+                      value: 3,
+                      message:
+                        "Citizenship Issue place must atleast be 3 character long",
+                    },
                   }}
                   variant="bordered"
                   label="Enter Citizenship Issued Place"
