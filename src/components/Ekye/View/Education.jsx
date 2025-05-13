@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EkyeEducationDetails = ({ employeeData }) => {

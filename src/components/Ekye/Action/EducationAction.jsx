@@ -8,7 +8,7 @@ import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EducationAction = ({ employeeData }) => {

@@ -3,7 +3,7 @@ import { Divider, Form } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 
 const UserEducation = ({ employeeData }) => {
   const [educationDocuments, setEducationDocuments] = useState({});
