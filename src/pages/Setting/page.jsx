@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 import ButtonComponent from "../../components/ButtonComp";
 import { Input, Avatar, Divider } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import UnderlineComponent from "../../components/underlinecomponent";
 import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
+import UnderlineComponent from "../../components/UnderlineComponent";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
