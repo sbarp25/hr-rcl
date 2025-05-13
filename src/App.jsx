@@ -12,7 +12,7 @@ import Employees from "./pages/Employees/page.jsx";
 import Department from "./pages/MasterData/Deparement/page.jsx";
 import Position from "./pages/MasterData/Position/page.jsx";
 import Roles from "./pages/MasterData/Roles/page.jsx";
-import HandBook from "./pages/Handbook/page.jsx";
+
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
 import { ToastContainer } from "react-toastify";
@@ -47,6 +47,7 @@ import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx
 import ViewWorkFromHome from "./pages/WorkFromHome/ViewWorkFromHome/Page.jsx";
 import AddRoles from "./pages/MasterData/Roles/AddRoles/Page.jsx";
 import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
+import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
   useEffect(() => {
