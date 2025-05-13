@@ -1,0 +1,87 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Modal,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  ScrollShadow,
+} from "@nextui-org/react";
+
+import PersonalAction from "./Action/PersonalAction";
+import AddressAction from "./Action/AddressAction";
+import DocumentAction from "./Action/DocumentAction";
+import EducationAction from "./Action/EducationAction";
+import axiosInstance from "../../lib/axios-Instance";
+import { toast } from "react-toastify";
+
+const EkyeAction = () => {
+  const { rclId } = useParams();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const navigate = useNavigate(); // Hook for navigation
+  const [employeeData, setEmployeeData] = useState();
+
+  // Automatically open the modal when the page loads
+  useEffect(() => {
+    onOpen();
+  }, [onOpen]);
+
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+          // `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
+        );
+        if (response.data.responseCode === "200") {
+          const data = response?.data?.data;
+          setEmployeeData(data);
+        } else {
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
+        }
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+        // toast.error("Error fetching employee data.");
+      }
+    };
+    fetchEmployeeData();
+  }, []);
+
+  return (
+    <>
+      <Modal
+        isOpen={isOpen}
+        size="5xl"
+        scrollBehavior="inside"
+        onOpenChange={(isModalOpen) => {
+          onOpenChange(isModalOpen);
+          if (!isModalOpen) {
+            navigate("/AdminEkye"); // Navigate back when modal is closed
+          }
+        }}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalBody>
+                {/* Render child components */}
+                <ScrollShadow className="w-full h-[900px] px-4" size={25}>
+                  <PersonalAction employeeData={employeeData} />
+                  <AddressAction employeeData={employeeData} />
+                  <DocumentAction employeeData={employeeData} />
+                  <EducationAction employeeData={employeeData} />
+                </ScrollShadow>
+              </ModalBody>
+              <ModalFooter></ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
+export default EkyeAction;

@@ -1,22 +1,8 @@
-# README
-## RCL HRMIS SYSTEM
-Human Resource Management System for Rebooted Creation Labs Pvt. Ltd.
-### Operational Story
-Service is built as per the following stories. <br>
+# React + Vite
 
-<!-- > _<b>Swagger UI</b>_ </br>
-> Available at: {IP}:8090/swagger-ui.html<br> -->
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-[//]: # (> port: 5173 <br>)
-> Staging Endpoint: [http://**]() <br>
-Organization Level Design: [Ojan Adhikari](mailto:ojan@rebootedcl.com), [Bishranta Bhattarai](mailto:bishranta@rebootedcl.com) <br>
-Business Level Design & Operational Stories: [Biplaw Chaudhary](mailto:biplaw.chaudhary@rebootedcl.com), [Sandeep Shrestha](mailto:sandeep01shrestha21@gmail.com) <br>
-Wireframe(Figma): [Prativa Oli](mailto:prativa.oli@rebootedcl.com) <br>
-Codebase: [Alistha Shrestha](mailto:alistha.shrestha@rebootedcl.com), [Umang Keshar Lamichhane](mailto:sunil.phuyal@rebootedcl.com)<br>
-Devops: [Bishranta Bhattarai](mailto:bishranta@rebootedcl.com)<br>
-Support(Service Design & Regulations): [Ojan Adhikari](mailto:ojan@rebootedcl.com) and [ Bishranta Bhattarai](mailto:bishranta@rebootedcl.com)<br>
-<br><br>
-&copy; **2024  Rebooted Creation Labs Pvt. Ltd.** All Rights Reserved. </br>
-<img src="https://www.rebootedcl.com/images/logo.png?i=1" width="135" height="40"> <br>
-<a href="https://www.rebootedcl.com/?i=1">Site</a> &nbsp; | &nbsp; <a href="https://www.rebootedcl.com/contact">Contact Us</a>
+Currently, two official plugins are available:
 
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
