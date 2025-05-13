@@ -129,12 +129,12 @@ const Sidebar = () => {
         { label: "Roles", to: "/master-data/Roles", view: seeRole },
       ],
     },
-    {
-      icon: FaBookBookmark,
-      label: "HandBook",
-      to: "/handbook",
-      view: seeHandbook,
-    },
+    // {
+    //   icon: FaBookBookmark,
+    //   label: "HandBook",
+    //   to: "/handbook",
+    //   view: seeHandbook,
+    // },
     { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,

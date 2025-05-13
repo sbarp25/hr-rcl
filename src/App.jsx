@@ -47,7 +47,7 @@ import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx
 import ViewWorkFromHome from "./pages/WorkFromHome/ViewWorkFromHome/Page.jsx";
 import AddRoles from "./pages/MasterData/Roles/AddRoles/Page.jsx";
 import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
-import HandBook from "./pages/HandBook/page.jsx";
+// import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
   useEffect(() => {
@@ -162,7 +162,7 @@ function App() {
                 path="/master-data/Roles/edit/:id"
                 element={<EditRole />}
               />
-              <Route path="/HandBook" element={<HandBook />} />
+              {/* <Route path="/HandBook" element={<HandBook />} /> */}
               <Route path="/Notice" element={<Notices />} />
               <Route path="/Leave/status" element={<LeaveStatus />} />
               <Route path="/Leave/Request" element={<LeaveRequest />} />

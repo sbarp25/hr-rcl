@@ -108,7 +108,7 @@ const MobileNavigation = () => {
         { label: "Roles", to: "/master-data/Roles", view: seeRole },
       ],
     },
-    { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
+    // { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
     { icon: FaNewspaper, label: "Notice", to: "/notice", view: true },
     {
       icon: FcLeave,
