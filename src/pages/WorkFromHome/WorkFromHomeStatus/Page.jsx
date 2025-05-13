@@ -529,37 +529,43 @@ const WorkFromHomeStatus = () => {
               <>
                 <ModalBody>
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Leave Approval</h3>
+                    <h3 className="text-lg font-medium">
+                      Work From Home Approval
+                    </h3>
                     <p>Are you sure you want to approve this WFH?</p>
                     {selectedWorkFromHome && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
-                        <div className="flex ">
-                          <span className="font-medium">Team Lead:</span>
-                          <span>{selectedWorkFromHome?.teamleadName}</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md gap-3">
+                        <div>
+                          <span className="font-medium mr-1">Request ID:</span>
+                          <span>{selectedWorkFromHome?.rclId}</span>
                         </div>
-                        <div className="flex ">
-                          <span className="font-medium">
-                            AssociateTeam Lead:
-                          </span>
-                          <span>
-                            {selectedWorkFromHome?.associateteamleadName}
-                          </span>
+                        <div>
+                          <span className="font-medium mr-1">Employee:</span>
+                          <span>{selectedWorkFromHome?.fullName}</span>
                         </div>
-                        <div className="flex ">
-                          <span className="font-medium">Leave Type:</span>
-                          <span>{selectedWorkFromHome?.leaveType}</span>
-                        </div>
-                        <div className="flex ">
-                          <span className="font-medium">Start Date:</span>
+                        <div>
+                          <span className="font-medium mr-1">Start Date:</span>
                           <span>
                             {selectedWorkFromHome?.workFromHomeStartDate}
                           </span>
                         </div>
-                        <div className="flex ">
-                          <span className="font-medium">End Date:</span>
+                        <div>
+                          <span className="font-medium mr-1">End Date:</span>
                           <span>
                             {selectedWorkFromHome?.workFromHomeEndDate}
                           </span>
+                        </div>
+                        <div>
+                          <span className="font-medium mr-1">
+                            Requested On:
+                          </span>
+                          <span>{selectedWorkFromHome?.requestDate}</span>
+                        </div>
+                        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                          <span className="font-medium mr-1">
+                            Reason/Email:
+                          </span>
+                          <span>{selectedWorkFromHome?.reason}</span>
                         </div>
                       </div>
                     )}
@@ -590,33 +596,60 @@ const WorkFromHomeStatus = () => {
               <>
                 <ModalBody>
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Leave Rejection</h3>
-                    <p>Are you sure you want to reject this leave?</p>
+                    <h3 className="text-lg font-medium">
+                      Work From Home Rejection
+                    </h3>
+                    <p>
+                      Please review the following WFH request details before
+                      rejection:
+                    </p>
                     {selectedWorkFromHome && (
-                      <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                        <div className="flex ">
-                          <span className="font-medium">Leave Type:</span>
-                          <span>{selectedWorkFromHome?.leaveType}</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md gap-3">
+                        <div>
+                          <span className="font-medium mr-1">Request ID:</span>
+                          <span>{selectedWorkFromHome?.rclId}</span>
                         </div>
-                        <div className="flex ">
-                          <span className="font-medium">Start Date:</span>
+                        <div>
+                          <span className="font-medium mr-1">Employee:</span>
+                          <span>{selectedWorkFromHome?.fullName}</span>
+                        </div>
+                        <div>
+                          <span className="font-medium mr-1">Start Date:</span>
                           <span>
                             {selectedWorkFromHome?.workFromHomeStartDate}
                           </span>
                         </div>
-                        <div className="flex ">
-                          <span className="font-medium">End Date:</span>
+                        <div>
+                          <span className="font-medium mr-1">End Date:</span>
                           <span>
                             {selectedWorkFromHome?.workFromHomeEndDate}
                           </span>
                         </div>
-                        <div className="flex ">
-                          {selectedWorkFromHome.isHalfDay && (
-                            <div>
-                              <span className="font-medium">Half Day</span>
-                              <span>{selectedWorkFromHome?.isHalfDay}</span>
-                            </div>
-                          )}
+                        <div>
+                          <span className="font-medium mr-1">
+                            Requested On:
+                          </span>
+                          <span>{selectedWorkFromHome?.requestDate}</span>
+                        </div>
+                        {selectedWorkFromHome?.leaveType && (
+                          <div>
+                            <span className="font-medium mr-1">
+                              Leave Type:
+                            </span>
+                            <span>{selectedWorkFromHome?.leaveType}</span>
+                          </div>
+                        )}
+                        {selectedWorkFromHome?.isHalfDay && (
+                          <div>
+                            <span className="font-medium mr-1">Half Day:</span>
+                            <span>{selectedWorkFromHome?.isHalfDay}</span>
+                          </div>
+                        )}
+                        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                          <span className="font-medium mr-1">
+                            Reason/Email:
+                          </span>
+                          <span>{selectedWorkFromHome?.reason}</span>
                         </div>
                       </div>
                     )}

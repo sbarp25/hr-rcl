@@ -152,7 +152,6 @@ const AddEmployeeForm = () => {
           isAssociateTeamLead: data.isAssociateteamLead,
         },
       };
-      // console.log("Hiring Date", data.HireDate);
       try {
         const accessToken = localStorage.getItem("accessToken");
         const response = await axiosInstance.post(
@@ -188,6 +187,7 @@ const AddEmployeeForm = () => {
     }
   };
 
+  // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
     menu.actionList.some((action) => action.actionId === 9)
   );

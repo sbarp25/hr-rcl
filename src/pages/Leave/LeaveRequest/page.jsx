@@ -128,6 +128,8 @@ const LeaveRequest = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
+  // const hasaccess = true;
+  // const hasLeaveRequestaccess = true;
   const hasaccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 60)
   );

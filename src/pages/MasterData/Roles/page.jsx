@@ -61,7 +61,7 @@ const Roles = () => {
       case "delete":
         if (hasRoleDeleteAccess) {
           try {
-            console.log(`Deleting position ID: ${role.roleId}`);
+            // console.log(`Deleting position ID: ${role.roleId}`);
             const response = await axiosInstance.delete(
               `/api/v1/role/delete/${role.roleId}`
             );

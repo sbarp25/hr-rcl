@@ -95,6 +95,8 @@ const LeaveStatus = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
+  // const hasaccess = true;
+  // const hasLeaveUpdateAccess = true;
   const hasaccess = menu?.some((menu) =>
     menu?.actionList?.some((action) => action.actionId === 56)
   );
