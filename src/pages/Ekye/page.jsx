@@ -203,7 +203,7 @@ const Ekye = () => {
         </ValidationComponent>
 
         {/* Navigation Buttons */}
-        <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        {/* <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -218,7 +218,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );
