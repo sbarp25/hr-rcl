@@ -29,7 +29,7 @@ const EducationAction = ({ employeeData }) => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasApproveAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 17)
+    menu?.actions?.some((action) => action.actionId === 17)
   );
   const onApprove = async () => {
     const submitData = {

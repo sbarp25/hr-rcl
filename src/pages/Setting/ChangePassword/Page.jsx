@@ -62,11 +62,11 @@ const ChangePassword = () => {
 
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 72)
+    menu?.actions?.some((action) => action.actionId === 72)
   );
 
   const changePasswordAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 71)
+    menu?.actions?.some((action) => action.actionId === 71)
   );
   useEffect(() => {
     if (!hasaccess) {

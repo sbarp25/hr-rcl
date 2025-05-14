@@ -193,16 +193,16 @@ const Settings = () => {
 
   // const seeProfile = true;
   const seeProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 64)
+    menu?.actions?.some((action) => action.actionId === 64)
   );
   const editProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 63)
+    menu?.actions?.some((action) => action.actionId === 63)
   );
   const createProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 50)
+    menu?.actions?.some((action) => action.actionId === 50)
   );
   const deleteProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
 
   useEffect(() => {

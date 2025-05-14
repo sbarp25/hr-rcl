@@ -50,7 +50,7 @@ const AddEmployeeForm = () => {
     { label: "Add Employees", href: "/AddEmployees" },
   ];
   const hasemployeecreateaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 1)
+    menu?.actions?.some((action) => action.actionId === 1)
   );
 
   // useEffect(() => {
@@ -189,7 +189,7 @@ const AddEmployeeForm = () => {
 
   // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 9)
+    menu?.actions?.some((action) => action.actionId === 9)
   );
 
   useEffect(() => {

@@ -102,19 +102,19 @@ const Position = () => {
 
   /**To check create status */
   const hasPositioncreateaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 47)
+    menu?.actions?.some((action) => action.actionId === 47)
   );
   /**To read the Data */
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 48)
+    menu?.actions?.some((action) => action.actionId === 48)
   );
   /**To check edit status */
   const hasPositionEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 49)
+    menu?.actions?.some((action) => action.actionId === 49)
   );
   /**To check Delete Access */
   const hasPositionDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 50)
+    menu?.actions?.some((action) => action.actionId === 50)
   );
 
   useEffect(() => {

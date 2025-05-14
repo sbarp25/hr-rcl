@@ -91,16 +91,16 @@ const Roles = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
   );
   const hasRoleAddAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 51)
+    menu?.actions?.some((action) => action.actionId === 51)
   );
   const hasRoleEditAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 53)
+    menu?.actions?.some((action) => action.actionId === 53)
   );
   const hasRoleDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 54)
+    menu?.actions?.some((action) => action.actionId === 54)
   );
 
   useEffect(() => {

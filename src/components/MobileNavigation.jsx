@@ -1,4 +1,4 @@
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm } from "react-icons/io5";
 import { FcLeave } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
@@ -43,48 +43,75 @@ const MobileNavigation = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  /**To check Employee see status */
   const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
   const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 6)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeRole = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
+  );
+  const seeMasterData = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeAttendance = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 6)
+  );
+  const seeMyAttendance = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 36)
+  );
+  const seeLateCheckIn = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 40)
   );
   const seeHandbook = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 20)
   );
   const seeNotices = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 24)
   );
   const seeLeave = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 28)
+  );
+
+  const seeLeaveStatus = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 56)
+  );
+  const seeLeaveRequest = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 60)
+  );
+  const seeEKYE = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 32)
   );
 
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
-    { icon: MdDashboard, label: "Dashboard", to: "/dashboard", view: true },
+    {
+      icon: MdDashboard,
+      label: "Dashboard",
+      to: "/dashboard",
+      view: seeDashboard,
+    },
     {
       icon: IoAlarm,
       label: "Attendance",
-      view: true,
+      view: seeAttendance,
       children: [
-        { label: "My Attendence", to: "/Attendance", view: true },
-        { label: "Late Checkin ", to: "/Attendance/Request", view: true },
+        { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        {
+          label: "Late Checkin ",
+          to: "/Attendance/Request",
+          view: seeLateCheckIn,
+        },
       ],
     },
     {
@@ -97,7 +124,7 @@ const MobileNavigation = () => {
     {
       icon: BiData,
       label: "Master Data",
-      view: true,
+      view: seeMasterData,
       children: [
         {
           label: "Department",
@@ -108,36 +135,39 @@ const MobileNavigation = () => {
         { label: "Roles", to: "/master-data/Roles", view: seeRole },
       ],
     },
-    // { icon: FaBookBookmark, label: "HandBook", to: "/handbook", view: true },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: true },
+    // {
+    //   icon: FaBookBookmark,
+    //   label: "HandBook",
+    //   to: "/handbook",
+    //   view: seeHandbook,
+    // },
+    { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",
-      view: true,
+      // view: seeLeave,
+      view: seeLeave,
       children: [
-        { label: "Leave Status", to: "/Leave/Status", view: true },
-        { label: "Leave Request", to: "/Leave/Request", view: true },
+        { label: "Leave Status", to: "/Leave/Status", view: seeLeaveStatus },
+        { label: "Leave Request", to: "/Leave/Request", view: seeLeaveRequest },
       ],
     },
-    // {
-    //   icon: FcLeave,
-    //   label: "Salary",
-    //   view: true,
-    //   children: [
-    //     { label: "Salary Details", to: "/Salary", view: true },
-    //     { label: "Salary Breakdown", to: "/salaryEdit", view: true },
-    //     { label: "Advance", to: "/AdvanceSalary", view: true },
-    //   ],
-    // },
-
+    {
+      icon: MdMapsHomeWork,
+      label: "Work From Home",
+      view: true,
+      children: [
+        { label: "WFH Status", to: "/WFH/Status", view: true },
+        { label: "WFH Request", to: "/WFH", view: true },
+      ],
+    },
     {
       icon: IoIosPeople,
       label: "Ekye",
       to: "/AdminEkye",
-      view: true,
+      view: seeEKYE,
     },
   ];
-
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };

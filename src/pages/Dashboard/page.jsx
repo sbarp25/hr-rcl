@@ -54,7 +54,7 @@ const Page = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
   );
 
   return (

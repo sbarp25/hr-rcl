@@ -83,16 +83,16 @@ const AttendanceRequest = () => {
     setCurrentPage(page);
   };
   const menu = LocalStorageUtil.getItem("menu");
-  const hasAttendanceEditAccess = true;
-  const hasaccess = true;
+  // const hasAttendanceEditAccess = true;
+  // const hasaccess = true;
   /**To Update Late Check   */
-  // const hasAttendanceEditAccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 41)
-  // );
-  // /**To read the Data */
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 40)
-  // );
+  const hasAttendanceEditAccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 41)
+  );
+  /**To read the Data */
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 40)
+  );
 
   const breadcrumbItems = [
     { label: "Attendance", href: "" },

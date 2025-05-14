@@ -151,21 +151,21 @@ const Department = () => {
 
   /**To check create status */
   const hasDepartmentCreateAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 43)
+    menu?.actions?.some((action) => action.actionId === 43)
   );
 
   /**To read the Data */
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 44)
+    menu?.actions?.some((action) => action.actionId === 44)
   );
   // const hasaccess = true;
   /**To check edit status */
   const hasDepartmentEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 45)
+    menu?.actions?.some((action) => action.actionId === 45)
   );
   /**To check Delete Access */
   const hasDepartmentDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 46)
+    menu?.actions?.some((action) => action.actionId === 46)
   );
 
   useEffect(() => {

@@ -98,16 +98,16 @@ const LeaveStatus = () => {
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 56)
+    menu?.actions?.some((action) => action.actionId === 56)
   );
   const hasLeaveUpdateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 57)
+    menu?.actions?.some((action) => action.actionId === 57)
   );
   const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 58)
+    menu?.actions?.some((action) => action.actionId === 58)
   );
   const hasLeaveCreateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 55)
+    menu?.actions?.some((action) => action.actionId === 55)
   );
 
   useEffect(() => {

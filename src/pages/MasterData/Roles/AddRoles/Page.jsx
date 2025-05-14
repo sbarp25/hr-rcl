@@ -31,7 +31,7 @@ const AddRoles = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 51)
+    menu?.actions?.some((action) => action.actionId === 51)
   );
 
   useEffect(() => {

@@ -39,53 +39,53 @@ const Sidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
   const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeRole = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
   );
   const seeMasterData = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeAttendance = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 6)
+    menu?.actions?.some((action) => action.actionId === 6)
   );
   const seeMyAttendance = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 36)
+    menu?.actions?.some((action) => action.actionId === 36)
   );
   const seeLateCheckIn = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 40)
+    menu?.actions?.some((action) => action.actionId === 40)
   );
   const seeHandbook = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 20)
+    menu?.actions?.some((action) => action.actionId === 20)
   );
   const seeNotices = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 24)
+    menu?.actions?.some((action) => action.actionId === 24)
   );
   const seeLeave = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 28)
+    menu?.actions?.some((action) => action.actionId === 28)
   );
 
   const seeLeaveStatus = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 56)
+    menu?.actions?.some((action) => action.actionId === 56)
   );
   const seeLeaveRequest = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 60)
+    menu?.actions?.some((action) => action.actionId === 60)
   );
   const seeEKYE = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 32)
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },

@@ -186,16 +186,16 @@ const Page = () => {
   const menu = LocalStorageUtil.getItem("menu");
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 20)
+    menu?.actions?.some((action) => action.actionId === 20)
   );
   const hasHandBookCreateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 19)
+    menu?.actions?.some((action) => action.actionId === 19)
   );
   const hasHandBookEditAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 21)
+    menu?.actions?.some((action) => action.actionId === 21)
   );
   const hasHandBookDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 22)
+    menu?.actions?.some((action) => action.actionId === 22)
   );
 
   useEffect(() => {

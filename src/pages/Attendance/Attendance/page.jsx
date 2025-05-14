@@ -22,7 +22,7 @@ const Attendance = () => {
 
   /**To check Employee see status */
   const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   return (
     <>

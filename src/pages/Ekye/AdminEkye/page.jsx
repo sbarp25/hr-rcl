@@ -103,24 +103,24 @@ const Page = () => {
 
   // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 32)
   );
 
   const hasViewAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 32)
   );
   const hasActionAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 32)
   );
 
   const hasUpdateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 33)
+    menu?.actions?.some((action) => action.actionId === 33)
   );
   const hasCreateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 31)
+    menu?.actions?.some((action) => action.actionId === 31)
   );
   const hasDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 34)
+    menu?.actions?.some((action) => action.actionId === 34)
   );
   useEffect(() => {
     if (!hasaccess) {

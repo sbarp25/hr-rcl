@@ -32,7 +32,7 @@ const RejectComp = ({ employeeData }) => {
 
   const menu = LocalStorageUtil.getItem("menu");
   const hasApproveAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 18)
+    menu?.actions?.some((action) => action.actionId === 18)
   );
   const onReject = async (data) => {
     if (hasApproveAccess) {

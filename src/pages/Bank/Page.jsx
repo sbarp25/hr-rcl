@@ -76,10 +76,10 @@ const Bank = () => {
   // const seeAddBank = true;
 
   const seeAddBank = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 76)
+    menu?.actions?.some((action) => action.actionId === 76)
   );
   const AddBank = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 75)
+    menu?.actions?.some((action) => action.actionId === 75)
   );
 
   useEffect(() => {

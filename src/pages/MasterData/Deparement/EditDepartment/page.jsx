@@ -157,7 +157,7 @@ const EditDepartment = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 45)
+    menu?.actions?.some((action) => action.actionId === 45)
   );
   useEffect(() => {
     if (!hasaccess) {

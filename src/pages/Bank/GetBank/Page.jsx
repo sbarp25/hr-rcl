@@ -52,10 +52,10 @@ const GetBankDetails = () => {
 
   /**To check Employee see status */
   const seeBankDetailsAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 76)
+    menu?.actions?.some((action) => action.actionId === 76)
   );
   const AddBankDetailsAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 75)
+    menu?.actions?.some((action) => action.actionId === 75)
   );
   useEffect(() => {
     if (!seeBankDetailsAccess) {
