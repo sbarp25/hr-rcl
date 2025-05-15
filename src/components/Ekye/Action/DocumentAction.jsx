@@ -2,7 +2,7 @@ import { Divider, Form } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import { useEffect, useState } from "react";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 
 const DocumentAction = ({ employeeData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);

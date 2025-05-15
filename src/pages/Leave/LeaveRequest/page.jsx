@@ -131,16 +131,16 @@ const LeaveRequest = () => {
   // const hasaccess = true;
   // const hasLeaveRequestaccess = true;
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 60)
+    menu?.actions?.some((action) => action.actionId === 60)
   );
   const hasLeaveRequestaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 59)
+    menu?.actions?.some((action) => action.actionId === 59)
   );
   const hasLeaveEditaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 61)
+    menu?.actions?.some((action) => action.actionId === 61)
   );
   const hasLeavedeleteaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 62)
+    menu?.actions?.some((action) => action.actionId === 62)
   );
   useEffect(() => {
     if (!hasaccess) {

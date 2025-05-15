@@ -126,7 +126,7 @@ const EditPosition = () => {
 
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 49)
+    menu?.actions?.some((action) => action.actionId === 49)
   );
   useEffect(() => {
     if (!hasaccess) {

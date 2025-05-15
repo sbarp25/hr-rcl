@@ -126,7 +126,7 @@ const ViewEKYE = () => {
   /**To check Employee see status */
   // const seeEKYEAccess = true;
   const seeEKYEAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 68)
+    menu?.actions?.some((action) => action.actionId === 68)
   );
 
   useEffect(() => {

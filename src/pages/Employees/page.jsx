@@ -79,20 +79,20 @@ const Employees = () => {
 
   /**To check create status */
   const hasemployeecreateaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 9)
+    menu?.actions?.some((action) => action.actionId === 9)
   );
   /**To read the Data */
   // const hasaccess = false;
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check edit status */
   const hasEmployeeEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 11)
+    menu?.actions?.some((action) => action.actionId === 11)
   );
   /**To check Delete Access */
   const hasEmployeeDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 12)
+    menu?.actions?.some((action) => action.actionId === 12)
   );
 
   useEffect(() => {

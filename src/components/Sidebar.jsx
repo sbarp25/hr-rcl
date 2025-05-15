@@ -1,7 +1,7 @@
 import Logo from "../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
-import { IoAlarm } from "react-icons/io5";
+import { IoAlarm, IoLogOutOutline, IoLogOutSharp } from "react-icons/io5";
 import { FcLeave } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { GoGear } from "react-icons/go";
@@ -20,14 +20,21 @@ import Loader from "../components/Loader";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import axiosInstance from "../lib/axios-Instance";
 import getInitials from "../utils/getInitials";
+import {} from "react-icons/io5";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  useDisclosure,
+} from "@nextui-org/react";
+import truncateText from "../utils/truncateText";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
@@ -39,53 +46,53 @@ const Sidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeEmployee = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
   const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeRole = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
   );
   const seeMasterData = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 14)
   );
   const seeAttendance = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 6)
+    menu?.actions?.some((action) => action.actionId === 6)
   );
   const seeMyAttendance = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 36)
+    menu?.actions?.some((action) => action.actionId === 36)
   );
   const seeLateCheckIn = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 40)
+    menu?.actions?.some((action) => action.actionId === 40)
   );
   const seeHandbook = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 20)
+    menu?.actions?.some((action) => action.actionId === 20)
   );
   const seeNotices = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 24)
+    menu?.actions?.some((action) => action.actionId === 24)
   );
   const seeLeave = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 28)
+    menu?.actions?.some((action) => action.actionId === 28)
   );
 
   const seeLeaveStatus = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 56)
+    menu?.actions?.some((action) => action.actionId === 56)
   );
   const seeLeaveRequest = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 60)
+    menu?.actions?.some((action) => action.actionId === 60)
   );
   const seeEKYE = menu?.some((menu) =>
-    menu.actionList?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 32)
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
@@ -232,9 +239,9 @@ const Sidebar = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="flex">
+      <div className="flex ">
         <div
-          className={`h-screen bg-black text-white flex flex-col transition-all duration-300 ${
+          className={`min-h-screen h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
             isSidebarExpanded ? "w-64" : "w-20"
           }`}>
           {/* Hamburger menu */}
@@ -306,34 +313,41 @@ const Sidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              {imageURL ? (
-                <Avatar className="h-full w-full object-cover" src={imageURL} />
-              ) : (
-                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                  {getInitials(username)}
-                </div>
-              )}
+              <Link to="/settings">
+                {imageURL ? (
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    src={imageURL}
+                  />
+                ) : (
+                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                    {getInitials(username)}
+                  </div>
+                )}
+              </Link>
 
               {isSidebarExpanded && (
-                <div>
-                  <p className="text-xl" title={username}>
-                    {" "}
-                    {truncateText(username, 7)}
-                  </p>
-                  <p className="text-sm" title={email}>
-                    {" "}
-                    {truncateText(email, 10)}
-                  </p>
-                </div>
+                <Link to="/settings">
+                  <div>
+                    <p className="text-xl" title={username}>
+                      {" "}
+                      {truncateText(username, 7)}
+                    </p>
+                    <p className="text-sm" title={email}>
+                      {" "}
+                      {truncateText(email, 10)}
+                    </p>
+                  </div>
+                </Link>
               )}
               {isSidebarExpanded && (
                 <div className="flex items-center gap-x-2">
-                  <a href="/settings">
+                  <Link to="/settings">
                     <GoGear className="text-2xl" />
-                  </a>
+                  </Link>
                   <button className="">
-                    <CiLogout
-                      onClick={handleLogOut}
+                    <IoLogOutOutline
+                      onClick={onOpen}
                       className="text-2xl text-red-500  hover:scale-125"
                     />
                   </button>
@@ -343,6 +357,30 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <p>Are you sure you want to Log out ?</p>
+                <div className="h-16"></div>
+                <div className="flex gap-2 justify-end mt-4 ">
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => handleLogOut()}>
+                    Log Out
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

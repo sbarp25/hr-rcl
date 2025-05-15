@@ -17,6 +17,7 @@ import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import truncateText from "../../utils/truncateText";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -33,19 +34,19 @@ const UserSidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 64)
+    menu?.actions?.some((action) => action.actionId === 64)
   );
   const seeDashboard = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   const seeEKYE = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 68)
+    menu?.actions?.some((action) => action.actionId === 68)
   );
   const seeSecurity = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 72)
+    menu?.actions?.some((action) => action.actionId === 72)
   );
   const seeBank = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 76)
+    menu?.actions?.some((action) => action.actionId === 76)
   );
   const navbarElements = [
     {
@@ -137,8 +138,6 @@ const UserSidebar = () => {
     fetchProfilephoto();
   }, []);
 
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
     <>
       {isLoading && <Loader />}

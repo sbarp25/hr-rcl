@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EkyeEducationDetails = ({ employeeData }) => {
@@ -28,7 +28,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasApproveAccess = menu.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 17)
+    menu?.actions?.some((action) => action.actionId === 17)
   );
   const onApprove = async () => {
     const approve = {

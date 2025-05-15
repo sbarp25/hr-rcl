@@ -99,7 +99,7 @@ const Login = () => {
               </p>
             </div>
           </div>
-          <div className="px-16 pt-64 bg-white rounded-2xl md:rounded-r-3xl">
+          <div className="px-16 pt-64 bg-white rounded-2xl md:rounded-r-3xl md:rounded-l-none">
             <form
               onSubmit={handleSubmit(handleLogin)}
               className="flex flex-col space-y-4 gap-6 w-full">

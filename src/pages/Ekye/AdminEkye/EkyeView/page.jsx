@@ -92,10 +92,10 @@ const Page = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   // const hasaccess = menu?.some((menu) =>
-  //   menu?.actionList?.some((action) => action.actionId === 2)
+  //   menu?.actions?.some((action) => action.actionId === 2)
   // );
   const ApproveEKYE = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
   const hasaccess = true;
 

@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 import ButtonComponent from "../../components/ButtonComp";
 import { Input, Avatar, Divider } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import UnderlineComponent from "../../components/underlinecomponent";
 import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
+import UnderlineComponent from "../../components/UnderlineComponent";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
@@ -35,6 +35,7 @@ const Settings = () => {
 
   const name = localStorage.getItem("fullName");
   const menu = LocalStorageUtil.getItem("menu");
+  const auth = localStorage.getItem("accessToken");
 
   const fetchProfilephoto = async () => {
     setIsLoading(true);
@@ -191,18 +192,20 @@ const Settings = () => {
     }
   }, [rclId]);
 
+  console.log("fetchEmployeeData", fetchEmployeeData);
+
   // const seeProfile = true;
   const seeProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 64)
+    menu?.actions?.some((action) => action.actionId === 64)
   );
   const editProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 63)
+    menu?.actions?.some((action) => action.actionId === 63)
   );
   const createProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 50)
+    menu?.actions?.some((action) => action.actionId === 50)
   );
   const deleteProfile = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 2)
   );
 
   useEffect(() => {
@@ -211,8 +214,14 @@ const Settings = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!auth) {
+      navigate("/login");
+    }
+  }, [auth, navigate]);
+
   return (
-    <div className=" overflow-x-auto mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-h-[97vh] overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 ">
       {/* Breadcrumbs */}
       <div className="mb-6">
         <BreadcrumbsComponent items={breadcrumbItems} />
@@ -220,10 +229,10 @@ const Settings = () => {
 
       {/* Profile Settings Card */}
       <div className="bg-white dark:bg-neutral-900 shadow-xl rounded-3xl p-8 border border-gray-200">
+        {" "}
         <h2 className="text-2xl font-bold text-center mb-8">
           Profile Settings
         </h2>
-
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10">
@@ -272,7 +281,6 @@ const Settings = () => {
             />
           </div>
         </form>
-
         {/* Personal Information Card */}
         <div className="bg-gray-50 dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
           <div className="flex justify-between items-center mb-6">

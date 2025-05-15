@@ -20,6 +20,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import truncateText from "../../../utils/truncateText";
 
 const Roles = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -91,16 +92,16 @@ const Roles = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 52)
+    menu?.actions?.some((action) => action.actionId === 52)
   );
   const hasRoleAddAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 51)
+    menu?.actions?.some((action) => action.actionId === 51)
   );
   const hasRoleEditAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 53)
+    menu?.actions?.some((action) => action.actionId === 53)
   );
   const hasRoleDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 54)
+    menu?.actions?.some((action) => action.actionId === 54)
   );
 
   useEffect(() => {
@@ -120,13 +121,6 @@ const Roles = () => {
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
-  };
-
-  const truncateText = (text, maxLength) => {
-    if (!text) return "";
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
-      : text;
   };
 
   return (

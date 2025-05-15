@@ -8,7 +8,7 @@ import Loader from "../../Loader";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EducationAction = ({ employeeData }) => {
@@ -29,7 +29,7 @@ const EducationAction = ({ employeeData }) => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasApproveAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 17)
+    menu?.actions?.some((action) => action.actionId === 17)
   );
   const onApprove = async () => {
     const submitData = {

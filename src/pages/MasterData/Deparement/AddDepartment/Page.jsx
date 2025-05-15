@@ -128,7 +128,7 @@ const AddDepartment = () => {
 
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 43)
+    menu?.actions?.some((action) => action.actionId === 43)
   );
 
   useEffect(() => {

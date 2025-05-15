@@ -10,6 +10,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
@@ -26,6 +27,7 @@ import { useForm } from "react-hook-form";
 import TextAreaComp from "../../../components/TextAreaComp";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
+import truncateText from "../../../utils/truncateText";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,7 +71,7 @@ const LeaveStatus = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        `/api/v1/leave_management/list`,
+        `/api/v1/leave_management/by-role`,
         { pageIndex: currentPage, pageSize: leaveDataPerPage }
       );
       if (response.data.responseCode === "200") {
@@ -98,16 +100,16 @@ const LeaveStatus = () => {
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
   const hasaccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 56)
+    menu?.actions?.some((action) => action.actionId === 56)
   );
   const hasLeaveUpdateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 57)
+    menu?.actions?.some((action) => action.actionId === 57)
   );
   const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 58)
+    menu?.actions?.some((action) => action.actionId === 58)
   );
   const hasLeaveCreateAccess = menu?.some((menu) =>
-    menu?.actionList?.some((action) => action.actionId === 55)
+    menu?.actions?.some((action) => action.actionId === 55)
   );
 
   useEffect(() => {
@@ -293,6 +295,7 @@ const LeaveStatus = () => {
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>Full Name</TableColumn>
+                  <TableColumn>Department</TableColumn>
                   <TableColumn>Request Date</TableColumn>
                   <TableColumn>Leave Type</TableColumn>
                   <TableColumn>Leave Start Date</TableColumn>
@@ -310,7 +313,16 @@ const LeaveStatus = () => {
                       key={item.rclId}
                       className="h-14 border-b-2 border-gray-300">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                      <TableCell>{item?.fullName || "N/A"}</TableCell>
+                      <TableCell>
+                        <Tooltip content={item?.fullName}>
+                          {truncateText(item?.fullName || "N/A", 7)}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip content={item?.departmentName}>
+                          {truncateText(item?.departmentName || "N/A", 7)}
+                        </Tooltip>
+                      </TableCell>
                       <TableCell>{item?.requestDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>
                       <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>

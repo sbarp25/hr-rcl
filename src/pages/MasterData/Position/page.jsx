@@ -30,6 +30,7 @@ import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import truncateText from "../../../utils/truncateText";
 
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -102,19 +103,19 @@ const Position = () => {
 
   /**To check create status */
   const hasPositioncreateaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 47)
+    menu?.actions?.some((action) => action.actionId === 47)
   );
   /**To read the Data */
   const hasaccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 48)
+    menu?.actions?.some((action) => action.actionId === 48)
   );
   /**To check edit status */
   const hasPositionEditAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 49)
+    menu?.actions?.some((action) => action.actionId === 49)
   );
   /**To check Delete Access */
   const hasPositionDeleteAccess = menu?.some((menu) =>
-    menu.actionList.some((action) => action.actionId === 50)
+    menu?.actions?.some((action) => action.actionId === 50)
   );
 
   useEffect(() => {
@@ -187,10 +188,6 @@ const Position = () => {
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
-
-  /**Truncate Text */
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const navigateAdd = () => {
     if (hasPositioncreateaccess) {

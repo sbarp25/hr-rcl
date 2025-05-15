@@ -1,6 +1,6 @@
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
 import { Divider } from "@nextui-org/react";
-import UnderlineComponent from "../../underlinecomponent";
+import UnderlineComponent from "../../UnderlineComponent";
 
 const Personal = ({ employeeData }) => {
   return (
