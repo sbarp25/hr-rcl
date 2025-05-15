@@ -50,8 +50,8 @@ const WorkFromHomeStatus = () => {
 
   const { reset, control, handleSubmit } = useForm();
   const breadcrumbItems = [
-    { label: "Leave", href: "" },
-    { label: "Leave Status", href: "/Leave/Status" },
+    { label: "WFH", href: "" },
+    { label: "WFH Status", href: "/WFH/Status" },
   ];
 
   const handleApplyFilters = (result) => {
