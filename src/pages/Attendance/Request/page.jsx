@@ -238,7 +238,7 @@ const AttendanceRequest = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        "/api/v1/attendance/late-check-in/my-late-check-ins",
+        "/api/v1/attendance/late-check-in/role-based-reviews",
         {
           // const response = await axiosInstance.post("/api/v1/auth/get/all", {
           pageIndex: currentPage,
