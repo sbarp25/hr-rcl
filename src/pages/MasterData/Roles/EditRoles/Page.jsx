@@ -12,7 +12,7 @@ import TextAreaComp from "../../../../components/TextAreaComp";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 
 const EditRole = () => {
-  const { id } = useParams(); // Get the role ID from URL
+  const { roleId } = useParams(); // Get the role ID from URL
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [menusAndActions, setMenusAndActions] = useState([]);
@@ -23,7 +23,7 @@ const EditRole = () => {
   const breadcrumbItems = [
     { label: "MasterData", href: "" },
     { label: "Roles", href: "/master-data/Roles" },
-    { label: "Edit Role", href: `/master-data/Roles/edit/${id}` },
+    { label: "Edit Role", href: `/master-data/Roles/edit/${roleId}` },
   ];
 
   // Fetch the specific role data and menus/actions when component mounts
@@ -32,7 +32,9 @@ const EditRole = () => {
       setIsLoading(true);
       try {
         // Fetch role details
-        const roleResponse = await axiosInstance.get(`/api/v1/role/${id}`);
+        const roleResponse = await axiosInstance.get(
+          `/api/v1/role/get/${roleId}`
+        );
         if (roleResponse.data.responseCode === "200") {
           const roleData = roleResponse.data.data;
           setRoleName(roleData.roleName || "");
@@ -86,10 +88,10 @@ const EditRole = () => {
       }
     };
 
-    if (id) {
+    if (roleId) {
       fetchRoleData();
     }
-  }, [id]);
+  }, [roleId]);
 
   // Calculate selected actions for updating
   const selectedActions = menusAndActions

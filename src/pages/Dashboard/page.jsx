@@ -79,7 +79,7 @@ const Page = () => {
         </div>
 
         {/* Weekly Attendance Report */}
-        <div className="flex flex-col bg-white rounded-lg w-full border border-gray-300 shadow-sm">
+        <div className="flex flex-col bg-white rounded-lg w-full border border-gray-300 shadow-sm ">
           <div className="flex flex-col justify-center items-center">
             <h1 className="page-title mt-2 text-xl font-bold">
               Weekly Attendance Report
@@ -108,14 +108,14 @@ const Page = () => {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Work From Home Panel */}
           <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="w-full">
+            <div className="">
               <WorkFromHome />
             </div>
           </div>
 
           {/* Leave Panel */}
           <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="w-full ">
+            <div className="">
               <Leave />
             </div>
           </div>

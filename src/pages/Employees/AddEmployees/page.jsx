@@ -18,6 +18,7 @@ import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
+import DatepickerComponent from "../../../components/DatepickerComponent";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -199,228 +200,232 @@ const AddEmployeeForm = () => {
   }, []);
 
   return (
-    <div className="container space-y-4">
-      <div className="flex justify-between">
-        <div className="flex flex-col space-y-8 ">
-          <div className="text-sm">
-            <GoBack />
-            {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="container space-y-4">
+          <div className="flex justify-between">
+            <div className="flex flex-col space-y-8 ">
+              <div className="text-sm">
+                <GoBack />
+                {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+              </div>
+            </div>
+            <div className="page-title flex items-center -pl-2">
+              <IoIosPeople />
+              Add Employee
+            </div>
+            <div></div>
           </div>
-        </div>
-        <div className="page-title flex items-center -pl-2">
-          <IoIosPeople />
-          Add Employee
-        </div>
-        <div></div>
-      </div>
-      <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8">
-          <div className="flex flex-col space-y-8 gap-4 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              <div className="mb-4">
-                <Input
-                  {...register("fullname", {
-                    required: "Full Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Full name must be at least 3 characters",
-                    },
-                  })}
-                  label="Full Name"
-                  variant="bordered"
-                  isInvalid={!!errors.fullname}
-                  errorMessage={errors.fullname?.message}
-                />
-              </div>
-              <div className="mb-4">
-                <Input
-                  {...register("phone", {
-                    required: "Phone Number is required",
-                    minLength: {
-                      value: 10,
-                      message: "Invalid Phone Number",
-                    },
-                    pattern: {
-                      value: /^9[0-9]{9}$/,
-                      message: "Phone must start with 9 and be 10 digits long",
-                    },
-                  })}
-                  label="Phone"
-                  variant="bordered"
-                  isInvalid={!!errors.phone}
-                  errorMessage={errors.phone?.message}
-                />
-                {/* {errors.phone && (
+          <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="w-full space-y-8">
+              <div className="flex flex-col space-y-8 gap-4 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  <div className="mb-4">
+                    <Input
+                      {...register("fullname", {
+                        required: "Full Name is required",
+                        minLength: {
+                          value: 3,
+                          message: "Full name must be at least 3 characters",
+                        },
+                      })}
+                      label="Full Name"
+                      variant="bordered"
+                      isInvalid={!!errors.fullname}
+                      errorMessage={errors.fullname?.message}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <Input
+                      {...register("phone", {
+                        required: "Phone Number is required",
+                        minLength: {
+                          value: 10,
+                          message: "Invalid Phone Number",
+                        },
+                        pattern: {
+                          value: /^9[0-9]{9}$/,
+                          message:
+                            "Phone must start with 9 and be 10 digits long",
+                        },
+                      })}
+                      label="Phone"
+                      variant="bordered"
+                      isInvalid={!!errors.phone}
+                      errorMessage={errors.phone?.message}
+                    />
+                    {/* {errors.phone && (
                 <p className="text-red-500 text-sm">{errors.phone.message}</p>
-              )} */}
-              </div>
-              <div className="mb-4">
-                <Input
-                  {...register("email", {
-                    required: "Email ID is required",
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Please enter a valid email",
-                    },
-                  })}
-                  label="Email"
-                  variant="bordered"
-                  isInvalid={!!errors.email}
-                  errorMessage={errors.email?.message}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              {/**Select Department */}
-              <div>
-                <Controller
-                  name="department"
-                  control={control}
-                  rules={{ required: "Department is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
+                )} */}
+                  </div>
+                  <div className="mb-4">
+                    <Input
+                      {...register("email", {
+                        required: "Email ID is required",
+                        pattern: {
+                          value: /^\S+@\S+$/i,
+                          message: "Please enter a valid email",
+                        },
+                      })}
+                      label="Email"
                       variant="bordered"
-                      label="Department"
-                      isInvalid={!!errors.department}
-                      className={`rounded-xl `}
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys)[0])
-                      }>
-                      {departmentsData?.map((dept) => (
-                        <SelectItem key={dept.id} textValue={dept.name}>
-                          {dept.name}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-                {errors.department && (
-                  <p className="text-danger text-sm">
-                    {errors.department.message}
-                  </p>
-                )}
-              </div>
-              {/**Select Position */}
-              <div>
-                <Controller
-                  name="position"
-                  control={control}
-                  rules={{ required: "Position is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      variant="bordered"
-                      label="Position"
-                      isInvalid={!!errors.position}
-                      className={`rounded-xl `}
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys)[0])
-                      }>
-                      {positionData.map((pos) => (
-                        <SelectItem key={pos.id} textValue={pos.positionName}>
-                          {pos.positionName}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-                {errors.position && (
-                  <p className="text-danger text-sm">
-                    {errors.position.message}
-                  </p>
-                )}
-              </div>
+                      isInvalid={!!errors.email}
+                      errorMessage={errors.email?.message}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  {/**Select Department */}
+                  <div>
+                    <Controller
+                      name="department"
+                      control={control}
+                      rules={{ required: "Department is required" }}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          variant="bordered"
+                          label="Department"
+                          isInvalid={!!errors.department}
+                          className={`rounded-xl `}
+                          selectedKeys={field.value ? [field.value] : []}
+                          onSelectionChange={(keys) =>
+                            field.onChange(Array.from(keys)[0])
+                          }>
+                          {departmentsData?.map((dept) => (
+                            <SelectItem key={dept.id} textValue={dept.name}>
+                              {dept.name}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                    {errors.department && (
+                      <p className="text-danger text-sm">
+                        {errors.department.message}
+                      </p>
+                    )}
+                  </div>
+                  {/**Select Position */}
+                  <div>
+                    <Controller
+                      name="position"
+                      control={control}
+                      rules={{ required: "Position is required" }}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          variant="bordered"
+                          label="Position"
+                          isInvalid={!!errors.position}
+                          className={`rounded-xl `}
+                          selectedKeys={field.value ? [field.value] : []}
+                          onSelectionChange={(keys) =>
+                            field.onChange(Array.from(keys)[0])
+                          }>
+                          {positionData.map((pos) => (
+                            <SelectItem
+                              key={pos.id}
+                              textValue={pos.positionName}>
+                              {pos.positionName}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                    {errors.position && (
+                      <p className="text-danger text-sm">
+                        {errors.position.message}
+                      </p>
+                    )}
+                  </div>
 
-              {/**Select Role  */}
-              <div>
-                <Controller
-                  name="roles"
-                  control={control}
-                  rules={{ required: "Role is required" }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
+                  {/**Select Role  */}
+                  <div>
+                    <Controller
+                      name="roles"
+                      control={control}
+                      rules={{ required: "Role is required" }}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          variant="bordered"
+                          label="Roles"
+                          isInvalid={!!errors.roles}
+                          className={`rounded-xl`}
+                          selectedKeys={field.value ? [field.value] : []}
+                          onSelectionChange={(keys) =>
+                            field.onChange(Array.from(keys)[0])
+                          }>
+                          {roleData.map((role) => (
+                            <SelectItem
+                              key={role.roleId}
+                              textValue={role.roleName}>
+                              {role.roleName}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                    {errors.roles && (
+                      <p className="text-danger text-sm">
+                        {errors.roles.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  <div className="mb-4">
+                    <Input
+                      {...register("salary", {
+                        required: "Salary is required",
+                        pattern: {
+                          value: /^\d+(\.\d{1,2})?$/,
+                          message:
+                            "Please enter a valid salary (e.g., 1000 or 1000.50)",
+                        },
+                      })}
+                      label="Salary"
                       variant="bordered"
-                      label="Roles"
-                      isInvalid={!!errors.roles}
-                      className={`rounded-xl`}
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys)[0])
-                      }>
-                      {roleData.map((role) => (
-                        <SelectItem key={role.roleId} textValue={role.roleName}>
-                          {role.roleName}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-                {errors.roles && (
-                  <p className="text-danger text-sm">{errors.roles.message}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-              <div className="mb-4">
-                <Input
-                  {...register("salary", {
-                    required: "Salary is required",
-                    pattern: {
-                      value: /^\d+(\.\d{1,2})?$/,
-                      message:
-                        "Please enter a valid salary (e.g., 1000 or 1000.50)",
-                    },
-                  })}
-                  label="Salary"
-                  variant="bordered"
-                  isInvalid={!!errors.salary}
-                  errorMessage={errors.salary?.message}
-                />
-              </div>
-              <div className="mb-4">
-                {/* <DatePicker {...register("HireDate",{required:"Hire Date is required"})}  isInvalid={!!errors.HireDate} errorMessage={errors.HireDate?.message} label="Hire Date" variant="bordered" /> */}
+                      isInvalid={!!errors.salary}
+                      errorMessage={errors.salary?.message}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    {/* <DatePicker {...register("HireDate",{required:"Hire Date is required"})}  isInvalid={!!errors.HireDate} errorMessage={errors.HireDate?.message} label="Hire Date" variant="bordered" /> */}
+                    <div>
+                      <DatepickerComponent
+                        name="fromDate"
+                        control={control}
+                        label="Hire Date(A.D)"
+                        size="sm"
+                        className="w-full"
+                        rules={{
+                          required: "Start date is required",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div>
                   <Controller
-                    name="fromDate"
+                    name="performEKYC"
                     control={control}
-                    rules={{ required: "Start date is required" }}
                     render={({ field }) => (
-                      <DatePicker
-                        {...field}
-                        isInvalid={!!errors.fromDate}
-                        className={`rounded-xl `}
-                        label="Hire Date"
-                        variant="bordered"
-                      />
+                      <Checkbox
+                        color="primary"
+                        isSelected={field.value}
+                        onValueChange={field.onChange}>
+                        Perform eKYE
+                      </Checkbox>
                     )}
                   />
-                  {errors.fromDate && (
-                    <p className="text-danger text-sm">
-                      {errors.fromDate.message}
-                    </p>
-                  )}
                 </div>
-              </div>
-            </div>
-            <div>
-              <Controller
-                name="performEKYC"
-                control={control}
-                render={({ field }) => (
-                  <Checkbox
-                    color="primary"
-                    isSelected={field.value}
-                    onValueChange={field.onChange}>
-                    Perform eKYE
-                  </Checkbox>
-                )}
-              />
-            </div>
-            {/* <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {/* <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               <div>
                 <Controller
                   name="isteamLead"
@@ -450,16 +455,18 @@ const AddEmployeeForm = () => {
                 />
               </div>
             </div> */}
+              </div>
+              <button
+                type="submit"
+                className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
+                <img src={Submit} alt="Submit" className="h-4 w-4" />
+                Add Employee
+              </button>
+            </form>
           </div>
-          <button
-            type="submit"
-            className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
-            <img src={Submit} alt="Submit" className="h-4 w-4" />
-            Add Employee
-          </button>
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -30,6 +30,7 @@ import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import truncateText from "../../../utils/truncateText";
 
 const Position = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -187,10 +188,6 @@ const Position = () => {
     { label: "MasterData", href: "" },
     { label: "Position", href: "/master-data/Position" },
   ];
-
-  /**Truncate Text */
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const navigateAdd = () => {
     if (hasPositioncreateaccess) {

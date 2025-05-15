@@ -14,6 +14,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import SkeletonLoader from "../../../components/SkeletonLoader";
@@ -27,6 +28,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/TextAreaComp";
 import axios from "axios";
+import truncateText from "../../../utils/truncateText";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -199,10 +201,11 @@ const WorkFromHomeStatus = () => {
   const fetchWorkFromHome = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
-        pageIndex: currentPage,
-        pageSize: WFHDataPerPage,
-      });
+      // const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
+      //   pageIndex: currentPage,
+      //   pageSize: WFHDataPerPage,
+      // });
+      const response = await axiosInstance.get(`/api/work_from_home/requests`);
       if (response.data.responseCode === "200") {
         setWorkFromHome(response.data.datalist);
         setOriginalLeaveData(response.data.datalist);
@@ -266,6 +269,7 @@ const WorkFromHomeStatus = () => {
                   <TableHeader>
                     <TableColumn>S.N</TableColumn>
                     <TableColumn>Full Name</TableColumn>
+                    <TableColumn>Department</TableColumn>
                     <TableColumn>Request Date</TableColumn>{" "}
                     <TableColumn>WRH Start Date</TableColumn>
                     <TableColumn>WRH End Date</TableColumn>
@@ -281,7 +285,21 @@ const WorkFromHomeStatus = () => {
                         key={item.rclId}
                         className="h-14 border-b-2 border-gray-300">
                         <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                        <TableCell>{item?.fullName || "N/A"}</TableCell>
+                        <TableCell>
+                          <Tooltip content={item?.userFullName}>
+                            {truncateText(item?.userFullName || "N/A", 7)}
+                          </Tooltip>
+                        </TableCell>
+                        {/* <TableCell>
+                          <Tooltip content={item?.fullName}>
+                            {truncateText(item?.fullName || "N/A", 7)}
+                          </Tooltip>
+                        </TableCell> */}
+                        <TableCell>
+                          <Tooltip content={item?.departmentName}>
+                            {truncateText(item?.departmentName || "N/A", 7)}
+                          </Tooltip>
+                        </TableCell>
                         <TableCell>{item?.requestDate || "N/A"}</TableCell>
 
                         <TableCell>

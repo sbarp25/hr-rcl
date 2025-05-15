@@ -30,6 +30,7 @@ import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import truncateText from "../../../utils/truncateText";
 
 const Department = () => {
   const [departmentsData, setDepartmentsData] = useState([]);
@@ -173,9 +174,6 @@ const Department = () => {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
-
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const gotoAdd = () => {
     if (hasDepartmentCreateAccess) {

@@ -28,15 +28,13 @@ import {
   ModalContent,
   useDisclosure,
 } from "@nextui-org/react";
+import truncateText from "../utils/truncateText";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);

@@ -17,6 +17,7 @@ import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import truncateText from "../../utils/truncateText";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -137,8 +138,6 @@ const UserSidebar = () => {
     fetchProfilephoto();
   }, []);
 
-  const truncateText = (text, maxLength) =>
-    text?.length > maxLength ? `${text?.slice(0, maxLength)}...` : text;
   return (
     <>
       {isLoading && <Loader />}

@@ -100,10 +100,10 @@ const Leave = () => {
             />
           </div>
         </div>
-        <div className="w-full p-4 ">
-          <div className="max-h-[30vh] overflow-auto px-1">
+        <div className="w-full p-2 ">
+          <div className="max-h-[30vh] overflow-auto ">
             {leaveList && leaveList.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2    gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {leaveList.map((data, index) => (
                   <div
                     key={index}

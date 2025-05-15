@@ -25,7 +25,7 @@ const AttendanceReport = ({ attendanceData }) => {
   };
 
   return (
-    <div className="w-full px-2 sm:px-4">
+    <div className="w-full ">
       {/* Large screens - Full table */}
       <div className="hidden lg:block">
         <Table

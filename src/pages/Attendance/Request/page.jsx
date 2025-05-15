@@ -14,6 +14,7 @@ import {
   Modal,
   ModalContent,
   ModalBody,
+  Tooltip,
 } from "@nextui-org/react";
 import { FaCheck } from "react-icons/fa";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
@@ -26,6 +27,7 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
 import { useForm } from "react-hook-form";
+import truncateText from "../../../utils/truncateText";
 
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -305,7 +307,7 @@ const AttendanceRequest = () => {
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
                 <TableColumn>RCL-ID</TableColumn>
-                {/* <TableColumn>Name</TableColumn> */}
+                <TableColumn>Department</TableColumn>
                 <TableColumn>Email</TableColumn>
                 <TableColumn>Attendance Date</TableColumn>
                 <TableColumn>Expected CheckInTime</TableColumn>
@@ -324,9 +326,21 @@ const AttendanceRequest = () => {
                       <TableCell>
                         {(currentPage - 1) * lateCheckInDataPerPage + index + 1}
                       </TableCell>
-                      <TableCell>{late.rclId}</TableCell>
-                      {/* <TableCell>{late.fullName}</TableCell> */}
-                      <TableCell>{late.email}</TableCell>
+                      <TableCell>
+                        <Tooltip content={late.rclId}>
+                          {truncateText(late.rclId, 7)}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip content={late.departmentName}>
+                          {truncateText(late.departmentName, 7) || "N/A"}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip content={late.email}>
+                          {truncateText(late.email, 7)}
+                        </Tooltip>
+                      </TableCell>
                       <TableCell>{late.attendanceDate}</TableCell>
                       <TableCell>{late.expectedCheckInTime}</TableCell>
 
@@ -350,16 +364,22 @@ const AttendanceRequest = () => {
                         {/* {late.status} */}
                       </TableCell>
                       <TableCell>{late.checkInTime}</TableCell>
-                      <TableCell>{late.lateReason}</TableCell>
+                      <TableCell>
+                        {" "}
+                        <Tooltip content={late.lateReason}>
+                          {truncateText(late.lateReason, 15)}
+                        </Tooltip>
+                        {/* {late.lateReason} */}
+                      </TableCell>
                       <TableCell>
                         <div className="flex justify-between items-center">
-                          <button
+                          {/* <button
                             className="text-blue-600 hover:text-blue-800"
                             onClick={() =>
                               handleAction("view", late.lateCheckInId)
                             }>
                             <FaRegEye size={18} />
-                          </button>
+                          </button> */}
                           <div className="flex justify-center gap-4">
                             <FaCheck
                               className={`${
@@ -399,6 +419,7 @@ const AttendanceRequest = () => {
             <Table bordered aria-label="List of Review for Late Checkin">
               <TableHeader>
                 <TableColumn>Employee</TableColumn>
+                <TableColumn>Department</TableColumn>
                 <TableColumn>Date</TableColumn>
                 <TableColumn>Check In</TableColumn>
                 <TableColumn>Reason</TableColumn>
@@ -416,6 +437,11 @@ const AttendanceRequest = () => {
                           {late.rclId}
                         </span>
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip content={late.departmentName}>
+                        {truncateText(late.departmentName, 7) || "N/A"}
+                      </Tooltip>
                     </TableCell>
                     <TableCell>{late.attendanceDate}</TableCell>
                     <TableCell>
@@ -500,6 +526,15 @@ const AttendanceRequest = () => {
                   <div className="grid grid-cols-2 gap-2">
                     <div className="font-medium">Email:</div>
                     <div className="truncate">{late.email}</div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="font-medium">Department:</div>
+                    <div className="truncate">
+                      <Tooltip content={late.departmentName}>
+                        {truncateText(late.departmentName, 7) || "N/A"}
+                      </Tooltip>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="font-medium">Expected Time:</div>
