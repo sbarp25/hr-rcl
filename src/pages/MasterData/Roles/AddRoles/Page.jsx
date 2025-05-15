@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
 import TextAreaComp from "../../../../components/TextAreaComp";
 import ButtonComponent from "../../../../components/ButtonComp";
@@ -16,7 +16,7 @@ const AddRoles = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset, watch } = useForm();
 
   // Get all selected action IDs from the menus
   const getSelectedActions = () => {
@@ -125,6 +125,7 @@ const AddRoles = () => {
         if (response.data.responseCode === "201") {
           toast.success(response.data.message || "Role created successfully");
           reset();
+          navigate("/master-data/Roles");
 
           // Reset all selections
           const resetMenus = menusAndActions.map((menu) => ({
@@ -149,6 +150,32 @@ const AddRoles = () => {
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
+  };
+
+  const SelectAll = (isChecked) => {
+    const updatedMenusAndActions = menusAndActions.map((menu) => ({
+      ...menu,
+      actions: menu.actions.map((action) => ({
+        ...action,
+        selected: isChecked,
+      })),
+    }));
+
+    setMenusAndActions(updatedMenusAndActions);
+  };
+
+  const selectMenuAll = (menuIndex, isChecked) => {
+    const updatedMenusAndActions = [...menusAndActions];
+
+    updatedMenusAndActions[menuIndex].actions = updatedMenusAndActions[
+      menuIndex
+    ].actions.map((action) => ({
+      ...action,
+      selected: isChecked,
+    }));
+
+    // Update state with the new array
+    setMenusAndActions(updatedMenusAndActions);
   };
 
   return (
@@ -202,23 +229,60 @@ const AddRoles = () => {
 
               {/* Menus and Actions Section */}
               <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4 pb-2 border-b border-gray-200">
-                  Permissions
-                </h3>
-
+                <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
+                  <h3 className="text-lg font-medium text-gray-800 ">
+                    Permissions
+                  </h3>
+                  <div>
+                    <Controller
+                      name="SelectAllRoles"
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          color="primary"
+                          isSelected={field.value}
+                          onValueChange={(isChecked) => {
+                            field.onChange(isChecked);
+                            SelectAll(isChecked);
+                          }}>
+                          Select All
+                        </Checkbox>
+                      )}
+                    />
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 gap-6 max-h-96 overflow-y-auto pr-2">
                   {menusAndActions.length > 0 ? (
                     menusAndActions.map((menu, menuIndex) => (
                       <div
                         key={menu.menuId}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
-                          <h4 className="text-md font-semibold text-gray-800">
-                            {menu.menuName}
-                          </h4>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {menu.menuDescription}
-                          </p>
+                        <div className="flex justify-between bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
+                          <div>
+                            <h4 className="text-md font-semibold text-gray-800">
+                              {menu.menuName}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {menu.menuDescription}
+                            </p>
+                          </div>
+                          <div>
+                            <Controller
+                              name={`SelectMenu_${menuIndex}`} // Give each menu its own control name
+                              control={control}
+                              render={({ field }) => (
+                                <Checkbox
+                                  color="primary"
+                                  isSelected={field.value}
+                                  onValueChange={(isChecked) => {
+                                    field.onChange(isChecked);
+                                    selectMenuAll(menuIndex, isChecked);
+                                  }}>
+                                  Select All
+                                </Checkbox>
+                              )}
+                            />
+                          </div>
                         </div>
 
                         <div className="p-4">

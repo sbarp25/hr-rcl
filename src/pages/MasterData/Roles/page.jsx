@@ -20,6 +20,7 @@ import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
+import truncateText from "../../../utils/truncateText";
 
 const Roles = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -120,13 +121,6 @@ const Roles = () => {
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
-  };
-
-  const truncateText = (text, maxLength) => {
-    if (!text) return "";
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
-      : text;
   };
 
   return (
