@@ -74,7 +74,7 @@ const Page = () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get(
-          "/api/v1/admin/non-approved-ekye",
+          "/api/v1/admin/completed_ekye_users",
           {
             // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
             pageIndex: currentPage,
@@ -225,7 +225,7 @@ const Page = () => {
             onChange={handlePageChange}
           />
           <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
+            <span className="text-xs mr-2">Lines Per Page: </span>
             <DropDownComp
               items={dropdownItems}
               onSelect={setEkyeDashboardDataPerPage}

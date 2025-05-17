@@ -197,7 +197,7 @@ const Department = () => {
         <Loader />
       ) : (
         <>
-          <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
+          <div className="px-2 md:px-8 space-y-4">
             {/**Header Section */}
             <div className="flex flex-col space-y-4">
               <div className="text-sm">
@@ -237,7 +237,7 @@ const Department = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-2">
+            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto space-y-4 p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className=" rounded-lg max-h-[80vh]  text-left">
@@ -254,47 +254,51 @@ const Department = () => {
                       items={isLoading ? [] : departmentsData}
                       isLoading={isLoading}
                       loadingContent={<SkeletonLoader />}>
-                      {departmentsData.map((department, index) => (
-                        <TableRow
-                          key={department.rclId}
-                          className="h-14 justify-center items-center border-b-2 border-gray-300">
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{department.name}</TableCell>
-                          <TableCell>
-                            <Tooltip content={department.description}>
-                              {truncateText(department.description, 30)}
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell>{department.teamLeadName}</TableCell>
-                          <TableCell>
-                            {department.associateTeamLeadName}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex">
-                              <HiPencilSquare
-                                className={`${
-                                  hasDepartmentEditAccess
-                                    ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
-                                    : "text-xl mr-2"
-                                }`}
-                                title="Edit"
-                                onClick={() => handleAction("edit", department)}
-                              />
-                              <MdDelete
-                                className={`${
-                                  hasDepartmentDeleteAccess
-                                    ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2"
-                                }`}
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("delete", department)
-                                }
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {departmentsData
+                        .filter((department) => !department.isDeleted)
+                        .map((department, index) => (
+                          <TableRow
+                            key={department.rclId}
+                            className="h-14 justify-center items-center border-b-2 border-gray-300">
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{department.name}</TableCell>
+                            <TableCell>
+                              <Tooltip content={department.description}>
+                                {truncateText(department.description, 30)}
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>{department.teamLeadName}</TableCell>
+                            <TableCell>
+                              {department.associateTeamLeadName}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex">
+                                <HiPencilSquare
+                                  className={`${
+                                    hasDepartmentEditAccess
+                                      ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                      : "text-xl mr-2"
+                                  }`}
+                                  title="Edit"
+                                  onClick={() =>
+                                    handleAction("edit", department)
+                                  }
+                                />
+                                <MdDelete
+                                  className={`${
+                                    hasDepartmentDeleteAccess
+                                      ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                      : "text-xl ml-2"
+                                  }`}
+                                  title="Delete"
+                                  onClick={() =>
+                                    handleAction("delete", department)
+                                  }
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -311,61 +315,66 @@ const Department = () => {
                       <TableColumn>Actions</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {departmentsData.map((department, index) => (
-                        <TableRow
-                          key={department.rclId}
-                          className="hover:bg-gray-50">
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {department.name}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                ID: {department.rclId}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip content={department.description}>
-                              {truncateText(department.description, 20)}
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span>{department.teamLeadName}</span>
-                              {department.associateTeamLeadName && (
-                                <span className="text-xs text-gray-500">
-                                  Associate: {department.associateTeamLeadName}
+                      {departmentsData
+                        .filter((department) => !department.isDeleted)
+                        .map((department, index) => (
+                          <TableRow
+                            key={department.rclId}
+                            className="hover:bg-gray-50">
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className="font-medium">
+                                  {department.name}
                                 </span>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex">
-                              <HiPencilSquare
-                                className={`${
-                                  hasDepartmentEditAccess
-                                    ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                    : "text-xl mr-2"
-                                }`}
-                                title="Edit"
-                                onClick={() => handleAction("edit", department)}
-                              />
-                              <MdDelete
-                                className={`${
-                                  hasDepartmentDeleteAccess
-                                    ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2"
-                                }`}
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("delete", department)
-                                }
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                                <span className="text-xs text-gray-500">
+                                  ID: {department.rclId}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip content={department.description}>
+                                {truncateText(department.description, 20)}
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span>{department.teamLeadName}</span>
+                                {department.associateTeamLeadName && (
+                                  <span className="text-xs text-gray-500">
+                                    Associate:{" "}
+                                    {department.associateTeamLeadName}
+                                  </span>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex">
+                                <HiPencilSquare
+                                  className={`${
+                                    hasDepartmentEditAccess
+                                      ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                      : "text-xl mr-2"
+                                  }`}
+                                  title="Edit"
+                                  onClick={() =>
+                                    handleAction("edit", department)
+                                  }
+                                />
+                                <MdDelete
+                                  className={`${
+                                    hasDepartmentDeleteAccess
+                                      ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                      : "text-xl ml-2"
+                                  }`}
+                                  title="Delete"
+                                  onClick={() =>
+                                    handleAction("delete", department)
+                                  }
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -374,82 +383,88 @@ const Department = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden">
                 <div className="space-y-4">
-                  {departmentsData.map((department, index) => (
-                    <div
-                      key={department.rclId}
-                      className="border rounded-lg overflow-hidden shadow-sm">
+                  {departmentsData
+                    .filter((department) => !department.isDeleted)
+                    .map((department, index) => (
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                        onClick={() => toggleExpandedRow(department.rclId)}>
-                        <div className="font-medium">{department.name}</div>
-                        <div className="flex items-center gap-2">
-                          <FaChevronDown
-                            size={16}
-                            className={`transition-transform ${
-                              expandedRow === department.rclId
-                                ? "rotate-180"
-                                : ""
-                            }`}
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className={`${
-                          expandedRow === department.rclId ? "block" : "hidden"
-                        } p-3 space-y-2 text-sm`}>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Department ID:</div>
-                          <div>{department.rclId}</div>
-                        </div>
-                        <div className="grid grid-cols-1 gap-2">
-                          <div className="font-medium">Description:</div>
-                          <div className="bg-gray-50 p-2 rounded">
-                            {department.description}
+                        key={department.rclId}
+                        className="border rounded-lg overflow-hidden shadow-sm">
+                        <div
+                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                          onClick={() => toggleExpandedRow(department.rclId)}>
+                          <div className="font-medium">{department.name}</div>
+                          <div className="flex items-center gap-2">
+                            <FaChevronDown
+                              size={16}
+                              className={`transition-transform ${
+                                expandedRow === department.rclId
+                                  ? "rotate-180"
+                                  : ""
+                              }`}
+                            />
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Team Lead:</div>
-                          <div>{department.teamLeadName || "N/A"}</div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Associate Lead:</div>
-                          <div>{department.associateTeamLeadName || "N/A"}</div>
-                        </div>
-                        <div className="flex justify-end gap-4 mt-2">
-                          <Button
-                            size="sm"
-                            color="warning"
-                            className={`${
-                              !hasDepartmentEditAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasDepartmentEditAccess &&
-                              handleAction("edit", department)
-                            }
-                            disabled={!hasDepartmentEditAccess}>
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            color="danger"
-                            className={`${
-                              !hasDepartmentDeleteAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasDepartmentDeleteAccess &&
-                              handleAction("delete", department)
-                            }
-                            disabled={!hasDepartmentDeleteAccess}>
-                            Delete
-                          </Button>
+                        <div
+                          className={`${
+                            expandedRow === department.rclId
+                              ? "block"
+                              : "hidden"
+                          } p-3 space-y-2 text-sm`}>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Department ID:</div>
+                            <div>{department.rclId}</div>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2">
+                            <div className="font-medium">Description:</div>
+                            <div className="bg-gray-50 p-2 rounded">
+                              {department.description}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Team Lead:</div>
+                            <div>{department.teamLeadName || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Associate Lead:</div>
+                            <div>
+                              {department.associateTeamLeadName || "N/A"}
+                            </div>
+                          </div>
+                          <div className="flex justify-end gap-4 mt-2">
+                            <Button
+                              size="sm"
+                              color="warning"
+                              className={`${
+                                !hasDepartmentEditAccess
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              onPress={() =>
+                                hasDepartmentEditAccess &&
+                                handleAction("edit", department)
+                              }
+                              disabled={!hasDepartmentEditAccess}>
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              color="danger"
+                              className={`${
+                                !hasDepartmentDeleteAccess
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              onPress={() =>
+                                hasDepartmentDeleteAccess &&
+                                handleAction("delete", department)
+                              }
+                              disabled={!hasDepartmentDeleteAccess}>
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
 
                   {(!departmentsData || departmentsData.length === 0) &&
                     !isLoading && (
@@ -462,11 +477,10 @@ const Department = () => {
 
               {/* Pagination - Responsive for all screens */}
               {departmentsData && departmentsData.length > 0 && (
-                <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                  <div className="text-sm font-medium text-gray-600  flex items-center">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
+                  <div className="text-sm font-medium text-gray-600 flex items-center">
                     <span className="mr-1">Showing:</span>
                     <span className="font-bold text-gray-800 mx-1">
-                      {/* {departmentPerPage} */}
                       {totalRecords < departmentPerPage
                         ? totalRecords
                         : departmentPerPage}

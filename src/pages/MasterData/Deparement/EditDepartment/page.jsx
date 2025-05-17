@@ -10,6 +10,7 @@ import SelectComp from "../../../../components/Select";
 import { toast } from "react-toastify";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader";
+import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -236,6 +237,15 @@ const EditDepartment = () => {
               {/* Team Leader */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  {/* <div>
+                    <ReusableAutocomplete
+                      name="teamlead"
+                      control={control}
+                      label="Team Lead"
+                      items={teamLeadid}
+                      rules={{ required: "Team Lead is required" }}
+                    />
+                  </div> */}
                   <SelectComp
                     name="teamlead"
                     label="Team Lead"
@@ -263,7 +273,7 @@ const EditDepartment = () => {
               <ButtonComponent
                 type="submit"
                 className="bg-black text-white"
-                content={isLoading ? "Editing..." : "Edit"}
+                content={isLoading ? "Updating..." : "Update"}
                 disabled={isLoading}
               />
             </form>

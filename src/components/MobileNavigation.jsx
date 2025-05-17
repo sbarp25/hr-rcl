@@ -141,7 +141,7 @@ const MobileNavigation = () => {
     //   to: "/handbook",
     //   view: seeHandbook,
     // },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
+    // { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",

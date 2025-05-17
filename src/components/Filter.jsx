@@ -64,7 +64,7 @@ const Filter = ({
       setLoadingDepartments(true);
       try {
         const response = await axiosInstance.post(
-          "/api/v1/departments/list",
+          "/api/v1/departments/get/all",
           {}
         );
         if (response.data.responseCode === "200") {
@@ -122,34 +122,38 @@ const Filter = ({
     setIsLoading(true);
     const filterCriteria = {};
 
+    // Initialize the structure properly
+    const requestBody = {
+      pageIndex: 1,
+      pageSize: 10,
+      filterCriteria: {},
+    };
+
     if (formData.FromDate || formData.toDate) {
-      filterCriteria.createdAt = {};
+      requestBody.filterCriteria.createdAt = {};
 
       if (formData.FromDate) {
-        filterCriteria.createdAt.from = formatDate(formData.FromDate);
+        requestBody.filterCriteria.createdAt.from = formatDate(
+          formData.FromDate
+        );
       }
 
       if (formData.toDate) {
-        filterCriteria.createdAt.to = formatDate(formData.toDate);
+        requestBody.filterCriteria.createdAt.to = formatDate(formData.toDate);
       }
     }
 
     if (formData.department) {
-      filterCriteria.filterCriteria[fieldNames?.departmentField] = parseInt(
-        formData.department || ""
+      requestBody.filterCriteria[fieldNames?.departmentField] = parseInt(
+        formData?.department || ""
       );
     }
 
     if (formData.position) {
-      filterCriteria.filterCriteria[fieldNames?.positionField] = parseInt(
-        formData.position || ""
+      requestBody.filterCriteria[fieldNames?.positionField] = parseInt(
+        formData?.position || ""
       );
     }
-    const requestBody = {
-      pageIndex: 1,
-      pageSize: 10,
-      filterCriteria: filterCriteria,
-    };
 
     try {
       const response = await axiosInstance.post(`${url}`, requestBody, {

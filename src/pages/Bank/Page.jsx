@@ -101,6 +101,7 @@ const Bank = () => {
         </div>
         <div></div>
       </div>
+      {/* {is} */}
       <div className="h-[80vh] border-2 border-gray-300 rounded-2xl p-4">
         <div>
           <form onSubmit={handleSubmit(onSubmit)} className=" space-y-4">

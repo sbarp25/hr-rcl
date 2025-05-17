@@ -142,7 +142,7 @@ const Sidebar = () => {
     //   to: "/handbook",
     //   view: seeHandbook,
     // },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
+    // { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",
@@ -367,9 +367,8 @@ const Sidebar = () => {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalBody>
+              <ModalBody className="text-center">
                 <p>Are you sure you want to Log out ?</p>
-                <div className="h-16"></div>
                 <div className="flex gap-2 justify-end mt-4 ">
                   <Button
                     className="bg-black text-white"

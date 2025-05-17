@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "@nextui-org/react";
-import { IoReturnDownBack } from "react-icons/io5";
+import { Form, Input } from "@nextui-org/react";
 import Loader from "../../../../components/Loader";
 import axiosInstance from "../../../../lib/axios-Instance";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
@@ -23,11 +21,6 @@ const EditRole = () => {
   const { control, handleSubmit, reset } = useForm();
   // Breadcrumb setup
   const NumroleId = parseInt(roleId);
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Roles", href: "/master-data/Roles" },
-    { label: "Edit Role", href: `/master-data/Roles/edit/${NumroleId}` },
-  ];
 
   // Fetch the specific role data and menus/actions when component mounts
   useEffect(() => {
@@ -62,23 +55,23 @@ const EditRole = () => {
           const allMenusAndActions = menusResponse.data.data;
 
           // Now fetch selected actions for this role
-          // const selectedActionsResponse = await axiosInstance.get(
-          //   `/api/v1/role/actions/${NumroleId}`
-          // );
-          // if (selectedActionsResponse.data.responseCode === "200") {
-          //   const selectedActionIds = selectedActionsResponse.data.data || [];
+          const selectedActionsResponse = await axiosInstance.get(
+            `/api/v1/role/actions/${NumroleId}`
+          );
+          if (selectedActionsResponse.data.responseCode === "200") {
+            const selectedActionIds = selectedActionsResponse.data.data || [];
 
-          //   // Mark actions as selected based on the role's permissions
-          //   const updatedMenusAndActions = allMenusAndActions.map((menu) => {
-          //     const updatedActions = menu.actions.map((action) => ({
-          //       ...action,
-          //       selected: selectedActionIds.includes(action.actionId),
-          //     }));
-          //     return { ...menu, actions: updatedActions };
-          //   });
+            // Mark actions as selected based on the role's permissions
+            const updatedMenusAndActions = allMenusAndActions.map((menu) => {
+              const updatedActions = menu.actions.map((action) => ({
+                ...action,
+                selected: selectedActionIds.includes(action.actionId),
+              }));
+              return { ...menu, actions: updatedActions };
+            });
 
-          //   setMenusAndActions(updatedMenusAndActions);
-          // }
+            setMenusAndActions(updatedMenusAndActions);
+          }
         } else {
           toast.error(
             menusResponse.data.message || "Failed to fetch menus and actions"
@@ -110,7 +103,7 @@ const EditRole = () => {
     .flat();
 
   // Handle form submission to update the role
-  const handleUpdateRole = async (e) => {
+  const handleUpdateRole = async () => {
     if (hasaccess) {
       // e.preventDefault();
       setIsLoading(true);
@@ -154,10 +147,6 @@ const EditRole = () => {
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
-  };
-
-  const handleCancel = () => {
-    navigate("/master-data/Roles");
   };
 
   const menu = LocalStorageUtil.getItem("menu");
@@ -285,7 +274,7 @@ const EditRole = () => {
             <ButtonComponent
               type="submit"
               className="bg-black text-white"
-              content={isLoading ? "Editing..." : "Edit"}
+              content={isLoading ? "Updating..." : "Update"}
               disabled={isLoading}
             />
           </div>

@@ -54,30 +54,30 @@ const Position = () => {
   };
 
   /**Start of Get API for Getting the Positions */
-  useEffect(() => {
-    const fetchPositions = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/positions/list", {
-          pageIndex: currentPage,
-          pageSize: positionPerPage,
-        });
-        if (response.data.responseCode === "200") {
-          setOriginalPositionsData(response?.data?.datalist || []); // Store original data
-          setPositionData(response?.data?.datalist || []); // Initially set filtered data to original data
-          setTotalPages(response.data.totalPages);
-          setTotalRecords(response.data.totalRecords);
-        } else {
-          toast.error(response?.data?.message || "Failed to fetch positions.");
-        }
-      } catch (error) {
-        console.error("Error fetching positions:", error);
-        toast.error("Error fetching positions.");
-      } finally {
-        setIsLoading(false);
+  const fetchPositions = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/positions/list", {
+        pageIndex: currentPage,
+        pageSize: positionPerPage,
+      });
+      if (response.data.responseCode === "200") {
+        setOriginalPositionsData(response?.data?.datalist || []); // Store original data
+        setPositionData(response?.data?.datalist || []); // Initially set filtered data to original data
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
+      } else {
+        toast.error(response?.data?.message || "Failed to fetch positions.");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching positions:", error);
+      toast.error("Error fetching positions.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPositions();
   }, [currentPage, positionPerPage]);
 
@@ -155,6 +155,7 @@ const Position = () => {
           toast.success(
             response.data.message || "Position deleted successfully!"
           );
+          fetchPositions();
           onClose();
 
           // Refresh the data after deletion
@@ -243,7 +244,7 @@ const Position = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-2">
+            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className="rounded-lg max-h-[80vh] text-left">
@@ -258,45 +259,49 @@ const Position = () => {
                       items={isLoading ? [] : positionData}
                       isLoading={isLoading}
                       loadingContent={<SkeletonLoader />}>
-                      {positionData.map((position, index) => (
-                        <TableRow
-                          key={position.rclId}
-                          className="h-14 justify-center items-center border-b-2 border-gray-300">
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>
-                            <Tooltip content={position.positionName}>
-                              {truncateText(position.positionName, 30)}
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell>
-                            <Tooltip content={position.description}>
-                              {truncateText(position.description, 30)}
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex">
-                              <HiPencilSquare
-                                className={`${
-                                  hasPositionEditAccess
-                                    ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
-                                    : "text-xl mr-2"
-                                }`}
-                                title="Edit"
-                                onClick={() => handleAction("edit", position)}
-                              />
-                              <MdDelete
-                                className={`${
-                                  hasPositionDeleteAccess
-                                    ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2"
-                                }`}
-                                title="Delete"
-                                onClick={() => handleAction("delete", position)}
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {positionData
+                        .filter((position) => !position.isDeleted)
+                        .map((position, index) => (
+                          <TableRow
+                            key={position.rclId}
+                            className="h-14 justify-center items-center border-b-2 border-gray-300">
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>
+                              <Tooltip content={position.positionName}>
+                                {truncateText(position.positionName, 30)}
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                              <Tooltip content={position.description}>
+                                {truncateText(position.description, 30)}
+                              </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex">
+                                <HiPencilSquare
+                                  className={`${
+                                    hasPositionEditAccess
+                                      ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                      : "text-xl mr-2"
+                                  }`}
+                                  title="Edit"
+                                  onClick={() => handleAction("edit", position)}
+                                />
+                                <MdDelete
+                                  className={`${
+                                    hasPositionDeleteAccess
+                                      ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                      : "text-xl ml-2"
+                                  }`}
+                                  title="Delete"
+                                  onClick={() =>
+                                    handleAction("delete", position)
+                                  }
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </div>
@@ -443,7 +448,7 @@ const Position = () => {
 
               {/* Pagination - Responsive for all screens */}
               {positionData && positionData.length > 0 && (
-                <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
                   <div className="text-sm font-medium text-gray-600 flex items-center">
                     <span className="mr-1">Showing:</span>
                     <span className="font-bold text-gray-800 mx-1">

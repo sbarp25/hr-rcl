@@ -284,10 +284,10 @@ const LeaveStatus = () => {
         </div>
 
         {/**Table Section */}
-        <div className="bg-white rounded-lg p-2">
+        <div className="bg-white rounded-lg p-2 max-h-[80vh]  overflow-y-auto">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+            <div className="shadow-md rounded-lg  text-left">
               <Table
                 bordered
                 aria-label="Table of Leave"
@@ -391,7 +391,7 @@ const LeaveStatus = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto  text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>Leave</TableColumn>
@@ -474,7 +474,7 @@ const LeaveStatus = () => {
 
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto">
               {leaveData.map((leave) => (
                 <div
                   key={leave.rclId}
@@ -611,23 +611,35 @@ const LeaveStatus = () => {
                   {selectedLeave && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
                       <div className="flex ">
-                        <span className="font-medium">Team Lead:</span>
-                        <span>{selectedLeave?.teamleadName}</span>
+                        <span className="font-medium">Full Name: &nbsp;</span>
+                        <span>{selectedLeave?.fullName}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">AssociateTeam Lead:</span>
-                        <span>{selectedLeave?.associateteamleadName}</span>
+                        <span className="font-medium">
+                          Department Name: &nbsp;
+                        </span>
+                        <span>{selectedLeave?.departmentName}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">Leave Type:</span>
+                        <span className="font-medium">Team Lead:&nbsp;</span>
+                        <span>{selectedLeave?.teamLeaderName}</span>
+                      </div>
+                      <div className="flex ">
+                        <span className="font-medium">
+                          AssociateTeam Lead:&nbsp;
+                        </span>
+                        <span>{selectedLeave?.associateTeamLeadName}</span>
+                      </div>
+                      <div className="flex ">
+                        <span className="font-medium">Leave Type:&nbsp;</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">Start Date:</span>
+                        <span className="font-medium">Start Date:&nbsp;</span>
                         <span>{selectedLeave?.leaveStartDate}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">End Date:</span>
+                        <span className="font-medium">End Date:&nbsp;</span>
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
                     </div>
@@ -664,9 +676,20 @@ const LeaveStatus = () => {
                   {selectedLeave && (
                     <div className="bg-gray-50 p-3 rounded-md space-y-2">
                       <div className="flex ">
+                        <span className="font-medium">Full Name: &nbsp;</span>
+                        <span>{selectedLeave?.fullName}</span>
+                      </div>
+                      <div className="flex ">
+                        <span className="font-medium">
+                          Department Name: &nbsp;
+                        </span>
+                        <span>{selectedLeave?.departmentName}</span>
+                      </div>
+                      <div className="flex ">
                         <span className="font-medium">Leave Type:</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
+
                       <div className="flex ">
                         <span className="font-medium">Start Date:</span>
                         <span>{selectedLeave?.leaveStartDate}</span>

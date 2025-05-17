@@ -515,7 +515,7 @@ const EditEmployees = () => {
             <ButtonComponent
               type="submit"
               className="bg-amber-400 text-white"
-              content={isLoading ? "Editing..." : "Edit"}
+              content={isLoading ? "Updating..." : "Update"}
             />
             <ButtonComponent
               onPress={onCancel}

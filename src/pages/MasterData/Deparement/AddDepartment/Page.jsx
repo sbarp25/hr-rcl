@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
-import { Input, Textarea } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import ButtonComponent from "../../../../components/ButtonComp";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import GoBack from "../../../../components/GoBack";
-import SelectComp from "../../../../components/Select";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader";
+import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -208,7 +207,16 @@ const AddDepartment = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Team Leader */}
                 <div>
-                  <SelectComp
+                  <div>
+                    <ReusableAutocomplete
+                      name="teamlead"
+                      control={control}
+                      label="Team Lead"
+                      items={teamLeadid}
+                      rules={{ required: "Team Lead is required" }}
+                    />
+                  </div>
+                  {/* <SelectComp
                     name="teamlead"
                     label="Team Lead"
                     control={control}
@@ -216,12 +224,21 @@ const AddDepartment = () => {
                     data={teamLeadid}
                     valueKey="key"
                     labelKey="label"
-                  />
+                  /> */}
                 </div>
 
                 {/* Associate Team Leader */}
                 <div>
-                  <SelectComp
+                  <div>
+                    <ReusableAutocomplete
+                      name="Associateteamlead"
+                      control={control}
+                      label="Associate Team Lead"
+                      items={teamLeadid}
+                      rules={{ required: "Associate Team Lead is required" }}
+                    />
+                  </div>
+                  {/* <SelectComp
                     name="Associateteamlead"
                     label="Associate Team Lead"
                     control={control}
@@ -229,7 +246,7 @@ const AddDepartment = () => {
                     data={teamLeadid}
                     valueKey="key"
                     labelKey="label"
-                  />
+                  /> */}
                 </div>
               </div>
               <ButtonComponent

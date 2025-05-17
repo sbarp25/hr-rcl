@@ -202,9 +202,9 @@ const Employees = () => {
   return (
     <>
       {isDeleteLoading && <Loader />}
-      <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
+      <div className="px-4 md:px-8 space-y-4">
         {/* Breadcrumbs and Header */}
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col">
           <div className="text-sm">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
@@ -240,8 +240,8 @@ const Employees = () => {
         </div>
 
         {/* Employee Table */}
-        <div className="bg-white rounded-lg p-2">
-          <div className=" rounded-lg max-h-[80vh] overflow-y-auto text-left">
+        <div className="bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto">
+          <div className=" rounded-lg  text-left">
             <Table bordered aria-label="List of Employees">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -325,7 +325,7 @@ const Employees = () => {
               onChange={handlePageChange}
             />
             <div className="flex justify-center items-center">
-              <span className="text-xs">Lines Per Page :</span>
+              <span className="text-xs mr-2">Lines Per Page :</span>
               <DropDownComp
                 items={dropdownItems}
                 onSelect={setEmployeeDataPerPage}

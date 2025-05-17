@@ -261,7 +261,7 @@ const WorkFromHomeStatus = () => {
           <div className="bg-white rounded-lg p-2">
             {/* Large screens - Full table */}
             <div className="hidden lg:block">
-              <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+              <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
                 <Table
                   bordered
                   aria-label="Table of Leave"
@@ -357,7 +357,7 @@ const WorkFromHomeStatus = () => {
 
             {/* Medium screens - Simplified table */}
             <div className="hidden md:block lg:hidden">
-              <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+              <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
                 <Table bordered aria-label="Table of Leave">
                   <TableHeader>
                     <TableColumn>Full Name</TableColumn>
@@ -424,7 +424,7 @@ const WorkFromHomeStatus = () => {
             </div>
 
             {/* Small screens - Card-like view */}
-            <div className="block md:hidden">
+            <div className="block md:hidden overflow-y-auto">
               <div className="space-y-4">
                 {workFromHome.map((WFH) => (
                   <div

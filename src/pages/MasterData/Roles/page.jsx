@@ -138,63 +138,69 @@ const Roles = () => {
               <span className="text-white font-Poppins text-xl">Add</span>
             </Button>
           </div>
-
-          <Table bordered aria-label="Roles Table">
-            <TableHeader>
-              <TableColumn>S.N</TableColumn>
-              <TableColumn>Position Name</TableColumn>
-              <TableColumn>Description</TableColumn>
-              <TableColumn>User Action</TableColumn>
-            </TableHeader>
-            <TableBody
-              items={isLoading ? [] : roleData}
-              isLoading={isLoading}
-              loadingContent={<SkeletonLoader />}>
-              {roleData.map((position, index) => (
-                <TableRow
-                  key={position.roleId || index}
-                  className="h-14 justify-center items-center border-b-2 border-gray-300">
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    {position.positionName || position.roleName}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip
-                      content={
-                        position.description || position.roleDescription
-                      }>
-                      {truncateText(
-                        position.description || position.roleDescription,
-                        30
-                      )}
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <HiPencilSquare
-                        className={`${
-                          hasRoleEditAccess
-                            ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
-                            : "text-xl mr-2"
-                        }`}
-                        title="Edit"
-                        onClick={() => handleAction("edit", position)}
-                      />
-                      <MdDelete
-                        className={`${
-                          hasRoleDeleteAccess
-                            ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                            : "text-xl ml-2"
-                        }`}
-                        title="Delete"
-                        onClick={() => handleAction("delete", position)}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+            <div className="rounded-lg max-h-[80vh] text-left">
+              <Table
+                bordered
+                aria-label="Roles Table"
+                className="max-h-[80vh] ">
+                <TableHeader>
+                  <TableColumn>S.N</TableColumn>
+                  <TableColumn>Position Name</TableColumn>
+                  <TableColumn>Description</TableColumn>
+                  <TableColumn>User Action</TableColumn>
+                </TableHeader>
+                <TableBody
+                  items={isLoading ? [] : roleData}
+                  isLoading={isLoading}
+                  loadingContent={<SkeletonLoader />}>
+                  {roleData.map((position, index) => (
+                    <TableRow
+                      key={position.roleId || index}
+                      className="h-14 justify-center items-center border-b-2 border-gray-300">
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>
+                        {position.positionName || position.roleName}
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip
+                          content={
+                            position.description || position.roleDescription
+                          }>
+                          {truncateText(
+                            position.description || position.roleDescription,
+                            30
+                          )}
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex">
+                          <HiPencilSquare
+                            className={`${
+                              hasRoleEditAccess
+                                ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                : "text-xl mr-2"
+                            }`}
+                            title="Edit"
+                            onClick={() => handleAction("edit", position)}
+                          />
+                          <MdDelete
+                            className={`${
+                              hasRoleDeleteAccess
+                                ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                : "text-xl ml-2"
+                            }`}
+                            title="Delete"
+                            onClick={() => handleAction("delete", position)}
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
       </ValidationComponent>
     </>

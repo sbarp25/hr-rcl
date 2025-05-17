@@ -165,7 +165,7 @@ function App() {
                 element={<EditRole />}
               />
               {/* <Route path="/HandBook" element={<HandBook />} /> */}
-              <Route path="/Notice" element={<Notices />} />
+              {/* <Route path="/Notice" element={<Notices />} /> */}
               <Route path="/Leave/status" element={<LeaveStatus />} />
               <Route path="/Leave/Request" element={<SelfLeaveStatus />} />
               <Route path="/Leave/addRequest" element={<LeaveRequest />} />

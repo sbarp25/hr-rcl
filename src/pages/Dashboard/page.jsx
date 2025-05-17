@@ -79,7 +79,7 @@ const Page = () => {
         </div>
 
         {/* Weekly Attendance Report */}
-        <div className="flex flex-col bg-white rounded-lg w-full border border-gray-300 shadow-sm ">
+        <div className="flex flex-col bg-white rounded-lg w-full p-1 shadow-sm ">
           <div className="flex flex-col justify-center items-center">
             <h1 className="page-title mt-2 text-xl font-bold">
               Weekly Attendance Report

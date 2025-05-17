@@ -27,7 +27,6 @@ const LeaveView = () => {
       });
       if (response.data.responseCode === "200") {
         setLeaveByIdData(response.data.datalist[0]);
-        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -115,7 +114,7 @@ const LeaveView = () => {
           {/* Subject */}
           <div className="pb-3 border-b border-gray-300">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-gray-600 text-sm">Body</span>
+              <span className="text-gray-600 text-sm">Reason</span>
             </div>
             <p className="text-gray-800 ">
               {leaveByIdData?.leaveSubject || "N/A"}

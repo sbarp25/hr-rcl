@@ -208,7 +208,7 @@ const EditPosition = () => {
               <ButtonComponent
                 type="submit"
                 className="bg-black text-white"
-                content={isLoading ? "Editing..." : "Edit"}
+                content={isLoading ? "Updating..." : "Update"}
                 disabled={isLoading}
               />
             </form>

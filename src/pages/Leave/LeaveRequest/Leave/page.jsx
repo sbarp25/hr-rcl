@@ -29,6 +29,7 @@ import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ButtonComponent from "../../../../components/ButtonComp";
+import { MdNavigateBefore } from "react-icons/md";
 
 const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,7 +73,7 @@ const SelfLeaveStatus = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        `/api/v1/leave_management/by-role`,
+        `/api/v1/leave_management/list`,
         { pageIndex: currentPage, pageSize: leaveDataPerPage }
       );
       if (response.data.responseCode === "200") {
@@ -258,7 +259,9 @@ const SelfLeaveStatus = () => {
       return "bg-red-100 border border-red-600 text-red-600";
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
-  const navigateToAdd = () => {};
+  const navigateToAdd = () => {
+    navigate("/Leave/addRequest");
+  };
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
