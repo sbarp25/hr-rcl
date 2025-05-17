@@ -19,6 +19,7 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
 import DatepickerComponent from "../../../components/DatepickerComponent";
+import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -199,6 +200,18 @@ const AddEmployeeForm = () => {
     }
   }, []);
 
+  const departmentItems = departmentsData?.map((department) => ({
+    key: department?.id,
+    label: department?.name,
+  }));
+  const positionItems = positionData?.map((position) => ({
+    key: position?.id,
+    label: position?.positionName,
+  }));
+  const roleItems = roleData?.map((role) => ({
+    key: role?.roleId,
+    label: role?.roleName,
+  }));
   return (
     <>
       {isLoading ? (
@@ -281,6 +294,15 @@ const AddEmployeeForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                   {/**Select Department */}
                   <div>
+                    <ReusableAutocomplete
+                      name="department"
+                      control={control}
+                      label="Department"
+                      items={departmentItems}
+                      rules={{ required: "This field is required" }}
+                    />
+                  </div>
+                  {/* <div>
                     <Controller
                       name="department"
                       control={control}
@@ -309,9 +331,18 @@ const AddEmployeeForm = () => {
                         {errors.department.message}
                       </p>
                     )}
-                  </div>
+                  </div> */}
                   {/**Select Position */}
                   <div>
+                    <ReusableAutocomplete
+                      name="position"
+                      control={control}
+                      label="Position"
+                      items={positionItems}
+                      rules={{ required: "This field is required" }}
+                    />
+                  </div>
+                  {/* <div>
                     <Controller
                       name="position"
                       control={control}
@@ -342,10 +373,19 @@ const AddEmployeeForm = () => {
                         {errors.position.message}
                       </p>
                     )}
-                  </div>
+                  </div> */}
 
                   {/**Select Role  */}
                   <div>
+                    <ReusableAutocomplete
+                      name="roles"
+                      control={control}
+                      label="Roles"
+                      items={roleItems}
+                      rules={{ required: "This field is required" }}
+                    />
+                  </div>
+                  {/* <div>
                     <Controller
                       name="roles"
                       control={control}
@@ -354,7 +394,7 @@ const AddEmployeeForm = () => {
                         <Select
                           {...field}
                           variant="bordered"
-                          label="Roles"
+                          label="roles"
                           isInvalid={!!errors.roles}
                           className={`rounded-xl`}
                           selectedKeys={field.value ? [field.value] : []}
@@ -376,7 +416,7 @@ const AddEmployeeForm = () => {
                         {errors.roles.message}
                       </p>
                     )}
-                  </div>
+                  </div> */}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                   <div className="mb-4">
@@ -425,36 +465,6 @@ const AddEmployeeForm = () => {
                     )}
                   />
                 </div>
-                {/* <div className="mb-4 -mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <Controller
-                  name="isteamLead"
-                  defaultValue={false}
-                  control={control}
-                  render={({ field }) => (
-                    <Switch
-                      isSelected={field.value}
-                      onValueChange={field.onChange}>
-                      Is Employee treamLead
-                    </Switch>
-                  )}
-                />
-              </div>
-              <div>
-                <Controller
-                  name="isAssociateteamLead"
-                  defaultValue={false}
-                  control={control}
-                  render={({ field }) => (
-                    <Switch
-                      isSelected={field.value}
-                      onValueChange={field.onChange}>
-                      Is Employee Associate Team Active
-                    </Switch>
-                  )}
-                />
-              </div>
-            </div> */}
               </div>
               <button
                 type="submit"

@@ -9,6 +9,7 @@ import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import Loader from "../../../../components/Loader";
 
 const AddPosition = () => {
   const navigate = useNavigate();
@@ -97,65 +98,80 @@ const AddPosition = () => {
   };
 
   return (
-    <div className="px-4 flex flex-col space-y-4">
-      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
-      <div className="flex justify-between">
-        <GoBack />
-        <div className="page-title -pl-2">Add Position</div>
-        <div></div>
-      </div>
-      <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
-          {/* position Title */}
-          <div>
-            <InputComponent
-              name="title"
-              control={control}
-              variant="bordered"
-              label="Position Name"
-              rules={{
-                required: "Title is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,300}$/,
-                  message: "Title must be 3-300 characters long.",
-                },
-              }}
-            />
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="px-4 flex flex-col space-y-4">
+          {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+          <div className="flex justify-between">
+            <GoBack />
+            <div className="page-title -pl-2">Add Position</div>
+            <div></div>
           </div>
+          <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
+              {/* position Title */}
+              <div>
+                <InputComponent
+                  name="title"
+                  control={control}
+                  variant="bordered"
+                  label="Position Name"
+                  rules={{
+                    required: "Title is required",
+                    minLength: {
+                      value: 3,
+                      message: "Title must be at least 3 characters long.",
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: "Title cannot exceed 100 characters.",
+                    },
+                  }}
+                />
+              </div>
 
-          {/* Position description*/}
-          <div>
-            <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className={` rounded-xl `}
-              label="Description"
-              {...register("description", {
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-              })}
-              variant="bordered"
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )}
+              {/* Position description*/}
+              <div>
+                <Textarea
+                  minRows={getRows()}
+                  maxRows={getMaxRows()}
+                  isInvalid={!!errors.description}
+                  className={` rounded-xl `}
+                  label="Description"
+                  {...register("description", {
+                    required: "Description is required",
+                    minLength: {
+                      value: 10,
+                      message:
+                        "Description must be at least 10 characters long.",
+                    },
+                    maxLength: {
+                      value: 255,
+                      message: "Description cannot exceed 255 characters long.",
+                    },
+                  })}
+                  variant="bordered"
+                />
+                {errors.description && (
+                  <p className="text-danger text-sm">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <ButtonComponent
+                type="submit"
+                className="bg-black text-white"
+                content={isLoading ? "Adding..." : "Add Position"}
+                disabled={isLoading}
+              />
+            </form>
           </div>
-
-          <ButtonComponent
-            type="submit"
-            className="bg-black text-white"
-            content={isLoading ? "Adding..." : "Add Position"}
-            disabled={isLoading}
-          />
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

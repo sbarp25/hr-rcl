@@ -233,9 +233,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Team Lead:
                 </span>
-                {leaveByIdData?.isTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
@@ -248,9 +248,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Associate Team Lead:
                 </span>
-                {leaveByIdData?.isAssociateTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByAssociateTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isAssociateTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByAssociateTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">

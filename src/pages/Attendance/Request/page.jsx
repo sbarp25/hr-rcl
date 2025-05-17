@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaRegEye } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 import {
   Table,
   TableBody,
@@ -27,7 +28,6 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import truncateText from "../../../utils/truncateText";
 
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -269,6 +269,8 @@ const AttendanceRequest = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
+  const truncateText = (text, maxLength) =>
+    text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
   return (
     <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
       <div className="flex flex-col space-y-4">
@@ -302,7 +304,7 @@ const AttendanceRequest = () => {
       <div className="bg-white rounded-lg p-2">
         {/* Large screens - Full table */}
         <div className="hidden lg:block">
-          <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+          <div className="shadow-md rounded-lg max-h-[80vh]  overflow-y-auto text-left">
             <Table bordered aria-label="List of Review for Late Checkin">
               <TableHeader>
                 <TableColumn>S.N</TableColumn>
@@ -363,7 +365,7 @@ const AttendanceRequest = () => {
                         </div>
                         {/* {late.status} */}
                       </TableCell>
-                      <TableCell>{late.checkInTime}</TableCell>
+                      <TableCell>{truncateText(late.checkInTime, 5)}</TableCell>
                       <TableCell>
                         {" "}
                         <Tooltip content={late.lateReason}>
@@ -392,7 +394,7 @@ const AttendanceRequest = () => {
                                 handleAction("Approve", late.lateCheckInId)
                               }
                             />
-                            <MdDelete
+                            <FaXmark
                               className={`${
                                 hasAttendanceEditAccess
                                   ? "text-red-500 cursor-pointer hover:text-red-700"
@@ -415,7 +417,7 @@ const AttendanceRequest = () => {
 
         {/* Medium screens - Simplified table */}
         <div className="hidden md:block lg:hidden">
-          <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+          <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
             <Table bordered aria-label="List of Review for Late Checkin">
               <TableHeader>
                 <TableColumn>Employee</TableColumn>
@@ -494,7 +496,7 @@ const AttendanceRequest = () => {
 
         {/* Small screens - Card-like view */}
         <div className="block md:hidden">
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-[80vh] overflow-y-auto">
             {lateCheckinData.map((late) => (
               <div
                 key={late.lateCheckInId}
@@ -602,7 +604,9 @@ const AttendanceRequest = () => {
             <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
               <span className="mr-1">Showing</span>
               <span className="font-bold text-gray-800 mx-1">
-                {lateCheckInDataPerPage}
+                {totalRecords < lateCheckInDataPerPage
+                  ? totalRecords
+                  : lateCheckInDataPerPage}
               </span>
               <span className="mr-1">of</span>
               <span className="font-bold text-gray-800">{totalRecords}</span>

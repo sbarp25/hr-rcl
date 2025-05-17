@@ -74,7 +74,7 @@ const Page = () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get(
-          "/api/v1/admin/completed_ekye_users",
+          "/api/v1/admin/non-approved-ekye",
           {
             // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
             pageIndex: currentPage,
@@ -210,7 +210,10 @@ const Page = () => {
           <div className="text-sm font-medium text-gray-600  flex items-center">
             <span className="mr-1">Showing:</span>
             <span className="font-bold text-gray-800 mx-1">
-              {ekyeDashboardDataPerPage}
+              {totalRecords < ekyeDashboardDataPerPage
+                ? totalRecords
+                : ekyeDashboardDataPerPage}
+              {/* {ekyeDashboardDataPerPage} */}
             </span>
             <span className="mr-1">of</span>
             <span className="font-bold text-gray-800">{totalRecords}</span>

@@ -1,100 +1,65 @@
-import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
-import { IoAlarm } from "react-icons/io5";
-import { FcLeave } from "react-icons/fc";
-import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
-import { BiData } from "react-icons/bi";
-import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import Logo from "../../assets/Images/Logo.png";
+import { MdDashboard } from "react-icons/md";
+import Loader from "../Loader";
+import { IoIosPeople } from "react-icons/io";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
+import { Avatar } from "@nextui-org/avatar";
+import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
+import { GoGear } from "react-icons/go";
+import { CiLogout, CiMenuBurger } from "react-icons/ci";
+import { CiBank } from "react-icons/ci";
+import { IoShieldCheckmark } from "react-icons/io5";
+import { IoPersonSharp } from "react-icons/io5";
+import getInitials from "../../utils/getInitials";
 import axios from "axios";
-
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import truncateText from "../../utils/truncateText";
+import CheckIn from "../CheckIn";
 import {
   Drawer,
+  DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerBody,
-  useDisclosure,
-  Avatar,
-  Input,
   Tooltip,
+  useDisclosure,
 } from "@nextui-org/react";
-
-import { useNavigate } from "react-router-dom";
-import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
-import CheckIn from "./CheckIn";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import axiosInstance from "../lib/axios-Instance";
-import getInitials from "../utils/getInitials";
-
-const MobileNavigation = () => {
+const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");
-  const navigate = useNavigate();
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
+  const [expandedDropdown, setExpandedDropdown] = useState(null);
+
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-  const [expandedDropdown, setExpandedDropdown] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const location = useLocation();
+  const navigate = useNavigate();
+  const toggleSidebar = () => {
+    setIsSidebarExpanded(!isSidebarExpanded);
+  };
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
+  const seeProfile = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 64)
   );
-  /**To check Dashboard see status */
   const seeDashboard = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 2)
   );
-  /**To check Department see status */
-  const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
-  /**To check Position see status */
-  const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
-  );
-  const seeRole = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
-  const seeMasterData = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
-  );
-  const seeAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 6)
-  );
-  const seeMyAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 36)
-  );
-  const seeLateCheckIn = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-  const seeHandbook = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
-  );
-  const seeNotices = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 24)
-  );
-  const seeLeave = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 28)
-  );
-
-  const seeLeaveStatus = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const seeLeaveRequest = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
   const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 68)
   );
-
+  const seeSecurity = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 72)
+  );
+  const seeBank = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 76)
+  );
   const navbarElements = [
-    // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
       icon: MdDashboard,
       label: "Dashboard",
@@ -102,76 +67,33 @@ const MobileNavigation = () => {
       view: seeDashboard,
     },
     {
-      icon: IoAlarm,
-      label: "Attendance",
-      view: seeAttendance,
-      children: [
-        { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
-        {
-          label: "Late Checkin ",
-          to: "/Attendance/Request",
-          view: seeLateCheckIn,
-        },
-      ],
+      icon: IoPersonSharp,
+      label: "Profile",
+      to: "/settings",
+      view: seeProfile,
     },
     {
       icon: IoIosPeople,
-      label: "Employees",
-      to: "/Employees",
-      view: seeEmployee,
-    },
-
-    {
-      icon: BiData,
-      label: "Master Data",
-      view: seeMasterData,
-      children: [
-        {
-          label: "Department",
-          to: "/master-data/Department",
-          view: seeDepartment,
-        },
-        { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: seeRole },
-      ],
-    },
-    // {
-    //   icon: FaBookBookmark,
-    //   label: "HandBook",
-    //   to: "/handbook",
-    //   view: seeHandbook,
-    // },
-    { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
-    {
-      icon: FcLeave,
-      label: "Leave",
-      // view: seeLeave,
-      view: seeLeave,
-      children: [
-        { label: "Leave Status", to: "/Leave/Status", view: seeLeaveStatus },
-        { label: "Leave Request", to: "/Leave/Request", view: seeLeaveRequest },
-      ],
-    },
-    {
-      icon: MdMapsHomeWork,
-      label: "Work From Home",
-      view: true,
-      children: [
-        { label: "WFH Status", to: "/WFH/Status", view: true },
-        { label: "WFH Request", to: "/WFH", view: true },
-      ],
-    },
-    {
-      icon: IoIosPeople,
-      label: "Ekye",
-      to: "/AdminEkye",
+      label: "My EKYE",
+      to: "/settings/ViewEKYE",
       view: seeEKYE,
+    },
+    {
+      icon: IoShieldCheckmark,
+      label: "Security",
+      to: "/settings/Change",
+      view: seeSecurity,
+    },
+    {
+      icon: CiBank,
+      label: "Bank Details",
+      to: "/Bank",
+      view: seeBank,
     },
   ];
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
-
   const handleLogOut = async () => {
     try {
       setIsLoading(true);
@@ -203,11 +125,6 @@ const MobileNavigation = () => {
       setIsLoading(false);
     }
   };
-  const handleNavigation = (path) => {
-    navigate(path);
-    onClose();
-  };
-
   const fetchProfilephoto = async () => {
     setIsLoading(true);
     try {
@@ -231,10 +148,14 @@ const MobileNavigation = () => {
   useEffect(() => {
     fetchProfilephoto();
   }, []);
-
+  const handleNavigation = (path) => {
+    navigate(path);
+    onClose();
+  };
   const handleProfileChange = () => {
     navigate("/settings");
   };
+
   return (
     <>
       <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
@@ -350,4 +271,4 @@ const MobileNavigation = () => {
   );
 };
 
-export default MobileNavigation;
+export default UserMobileSidebar;

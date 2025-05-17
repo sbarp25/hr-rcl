@@ -214,13 +214,18 @@ const UserSidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              {imageURL ? (
-                <Avatar className="h-full w-full object-cover" src={imageURL} />
-              ) : (
-                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                  {getInitials(username)}
-                </div>
-              )}
+              <Link to="/settings">
+                {imageURL ? (
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    src={imageURL}
+                  />
+                ) : (
+                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                    {getInitials(username)}
+                  </div>
+                )}
+              </Link>
               {isSidebarExpanded && (
                 <div>
                   <p className="text-xl" title={username}>

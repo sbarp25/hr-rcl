@@ -9,6 +9,7 @@ import InputComponent from "../../../../components/InputComponent";
 import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ButtonComp";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import Loader from "../../../../components/Loader";
 
 const EditPosition = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -134,72 +135,87 @@ const EditPosition = () => {
     }
   }, [hasaccess, navigate]);
   return (
-    <div className="px-4 flex flex-col space-y-4">
-      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
-      <div className="flex justify-between">
-        <GoBack />
-        <div className="page-title -pl-2">Edit Position</div>
-        <div></div>
-      </div>
-      <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
-          {/* Department Title */}
-          <div>
-            <InputComponent
-              name="title"
-              control={control}
-              variant="bordered"
-              label="Position Name"
-              rules={{
-                required: "Title is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,300}$/,
-                  message: "Title must be 3-300 characters long.",
-                },
-              }}
-            />
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="px-4 flex flex-col space-y-4">
+          {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+          <div className="flex justify-between">
+            <GoBack />
+            <div className="page-title -pl-2">Edit Position</div>
+            <div></div>
           </div>
-
-          {/* Position description*/}
-          <div>
-            <Controller
-              name="description"
-              control={control}
-              rules={{
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-              }}
-              render={({ field }) => (
-                <Textarea
-                  {...field}
-                  minRows={getRows()}
-                  maxRows={getMaxRows()}
-                  isInvalid={!!errors.description}
-                  className="rounded-xl"
-                  label="Description"
+          <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
+              {/* Position Title */}
+              <div>
+                <InputComponent
+                  name="title"
+                  control={control}
                   variant="bordered"
+                  label="Position Name"
+                  rules={{
+                    required: "Title is required",
+                    minLength: {
+                      value: 3,
+                      message: "Title must be at least 3 characters long.",
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: "Title cannot exceed 100 characters.",
+                    },
+                  }}
                 />
-              )}
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+              </div>
 
-          <ButtonComponent
-            type="submit"
-            className="bg-black text-white"
-            content={isLoading ? "Editing..." : "Edit"}
-            disabled={isLoading}
-          />
-        </form>
-      </div>
-    </div>
+              {/* Position description*/}
+              <div>
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{
+                    required: "Description is required",
+                    minLength: {
+                      value: 10,
+                      message:
+                        "Description must be at least 10 characters long.",
+                    },
+                    maxLength: {
+                      value: 255,
+                      message: "Title cannot exceed 300 characters.",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Textarea
+                      {...field}
+                      minRows={getRows()}
+                      maxRows={getMaxRows()}
+                      isInvalid={!!errors.description}
+                      className="rounded-xl"
+                      label="Description"
+                      variant="bordered"
+                    />
+                  )}
+                />
+                {errors.description && (
+                  <p className="text-danger text-sm">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <ButtonComponent
+                type="submit"
+                className="bg-black text-white"
+                content={isLoading ? "Editing..." : "Edit"}
+                disabled={isLoading}
+              />
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

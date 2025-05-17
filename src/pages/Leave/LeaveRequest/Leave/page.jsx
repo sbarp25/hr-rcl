@@ -13,23 +13,24 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
-import DropDownComp from "../../../components/Dropdown";
-import { useNavigate } from "react-router-dom";
-import SkeletonLoader from "../../../components/SkeletonLoader";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { FaCheckCircle, FaRegEye, FaChevronDown } from "react-icons/fa";
+import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import Filter from "../../../../components/Filter";
+import Search from "../../../../components/Search";
+import SkeletonLoader from "../../../../components/SkeletonLoader";
+import truncateText from "../../../../utils/truncateText";
+import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+import DropDownComp from "../../../../components/Dropdown";
+import TextAreaComp from "../../../../components/TextAreaComp";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../../lib/axios-Instance";
+import { useEffect, useState } from "react";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useForm } from "react-hook-form";
-import TextAreaComp from "../../../components/TextAreaComp";
-import Search from "../../../components/Search";
-import Filter from "../../../components/Filter";
-import truncateText from "../../../utils/truncateText";
+import { useNavigate } from "react-router-dom";
+import ButtonComponent from "../../../../components/ButtonComp";
 
-const LeaveStatus = () => {
+const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRow, setExpandedRow] = useState(null);
 
@@ -257,7 +258,7 @@ const LeaveStatus = () => {
       return "bg-red-100 border border-red-600 text-red-600";
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
-
+  const navigateToAdd = () => {};
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -268,7 +269,7 @@ const LeaveStatus = () => {
           </div>
           <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Applied Leaves</h1>
+              <h1 className="page-title">Leave Status</h1>
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
@@ -277,6 +278,11 @@ const LeaveStatus = () => {
                   onApplyFilters={handleApplyFilters}
                   url="/api/leave/all"
                   className="w-full sm:w-auto"
+                />
+                <ButtonComponent
+                  className="bg-black text-white"
+                  onPress={navigateToAdd}
+                  content="Apply Leave"
                 />
               </div>
             </div>
@@ -302,7 +308,6 @@ const LeaveStatus = () => {
                   <TableColumn>Leave End Date</TableColumn>
                   <TableColumn>Status</TableColumn>
                   {/* <TableColumn>Approved by</TableColumn> */}
-                  <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -342,46 +347,6 @@ const LeaveStatus = () => {
                             : "N/A"}{" "}
                         </div>
                       </TableCell>
-
-                      {/* <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
-                              item?.leaveStatus
-                            )}`}>
-                            {item?.approvedBy?.charAt(0) ||
-                              item?.rejectedBy?.charAt(0) ||
-                              "?"}
-                          </div>
-                          <div>
-                            {item?.approvedBy || item?.rejectedBy || "N/A"}
-                          </div>
-                        </div>
-                      </TableCell> */}
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {hasaccess && (
-                            <button
-                              className="text-blue-600 hover:text-blue-800"
-                              onClick={() => handleAction("view", item)}>
-                              <FaRegEye size={18} />
-                            </button>
-                          )}
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
-                        </div>
-                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -399,7 +364,6 @@ const LeaveStatus = () => {
                   <TableColumn>Duration</TableColumn>
                   <TableColumn>Status</TableColumn>
                   <TableColumn>Team</TableColumn>
-                  <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -447,24 +411,6 @@ const LeaveStatus = () => {
                           </div>
                         </div>
                       </TableCell>
-
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
-                        </div>
-                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -477,7 +423,7 @@ const LeaveStatus = () => {
             <div className="space-y-4">
               {leaveData.map((leave) => (
                 <div
-                  key={leave.rclId}
+                  key={leave.leaveId}
                   className="border rounded-lg overflow-hidden shadow-sm">
                   <div
                     className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
@@ -524,29 +470,6 @@ const LeaveStatus = () => {
                       <div className="font-medium">Team Leader:</div>
                       <div>{leave?.teamLeaderName || "N/A"}</div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Approver:</div>
-                      <div>{leave?.approvedBy || "N/A"}</div>
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                      {leave?.leaveStatus === "PENDING" &&
-                        hasLeaveUpdateAccess && (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-black text-white"
-                              onPress={() => handleAction("approve", leave)}>
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="danger"
-                              onPress={() => handleAction("reject", leave)}>
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                    </div>
                   </div>
                 </div>
               ))}
@@ -568,6 +491,7 @@ const LeaveStatus = () => {
                   {totalRecords < leaveDataPerPage
                     ? totalRecords
                     : leaveDataPerPage}
+                  {/* {leaveDataPerPage} */}
                 </span>
                 <span className="mr-1">of</span>
                 <span className="font-bold text-gray-800">{totalRecords}</span>
@@ -716,4 +640,4 @@ const LeaveStatus = () => {
   );
 };
 
-export default LeaveStatus;
+export default SelfLeaveStatus;

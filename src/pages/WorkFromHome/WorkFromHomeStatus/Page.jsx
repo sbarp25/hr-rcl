@@ -506,7 +506,9 @@ const WorkFromHomeStatus = () => {
                 <div className="text-sm font-medium text-gray-600  flex items-center">
                   <span className="mr-1">Showing:</span>
                   <span className="font-bold text-gray-800 mx-1">
-                    {WFHDataPerPage}
+                    {totalRecords < WFHDataPerPage
+                      ? totalRecords
+                      : WFHDataPerPage}
                   </span>
                   <span className="mr-1">of</span>
                   <span className="font-bold text-gray-800">

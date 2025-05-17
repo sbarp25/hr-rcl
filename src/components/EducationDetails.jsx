@@ -288,7 +288,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     formDataToSend.append("isCurrentlyStudying", data.isCurrentlyStudying);
     if (data.isCurrentlyStudying && data.expectedCheckingTime) {
       const timeValue = data.expectedCheckingTime;
-      const formattedTime = `${timeValue.hour}:${timeValue.minute}:${timeValue.second}`;
+      const formattedTime = `${timeValue.hour}:${timeValue.minute}:10`;
       formDataToSend.append("expectedCheckingTime", formattedTime);
     }
 
@@ -690,7 +690,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 return true;
               },
             }}
-            defaultValue={new Time(10, 0, 0)}
+            defaultValue={new Time(10, 10, 10)}
             render={({ field }) => (
               <div>
                 <TimeInput
@@ -700,7 +700,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   onChange={(time) => {
                     field.onChange(time);
                   }}
-                  minValue={new Time(10, 0, 0)}
+                  minValue={new Time(10, 10, 10)}
                   maxValue={new Time(18, 30, 0)}
                   isInvalid={!!errors.expectedCheckingTime}
                   errorMessage={errors.expectedCheckingTime?.message}

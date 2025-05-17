@@ -566,7 +566,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     rules={{
                       required: "Permanent Ward Number is required",
                       pattern: {
-                        value: /^(?:[1-9]|[12][0-9]|3[0-2])$/,
+                        value: /^([1-9]|0[1-9]|[1-2][0-9]|3[0-2])$/,
                         message: "Ward Number must be between 1 and 32",
                       },
                     }}
@@ -586,9 +586,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "Permanent Pin Code is required",
                     pattern: {
-                      value: /^[1-9]\d{5}$/,
+                      value: /^\d{5}$/,
                       message:
-                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                        "Invalid pincode. Must be a 5-digit number starting with 1-9.",
                     },
                   }}
                   label="Pin Code"
@@ -789,9 +789,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       ? "Temporary Pin Code is required"
                       : false,
                     pattern: {
-                      value: /^[1-9]\d{5}$/,
+                      value: /^\d{5}$/,
                       message:
-                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                        "Invalid pincode. Must be a 5-digit number starting with 1-9.",
                     },
                   }}
                   label="Pin Code"

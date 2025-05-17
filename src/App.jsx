@@ -47,6 +47,8 @@ import WorkFromHomeStatus from "./pages/WorkFromHome/WorkFromHomeStatus/Page.jsx
 import ViewWorkFromHome from "./pages/WorkFromHome/ViewWorkFromHome/Page.jsx";
 import AddRoles from "./pages/MasterData/Roles/AddRoles/Page.jsx";
 import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
+import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
+import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
@@ -106,7 +108,7 @@ function App() {
       ) : isUserRoutes ? (
         <UserLayout>
           <div className="flex md:hidden mb-1">
-            <MobileNavigation />
+            <UserMobileSidebar />
           </div>
           <Routes>
             <Route element={<PrivateRoutes />}>
@@ -130,7 +132,7 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-              <Route path="/Attendance" element={<Attendance />} />
+              {/* <Route path="/Attendance" element={<Attendance />} /> */}
               <Route
                 path="/Attendance/Request"
                 element={<AttendanceRequest />}
@@ -159,13 +161,14 @@ function App() {
               <Route path="/master-data/Roles" element={<Roles />} />
               <Route path="/master-data/Roles/add" element={<AddRoles />} />
               <Route
-                path="/master-data/Roles/edit/:id"
+                path="/master-data/Roles/edit/:roleId"
                 element={<EditRole />}
               />
               {/* <Route path="/HandBook" element={<HandBook />} /> */}
               <Route path="/Notice" element={<Notices />} />
               <Route path="/Leave/status" element={<LeaveStatus />} />
-              <Route path="/Leave/Request" element={<LeaveRequest />} />
+              <Route path="/Leave/Request" element={<SelfLeaveStatus />} />
+              <Route path="/Leave/addRequest" element={<LeaveRequest />} />
               <Route path="/Leave/view/:id" element={<LeaveView />} />
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />

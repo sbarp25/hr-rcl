@@ -277,6 +277,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
+                    validate: (value) =>
+                      new Date(value) <= new Date() ||
+                      "PAN Issue date cannot be in the future",
                   }}
                 />
               </div>
@@ -421,9 +424,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "Citizenship Number is required",
                     pattern: {
-                      value: /^[0-9]{4,12}$/,
+                      value: /^(\d{2}-){3}\d{5}$/,
                       message:
-                        "Invalid Citizenship number. Must be up to 11 digits starting with 1-9.",
+                        "Invalid format. Expected format: 00-00-00-00000",
                     },
                   }}
                   variant="bordered"
@@ -437,10 +440,13 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="issuedDate"
-                  label="Citizenship Issue Date(A.D)"
+                  label="Citizenship Issue Date (A.D)"
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",
+                    validate: (value) =>
+                      new Date(value) <= new Date() ||
+                      "Citizenship Issue Date cannot be in the future",
                   }}
                 />
               </div>

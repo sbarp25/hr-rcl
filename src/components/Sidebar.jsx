@@ -107,7 +107,7 @@ const Sidebar = () => {
       label: "Attendance",
       view: seeAttendance,
       children: [
-        { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
         {
           label: "Late Checkin ",
           to: "/Attendance/Request",
@@ -299,7 +299,9 @@ const Sidebar = () => {
                             {location.pathname === child.to && (
                               <BsArrowReturnRight className="mt-1 " />
                             )}
-                            {child.label}
+                            {isSidebarExpanded && (
+                              <span className="text-base">{child.label}</span>
+                            )}
                           </Link>
                         );
                       })}
