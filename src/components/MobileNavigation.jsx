@@ -332,9 +332,9 @@ const MobileNavigation = () => {
                     );
                   })}
                 </div>
-                <button>
+                {/* <button>
                   <CheckIn />
-                </button>
+                </button> */}
                 <button className="">
                   <CiLogout
                     onClick={handleLogOut}

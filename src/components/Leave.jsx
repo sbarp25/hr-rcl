@@ -64,7 +64,7 @@ const Leave = () => {
         const errorMessage =
           response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
-        toast.error(errorMessage);
+        // toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;

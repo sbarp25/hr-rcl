@@ -216,15 +216,6 @@ const AddDepartment = () => {
                       rules={{ required: "Team Lead is required" }}
                     />
                   </div>
-                  {/* <SelectComp
-                    name="teamlead"
-                    label="Team Lead"
-                    control={control}
-                    rules={{ required: "Team Lead is required" }}
-                    data={teamLeadid}
-                    valueKey="key"
-                    labelKey="label"
-                  /> */}
                 </div>
 
                 {/* Associate Team Leader */}
@@ -238,15 +229,6 @@ const AddDepartment = () => {
                       rules={{ required: "Associate Team Lead is required" }}
                     />
                   </div>
-                  {/* <SelectComp
-                    name="Associateteamlead"
-                    label="Associate Team Lead"
-                    control={control}
-                    rules={{ required: "Associate Team Lead is required" }}
-                    data={teamLeadid}
-                    valueKey="key"
-                    labelKey="label"
-                  /> */}
                 </div>
               </div>
               <ButtonComponent

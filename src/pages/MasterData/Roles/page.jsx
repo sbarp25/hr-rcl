@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
-import Loader from "../../../components/Loader";
+import { FaChevronDown } from "react-icons/fa";
+import { BiData } from "react-icons/bi";
+import { IoIosAddCircleOutline } from "react-icons/io";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import {
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -13,93 +19,98 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
+  useDisclosure,
 } from "@nextui-org/react";
-import { IoMdAdd } from "react-icons/io";
-import ValidationComponent from "../../../components/ValidationComponent";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import DropDownComp from "../../../components/Dropdown";
+import Filter from "../../../components/Filter";
+import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/SkeletonLoader";
 import truncateText from "../../../utils/truncateText";
+import Loader from "../../../components/Loader";
 
 const Roles = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [roleId, setRoleId] = useState(null);
   const [roleData, setRoleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rolesPerPage, setRolesPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [originalRolesData, setOriginalRolesData] = useState([]);
+  const [expandedRow, setExpandedRow] = useState(null);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
   const navigate = useNavigate();
 
-  // Fetch roles
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/role/get/all", {});
-        if (response.data.responseCode === "200") {
-          setRoleData(response.data.datalist);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        toast.error(error.response?.data?.messages);
-        console.error(error);
-      } finally {
-        setIsLoading(false);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  /**Start of Get API for Getting the Roles */
+  const fetchRoles = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/role/get/all", {
+        pageIndex: currentPage,
+        pageSize: rolesPerPage,
+      });
+      if (response.data.responseCode === "200") {
+        setOriginalRolesData(response?.data?.datalist || []); // Store original data
+        setRoleData(response?.data?.datalist || []); // Initially set filtered data to original data
+        setTotalPages(
+          response.data.totalPages ||
+            Math.ceil(response.data.datalist.length / rolesPerPage)
+        );
+        setTotalRecords(
+          response.data.totalRecords || response.data.datalist.length
+        );
+      } else {
+        toast.error(response?.data?.message || "Failed to fetch roles.");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      toast.error("Error fetching roles.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRoles();
-  }, []);
+  }, [currentPage, rolesPerPage]);
 
-  const handleAction = async (action, role) => {
-    switch (action) {
-      // Now we'll navigate to edit page instead of showing edit form
-      case "edit":
-        if (hasRoleEditAccess) {
-          navigate(`/master-data/Roles/edit/${role.roleId}`);
-        } else {
-          toast.error("Currently You dont have access to this setting.");
-        }
-        break;
-      case "delete":
-        if (hasRoleDeleteAccess) {
-          try {
-            // console.log(`Deleting position ID: ${role.roleId}`);
-            const response = await axiosInstance.delete(
-              `/api/v1/role/delete/${role.roleId}`
-            );
-            if (response.data.responseCode === "204") {
-              toast.success(response.data.message);
-              // Refresh the role list after successful deletion
-              const updatedRoles = roleData.filter(
-                (item) => item.roleId !== role.roleId
-              );
-              setRoleData(updatedRoles);
-            } else {
-              toast.error(response.data.messages);
-            }
-          } catch (error) {
-            console.error("Error deleting position:", error);
-            toast.error(error.response?.data?.messages);
-          }
-        } else {
-          toast.error("Currently You dont have access to this setting.");
-        }
-        break;
-      default:
-        console.log("Unknown action");
+  // Enhanced filter handler to match Department implementation
+  const handleApplyFilters = (result) => {
+    if (result.data) {
+      setRoleData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      setRoleData(originalRolesData);
     }
   };
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
+  /**To check create status */
   const hasRoleAddAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 51)
   );
+  /**To read the Data */
+  const hasaccess = true;
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 52)
+  // );
+  /**To check edit status */
   const hasRoleEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 53)
   );
+  /**To check Delete Access */
   const hasRoleDeleteAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 54)
   );
@@ -110,6 +121,66 @@ const Roles = () => {
     }
   }, [hasaccess, navigate]);
 
+  /**Start Of handleActions*/
+  const handleAction = async (action, role) => {
+    switch (action) {
+      // Start Of Edit Operation
+      case "edit":
+        if (hasRoleEditAccess) {
+          navigate(`/master-data/Roles/edit/${role.roleId}`);
+        } else {
+          toast.error("Access denied");
+        }
+        break;
+
+      // Start Of Delete Operation
+      case "delete":
+        if (hasRoleDeleteAccess) {
+          setRoleId(role.roleId);
+          onOpen();
+        } else {
+          toast.error("Access denied");
+        }
+        break;
+      // End Of Delete Operation
+      default:
+        console.log("Unknown action");
+    }
+  };
+
+  const onDelete = async () => {
+    setIsDeleteLoading(true);
+    try {
+      if (hasRoleDeleteAccess) {
+        const response = await axiosInstance.delete(
+          `/api/v1/role/delete/${roleId}`
+        );
+        if (response.data.responseCode === "204") {
+          toast.success(response.data.message || "Role deleted successfully!");
+          fetchRoles();
+          onClose();
+
+          // Refresh the data after deletion
+          const updatedPage =
+            roleData.length === 1 && currentPage > 1
+              ? currentPage - 1
+              : currentPage;
+
+          setCurrentPage(updatedPage);
+        } else {
+          toast.error(response.data.message || "Failed to delete the role.");
+        }
+      } else {
+        toast.error("Access denied");
+      }
+    } catch (error) {
+      console.error("Error deleting role:", error);
+      toast.error(error.response?.data?.message || "Error deleting role.");
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
+
   const breadcrumbItems = [
     { label: "MasterData", href: "" },
     { label: "Roles", href: "/master-data/Roles" },
@@ -119,90 +190,339 @@ const Roles = () => {
     if (hasRoleAddAccess) {
       navigate("/master-data/Roles/add");
     } else {
-      toast.error("Currently You dont have access to this setting.");
+      toast.error("You don't have Create Access");
+    }
+  };
+
+  const toggleExpandedRow = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
+  };
+
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setRoleData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchRoles();
     }
   };
 
   return (
     <>
-      <ValidationComponent>
-        {isLoading && <Loader message="Loading data, please wait..." />}
-        <div className="p-4 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div>
-              <BreadcrumbsComponent items={breadcrumbItems} />
-              <h2 className="page-title">Roles</h2>
+      {isDeleteLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
+            {/* Header Section */}
+            <div className="flex flex-col space-y-4">
+              <div className="text-sm">
+                <BreadcrumbsComponent items={breadcrumbItems} />
+              </div>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div className="flex items-center page-title -pl-2">
+                  <BiData className="text-2xl" />
+                  <span className="page-title">Roles</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-x-4 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                    <Search
+                      onApplySearch={handleApplySearch}
+                      url="/api/v1/role/get/all"
+                      searchFields={["roleName", "roleDescription"]}
+                      placeholder="Search Roles..."
+                    />
+                    {/* <Filter
+                      onApplyFilters={handleApplyFilters}
+                      url="/api/v1/role/get/all"
+                      fieldNames={{
+                        departmentField: "id",
+                        fromDateField: "createdAt",
+                        toDateField: "toDate",
+                        positionField: "id",
+                      }}
+                      className="w-full sm:w-auto"
+                    /> */}
+                  </div>
+                  <Button
+                    className="flex bg-black text-white w-full sm:w-auto"
+                    onPress={navigateAdd}>
+                    <div className="flex justify-center items-center gap-2">
+                      <IoIosAddCircleOutline className="text-white text-xl" />
+                      <span className="text-white font-normal">Add Role</span>
+                    </div>
+                  </Button>
+                </div>
+              </div>
             </div>
-            <Button className="bg-black text-white" onPress={navigateAdd}>
-              <IoMdAdd className="text-white h-24 w-24" />
-              <span className="text-white font-Poppins text-xl">Add</span>
-            </Button>
-          </div>
-          <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
-            <div className="rounded-lg max-h-[80vh] text-left">
-              <Table
-                bordered
-                aria-label="Roles Table"
-                className="max-h-[80vh] ">
-                <TableHeader>
-                  <TableColumn>S.N</TableColumn>
-                  <TableColumn>Position Name</TableColumn>
-                  <TableColumn>Description</TableColumn>
-                  <TableColumn>User Action</TableColumn>
-                </TableHeader>
-                <TableBody
-                  items={isLoading ? [] : roleData}
-                  isLoading={isLoading}
-                  loadingContent={<SkeletonLoader />}>
-                  {roleData.map((position, index) => (
-                    <TableRow
-                      key={position.roleId || index}
-                      className="h-14 justify-center items-center border-b-2 border-gray-300">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        {position.positionName || position.roleName}
-                      </TableCell>
-                      <TableCell>
-                        <Tooltip
-                          content={
-                            position.description || position.roleDescription
-                          }>
-                          {truncateText(
-                            position.description || position.roleDescription,
-                            30
-                          )}
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex">
-                          <HiPencilSquare
-                            className={`${
-                              hasRoleEditAccess
-                                ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
-                                : "text-xl mr-2"
+
+            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+              {/* Large screens - Full table */}
+              <div className="hidden lg:block">
+                <div className="rounded-lg max-h-[80vh] text-left">
+                  <Table bordered aria-label="Roles Table">
+                    <TableHeader>
+                      <TableColumn>S.N</TableColumn>
+                      <TableColumn>Role Name</TableColumn>
+                      <TableColumn>Description</TableColumn>
+                      <TableColumn>User Action</TableColumn>
+                    </TableHeader>
+                    <TableBody
+                      items={isLoading ? [] : roleData}
+                      isLoading={isLoading}
+                      loadingContent={<SkeletonLoader />}>
+                      {roleData.map((role, index) => (
+                        <TableRow
+                          key={role.roleId}
+                          className="h-14 justify-center items-center border-b-2 border-gray-300">
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>
+                            {role.roleName.length < 7 ? (
+                              role.roleName
+                            ) : (
+                              <Tooltip content={role.roleName}>
+                                {truncateText(role.roleName, 15)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {role.roleDescription.length < 30 ? (
+                              role.roleDescription
+                            ) : (
+                              <Tooltip content={role.roleDescription}>
+                                {truncateText(role.roleDescription, 30)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex">
+                              <HiPencilSquare
+                                className={`${
+                                  hasRoleEditAccess
+                                    ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                    : "text-xl mr-2"
+                                }`}
+                                title="Edit"
+                                onClick={() => handleAction("edit", role)}
+                              />
+                              <MdDelete
+                                className={`${
+                                  hasRoleDeleteAccess
+                                    ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                    : "text-xl ml-2"
+                                }`}
+                                title="Delete"
+                                onClick={() => handleAction("delete", role)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Medium screens - Simplified table */}
+              <div className="hidden md:block lg:hidden">
+                <div className="shadow-md rounded-lg max-h-[80vh] text-left">
+                  <Table bordered aria-label="Roles Table">
+                    <TableHeader>
+                      <TableColumn>Role</TableColumn>
+                      <TableColumn>Description</TableColumn>
+                      <TableColumn>Actions</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      {roleData.map((role, index) => (
+                        <TableRow
+                          key={role.roleId}
+                          className="hover:bg-gray-50">
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {role.roleName}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ID: {role.roleId}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {role.roleDescription.length < 20 ? (
+                              role.roleDescription
+                            ) : (
+                              <Tooltip content={role.roleDescription}>
+                                {truncateText(role.roleDescription, 20)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex">
+                              <HiPencilSquare
+                                className={`${
+                                  hasRoleEditAccess
+                                    ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                    : "text-xl mr-2"
+                                }`}
+                                title="Edit"
+                                onClick={() => handleAction("edit", role)}
+                              />
+                              <MdDelete
+                                className={`${
+                                  hasRoleDeleteAccess
+                                    ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
+                                    : "text-xl ml-2"
+                                }`}
+                                title="Delete"
+                                onClick={() => handleAction("delete", role)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Small screens - Card-like view */}
+              <div className="block md:hidden">
+                <div className="space-y-4">
+                  {roleData.map((role, index) => (
+                    <div
+                      key={role.roleId}
+                      className="border rounded-lg overflow-hidden shadow-sm">
+                      <div
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                        onClick={() => toggleExpandedRow(role.roleId)}>
+                        <div className="font-medium">{role.roleName}</div>
+                        <div className="flex items-center gap-2">
+                          <FaChevronDown
+                            size={16}
+                            className={`transition-transform ${
+                              expandedRow === role.roleId ? "rotate-180" : ""
                             }`}
-                            title="Edit"
-                            onClick={() => handleAction("edit", position)}
-                          />
-                          <MdDelete
-                            className={`${
-                              hasRoleDeleteAccess
-                                ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                : "text-xl ml-2"
-                            }`}
-                            title="Delete"
-                            onClick={() => handleAction("delete", position)}
                           />
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </div>
+                      <div
+                        className={`${
+                          expandedRow === role.roleId ? "block" : "hidden"
+                        } p-3 space-y-2 text-sm`}>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Role ID:</div>
+                          <div>{role.roleId}</div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2">
+                          <div className="font-medium">Description:</div>
+                          <div className="bg-gray-50 p-2 rounded">
+                            {role.roleDescription}
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-4 mt-2">
+                          <Button
+                            size="sm"
+                            color="warning"
+                            className={`${
+                              !hasRoleEditAccess
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }`}
+                            onPress={() =>
+                              hasRoleEditAccess && handleAction("edit", role)
+                            }
+                            disabled={!hasRoleEditAccess}>
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            className={`${
+                              !hasRoleDeleteAccess
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }`}
+                            onPress={() =>
+                              hasRoleDeleteAccess &&
+                              handleAction("delete", role)
+                            }
+                            disabled={!hasRoleDeleteAccess}>
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </TableBody>
-              </Table>
+
+                  {(!roleData || roleData.length === 0) && !isLoading && (
+                    <div className="p-8 text-center text-gray-500">
+                      No Data available
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Pagination - Responsive for all screens */}
+              {roleData && roleData.length > 0 && (
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
+                  <div className="text-sm font-medium text-gray-600 flex items-center">
+                    <span className="mr-1">Showing:</span>
+                    <span className="font-bold text-gray-800 mx-1">
+                      {totalRecords < rolesPerPage
+                        ? totalRecords
+                        : rolesPerPage}
+                    </span>
+                    <span className="mr-1">of</span>
+                    <span className="font-bold text-gray-800">
+                      {totalRecords}
+                    </span>
+                  </div>
+
+                  <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+                    <Pagination
+                      showControls
+                      total={totalPages}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                      size="sm"
+                    />
+                  </div>
+                  <div className="flex justify-center items-center order-3">
+                    <span className="text-xs mr-2">Lines Per Page:</span>
+                    <DropDownComp
+                      items={dropdownItems}
+                      onSelect={setRolesPerPage}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </ValidationComponent>
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            isDismissable={true}
+            isKeyboardDismissDisabled={false}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalBody>
+                    <p>Are you sure you want to delete this role?</p>
+                    <div className="flex gap-2 justify-end mt-4">
+                      <Button color="danger" onPress={() => onDelete()}>
+                        Delete
+                      </Button>
+                      <Button onPress={onClose}>Cancel</Button>
+                    </div>
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
+      )}
     </>
   );
 };

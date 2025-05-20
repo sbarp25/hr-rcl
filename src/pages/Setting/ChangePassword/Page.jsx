@@ -114,14 +114,6 @@ const ChangePassword = () => {
                       !@#$%^&amp;*()_+={}[]:.;&quot;&#39;&lt;&gt;,.?\|
                     </span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <GoDotFill className="mt-1 text-gray-600" />
-                    Not consist solely of spaces
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <GoDotFill className="mt-1 text-gray-600" />
-                    Not contain 2 or more consecutive spaces
-                  </li>
                 </ul>
               </div>
 
@@ -135,12 +127,6 @@ const ChangePassword = () => {
                 label="Old Password"
                 rules={{
                   required: "Password is required",
-                  pattern: {
-                    value:
-                      /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-                    message:
-                      "Password must be 8 characters long. And can include letters, numbers, and special characters.",
-                  },
                 }}
               />
 

@@ -60,7 +60,7 @@ const Page = () => {
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">
-        <div className="hidden md:block">
+        <div className="">
           {email === "superadmin@rebootedcl.com" ? (
             ""
           ) : (
@@ -94,7 +94,7 @@ const Page = () => {
               )}
             </div>
           </div>
-          <div className="text-md font-bold text-right mt-1 mr-4 mb-3">
+          <div className="text-sm font-semibold text-right mt-1 mr-4 mb-3">
             <p className="text-green-700 mt-1">
               Total Early Time: {totalEarlyTime || "N/A"}
             </p>

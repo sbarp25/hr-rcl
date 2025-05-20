@@ -6,12 +6,14 @@ import ButtonComponent from "../../../components/ButtonComp";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import SelectComp from "../../../components/Select";
+
 import DatepickerComponent, {
   formatDate,
 } from "../../../components/DatepickerComponent";
 import TextAreaComp from "../../../components/TextAreaComp";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import GoBack from "../../../components/GoBack";
+import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -150,11 +152,10 @@ const LeaveRequest = () => {
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
-      <div className="hidden md:block">
-        <BreadcrumbsComponent items={breadcrumbItems} />
-      </div>
-      <div>
+      <div className="flex flex-col sm:flex-row items-center justify-between">
+        <GoBack />
         <h1 className="text-xl sm:text-md font-semibold">Leave Request</h1>
+        <div></div>
       </div>
 
       <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
@@ -187,29 +188,21 @@ const LeaveRequest = () => {
           <div className="grid grid-cols-1 gap-y-4 sm:gap-y-6 md:grid-cols-2 md:gap-x-4 md:gap-y-8">
             {/* Leave Type */}
             <div>
-              <SelectComp
+              <ReusableAutocomplete
                 name="leaveType"
-                label="Leave Type"
                 control={control}
-                size="sm"
-                className="w-full"
+                label="Leave Type"
+                items={LeaveType}
                 rules={{ required: "Type of leave is required" }}
-                data={LeaveType}
-                valueKey="key"
-                labelKey="label"
               />
             </div>
             <div>
-              <SelectComp
+              <ReusableAutocomplete
                 name="leaveStatus"
-                label="Leave Category"
                 control={control}
-                size="sm"
-                className="w-full"
+                label="Leave Category"
+                items={leaveStatus}
                 rules={{ required: "Category of leave is required" }}
-                data={leaveStatus}
-                valueKey="key"
-                labelKey="label"
               />
             </div>
 

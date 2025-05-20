@@ -274,6 +274,17 @@ const AttendanceRequest = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
+
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setLateCheckinData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchLateCheckInData();
+    }
+  };
   return (
     <>
       {isLoading ? (
@@ -291,7 +302,18 @@ const AttendanceRequest = () => {
               </div>
               <div className="flex gap-x-2 w-full sm:w-auto">
                 <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                  <Search />
+                  <Search
+                    onApplySearch={handleApplySearch}
+                    url="/api/v1/attendance/late-check-in/role-based-reviews"
+                    searchFields={[
+                      "fullName",
+                      "email",
+                      "rclId",
+                      "Department",
+                      "position",
+                    ]}
+                    placeholder="Search employees..."
+                  />
                   <Filter
                     onApplyFilters={handleApplyFilters}
                     // url="api/v1/attendance/late-check-in/all-reviews"
@@ -340,19 +362,31 @@ const AttendanceRequest = () => {
                               1}
                           </TableCell>
                           <TableCell>
-                            <Tooltip content={late.rclId}>
-                              {truncateText(late.rclId, 7)}
-                            </Tooltip>
+                            {late.rclId.length < 7 ? (
+                              late.rclId
+                            ) : (
+                              <Tooltip content={late.rclId}>
+                                {truncateText(late.rclId, 7)}
+                              </Tooltip>
+                            )}
                           </TableCell>
                           <TableCell>
-                            <Tooltip content={late.departmentName}>
-                              {truncateText(late.departmentName, 7) || "N/A"}
-                            </Tooltip>
+                            {late.departmentName.length < 7 ? (
+                              late.departmentName
+                            ) : (
+                              <Tooltip content={late.departmentName}>
+                                {truncateText(late.departmentName, 7) || "N/A"}
+                              </Tooltip>
+                            )}
                           </TableCell>
                           <TableCell>
-                            <Tooltip content={late.email}>
-                              {truncateText(late.email, 7)}
-                            </Tooltip>
+                            {late.email.length < 7 ? (
+                              late.email
+                            ) : (
+                              <Tooltip content={late.email}>
+                                {truncateText(late.email, 7)}
+                              </Tooltip>
+                            )}
                           </TableCell>
                           <TableCell>{late.attendanceDate}</TableCell>
                           <TableCell>{late.expectedCheckInTime}</TableCell>
@@ -377,24 +411,27 @@ const AttendanceRequest = () => {
                             {/* {late.status} */}
                           </TableCell>
                           <TableCell>
-                            {truncateText(late.checkInTime, 5)}
+                            {late.checkInTime.length < 5 ? (
+                              late.checkInTime
+                            ) : (
+                              <Tooltip content={late.checkInTime}>
+                                {truncateText(late.checkInTime, 7)}
+                              </Tooltip>
+                            )}
                           </TableCell>
                           <TableCell>
                             {" "}
-                            <Tooltip content={late.lateReason}>
-                              {truncateText(late.lateReason, 15)}
-                            </Tooltip>
+                            {late.lateReason.length < 5 ? (
+                              late.lateReason
+                            ) : (
+                              <Tooltip content={late.lateReason}>
+                                {truncateText(late.lateReason, 7)}
+                              </Tooltip>
+                            )}
                             {/* {late.lateReason} */}
                           </TableCell>
                           <TableCell>
                             <div className="flex justify-between items-center">
-                              {/* <button
-                            className="text-blue-600 hover:text-blue-800"
-                            onClick={() =>
-                              handleAction("view", late.lateCheckInId)
-                            }>
-                            <FaRegEye size={18} />
-                          </button> */}
                               <div className="flex justify-center gap-4">
                                 <Button
                                   className="bg-black text-white"
@@ -404,29 +441,6 @@ const AttendanceRequest = () => {
                                   }}>
                                   Action
                                 </Button>
-
-                                {/* <FaCheck
-                                  className={`${
-                                    hasAttendanceEditAccess
-                                      ? "text-orange-500 hover:text-orange-700 cursor-pointer"
-                                      : ""
-                                  }`}
-                                  title="Edit"
-                                  onClick={() =>
-                                    handleAction("Approve", late.lateCheckInId)
-                                  }
-                                />
-                                <FaXmark
-                                  className={`${
-                                    hasAttendanceEditAccess
-                                      ? "text-red-500 cursor-pointer hover:text-red-700"
-                                      : ""
-                                  }`}
-                                  title="Delete"
-                                  onClick={() =>
-                                    handleAction("Reject", late.lateCheckInId)
-                                  }
-                                /> */}
                               </div>
                             </div>
                           </TableCell>
@@ -463,9 +477,13 @@ const AttendanceRequest = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Tooltip content={late.departmentName}>
-                            {truncateText(late.departmentName, 7) || "N/A"}
-                          </Tooltip>
+                          {late.departmentName.length < 7 ? (
+                            late.departmentName
+                          ) : (
+                            <Tooltip content={late.departmentName}>
+                              {truncateText(late.departmentName, 7)}
+                            </Tooltip>
+                          )}
                         </TableCell>
                         <TableCell>{late.attendanceDate}</TableCell>
                         <TableCell>
@@ -557,9 +575,13 @@ const AttendanceRequest = () => {
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Department:</div>
                         <div className="truncate">
-                          <Tooltip content={late.departmentName}>
-                            {truncateText(late.departmentName, 7) || "N/A"}
-                          </Tooltip>
+                          {late.departmentName.length < 7 ? (
+                            late.departmentName
+                          ) : (
+                            <Tooltip content={late.departmentName}>
+                              {truncateText(late.departmentName, 7)}
+                            </Tooltip>
+                          )}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">

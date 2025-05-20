@@ -59,30 +59,29 @@ const Department = () => {
   };
 
   // Fetch departments data
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/departments/list", {
-          pageIndex: currentPage,
-          pageSize: departmentPerPage,
-        });
-        if (response.data.responseCode === "200") {
-          setOriginalDepartmentsData(response?.data?.datalist || []); // Store original data
-          setDepartmentsData(response?.data?.datalist || []); // Initially set filtered data to original data
-          setTotalPages(response.data.totalPages);
-          setTotalRecords(response.data.totalRecords);
-        } else {
-          toast.error(response?.data?.data?.message);
-        }
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.");
-      } finally {
-        setIsLoading(false);
+  const fetchDepartments = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post("/api/v1/departments/list", {
+        pageIndex: currentPage,
+        pageSize: departmentPerPage,
+      });
+      if (response.data.responseCode === "200") {
+        setOriginalDepartmentsData(response?.data?.datalist || []); // Store original data
+        setDepartmentsData(response?.data?.datalist || []); // Initially set filtered data to original data
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
+      } else {
+        toast.error(response?.data?.data?.message);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Error fetching departments.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchDepartments();
   }, [currentPage, departmentPerPage]);
 
@@ -190,7 +189,16 @@ const Department = () => {
   const toggleExpandedRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
-
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setDepartmentsData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchDepartments();
+    }
+  };
   return (
     <>
       {isDeleteLoading ? (
@@ -210,7 +218,18 @@ const Department = () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-x-4 w-full sm:w-auto">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                    <Search className="w-full sm:w-auto" />
+                    <Search
+                      onApplySearch={handleApplySearch}
+                      url="/api/v1/departments/list"
+                      searchFields={[
+                        "fullName",
+                        "email",
+                        "rclId",
+                        "Department",
+                        "position",
+                      ]}
+                      placeholder="Search Departments..."
+                    />
                     <Filter
                       onApplyFilters={handleApplyFilters}
                       url="/api/v1/departments/list"
@@ -263,9 +282,13 @@ const Department = () => {
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{department.name}</TableCell>
                             <TableCell>
-                              <Tooltip content={department.description}>
-                                {truncateText(department.description, 30)}
-                              </Tooltip>
+                              {department.description.length < 15 ? (
+                                department.description
+                              ) : (
+                                <Tooltip content={department.description}>
+                                  {truncateText(department.description, 15)}
+                                </Tooltip>
+                              )}
                             </TableCell>
                             <TableCell>{department.teamLeadName}</TableCell>
                             <TableCell>
@@ -332,9 +355,13 @@ const Department = () => {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Tooltip content={department.description}>
-                                {truncateText(department.description, 20)}
-                              </Tooltip>
+                              {department.description.length < 15 ? (
+                                department.description
+                              ) : (
+                                <Tooltip content={department.description}>
+                                  {truncateText(department.description, 15)}
+                                </Tooltip>
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="flex flex-col">

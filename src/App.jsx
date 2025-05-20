@@ -49,6 +49,7 @@ import AddRoles from "./pages/MasterData/Roles/AddRoles/Page.jsx";
 import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
 import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
 import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
+import SelfWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/SelfWFH/Page.jsx";
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
@@ -174,7 +175,8 @@ function App() {
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
               <Route path="/View/:rclId" element={<View />} />
               <Route path="/WFH" element={<RequestWorkFromHome />} />
-              <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
+              <Route path="/WFH/Status" element={<SelfWorkFromHome />} />
+              <Route path="/WFH/Add" element={<RequestWorkFromHome />} />
               <Route path="/WRH/view/:rclId" element={<ViewWorkFromHome />} />
             </Route>
           </Routes>

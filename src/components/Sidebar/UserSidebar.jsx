@@ -18,6 +18,7 @@ import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
+import { Tooltip } from "@nextui-org/react";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -228,13 +229,13 @@ const UserSidebar = () => {
               </Link>
               {isSidebarExpanded && (
                 <div>
-                  <p className="text-xl" title={username}>
-                    {" "}
-                    {truncateText(username, 7)}
+                  <p className="text-xl">
+                    <Tooltip content={username}>
+                      {truncateText(username, 7)}
+                    </Tooltip>
                   </p>
                   <p className="text-sm" title={email}>
-                    {" "}
-                    {truncateText(email, 10)}
+                    <Tooltip content={email}>{truncateText(email, 10)}</Tooltip>
                   </p>
                 </div>
               )}

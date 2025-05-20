@@ -7,7 +7,6 @@ const ReusableAutocomplete = ({
   label,
   items = [],
   rules = {},
-  getOptionLabel = (val) => val,
   ...props
 }) => {
   return (
@@ -17,7 +16,7 @@ const ReusableAutocomplete = ({
       rules={rules}
       render={({ field, fieldState }) => (
         <Autocomplete
-          selectedKey={field.value ?? ""}
+          selectedKey={field.value ? field.value.toString() : ""}
           onSelectionChange={field.onChange}
           label={label}
           variant="bordered"

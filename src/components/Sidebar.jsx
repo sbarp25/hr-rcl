@@ -2,7 +2,7 @@ import Logo from "../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm, IoLogOutOutline, IoLogOutSharp } from "react-icons/io5";
-import { FcLeave } from "react-icons/fc";
+import { FcLeave, FcDepartment } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
@@ -20,12 +20,16 @@ import Loader from "../components/Loader";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import axiosInstance from "../lib/axios-Instance";
 import getInitials from "../utils/getInitials";
-import {} from "react-icons/io5";
+import { TbScanPosition } from "react-icons/tb";
+import { VscGitPullRequestNewChanges } from "react-icons/vsc";
+import { GrStatusGoodSmall } from "react-icons/gr";
+import { LuMapPinCheckInside } from "react-icons/lu";
 import {
   Button,
   Modal,
   ModalBody,
   ModalContent,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import truncateText from "../utils/truncateText";
@@ -49,9 +53,10 @@ const Sidebar = () => {
     menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
+  // const seeDashboard = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
+  const seeDashboard = true;
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 10)
@@ -109,6 +114,7 @@ const Sidebar = () => {
       children: [
         // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
         {
+          icon: LuMapPinCheckInside,
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
@@ -128,12 +134,23 @@ const Sidebar = () => {
       view: seeMasterData,
       children: [
         {
+          icon: FcDepartment,
           label: "Department",
           to: "/master-data/Department",
           view: seeDepartment,
         },
-        { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: seeRole },
+        {
+          icon: TbScanPosition,
+          label: "Position",
+          to: "/master-data/Position",
+          view: seePosition,
+        },
+        {
+          icon: FcDepartment,
+          label: "Roles",
+          to: "/master-data/Roles",
+          view: seeRole,
+        },
       ],
     },
     // {
@@ -149,8 +166,18 @@ const Sidebar = () => {
       // view: seeLeave,
       view: seeLeave,
       children: [
-        { label: "Leave Status", to: "/Leave/Status", view: seeLeaveStatus },
-        { label: "Leave Request", to: "/Leave/Request", view: seeLeaveRequest },
+        {
+          icon: GrStatusGoodSmall,
+          label: "Leave Status",
+          to: "/Leave/Status",
+          view: seeLeaveStatus,
+        },
+        {
+          icon: VscGitPullRequestNewChanges,
+          label: "Leave Request",
+          to: "/Leave/Request",
+          view: seeLeaveRequest,
+        },
       ],
     },
     {
@@ -158,8 +185,18 @@ const Sidebar = () => {
       label: "Work From Home",
       view: true,
       children: [
-        { label: "WFH Status", to: "/WFH/Status", view: true },
-        { label: "WFH Request", to: "/WFH", view: true },
+        {
+          icon: GrStatusGoodSmall,
+          label: "WFH Status",
+          to: "/WFH/Status",
+          view: true,
+        },
+        {
+          icon: VscGitPullRequestNewChanges,
+          label: "WFH Request",
+          to: "/WFH",
+          view: true,
+        },
       ],
     },
     {
@@ -296,11 +333,14 @@ const Sidebar = () => {
                                 ? "bg-active text-white border-l-4 border-l-red-800"
                                 : "hover:bg-gray-600"
                             }`}>
-                            {location.pathname === child.to && (
-                              <BsArrowReturnRight className="mt-1 " />
-                            )}
-                            {isSidebarExpanded && (
+                            {location.pathname === child.to &&
+                              isSidebarExpanded && (
+                                <BsArrowReturnRight className="mt-1 " />
+                              )}
+                            {isSidebarExpanded ? (
                               <span className="text-base">{child.label}</span>
+                            ) : (
+                              <child.icon className="text-2xl" />
                             )}
                           </Link>
                         );
@@ -331,13 +371,15 @@ const Sidebar = () => {
               {isSidebarExpanded && (
                 <Link to="/settings">
                   <div>
-                    <p className="text-xl" title={username}>
-                      {" "}
-                      {truncateText(username, 7)}
+                    <p className="text-xl">
+                      <Tooltip content={username}>
+                        {truncateText(username, 7)}
+                      </Tooltip>
                     </p>
                     <p className="text-sm" title={email}>
-                      {" "}
-                      {truncateText(email, 10)}
+                      <Tooltip content={email}>
+                        {truncateText(email, 10)}
+                      </Tooltip>
                     </p>
                   </div>
                 </Link>

@@ -253,9 +253,6 @@ const UserMobileSidebar = () => {
                     );
                   })}
                 </div>
-                <button>
-                  <CheckIn />
-                </button>
                 <button className="">
                   <CiLogout
                     onClick={handleLogOut}

@@ -6,7 +6,7 @@ import ButtonComponent from "../../../../components/ButtonComp";
 import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectComp from "../../../../components/Select";
+
 import { toast } from "react-toastify";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader";
@@ -162,6 +162,8 @@ const EditDepartment = () => {
   const hasaccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 45)
   );
+
+  // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -237,36 +239,23 @@ const EditDepartment = () => {
               {/* Team Leader */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  {/* <div>
-                    <ReusableAutocomplete
-                      name="teamlead"
-                      control={control}
-                      label="Team Lead"
-                      items={teamLeadid}
-                      rules={{ required: "Team Lead is required" }}
-                    />
-                  </div> */}
-                  <SelectComp
+                  <ReusableAutocomplete
                     name="teamlead"
-                    label="Team Lead"
                     control={control}
+                    label="Team Lead"
+                    items={teamLeadid}
                     rules={{ required: "Team Lead is required" }}
-                    data={teamLeadid}
-                    valueKey="key"
-                    labelKey="label"
                   />
                 </div>
 
                 {/* Associate Team Leader */}
                 <div>
-                  <SelectComp
+                  <ReusableAutocomplete
                     name="Associateteamlead"
-                    label="Associate Team Lead"
                     control={control}
-                    rules={{ required: "Associate Team Lead is required" }}
-                    data={teamLeadid}
-                    valueKey="key"
-                    labelKey="label"
+                    label="Associate Team Lead"
+                    items={teamLeadid}
+                    rules={{ required: "AssociateTeam Lead is required" }}
                   />
                 </div>
               </div>

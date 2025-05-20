@@ -198,6 +198,17 @@ const Position = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setPositionData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchPositions();
+    }
+  };
+
   return (
     <>
       {isDeleteLoading ? (
@@ -217,7 +228,18 @@ const Position = () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-x-4 w-full sm:w-auto">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                    <Search className="w-full sm:w-auto" />
+                    <Search
+                      onApplySearch={handleApplySearch}
+                      url="/api/v1/departments/list"
+                      searchFields={[
+                        "fullName",
+                        "email",
+                        "rclId",
+                        "Department",
+                        "position",
+                      ]}
+                      placeholder="Search Position..."
+                    />
                     <Filter
                       onApplyFilters={handleApplyFilters}
                       url="/api/v1/positions/list"
@@ -267,14 +289,22 @@ const Position = () => {
                             className="h-14 justify-center items-center border-b-2 border-gray-300">
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                              <Tooltip content={position.positionName}>
-                                {truncateText(position.positionName, 30)}
-                              </Tooltip>
+                              {position.positionName.length < 15 ? (
+                                position.positionName
+                              ) : (
+                                <Tooltip content={position.positionName}>
+                                  {truncateText(position.positionName, 15)}
+                                </Tooltip>
+                              )}
                             </TableCell>
                             <TableCell>
-                              <Tooltip content={position.description}>
-                                {truncateText(position.description, 30)}
-                              </Tooltip>
+                              {position.description.length < 30 ? (
+                                position.description
+                              ) : (
+                                <Tooltip content={position.description}>
+                                  {truncateText(position.description, 30)}
+                                </Tooltip>
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="flex">
@@ -332,9 +362,13 @@ const Position = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Tooltip content={position.description}>
-                              {truncateText(position.description, 20)}
-                            </Tooltip>
+                            {position.description.length < 20 ? (
+                              position.description
+                            ) : (
+                              <Tooltip content={position.description}>
+                                {truncateText(position.description, 20)}
+                              </Tooltip>
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="flex">

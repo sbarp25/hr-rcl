@@ -43,10 +43,8 @@ const Login = () => {
         const Email = response?.data?.data?.email;
         const ekeyStep = response?.data?.data?.ekeyStep;
         const Menu = response?.data?.data?.menuActionsAndPermissions;
-        const CheckinStatus = response?.data?.data?.isCheckedInToday;
         const isCurrentlyStudying = response?.data?.data?.isCurrentlyStudying;
         localStorage.setItem("isCurrentlyStudying", isCurrentlyStudying);
-        localStorage.setItem("CheckinStatus", CheckinStatus);
         localStorage.setItem("ekeyStep", ekeyStep);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);

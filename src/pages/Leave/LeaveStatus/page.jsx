@@ -258,6 +258,16 @@ const LeaveStatus = () => {
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
 
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setLeaveData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchLeave();
+    }
+  };
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -272,7 +282,18 @@ const LeaveStatus = () => {
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                <Search className="w-full sm:w-auto" />
+                <Search
+                  onApplySearch={handleApplySearch}
+                  url="/api/v1/leave_management/by-role"
+                  searchFields={[
+                    "fullName",
+                    "email",
+                    "rclId",
+                    "Department",
+                    "position",
+                  ]}
+                  placeholder="Search employees..."
+                />
                 <Filter
                   onApplyFilters={handleApplyFilters}
                   url="/api/leave/all"
@@ -314,14 +335,22 @@ const LeaveStatus = () => {
                       className="h-14 border-b-2 border-gray-300">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                       <TableCell>
-                        <Tooltip content={item?.fullName}>
-                          {truncateText(item?.fullName || "N/A", 7)}
-                        </Tooltip>
+                        {item.fullName.length < 7 ? (
+                          item.fullName
+                        ) : (
+                          <Tooltip content={item.fullName}>
+                            {truncateText(item.fullName, 7)}
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>
-                        <Tooltip content={item?.departmentName}>
-                          {truncateText(item?.departmentName || "N/A", 7)}
-                        </Tooltip>
+                        {item.departmentName.length < 7 ? (
+                          item.departmentName
+                        ) : (
+                          <Tooltip content={item.departmentName}>
+                            {truncateText(item.departmentName, 7)}
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>{item?.requestDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>

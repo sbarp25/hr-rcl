@@ -131,9 +131,9 @@ const Bank = () => {
               rules={{
                 required: "Account Number is required",
                 pattern: {
-                  value: /^[a-zA-Z0-9]{5,20}$/,
+                  value: /^(?=.*\d)[a-zA-Z0-9]{5,20}$/,
                   message:
-                    "Account Number is needs to be between 5 and 20 characters.",
+                    "Account Number needs to be between 5 and 20 characters.",
                 },
               }}
             />
@@ -147,6 +147,11 @@ const Bank = () => {
                 minLength: {
                   value: 3,
                   message: "Full name must be at least 3 characters",
+                },
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message:
+                    "Name must not contain numbers or special characters",
                 },
               }}
             />

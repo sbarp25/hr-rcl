@@ -230,6 +230,17 @@ const WorkFromHomeStatus = () => {
   const menu = LocalStorageUtil.getItem("menu");
   const hasWorkFromHomeReviewAccess = true;
   const hasLeaveViewAccess = false;
+
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setOriginalLeaveData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchWorkFromHome();
+    }
+  };
   return (
     <div>
       {" "}
@@ -246,10 +257,21 @@ const WorkFromHomeStatus = () => {
               </div>
               <div className="flex gap-x-2 w-full sm:w-auto">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                  <Search className="w-full sm:w-auto" />
+                  <Search
+                    onApplySearch={handleApplySearch}
+                    url="/api/work_from_home/review"
+                    searchFields={[
+                      "fullName",
+                      "email",
+                      "rclId",
+                      "Department",
+                      "position",
+                    ]}
+                    placeholder="Search Employee..."
+                  />
                   <Filter
                     onApplyFilters={handleApplyFilters}
-                    url="/api/leave/all"
+                    url="/api/work_from_home/review"
                     className="w-full sm:w-auto"
                   />
                 </div>
@@ -286,19 +308,23 @@ const WorkFromHomeStatus = () => {
                         className="h-14 border-b-2 border-gray-300">
                         <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                         <TableCell>
-                          <Tooltip content={item?.userFullName}>
-                            {truncateText(item?.userFullName || "N/A", 7)}
-                          </Tooltip>
+                          {item?.userFullName.length < 7 ? (
+                            item?.userFullName
+                          ) : (
+                            <Tooltip content={item?.userFullName}>
+                              {truncateText(item?.userFullName, 7)}
+                            </Tooltip>
+                          )}
                         </TableCell>
-                        {/* <TableCell>
-                          <Tooltip content={item?.fullName}>
-                            {truncateText(item?.fullName || "N/A", 7)}
-                          </Tooltip>
-                        </TableCell> */}
+
                         <TableCell>
-                          <Tooltip content={item?.departmentName}>
-                            {truncateText(item?.departmentName || "N/A", 7)}
-                          </Tooltip>
+                          {item?.departmentName.length < 7 ? (
+                            item?.departmentName
+                          ) : (
+                            <Tooltip content={item?.departmentName}>
+                              {truncateText(item?.departmentName, 7)}
+                            </Tooltip>
+                          )}
                         </TableCell>
                         <TableCell>{item?.requestDate || "N/A"}</TableCell>
 

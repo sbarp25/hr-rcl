@@ -83,10 +83,10 @@ const Employees = () => {
     menu?.actions?.some((action) => action.actionId === 9)
   );
   /**To read the Data */
-  // const hasaccess = false;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
+  const hasaccess = true;
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 10)
+  // );
   /**To check edit status */
   const hasEmployeeEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 11)
@@ -199,6 +199,17 @@ const Employees = () => {
     }
   };
 
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setEmployeesData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchEmployees();
+    }
+  };
+
   return (
     <>
       {isDeleteLoading && <Loader />}
@@ -215,7 +226,18 @@ const Employees = () => {
             </div>
             <div className="flex gap-x-4">
               <div className="flex items-center space-x-4">
-                <Search />
+                <Search
+                  onApplySearch={handleApplySearch}
+                  url="/api/v1/users/list"
+                  searchFields={[
+                    "fullName",
+                    "email",
+                    "rclId",
+                    "Department",
+                    "position",
+                  ]}
+                  placeholder="Search employees..."
+                />
                 <Filter
                   onApplyFilters={handleApplyFilters}
                   url="/api/v1/users/list"

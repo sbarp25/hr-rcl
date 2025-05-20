@@ -99,11 +99,11 @@ const SelfLeaveStatus = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  // const hasaccess = true;
+  const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 56)
+  // );
   const hasLeaveUpdateAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 57)
   );
@@ -128,23 +128,6 @@ const SelfLeaveStatus = () => {
     } else {
       // Reset case - restore original data
       setLeaveData(originalLeaveData);
-    }
-  };
-
-  const handleAction = (action, data) => {
-    setSelectedLeave(data);
-    switch (action) {
-      case "approve":
-        onOpen();
-        break;
-      case "reject":
-        onRejectOpen();
-        break;
-      case "view":
-        navigate(`/Leave/view/${data.rclId}`);
-        break;
-      default:
-        console.log("Unknown action");
     }
   };
 
@@ -322,14 +305,22 @@ const SelfLeaveStatus = () => {
                       className="h-14 border-b-2 border-gray-300">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                       <TableCell>
-                        <Tooltip content={item?.fullName}>
-                          {truncateText(item?.fullName || "N/A", 7)}
-                        </Tooltip>
+                        {item.fullName.length < 7 ? (
+                          item.fullName
+                        ) : (
+                          <Tooltip content={item.fullName}>
+                            {truncateText(item.fullName, 7)}
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>
-                        <Tooltip content={item?.departmentName}>
-                          {truncateText(item?.departmentName || "N/A", 7)}
-                        </Tooltip>
+                        {item.departmentName.length < 7 ? (
+                          item.departmentName
+                        ) : (
+                          <Tooltip content={item.departmentName}>
+                            {truncateText(item.departmentName, 7)}
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>{item?.requestDate || "N/A"}</TableCell>
                       <TableCell>{item?.leaveType || "N/A"}</TableCell>
