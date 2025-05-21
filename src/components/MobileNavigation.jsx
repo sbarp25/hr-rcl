@@ -47,9 +47,10 @@ const MobileNavigation = () => {
     menu?.actions?.some((action) => action.actionId === 2)
   );
   /**To check Dashboard see status */
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
+  // const seeDashboard = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
+  const seeDashboard = true;
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 10)
@@ -92,7 +93,6 @@ const MobileNavigation = () => {
   const seeEKYE = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 32)
   );
-
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {

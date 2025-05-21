@@ -10,7 +10,13 @@ import { useForm, Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
 import { CiImageOn } from "react-icons/ci";
 
-const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
+const DocumentDetails = ({
+  formData,
+  handleNext,
+  handleBack,
+  setFormData,
+  dateOfBirth,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
@@ -28,7 +34,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   });
   const MAX_FILE_SIZE = 1024 * 1024;
   const { control, handleSubmit, setValue, formState } = useForm({
-    mode: "onBlur",
     defaultValues: {
       panNumber: formData?.documents?.panNumber || "",
       panIssuePlace: formData?.documents?.panIssuePlace || "",
@@ -42,6 +47,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       citizenshipBackDocumentFile:
         formData?.documents?.citizenshipBackDocumentFile || null,
     },
+    mode: "onChange",
   });
   const authToken = localStorage.getItem("authToken");
   const fetchDocumentDetails = async () => {
@@ -116,6 +122,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   }, [setValue, setFormData]);
 
   const onSubmit = async (data) => {
+    console.log("Date of birth", dateOfBirth);
     setIsLoading(true);
     const formDataToSubmit = new FormData();
 
@@ -273,9 +280,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
-                    validate: (value) =>
-                      new Date(value) <= new Date() ||
-                      "PAN Issue date cannot be in the future",
+                    validate: (value) => {
+                      if (new Date(value) > new Date()) {
+                        return "PAN Issue date cannot be in the future";
+                      }
+                      if (new Date(value) < new Date(dateOfBirth)) {
+                        return "PAN Issue date cannot be before date of birth";
+                      }
+                      return true;
+                    },
                   }}
                 />
               </div>
@@ -440,9 +453,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",
-                    validate: (value) =>
-                      new Date(value) <= new Date() ||
-                      "Citizenship Issue Date cannot be in the future",
+                    validate: (value) => {
+                      if (new Date(value) > new Date()) {
+                        return " Issue Date cannot be in the future";
+                      }
+                      if (new Date(value) < new Date(dateOfBirth)) {
+                        return "Citizenship Issue date cannot be before date of birth";
+                      }
+                      return true;
+                    },
                   }}
                 />
               </div>

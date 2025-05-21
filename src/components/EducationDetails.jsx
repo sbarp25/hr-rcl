@@ -22,17 +22,24 @@ import { CiImageOn } from "react-icons/ci";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
-const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
+const degrees = ["SEE/SLC", "+2/A levels", "Bachelor's", "Master's", "PhD"];
 
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
-const EducationalDetails = ({ formData, setFormData, handleBack }) => {
+const EducationalDetails = ({
+  formData,
+  setFormData,
+  handleBack,
+  dateOfBirth,
+}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const [educationalDocument, setEducationalDocument] = useState(false);
   const [numberOfItems, setNumberOfItems] = useState(1);
+  const [hasInProgressDegree, setHasInProgressDegree] = useState(false);
+  const [inProgressDegreeIndex, setInProgressDegreeIndex] = useState(-1);
   const navigate = useNavigate();
 
   const {
@@ -42,14 +49,51 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     getValues,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
+
+  // Watch all status fields to check for IN_PROGRESS
+  const statusValues = degrees.map((_, index) => watch(`status_${index}`));
 
   // Watch the currently studying checkbox to conditionally require time input
   const watchIsCurrentlyStudying = watch("isCurrentlyStudying", false);
 
   const handleDegreeSelection = (selected) => {
+    // Check if there's an IN_PROGRESS degree and if the selected degree is higher
+    if (
+      hasInProgressDegree &&
+      degrees.indexOf(selected) > inProgressDegreeIndex
+    ) {
+      toast.error(
+        `You cannot add higher education levels while ${degrees[inProgressDegreeIndex]} is in progress`
+      );
+      return;
+    }
+
     setSelectedDegree(selected);
   };
+
+  // Check for IN_PROGRESS status whenever status values change
+  useEffect(() => {
+    let foundInProgress = false;
+    let progressIndex = -1;
+
+    statusValues.forEach((status, index) => {
+      if (status === "IN_PROGRESS") {
+        foundInProgress = true;
+        progressIndex = index;
+      }
+    });
+
+    setHasInProgressDegree(foundInProgress);
+    setInProgressDegreeIndex(progressIndex);
+
+    // If we have an IN_PROGRESS degree and the selected degree is higher,
+    // reset the selected degree to the IN_PROGRESS one
+    if (foundInProgress && degrees.indexOf(selectedDegree) > progressIndex) {
+      setSelectedDegree(degrees[progressIndex]);
+      setNumberOfItems(progressIndex + 1);
+    }
+  }, [statusValues, selectedDegree]);
 
   useEffect(() => {
     if (degrees.includes(selectedDegree)) {
@@ -122,10 +166,14 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           const initialEducation = degrees.map(() => ({}));
 
           // Map each fetched education item to its corresponding degree position
+          let hasInProgressItem = false;
+          let inProgressIndex = -1;
+
           data.forEach((edu) => {
             const degreeIndex = degrees.indexOf(edu.degree);
             const startyear = formatDate(edu.startYear);
             const endyear = formatDate(edu.endYear);
+
             if (degreeIndex !== -1) {
               initialEducation[degreeIndex] = {
                 degree: edu.degree || "",
@@ -137,8 +185,18 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 file: edu.documentUrl || "",
                 files: [],
               };
+
+              // Check if any education is in progress
+              if (edu.status === "IN_PROGRESS") {
+                hasInProgressItem = true;
+                inProgressIndex = degreeIndex;
+              }
             }
           });
+
+          // Set IN_PROGRESS flags
+          setHasInProgressDegree(hasInProgressItem);
+          setInProgressDegreeIndex(inProgressIndex);
 
           setFormData((prev) => ({
             ...prev,
@@ -147,10 +205,16 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
 
           // Update selected degree if we have education data
           if (data.length > 0) {
-            const highestDegreeIndex = data.reduce((highest, edu) => {
+            let highestDegreeIndex = data.reduce((highest, edu) => {
               const index = degrees.indexOf(edu.degree);
               return index > highest ? index : highest;
             }, 0);
+
+            // If there's an IN_PROGRESS degree, limit to that level
+            if (hasInProgressItem && highestDegreeIndex > inProgressIndex) {
+              highestDegreeIndex = inProgressIndex;
+            }
+
             setSelectedDegree(degrees[highestDegreeIndex]);
             setNumberOfItems(highestDegreeIndex + 1);
           }
@@ -335,6 +399,80 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     const degree = degrees[degreeIndex];
     return degree !== "SEE/SLC";
   };
+
+  const validateStartDate = (value, index) => {
+    // Skip validation for the first education level (SEE/SLC) as it has no previous level
+    if (index === 0) return true;
+
+    // Get the end date of the previous level
+    const previousLevelEndDate = getValues(`endYear_${index - 1}`);
+
+    // If previous level's end date isn't available or status is IN_PROGRESS, skip validation
+    const previousLevelStatus = getValues(`status_${index - 1}`);
+    if (!previousLevelEndDate || previousLevelStatus === "IN_PROGRESS")
+      return true;
+
+    // Convert dates to comparable format
+    const previousEndDateObj = previousLevelEndDate.toDate(getLocalTimeZone());
+    const currentStartDateObj = value.toDate(getLocalTimeZone());
+
+    // Check if current start date is after previous end date
+    return (
+      currentStartDateObj >= previousEndDateObj ||
+      `Start date must be after the end date of your ${
+        degrees[index - 1]
+      } education`
+    );
+  };
+
+  // Handle status change
+  const handleStatusChange = (index, value) => {
+    // Update the status in the form
+    setValue(`status_${index}`, value);
+
+    // If the status is IN_PROGRESS, make sure we can't select higher degrees
+    if (value === "IN_PROGRESS") {
+      // If selected degree is higher than the IN_PROGRESS degree, reset it
+      if (degrees.indexOf(selectedDegree) > index) {
+        setSelectedDegree(degrees[index]);
+        setNumberOfItems(index + 1);
+      }
+
+      setHasInProgressDegree(true);
+      setInProgressDegreeIndex(index);
+    } else {
+      // If this was the IN_PROGRESS degree and now it's not, update the flags
+      if (index === inProgressDegreeIndex) {
+        // Check if any other degree is still IN_PROGRESS
+        const otherInProgressIndex = statusValues.findIndex(
+          (status, i) => i !== index && status === "IN_PROGRESS"
+        );
+
+        if (otherInProgressIndex === -1) {
+          setHasInProgressDegree(false);
+          setInProgressDegreeIndex(-1);
+        } else {
+          setInProgressDegreeIndex(otherInProgressIndex);
+        }
+      }
+    }
+
+    // Keep local formData in sync
+    setFormData((prev) => {
+      // Ensure education array exists
+      const updated = Array.isArray(prev.education)
+        ? [...prev.education]
+        : degrees.map(() => ({}));
+
+      // Ensure the element at index exists
+      updated[index] = {
+        ...updated[index],
+        status: value,
+      };
+      return { ...prev, education: updated };
+    });
+  };
+
   return (
     <div className="space-y-4 py-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -349,13 +487,24 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           className="w-full"
           label="Select A Level"
           selectedKeys={[selectedDegree]}
-          onChange={(e) => handleDegreeSelection(e.target.value)}>
-          {degrees.map((degree) => (
-            <SelectItem key={degree} value={degree}>
+          onChange={(e) => handleDegreeSelection(e.target.value)}
+          isDisabled={hasInProgressDegree}>
+          {degrees.map((degree, index) => (
+            <SelectItem
+              key={degree}
+              value={degree}
+              isDisabled={hasInProgressDegree && index > inProgressDegreeIndex}>
               {degree}
             </SelectItem>
           ))}
         </Select>
+
+        {hasInProgressDegree && (
+          <p className="text-sm text-danger mt-1">
+            You cannot add higher education levels while
+            {" " + degrees[inProgressDegreeIndex]} is in progress.
+          </p>
+        )}
       </div>
 
       {Array.from({ length: numberOfItems }).map((_, index) => (
@@ -457,9 +606,21 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 control={control}
                 rules={{
                   required: "Start year is required",
-                  validate: (value) =>
-                    new Date(value) <= new Date() ||
-                    "Start year cannot be in the future",
+                  validate: (value) => {
+                    const futureCheck =
+                      new Date(value) <= new Date() ||
+                      "Start year cannot be in the future";
+
+                    const birthCheck = dateOfBirth
+                      ? new Date(value) >= new Date(dateOfBirth) ||
+                        "Start year cannot be before date of birth"
+                      : true;
+
+                    if (futureCheck !== true) return futureCheck;
+                    if (birthCheck !== true) return birthCheck;
+
+                    return validateStartDate(value, index);
+                  },
                 }}
               />
             </div>

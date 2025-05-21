@@ -40,15 +40,7 @@ const Filter = ({
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  // Watch date fields
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === "FromDate" || name === "toDate") {
-        setValue(name, value[name]);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch, setValue]);
+  const fromDate = watch("FromDate");
 
   /** Fetch Departments */
   useEffect(() => {
@@ -191,6 +183,13 @@ const Filter = ({
                   name="toDate"
                   label="To Date (A.D)"
                   control={control}
+                  rules={{
+                    validate: (value) =>
+                      !fromDate ||
+                      !value ||
+                      value >= fromDate ||
+                      "End date cannot be before start date",
+                  }}
                 />
               </div>
 

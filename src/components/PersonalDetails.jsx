@@ -9,7 +9,7 @@ import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
 import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 import ReusableAutocomplete from "./ui/SearableDropdown";
 
-const PersonalDetails = ({ handleNext, handleBack }) => {
+const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   const [isLoading, setIsLoading] = useState(false);
   const genderOptions = [
     { key: "Male", label: "Male" },
@@ -54,6 +54,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data) => {
@@ -73,6 +74,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
         guardianNumber: data.guardianPhone,
       },
     };
+    setDateOfBirth(formatDate(data.dob));
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -236,6 +238,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                     value: 3,
                     message: "Guardian Name must atleast be 3 character long",
                   },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
+                  },
                 }}
                 label="Guardian Name"
                 variant="bordered"
@@ -291,6 +298,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   minLength: {
                     value: 3,
                     message: "Emergency Name must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
                   },
                 }}
                 label="Emergency Name"

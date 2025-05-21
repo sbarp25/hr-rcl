@@ -17,6 +17,7 @@ const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [formData, setFormData] = useState({
     personalInfo: {
       email: "",
@@ -169,6 +170,7 @@ const Ekye = () => {
                 handleBack={handleBack}
                 handleNestedChange={handleNestedChange}
                 setFormData={setFormData}
+                setDateOfBirth={setDateOfBirth}
               />
             )}
             {step === 1 && (
@@ -188,6 +190,7 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
             {step === 3 && (
@@ -197,13 +200,14 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
           </div>
         </ValidationComponent>
 
         {/* Navigation Buttons */}
-        <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        {/* <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -218,7 +222,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

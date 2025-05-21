@@ -4,7 +4,15 @@ import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import ButtonComponent from "../../components/ButtonComp";
-import { Input, Avatar, Divider } from "@nextui-org/react";
+import {
+  Input,
+  Avatar,
+  Divider,
+  Modal,
+  ModalBody,
+  useDisclosure,
+  ModalContent,
+} from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
@@ -14,6 +22,7 @@ import Loader from "../../components/Loader";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
+
   const [rclId, setRclId] = useState();
   const {
     register,
@@ -30,7 +39,7 @@ const Settings = () => {
   const [imageURL, setImageURL] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
-
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const breadcrumbItems = [{ label: "Setting", href: "/settings" }];
   const navigate = useNavigate();
 
@@ -236,13 +245,11 @@ const Settings = () => {
             <h2 className="text-2xl font-bold text-center mb-8">
               Profile Settings
             </h2>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10">
               {/* Profile Image Upload */}
               <div
                 className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
-                onClick={handleIconClick}>
+                onClick={onOpen}>
                 {imageURL ? (
                   <Avatar
                     className="h-full w-full object-cover"
@@ -253,41 +260,17 @@ const Settings = () => {
                     {getInitials(name)}
                   </div>
                 )}
-
-                <Input
-                  type="file"
-                  {...register("profilePicture", {
-                    validate: {
-                      validateFileType,
-                      validateFileSize,
-                    },
-                  })}
-                  ref={(e) => {
-                    register("profilePicture").ref(e);
-                    fileInputRef.current = e;
-                  }}
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="image/jpeg, image/png, image/gif, image/webp"
-                />
               </div>
 
               {/* Upload Button */}
               <div className="flex flex-col items-center gap-2">
-                {errors.profilePicture && (
-                  <p className="text-red-500 text-sm">
-                    {errors.profilePicture.message}
-                  </p>
-                )}
-
                 <ButtonComponent
-                  type="submit"
                   className="bg-black text-white"
-                  content={isLoading ? "Updating..." : "Update Photo"}
-                  // disabled={createProfile}
+                  content={isLoading ? "Updating..." : "Upload Photo"}
+                  onPress={onOpen}
                 />
               </div>
-            </form>
+            </div>
             {/* Personal Information Card */}
             <div className="bg-gray-50 dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
               <div className="flex justify-between items-center mb-6">
@@ -369,6 +352,76 @@ const Settings = () => {
           </div>
         </div>
       )}
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        // size="4xl"
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                {" "}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="flex flex-col items-center justify-center gap-8 mb-10">
+                  {/* Profile Image Upload */}
+                  <div
+                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
+                    onClick={handleIconClick}>
+                    {imageURL ? (
+                      <Avatar
+                        className="h-full w-full object-cover"
+                        src={imageURL}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-9xl ">
+                        {getInitials(name)}
+                      </div>
+                    )}
+
+                    <Input
+                      type="file"
+                      {...register("profilePicture", {
+                        validate: {
+                          validateFileType,
+                          validateFileSize,
+                        },
+                      })}
+                      ref={(e) => {
+                        register("profilePicture").ref(e);
+                        fileInputRef.current = e;
+                      }}
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="image/jpeg, image/png, image/gif, image/webp"
+                    />
+                  </div>
+                  <p className="text-orange-300 text-xs">
+                    Please click the above circle to change the profile photo
+                  </p>
+                  {/* Upload Button */}
+                  <div className="flex flex-col items-center gap-2">
+                    {errors.profilePicture && (
+                      <p className="text-danger text-sm">
+                        {errors.profilePicture.message}
+                      </p>
+                    )}
+
+                    <ButtonComponent
+                      type="submit"
+                      className="bg-black text-white"
+                      content={isLoading ? "Updating..." : "Update Photo"}
+                      // disabled={createProfile}
+                    />
+                  </div>
+                </form>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

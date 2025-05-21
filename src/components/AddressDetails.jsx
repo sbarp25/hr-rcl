@@ -15,13 +15,12 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [permanentDistrictName, setPermanentDistrictName] = useState("");
   const [temporaryDistrictName, setTemporaryDistrictName] = useState("");
-  // Add state variables for province names
   const [permanentProvinceName, setPermanentProvinceName] = useState("");
   const [temporaryProvinceName, setTemporaryProvinceName] = useState("");
 
   const {
     control,
-    handleSubmit: handleReactHookFormSubmit,
+    handleSubmit,
     setValue,
     formState: { errors },
     watch,
@@ -223,6 +222,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     temporaryDistrictName,
     permanentProvinceName,
     temporaryProvinceName,
+    setValue,
   ]);
 
   // Handle Same As Permanent checkbox
@@ -437,7 +437,40 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       },
     };
   };
+  useEffect(() => {
+    if (watchedSameAsPermanent) {
+      // Copy all permanent address values to temporary fields
+      setValue("temporary.provinceId", watch("permanent.provinceId") || "");
+      setValue("temporary.districtId", watch("permanent.districtId") || "");
+      setValue("temporary.municipality", watch("permanent.municipality") || "");
+      setValue("temporary.wardNumber", watch("permanent.wardNumber") || "");
+      setValue("temporary.pinCode", watch("permanent.pinCode") || "");
+      setValue("temporary.tole", watch("permanent.tole") || "");
 
+      // Update display names
+      setTemporaryDistrictName(permanentDistrictName);
+      setTemporaryProvinceName(permanentProvinceName);
+
+      // Clear any temporary field errors when using same as permanent
+      if (errors.temporary) {
+        clearErrors("temporary");
+      }
+    }
+  }, [
+    watch,
+    watchedSameAsPermanent,
+    watch("permanent.provinceId"),
+    watch("permanent.districtId"),
+    watch("permanent.municipality"),
+    watch("permanent.wardNumber"),
+    watch("permanent.pinCode"),
+    watch("permanent.tole"),
+    permanentDistrictName,
+    permanentProvinceName,
+    setValue,
+    clearErrors,
+    errors.temporary,
+  ]);
   return (
     <>
       {isLoading && <Loader message="Loading please wait" />}
@@ -446,9 +479,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>
-          <form
-            className="w-full"
-            onSubmit={handleReactHookFormSubmit(onSubmit)}>
+          <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
@@ -660,9 +691,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         className={`w-full rounded-xl`}
                         label="Select A Province"
                         placeholder={
-                          temporaryProvinceName ||
-                          formData.address?.temporary?.provinceName ||
-                          "Select Province"
+                          watchedSameAsPermanent
+                            ? permanentProvinceName
+                            : temporaryProvinceName || "Select Province"
                         }
                         selectedKeys={field.value ? [field.value] : []}
                         onSelectionChange={(keys) => {

@@ -245,6 +245,17 @@ const SelfLeaveStatus = () => {
   const navigateToAdd = () => {
     navigate("/Leave/addRequest");
   };
+
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setLeaveData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchLeave();
+    }
+  };
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -259,10 +270,21 @@ const SelfLeaveStatus = () => {
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                <Search className="w-full sm:w-auto" />
+                <Search
+                  onApplySearch={handleApplySearch}
+                  className="w-full sm:w-auto"
+                  url="/api/v1/leave_management/list"
+                  searchFields={[
+                    "fullName",
+                    "email",
+                    "rclId",
+                    "Department",
+                    "position",
+                  ]}
+                />
                 <Filter
                   onApplyFilters={handleApplyFilters}
-                  url="/api/leave/all"
+                  url="/api/v1/leave_management/list"
                   className="w-full sm:w-auto"
                 />
                 <ButtonComponent

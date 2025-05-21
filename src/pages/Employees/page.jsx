@@ -83,10 +83,10 @@ const Employees = () => {
     menu?.actions?.some((action) => action.actionId === 9)
   );
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 10)
-  // );
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 10)
+  );
   /**To check edit status */
   const hasEmployeeEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 11)

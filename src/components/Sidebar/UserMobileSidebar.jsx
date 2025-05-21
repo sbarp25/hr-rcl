@@ -44,21 +44,26 @@ const UserMobileSidebar = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 68)
-  );
-  const seeSecurity = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 72)
-  );
-  const seeBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
+  const seeProfile = true;
+  // const seeProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 64)
+  // );
+  const seeDashboard = true;
+  // const seeDashboard = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
+  const seeEKYE = true;
+  // const seeEKYE = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 68)
+  // );
+  const seeSecurity = true;
+  // const seeSecurity = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 72)
+  // );
+  const seeBank = true;
+  // const seeBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 76)
+  // );
   const navbarElements = [
     {
       icon: MdDashboard,
