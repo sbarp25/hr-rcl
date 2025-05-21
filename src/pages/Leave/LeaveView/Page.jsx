@@ -27,7 +27,6 @@ const LeaveView = () => {
       });
       if (response.data.responseCode === "200") {
         setLeaveByIdData(response.data.datalist[0]);
-        toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -115,7 +114,7 @@ const LeaveView = () => {
           {/* Subject */}
           <div className="pb-3 border-b border-gray-300">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-gray-600 text-sm">Body</span>
+              <span className="text-gray-600 text-sm">Reason</span>
             </div>
             <p className="text-gray-800 ">
               {leaveByIdData?.leaveSubject || "N/A"}
@@ -233,9 +232,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Team Lead:
                 </span>
-                {leaveByIdData?.isTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
@@ -248,9 +247,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Associate Team Lead:
                 </span>
-                {leaveByIdData?.isAssociateTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByAssociateTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isAssociateTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByAssociateTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">

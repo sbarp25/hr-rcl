@@ -65,42 +65,47 @@ const Page = () => {
     }
   };
 
-  const handleApplySearch = (searchData) => {
-    console.log("Search applied with:", searchData);
+  const fetchEkye = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        "/api/v1/admin/completed_ekye_users",
+        {
+          // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
+          pageIndex: currentPage,
+          pageSize: ekyeDashboardDataPerPage,
+        }
+      );
+      if (response.data.responseCode === "200") {
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
+        setEkyeData(response?.data?.datalist || []);
+      } else {
+        toast.error(response?.data?.data?.message);
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      toast.error("Error fetching departments.", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get(
-          "/api/v1/admin/completed_ekye_users",
-          {
-            // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
-            pageIndex: currentPage,
-            pageSize: ekyeDashboardDataPerPage,
-          }
-        );
-        if (response.data.responseCode === "200") {
-          setTotalPages(response.data.totalPages);
-          setTotalRecords(response.data.totalRecords);
-          setEkyeData(response?.data?.datalist || []);
-        } else {
-          toast.error(response?.data?.data?.message);
-        }
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDepartments();
+    fetchEkye();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
-
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      // Search component returned filtered data
+      setEkyeData(result.data);
+      if (result.totalPages) setTotalPages(result.totalPages);
+      if (result.totalRecords) setTotalRecords(result.totalRecords);
+    } else {
+      fetchEkye();
+    }
+  };
   // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 32)
@@ -136,7 +141,18 @@ const Page = () => {
         </div>
         <div className="flex flex-col space-y-4"></div>
         <div className="flex items-center space-x-4">
-          <Search onApplySearch={handleApplySearch} />
+          <Search
+            onApplySearch={handleApplySearch}
+            url="/api/v1/admin/completed_ekye_users"
+            searchFields={[
+              "fullName",
+              "email",
+              "rclId",
+              "Department",
+              "position",
+            ]}
+            placeholder="Search employees..."
+          />
           <Filter
             onApplyFilters={setFilters}
             url="/api/v1/admin/completed_ekye_users"
@@ -210,7 +226,10 @@ const Page = () => {
           <div className="text-sm font-medium text-gray-600  flex items-center">
             <span className="mr-1">Showing:</span>
             <span className="font-bold text-gray-800 mx-1">
-              {ekyeDashboardDataPerPage}
+              {totalRecords < ekyeDashboardDataPerPage
+                ? totalRecords
+                : ekyeDashboardDataPerPage}
+              {/* {ekyeDashboardDataPerPage} */}
             </span>
             <span className="mr-1">of</span>
             <span className="font-bold text-gray-800">{totalRecords}</span>
@@ -222,7 +241,7 @@ const Page = () => {
             onChange={handlePageChange}
           />
           <div className="flex justify-center items-center">
-            <span className="text-xs">Lines Per Page :</span>
+            <span className="text-xs mr-2">Lines Per Page: </span>
             <DropDownComp
               items={dropdownItems}
               onSelect={setEkyeDashboardDataPerPage}

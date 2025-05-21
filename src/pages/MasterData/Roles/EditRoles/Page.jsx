@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "@nextui-org/react";
-import { IoReturnDownBack } from "react-icons/io5";
+import { Form, Input } from "@nextui-org/react";
 import Loader from "../../../../components/Loader";
 import axiosInstance from "../../../../lib/axios-Instance";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/InputComponent";
 import TextAreaComp from "../../../../components/TextAreaComp";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import ButtonComponent from "../../../../components/ButtonComp";
+import GoBack from "../../../../components/GoBack";
 
 const EditRole = () => {
   const { roleId } = useParams(); // Get the role ID from URL
@@ -18,13 +18,9 @@ const EditRole = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const [roleName, setRoleName] = useState("");
   const [roleDescription, setRoleDescription] = useState("");
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, reset } = useForm();
   // Breadcrumb setup
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Roles", href: "/master-data/Roles" },
-    { label: "Edit Role", href: `/master-data/Roles/edit/${roleId}` },
-  ];
+  const NumroleId = parseInt(roleId);
 
   // Fetch the specific role data and menus/actions when component mounts
   useEffect(() => {
@@ -33,10 +29,14 @@ const EditRole = () => {
       try {
         // Fetch role details
         const roleResponse = await axiosInstance.get(
-          `/api/v1/role/get/${roleId}`
+          `/api/v1/role/get/${NumroleId}`
         );
         if (roleResponse.data.responseCode === "200") {
           const roleData = roleResponse.data.data;
+          reset({
+            roleName: roleData?.roleName,
+            roleDescription: roleData?.roleDescription,
+          });
           setRoleName(roleData.roleName || "");
           setRoleDescription(roleData.roleDescription || "");
         } else {
@@ -56,7 +56,7 @@ const EditRole = () => {
 
           // Now fetch selected actions for this role
           const selectedActionsResponse = await axiosInstance.get(
-            `/api/v1/role/actions/${id}`
+            `/api/v1/role/actions/${NumroleId}`
           );
           if (selectedActionsResponse.data.responseCode === "200") {
             const selectedActionIds = selectedActionsResponse.data.data || [];
@@ -88,10 +88,10 @@ const EditRole = () => {
       }
     };
 
-    if (roleId) {
-      fetchRoleData();
-    }
-  }, [roleId]);
+    // if (NumroleId) {
+    fetchRoleData();
+    // }
+  }, [NumroleId, reset]);
 
   // Calculate selected actions for updating
   const selectedActions = menusAndActions
@@ -103,9 +103,9 @@ const EditRole = () => {
     .flat();
 
   // Handle form submission to update the role
-  const handleUpdateRole = async (e) => {
+  const handleUpdateRole = async () => {
     if (hasaccess) {
-      e.preventDefault();
+      // e.preventDefault();
       setIsLoading(true);
 
       const updatedRole = {
@@ -119,7 +119,7 @@ const EditRole = () => {
 
       try {
         const response = await axiosInstance.put(
-          `/api/v1/role/update/${id}`,
+          `/api/v1/role/update/${NumroleId}`,
           updatedRole,
           {
             headers: {
@@ -149,10 +149,6 @@ const EditRole = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigate("/master-data/Roles");
-  };
-
   const menu = LocalStorageUtil.getItem("menu");
 
   const hasaccess = menu?.some((menu) =>
@@ -169,21 +165,16 @@ const EditRole = () => {
     <>
       {isLoading && <Loader message="Loading data, please wait..." />}
       <div className="p-4 md:p-8">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <div>
-            <BreadcrumbsComponent items={breadcrumbItems} />
-            <h2 className="page-title">Edit Role</h2>
-          </div>
-          <Button className="bg-gray-200" onPress={handleCancel}>
-            <IoReturnDownBack className="h-5 w-5" />
-            <span className="font-Poppins">Back to Roles</span>
-          </Button>
+        <div className="flex justify-between items-center mb-6">
+          <GoBack />
+          <h1 className="text-2xl font-bold text-gray-800">Edit Roles</h1>
+          <div></div>
         </div>
 
         {/* Edit Form */}
         <Form
           onSubmit={handleSubmit(handleUpdateRole)}
-          className="mb-6 p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
+          className="mb-6 p-6 bg-white shadow-md rounded-xl  mx-auto border-2 border-gray-300">
           <div className="grid grid-cols-1 gap-6 w-full">
             <div className="flex flex-col gap-6 w-full">
               <div>
@@ -280,17 +271,12 @@ const EditRole = () => {
 
           {/* Action Buttons */}
           <div className="flex justify-center items-center gap-x-4 mt-6">
-            <Button
+            <ButtonComponent
               type="submit"
-              className="button bg-bgprimary text-white rounded-lg px-6 py-3 hover:bg-bgprimaryhover transition w-full md:w-auto">
-              Update Role
-            </Button>
-            <Button
-              type="button"
-              className="button bg-gray-500 text-white rounded-lg px-6 py-2 hover:bg-gray-600 transition w-full md:w-auto"
-              onPress={handleCancel}>
-              Cancel
-            </Button>
+              className="bg-black text-white"
+              content={isLoading ? "Updating..." : "Update"}
+              disabled={isLoading}
+            />
           </div>
         </Form>
       </div>

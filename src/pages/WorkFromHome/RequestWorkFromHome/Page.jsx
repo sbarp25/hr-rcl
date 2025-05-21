@@ -11,6 +11,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getIpAddress } from "../../../utils/getIpAddress";
+import GoBack from "../../../components/GoBack";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -78,20 +79,19 @@ const RequestWorkFromHome = () => {
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
-      <div className="hidden md:block">
-        <BreadcrumbsComponent items={breadcrumbItems} />
-      </div>
-      <div>
+      <div className="flex items-center justify-between">
+        <GoBack />
         <h1 className="text-xl sm:text-md font-semibold">
           Work From Home Request
         </h1>
+        <div></div>
       </div>
 
       <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 sm:space-y-8 p-2 sm:p-4">
-          {/* Leave Title */}
+          className="space-y-4 sm:space-y-8 p-2 sm:p-4 ">
+          {/* Work from Home Title */}
           <div>
             <InputComponent
               name="title"
@@ -157,7 +157,7 @@ const RequestWorkFromHome = () => {
             </div>
           </div>
 
-          {/* Reason for Leave */}
+          {/* Reason for WFH */}
           <div>
             <TextAreaComp
               control={control}

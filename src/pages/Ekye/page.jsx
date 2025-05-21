@@ -17,6 +17,7 @@ const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [formData, setFormData] = useState({
     personalInfo: {
       email: "",
@@ -169,6 +170,7 @@ const Ekye = () => {
                 handleBack={handleBack}
                 handleNestedChange={handleNestedChange}
                 setFormData={setFormData}
+                setDateOfBirth={setDateOfBirth}
               />
             )}
             {step === 1 && (
@@ -188,6 +190,7 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
             {step === 3 && (
@@ -197,6 +200,7 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
           </div>

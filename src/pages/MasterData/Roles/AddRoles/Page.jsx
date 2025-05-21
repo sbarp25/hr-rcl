@@ -197,15 +197,19 @@ const AddRoles = () => {
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <InputComponent
-                    control={control}
                     name="roleName"
-                    label="Role Title"
+                    control={control}
                     variant="bordered"
+                    label="Role Title"
                     rules={{
                       required: "Title is required",
-                      pattern: {
-                        value: /^[a-zA-Z0-9 ]{3,300}$/,
-                        message: "Title must be 3-300 characters long.",
+                      minLength: {
+                        value: 3,
+                        message: "Title must be at least 3 characters long.",
+                      },
+                      maxLengt: {
+                        value: 300,
+                        message: "Title cannot exceed 300 characters.",
                       },
                     }}
                   />

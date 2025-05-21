@@ -58,6 +58,7 @@ const EkyeAdreess = ({ employeeData }) => {
                 placeholder={permanentAddress?.tole || "N/A"}
               />
             </div>
+            <Divider />
           </Form>
         </div>
         <div className="bg-white  text-lg w-full p-6 rounded-xl ">

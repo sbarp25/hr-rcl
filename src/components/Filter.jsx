@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
 import { Select, SelectItem } from "@nextui-org/select";
@@ -11,7 +11,6 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
-
 import { useForm } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./DatepickerComponent";
 
@@ -25,46 +24,31 @@ const Filter = ({
     toDateField: "toDate",
   },
 }) => {
-  const { watch, control } = useForm();
-
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === "FromDate" || name === "toDate") {
-        setFormData((prev) => ({ ...prev, [name]: value[name] }));
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch]);
-  const [formData, setFormData] = useState({
-    FromDate: null,
-    toDate: null,
-    department: "",
-    position: "",
-    roles: "",
+  const { control, handleSubmit, reset, watch, setValue } = useForm({
+    defaultValues: {
+      FromDate: null,
+      toDate: null,
+      department: "",
+      position: "",
+    },
   });
 
   const [departmentsData, setDepartmentsData] = useState([]);
   const [positionData, setPositionData] = useState([]);
-
   const [loadingDepartments, setLoadingDepartments] = useState(false);
   const [loadingPositions, setLoadingPositions] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const handleChange = (name, value) => {
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+  const fromDate = watch("FromDate");
 
-  /**Department Fetch */
+  /** Fetch Departments */
   useEffect(() => {
     const fetchDepartments = async () => {
       setLoadingDepartments(true);
       try {
         const response = await axiosInstance.post(
-          "/api/v1/departments/list",
+          "/api/v1/departments/get/all",
           {}
         );
         if (response.data.responseCode === "200") {
@@ -73,7 +57,6 @@ const Filter = ({
           toast.error(response?.data?.message);
         }
       } catch (error) {
-        console.error("Error fetching departments:", error);
         toast.error("Error fetching departments.");
       } finally {
         setLoadingDepartments(false);
@@ -82,7 +65,7 @@ const Filter = ({
     fetchDepartments();
   }, []);
 
-  /**Position Fetch */
+  /** Fetch Positions */
   useEffect(() => {
     const fetchPositions = async () => {
       setLoadingPositions(true);
@@ -94,7 +77,7 @@ const Filter = ({
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("Error fetching positions.", error);
+        toast.error("Error fetching positions.");
       } finally {
         setLoadingPositions(false);
       }
@@ -102,54 +85,38 @@ const Filter = ({
     fetchPositions();
   }, []);
 
-  const resetFilters = () => {
-    setFormData({
-      FromDate: null,
-      toDate: null,
-      department: "",
-      position: "",
-    });
-
-    onApplyFilters({});
-    onClose();
-  };
-
-  const onSubmit = async (e) => {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-
+  const onSubmit = async (formData) => {
     setIsLoading(true);
-    const filterCriteria = {};
+
+    const requestBody = {
+      pageIndex: 1,
+      pageSize: 10,
+      filterCriteria: {},
+    };
 
     if (formData.FromDate || formData.toDate) {
-      filterCriteria.createdAt = {};
-
+      requestBody.filterCriteria.createdAt = {};
       if (formData.FromDate) {
-        filterCriteria.createdAt.from = formatDate(formData.FromDate);
+        requestBody.filterCriteria.createdAt.from = formatDate(
+          formData.FromDate
+        );
       }
-
       if (formData.toDate) {
-        filterCriteria.createdAt.to = formatDate(formData.toDate);
+        requestBody.filterCriteria.createdAt.to = formatDate(formData.toDate);
       }
     }
 
     if (formData.department) {
-      filterCriteria.filterCriteria[fieldNames?.departmentField] = parseInt(
-        formData.department || ""
+      requestBody.filterCriteria[fieldNames?.departmentField] = parseInt(
+        formData.department
       );
     }
 
     if (formData.position) {
-      filterCriteria.filterCriteria[fieldNames?.positionField] = parseInt(
-        formData.position || ""
+      requestBody.filterCriteria[fieldNames?.positionField] = parseInt(
+        formData.position
       );
     }
-    const requestBody = {
-      pageIndex: 1,
-      pageSize: 10,
-      filterCriteria: filterCriteria,
-    };
 
     try {
       const response = await axiosInstance.post(`${url}`, requestBody, {
@@ -170,20 +137,25 @@ const Filter = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error fetching data", error);
       toast.error("Error fetching data.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const resetFilters = () => {
+    reset();
+    onApplyFilters({});
+    onClose();
+  };
+
   const filteredDepartments = useMemo(
-    () => departmentsData?.filter((department) => !department?.isDeleted),
+    () => departmentsData?.filter((d) => !d?.isDeleted),
     [departmentsData]
   );
 
   const filteredPositions = useMemo(
-    () => positionData?.filter((position) => !position?.isDeleted),
+    () => positionData?.filter((p) => !p?.isDeleted),
     [positionData]
   );
 
@@ -191,45 +163,51 @@ const Filter = ({
     <div className="bg-white rounded-xl">
       <Button onPress={onOpen} className="text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
-        <p className="">Filters</p>
+        <p>Filters</p>
       </Button>
+
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           <DrawerHeader>Filter Options</DrawerHeader>
           <DrawerBody>
-            <div className="p-4 space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-6">
               <div className="flex gap-4">
                 <DatepickerComponent
+                  disabled={isLoading}
                   name="FromDate"
-                  label="From Date(A.D)"
+                  label="From Date (A.D)"
                   control={control}
-                  onChange={(date) => handleChange("FromDate", date)}
                 />
                 <DatepickerComponent
+                  disabled={isLoading}
                   name="toDate"
-                  label="To Date(A.D)"
+                  label="To Date (A.D)"
                   control={control}
-                  onChange={(date) => handleChange("toDate", date)}
+                  rules={{
+                    validate: (value) =>
+                      !fromDate ||
+                      !value ||
+                      value >= fromDate ||
+                      "End date cannot be before start date",
+                  }}
                 />
               </div>
 
               <Select
                 label={loadingDepartments ? "Loading..." : "Department"}
                 variant="bordered"
-                selectedKeys={formData.department ? [formData.department] : []}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  handleChange("department", selected);
-                }}
+                isDisabled={isLoading}
+                selectedKeys={watch("department") ? [watch("department")] : []}
+                onSelectionChange={(keys) =>
+                  setValue("department", Array.from(keys)[0] || "")
+                }
                 placeholder="Select a department">
                 {loadingDepartments ? (
                   <SelectItem key="loading">Loading departments...</SelectItem>
                 ) : (
-                  filteredDepartments?.map((department) => (
-                    <SelectItem
-                      key={department.id.toString()}
-                      value={department.name}>
-                      {department.name}
+                  filteredDepartments.map((dept) => (
+                    <SelectItem key={dept.id.toString()} value={dept.name}>
+                      {dept.name}
                     </SelectItem>
                   ))
                 )}
@@ -238,20 +216,20 @@ const Filter = ({
               <Select
                 label={loadingPositions ? "Loading..." : "Position"}
                 variant="bordered"
-                selectedKeys={formData.position ? [formData.position] : []}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  handleChange("position", selected);
-                }}
+                isDisabled={isLoading}
+                selectedKeys={watch("position") ? [watch("position")] : []}
+                onSelectionChange={(keys) =>
+                  setValue("position", Array.from(keys)[0] || "")
+                }
                 placeholder="Select a position">
                 {loadingPositions ? (
                   <SelectItem key="loading">Loading positions...</SelectItem>
                 ) : (
-                  filteredPositions?.map((position) => (
+                  filteredPositions.map((pos) => (
                     <SelectItem
-                      key={position.id.toString()}
-                      value={position.positionName}>
-                      {position.positionName}
+                      key={pos.id.toString()}
+                      value={pos.positionName}>
+                      {pos.positionName}
                     </SelectItem>
                   ))
                 )}
@@ -259,8 +237,8 @@ const Filter = ({
 
               <div className="flex justify-between">
                 <Button
+                  type="submit"
                   className="bg-black text-white hover:bg-hoverbackground"
-                  onPress={onSubmit}
                   isLoading={isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
@@ -271,7 +249,7 @@ const Filter = ({
                   Reset
                 </Button>
               </div>
-            </div>
+            </form>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

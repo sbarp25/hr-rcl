@@ -6,15 +6,18 @@ import ButtonComponent from "../../../../components/ButtonComp";
 import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
-import SelectComp from "../../../../components/Select";
+
 import { toast } from "react-toastify";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import Loader from "../../../../components/Loader";
+import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [teamLead, setTeamLead] = useState([]);
 
   const { id } = useParams();
+  const longid = parseInt(id);
   const navigate = useNavigate();
   const {
     register,
@@ -79,7 +82,7 @@ const EditDepartment = () => {
     try {
       // const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
       const response = await axiosInstance.post(
-        `/api/v1/departments/get/{id}`,
+        `/api/v1/departments/get/${longid}`,
         {
           id: parseFloat(id),
         }
@@ -125,7 +128,7 @@ const EditDepartment = () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const response = await axiosInstance.put(
-          `/api/v1/departments/update/${id}`,
+          `/api/v1/departments/update/${longid}`,
           updatedDepartment,
           {
             headers: {
@@ -159,6 +162,8 @@ const EditDepartment = () => {
   const hasaccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 45)
   );
+
+  // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -166,99 +171,105 @@ const EditDepartment = () => {
   }, [hasaccess, navigate]);
 
   return (
-    <div className="px-4 flex flex-col space-y-4">
-      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
-      <div className="flex justify-between">
-        <GoBack />
-        <div className="page-title -pl-2">Edit Department</div>
-        <div></div>
-      </div>
-      <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
-          {/* Department Title */}
-          <div>
-            <InputComponent
-              name="title"
-              control={control}
-              variant="bordered"
-              label="Title"
-              // value={}
-              rules={{
-                required: "Title is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,300}$/,
-                  message: "Title must be 3-300 characters long.",
-                },
-              }}
-            />
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="px-4 flex flex-col space-y-4">
+          {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
+          <div className="flex justify-between">
+            <GoBack />
+            <div className="page-title -pl-2">Edit Department</div>
+            <div></div>
           </div>
-
-          {/* Department description*/}
-          <div>
-            <Controller
-              name="description"
-              control={control}
-              rules={{
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-              }}
-              render={({ field }) => (
-                <Textarea
-                  {...field}
-                  minRows={getRows()}
-                  maxRows={getMaxRows()}
-                  isInvalid={!!errors.description}
-                  className="rounded-xl"
-                  label="Description"
+          <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
+              {/* Department Title */}
+              <div>
+                <InputComponent
+                  name="title"
+                  control={control}
                   variant="bordered"
+                  label="Title"
+                  rules={{
+                    required: "Title is required",
+                    minLength: {
+                      value: 3,
+                      message: "Title must be at least 3 characters long.",
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: "Title cannot exceed 100 characters.",
+                    },
+                  }}
                 />
-              )}
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-          {/* Team Leader */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <SelectComp
-                name="teamlead"
-                label="Team Lead"
-                control={control}
-                rules={{ required: "Team Lead is required" }}
-                data={teamLeadid}
-                valueKey="key"
-                labelKey="label"
-              />
-            </div>
+              </div>
 
-            {/* Associate Team Leader */}
-            <div>
-              <SelectComp
-                name="Associateteamlead"
-                label="Associate Team Lead"
-                control={control}
-                rules={{ required: "Associate Team Lead is required" }}
-                data={teamLeadid}
-                valueKey="key"
-                labelKey="label"
+              {/* Department description*/}
+              <div>
+                <Controller
+                  name="description"
+                  control={control}
+                  rules={{
+                    required: "Description is required",
+                    minLength: {
+                      value: 10,
+                      message:
+                        "Description must be at least 10 characters long.",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <Textarea
+                      {...field}
+                      minRows={getRows()}
+                      maxRows={getMaxRows()}
+                      isInvalid={!!errors.description}
+                      className="rounded-xl"
+                      label="Description"
+                      variant="bordered"
+                    />
+                  )}
+                />
+                {errors.description && (
+                  <p className="text-danger text-sm">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+              {/* Team Leader */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <ReusableAutocomplete
+                    name="teamlead"
+                    control={control}
+                    label="Team Lead"
+                    items={teamLeadid}
+                    rules={{ required: "Team Lead is required" }}
+                  />
+                </div>
+
+                {/* Associate Team Leader */}
+                <div>
+                  <ReusableAutocomplete
+                    name="Associateteamlead"
+                    control={control}
+                    label="Associate Team Lead"
+                    items={teamLeadid}
+                    rules={{ required: "AssociateTeam Lead is required" }}
+                  />
+                </div>
+              </div>
+              <ButtonComponent
+                type="submit"
+                className="bg-black text-white"
+                content={isLoading ? "Updating..." : "Update"}
+                disabled={isLoading}
               />
-            </div>
+            </form>
           </div>
-          <ButtonComponent
-            type="submit"
-            className="bg-black text-white"
-            content={isLoading ? "Editing..." : "Edit"}
-            disabled={isLoading}
-          />
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -6,10 +6,10 @@ import { toast } from "react-toastify";
 import Loader from "./Loader";
 import InputComponent from "./InputComponent";
 import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
-import SelectComp from "./Select";
 import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import ReusableAutocomplete from "./ui/SearableDropdown";
 
-const PersonalDetails = ({ handleNext, handleBack }) => {
+const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   const [isLoading, setIsLoading] = useState(false);
   const genderOptions = [
     { key: "Male", label: "Male" },
@@ -54,6 +54,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data) => {
@@ -63,7 +64,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
         email: data.email,
         dateOfBirthAd: formatDate(data.dob),
         gender: data.gender,
-        married: Boolean(data.married),
+        married: data.married === "true",
         bloodGroup: data.bloodType,
         emergencyNumber: data.emergencyNumber,
         emergencyName: data.emergencyName,
@@ -73,6 +74,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
         guardianNumber: data.guardianPhone,
       },
     };
+    setDateOfBirth(formatDate(data.dob));
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -119,7 +121,7 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             email: data.email || "",
             dob: data.dateOfBirthAd || "",
             gender: data.gender || "",
-            married: Boolean(data.married) || "",
+            married: data.married ? true : false,
             bloodType: data.bloodGroup || "",
             emergencyNumber: data.emergencyNumber || "",
             emergencyName: data.emergencyName || "",
@@ -186,40 +188,34 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               />
 
               <div>
-                <SelectComp
-                  control={control}
+                <ReusableAutocomplete
                   name="bloodType"
-                  rules={{ required: "Blood Type is required" }}
+                  control={control}
                   label="Blood Group"
-                  data={bloodGroupOptions}
-                  valueKey="key"
-                  labelKey="label"
+                  items={bloodGroupOptions}
+                  rules={{ required: "Blood Type is required" }}
                 />
               </div>
 
               {/* Gender */}
               <div>
-                <SelectComp
-                  control={control}
+                <ReusableAutocomplete
                   name="gender"
-                  rules={{ required: "Gender is required" }}
+                  control={control}
                   label="Gender"
-                  data={genderOptions}
-                  valueKey="key"
-                  labelKey="label"
+                  items={genderOptions}
+                  rules={{ required: "Gender is required" }}
                 />
               </div>
 
               {/* Marital Status */}
               <div>
-                <SelectComp
+                <ReusableAutocomplete
                   name="married"
-                  label="Maritial Status"
                   control={control}
+                  label="Maritial Status"
+                  items={maritalOptions}
                   rules={{ required: "Maritial Status is required" }}
-                  data={maritalOptions}
-                  valueKey="key"
-                  labelKey="label"
                 />
               </div>
             </div>
@@ -241,6 +237,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   minLength: {
                     value: 3,
                     message: "Guardian Name must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
                   },
                 }}
                 label="Guardian Name"
@@ -270,14 +271,12 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
               {/* Guardian Relation */}
               <div>
-                <SelectComp
+                <ReusableAutocomplete
                   name="guardianRelation"
-                  label="Relation"
                   control={control}
+                  label="Relation"
+                  items={relationOptions}
                   rules={{ required: "Guardian Relation is required" }}
-                  data={relationOptions}
-                  valueKey="key"
-                  labelKey="label"
                 />
               </div>
             </div>
@@ -299,6 +298,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   minLength: {
                     value: 3,
                     message: "Emergency Name must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
                   },
                 }}
                 label="Emergency Name"

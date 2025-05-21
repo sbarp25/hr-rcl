@@ -1,79 +1,103 @@
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { Input } from "@nextui-org/react";
+import { Input, Select, SelectItem } from "@nextui-org/react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 
-const Search = ({ onApplySearch }) => {
-  const [formData, setFormData] = useState({
-    search: "",
-  });
+const Search = ({
+  onApplySearch,
+  url,
+  searchFields = ["fullName", "email", "rclId", "department", "position"],
+  placeholder = "Search",
+  width = "w-full sm:w-72 md:w-80 lg:w-96",
+}) => {
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedField, setSelectedField] = useState(searchFields[0]); // default to first field
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async () => {
+    if (!searchValue.trim()) {
+      if (onApplySearch) onApplySearch({});
+      return;
+    }
+
     setIsLoading(true);
 
     const requestBody = {
-      pageIndex: 0,
-      pageSize: 10, // Set the page size as needed
+      pageIndex: 1,
+      pageSize: 10,
       searchCriteria: {
-        search: formData.search || "", // Ensure search input is included
+        [selectedField]: searchValue.trim(),
       },
     };
-    if (onApplySearch) {
-      onApplySearch({ search: formData.search });
-    }
-
-    setIsLoading(false);
 
     try {
-      const response = await axiosInstance.post(
-        "/api/v1/admin/completedEkyeUsers",
-        requestBody,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axiosInstance.post(url, requestBody, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if (response.data.responseCode === "201") {
-        toast.success(response.data.data.message);
-
-        // Call onApplySearch only after a successful response
-        if (onApplySearch) {
-          onApplySearch(formData);
-        }
+      if (response.data.responseCode === "200") {
+        onApplySearch?.({
+          data: response.data.datalist,
+          totalPages: response.data.totalPages,
+          totalRecords: response.data.totalRecords,
+        });
       } else {
-        toast.error(response.data.data.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          response?.data?.message ||
+          "Search failed";
+        toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error fetching data", error);
-      toast.error("Error fetching data.");
+      console.error("Error searching data:", error);
+      toast.error("Error searching data.");
     } finally {
       setIsLoading(false);
     }
-    onApplySearch(formData);
   };
 
-  const handleChange = (name, value) => {
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  const handleChange = (value) => {
+    setSearchValue(value);
+    if (!value.trim()) onApplySearch?.({});
   };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      onSubmit(); // Trigger search on "Enter"
+      onSubmit();
     }
   };
+
   return (
-    <div className="bg-white rounded-xl">
+    <div className="bg-white rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
+      <Select
+        aria-label="Search by field"
+        size="sm"
+        className="max-w-xs"
+        selectedKeys={[selectedField]}
+        onChange={(e) => setSelectedField(e.target.value)}>
+        {searchFields.map((field) => (
+          <SelectItem key={field} value={field}>
+            {field}
+          </SelectItem>
+        ))}
+      </Select>
+
       <Input
-        className="w-full sm:w-72 md:w-80 lg:w-96"
+        className={width}
         onKeyDown={handleKeyPress}
         variant="bordered"
-        placeholder="Search"
-        onChange={(e) => handleChange("search", e.target.value)}
-        startContent={<CiSearch />}
+        placeholder={placeholder}
+        value={searchValue}
+        onChange={(e) => handleChange(e.target.value)}
+        startContent={<CiSearch className="text-default-400" />}
         type="search"
         isLoading={isLoading}
+        onClear={() => {
+          setSearchValue("");
+          onApplySearch?.({});
+        }}
+        isClearable
       />
     </div>
   );

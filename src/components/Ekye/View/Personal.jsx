@@ -74,6 +74,10 @@ const Personal = ({ employeeData }) => {
                   employeeData?.personalDetails?.postionName || "N/A"
                 }
               />
+            </div>
+
+            <Divider />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-20">
               <EkyeDetailsComponent
                 label="Marital Status"
                 placeholder={

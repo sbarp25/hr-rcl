@@ -18,6 +18,7 @@ import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
+import { Tooltip } from "@nextui-org/react";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -33,21 +34,26 @@ const UserSidebar = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 68)
-  );
-  const seeSecurity = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 72)
-  );
-  const seeBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
+  const seeProfile = true;
+  // const seeProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 64)
+  // );
+  const seeDashboard = true;
+  // const seeDashboard = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
+  const seeEKYE = true;
+  // const seeEKYE = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 68)
+  // );
+  const seeSecurity = true;
+  // const seeSecurity = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 72)
+  // );
+  const seeBank = true;
+  // const seeBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 76)
+  // );
   const navbarElements = [
     {
       icon: MdDashboard,
@@ -214,22 +220,27 @@ const UserSidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              {imageURL ? (
-                <Avatar className="h-full w-full object-cover" src={imageURL} />
-              ) : (
-                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                  {getInitials(username)}
-                </div>
-              )}
+              <Link to="/settings">
+                {imageURL ? (
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    src={imageURL}
+                  />
+                ) : (
+                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                    {getInitials(username)}
+                  </div>
+                )}
+              </Link>
               {isSidebarExpanded && (
                 <div>
-                  <p className="text-xl" title={username}>
-                    {" "}
-                    {truncateText(username, 7)}
+                  <p className="text-xl">
+                    <Tooltip content={username}>
+                      {truncateText(username, 7)}
+                    </Tooltip>
                   </p>
                   <p className="text-sm" title={email}>
-                    {" "}
-                    {truncateText(email, 10)}
+                    <Tooltip content={email}>{truncateText(email, 10)}</Tooltip>
                   </p>
                 </div>
               )}

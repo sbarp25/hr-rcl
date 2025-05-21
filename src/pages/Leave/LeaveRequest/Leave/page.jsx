@@ -13,23 +13,25 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
-import DropDownComp from "../../../components/Dropdown";
-import { useNavigate } from "react-router-dom";
-import SkeletonLoader from "../../../components/SkeletonLoader";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { FaCheckCircle, FaRegEye, FaChevronDown } from "react-icons/fa";
+import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import Filter from "../../../../components/Filter";
+import Search from "../../../../components/Search";
+import SkeletonLoader from "../../../../components/SkeletonLoader";
+import truncateText from "../../../../utils/truncateText";
+import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+import DropDownComp from "../../../../components/Dropdown";
+import TextAreaComp from "../../../../components/TextAreaComp";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../../lib/axios-Instance";
+import { useEffect, useState } from "react";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useForm } from "react-hook-form";
-import TextAreaComp from "../../../components/TextAreaComp";
-import Search from "../../../components/Search";
-import Filter from "../../../components/Filter";
-import truncateText from "../../../utils/truncateText";
+import { useNavigate } from "react-router-dom";
+import ButtonComponent from "../../../../components/ButtonComp";
+import { MdNavigateBefore } from "react-icons/md";
 
-const LeaveStatus = () => {
+const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedRow, setExpandedRow] = useState(null);
 
@@ -71,7 +73,7 @@ const LeaveStatus = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        `/api/v1/leave_management/by-role`,
+        `/api/v1/leave_management/list`,
         { pageIndex: currentPage, pageSize: leaveDataPerPage }
       );
       if (response.data.responseCode === "200") {
@@ -97,11 +99,11 @@ const LeaveStatus = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  // const hasaccess = true;
+  const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 56)
+  // );
   const hasLeaveUpdateAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 57)
   );
@@ -126,23 +128,6 @@ const LeaveStatus = () => {
     } else {
       // Reset case - restore original data
       setLeaveData(originalLeaveData);
-    }
-  };
-
-  const handleAction = (action, data) => {
-    setSelectedLeave(data);
-    switch (action) {
-      case "approve":
-        onOpen();
-        break;
-      case "reject":
-        onRejectOpen();
-        break;
-      case "view":
-        navigate(`/Leave/view/${data.rclId}`);
-        break;
-      default:
-        console.log("Unknown action");
     }
   };
 
@@ -257,6 +242,9 @@ const LeaveStatus = () => {
       return "bg-red-100 border border-red-600 text-red-600";
     return "bg-yellow-100 border border-yellow-500 text-yellow-500";
   };
+  const navigateToAdd = () => {
+    navigate("/Leave/addRequest");
+  };
 
   const handleApplySearch = (result) => {
     if (result.data) {
@@ -278,13 +266,14 @@ const LeaveStatus = () => {
           </div>
           <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Applied Leaves</h1>
+              <h1 className="page-title">Leave Status</h1>
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                 <Search
                   onApplySearch={handleApplySearch}
-                  url="/api/v1/leave_management/by-role"
+                  className="w-full sm:w-auto"
+                  url="/api/v1/leave_management/list"
                   searchFields={[
                     "fullName",
                     "email",
@@ -292,12 +281,16 @@ const LeaveStatus = () => {
                     "Department",
                     "position",
                   ]}
-                  placeholder="Search employees..."
                 />
                 <Filter
                   onApplyFilters={handleApplyFilters}
-                  url="/api/leave/all"
+                  url="/api/v1/leave_management/list"
                   className="w-full sm:w-auto"
+                />
+                <ButtonComponent
+                  className="bg-black text-white"
+                  onPress={navigateToAdd}
+                  content="Apply Leave"
                 />
               </div>
             </div>
@@ -305,10 +298,10 @@ const LeaveStatus = () => {
         </div>
 
         {/**Table Section */}
-        <div className="bg-white rounded-lg p-2 max-h-[80vh]  overflow-y-auto">
+        <div className="bg-white rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg  text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
               <Table
                 bordered
                 aria-label="Table of Leave"
@@ -323,7 +316,6 @@ const LeaveStatus = () => {
                   <TableColumn>Leave End Date</TableColumn>
                   <TableColumn>Status</TableColumn>
                   {/* <TableColumn>Approved by</TableColumn> */}
-                  <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -371,46 +363,6 @@ const LeaveStatus = () => {
                             : "N/A"}{" "}
                         </div>
                       </TableCell>
-
-                      {/* <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
-                              item?.leaveStatus
-                            )}`}>
-                            {item?.approvedBy?.charAt(0) ||
-                              item?.rejectedBy?.charAt(0) ||
-                              "?"}
-                          </div>
-                          <div>
-                            {item?.approvedBy || item?.rejectedBy || "N/A"}
-                          </div>
-                        </div>
-                      </TableCell> */}
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {hasaccess && (
-                            <button
-                              className="text-blue-600 hover:text-blue-800"
-                              onClick={() => handleAction("view", item)}>
-                              <FaRegEye size={18} />
-                            </button>
-                          )}
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
-                        </div>
-                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -420,7 +372,7 @@ const LeaveStatus = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto  text-left">
+            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>Leave</TableColumn>
@@ -428,7 +380,6 @@ const LeaveStatus = () => {
                   <TableColumn>Duration</TableColumn>
                   <TableColumn>Status</TableColumn>
                   <TableColumn>Team</TableColumn>
-                  <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
                   items={isLoading ? [] : leaveData}
@@ -476,24 +427,6 @@ const LeaveStatus = () => {
                           </div>
                         </div>
                       </TableCell>
-
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
-                        </div>
-                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -503,10 +436,10 @@ const LeaveStatus = () => {
 
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
-            <div className="space-y-4 overflow-y-auto">
+            <div className="space-y-4">
               {leaveData.map((leave) => (
                 <div
-                  key={leave.rclId}
+                  key={leave.leaveId}
                   className="border rounded-lg overflow-hidden shadow-sm">
                   <div
                     className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
@@ -553,29 +486,6 @@ const LeaveStatus = () => {
                       <div className="font-medium">Team Leader:</div>
                       <div>{leave?.teamLeaderName || "N/A"}</div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Approver:</div>
-                      <div>{leave?.approvedBy || "N/A"}</div>
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                      {leave?.leaveStatus === "PENDING" &&
-                        hasLeaveUpdateAccess && (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-black text-white"
-                              onPress={() => handleAction("approve", leave)}>
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="danger"
-                              onPress={() => handleAction("reject", leave)}>
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                    </div>
                   </div>
                 </div>
               ))}
@@ -597,6 +507,7 @@ const LeaveStatus = () => {
                   {totalRecords < leaveDataPerPage
                     ? totalRecords
                     : leaveDataPerPage}
+                  {/* {leaveDataPerPage} */}
                 </span>
                 <span className="mr-1">of</span>
                 <span className="font-bold text-gray-800">{totalRecords}</span>
@@ -640,35 +551,23 @@ const LeaveStatus = () => {
                   {selectedLeave && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
                       <div className="flex ">
-                        <span className="font-medium">Full Name: &nbsp;</span>
-                        <span>{selectedLeave?.fullName}</span>
+                        <span className="font-medium">Team Lead:</span>
+                        <span>{selectedLeave?.teamleadName}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">
-                          Department Name: &nbsp;
-                        </span>
-                        <span>{selectedLeave?.departmentName}</span>
+                        <span className="font-medium">AssociateTeam Lead:</span>
+                        <span>{selectedLeave?.associateteamleadName}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">Team Lead:&nbsp;</span>
-                        <span>{selectedLeave?.teamLeaderName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">
-                          AssociateTeam Lead:&nbsp;
-                        </span>
-                        <span>{selectedLeave?.associateTeamLeadName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Leave Type:&nbsp;</span>
+                        <span className="font-medium">Leave Type:</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">Start Date:&nbsp;</span>
+                        <span className="font-medium">Start Date:</span>
                         <span>{selectedLeave?.leaveStartDate}</span>
                       </div>
                       <div className="flex ">
-                        <span className="font-medium">End Date:&nbsp;</span>
+                        <span className="font-medium">End Date:</span>
                         <span>{selectedLeave?.leaveEndDate}</span>
                       </div>
                     </div>
@@ -705,20 +604,9 @@ const LeaveStatus = () => {
                   {selectedLeave && (
                     <div className="bg-gray-50 p-3 rounded-md space-y-2">
                       <div className="flex ">
-                        <span className="font-medium">Full Name: &nbsp;</span>
-                        <span>{selectedLeave?.fullName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">
-                          Department Name: &nbsp;
-                        </span>
-                        <span>{selectedLeave?.departmentName}</span>
-                      </div>
-                      <div className="flex ">
                         <span className="font-medium">Leave Type:</span>
                         <span>{selectedLeave?.leaveType}</span>
                       </div>
-
                       <div className="flex ">
                         <span className="font-medium">Start Date:</span>
                         <span>{selectedLeave?.leaveStartDate}</span>
@@ -768,4 +656,4 @@ const LeaveStatus = () => {
   );
 };
 
-export default LeaveStatus;
+export default SelfLeaveStatus;

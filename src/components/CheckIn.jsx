@@ -181,6 +181,8 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           )}
         </div>
         <Button
+          isDisabled={isloading}
+          // isDisabled={isloading}
           onPress={handleAttendance}
           className="button bg-bgprimary hover:bg-hoverbackground text-white py-2 tracking-normal">
           {checkedInStatus ? (

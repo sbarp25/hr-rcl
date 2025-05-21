@@ -153,17 +153,16 @@ const EducationAction = ({ employeeData }) => {
         </div>
 
         {/* Buttons Section */}
-        <div className="mt-6 flex justify-end gap-4">
-          {/* <Button className="bg-red-700 text-white" onPress={onOpen}>
-            Reject
-          </Button> */}
-          <RejectComp employeeData={employeeData} />
-          <Button className="bg-emerald-500 text-white" onPress={onApprove}>
-            <FaCheck />
-            Approve
-          </Button>
-        </div>
-        {/**Modal For Reject  */}
+        {employeeData?.status === "PENDING" ||
+          (employeeData?.status === "REJECTED" && (
+            <div className="mt-6 flex justify-end gap-4">
+              <RejectComp employeeData={employeeData} />
+              <Button className="bg-emerald-500 text-white" onPress={onApprove}>
+                <FaCheck />
+                Approve
+              </Button>
+            </div>
+          ))}
       </div>
     </>
   );
