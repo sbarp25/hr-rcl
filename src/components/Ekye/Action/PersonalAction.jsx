@@ -1,5 +1,5 @@
 import { Divider, Form } from "@nextui-org/react";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 const PersonalAction = ({ employeeData }) => {
   return (

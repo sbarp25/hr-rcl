@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
@@ -14,7 +14,7 @@ import {
   ModalContent,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
 import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";

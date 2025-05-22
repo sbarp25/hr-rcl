@@ -1,4 +1,4 @@
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import { Divider } from "@nextui-org/react";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 

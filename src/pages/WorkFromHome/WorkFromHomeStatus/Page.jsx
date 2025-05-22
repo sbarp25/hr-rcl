@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import {

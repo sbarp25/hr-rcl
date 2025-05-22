@@ -21,7 +21,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";

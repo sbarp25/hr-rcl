@@ -1,7 +1,7 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
 

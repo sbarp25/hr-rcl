@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import GoBack from "../../../components/GoBack";
 import { Controller, useForm } from "react-hook-form";
 import UnderlineComponent from "../../../components/ui/UnderlineComponent.jsx";

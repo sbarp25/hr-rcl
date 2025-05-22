@@ -21,7 +21,7 @@ import {
 
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/ui/Dropdown.jsx";

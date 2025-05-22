@@ -23,7 +23,7 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";

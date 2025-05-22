@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import DatepickerComponent, {
   formatDate,

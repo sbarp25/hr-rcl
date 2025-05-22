@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import { useForm } from "react-hook-form";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";

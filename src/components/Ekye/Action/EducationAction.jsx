@@ -5,7 +5,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";

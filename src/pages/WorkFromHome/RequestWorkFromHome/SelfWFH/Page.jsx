@@ -12,7 +12,7 @@ import {
 import { FaChevronDown } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../../lib/axios-Instance";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../../components/Search";
 import Filter from "../../../../components/Filter";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";

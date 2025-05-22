@@ -1,4 +1,4 @@
-import Attendancereport from "../../components/Attendancereport.jsx";
+import Attendancereport from "../../components/Dashboard/Attendancereport.jsx";
 import { Input } from "@nextui-org/input";
 
 import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";

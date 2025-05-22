@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import {
   DatePicker,
   Input,

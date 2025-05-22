@@ -3,7 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@nextui-org/react";
