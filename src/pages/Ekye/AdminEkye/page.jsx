@@ -15,9 +15,9 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const Page = () => {

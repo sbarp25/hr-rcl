@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
 import { Button } from "@nextui-org/react";
 import axiosInstance from "../../../lib/axios-Instance";
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { GoDotFill } from "react-icons/go";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/Loader/Loader.jsx";
 
 const ChangePassword = () => {
   const {

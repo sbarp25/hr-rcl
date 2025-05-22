@@ -34,7 +34,7 @@ import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
 import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
 import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
 import LeaveView from "./pages/Leave/LeaveView/Page.jsx";
-import MobileNavigation from "./components/MobileNavigation.jsx";
+
 import ForgetPassword from "./pages/ForgetPassword/Page.jsx";
 import ResetForGetPassword from "./pages/ForgetPassword/ValidatePassword/Page.jsx";
 import ChangePassword from "./pages/Setting/ChangePassword/Page.jsx";
@@ -50,6 +50,7 @@ import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
 import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
 import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
 import SelfWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/SelfWFH/Page.jsx";
+import MobileNavigation from "./components/Sidebar/MobileNavigation.jsx";
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {

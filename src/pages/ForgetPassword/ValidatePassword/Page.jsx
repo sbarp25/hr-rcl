@@ -3,10 +3,10 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
 import Logo from "../../../assets/Images/Logo.png";
 import { Button } from "@nextui-org/button";
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
+import Loader from "../../../components/Loader/Loader.jsx";
 const ResetForGetPassword = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(true);

@@ -18,17 +18,17 @@ import {
   ModalContent,
   ModalBody,
 } from "@nextui-org/react";
-import Loader from "../../components/Loader";
+
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
-import DropDownComp from "../../components/Dropdown";
+import DropDownComp from "../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
-import SkeletonLoader from "../../components/SkeletonLoader";
-
+import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
+import Loader from "../../components/Loader/Loader.jsx";
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteLoading, setDeleteIsLoading] = useState(false);

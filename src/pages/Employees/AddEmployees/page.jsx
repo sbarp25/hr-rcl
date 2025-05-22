@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
-import Loader from "../../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import {
@@ -18,8 +17,9 @@ import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
-import DatepickerComponent from "../../../components/DatepickerComponent";
+import DatepickerComponent from "../../../components/ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
+import Loader from "../../../components/Loader/Loader.jsx";
 const AddEmployeeForm = () => {
   const {
     register,

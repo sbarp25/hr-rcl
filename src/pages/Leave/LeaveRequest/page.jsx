@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import InputComponent from "../../../components/InputComponent";
-import ButtonComponent from "../../../components/ButtonComp";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import DatepickerComponent, {
   formatDate,
-} from "../../../components/DatepickerComponent";
-import TextAreaComp from "../../../components/TextAreaComp";
+} from "../../../components/ui/DatepickerComponent.jsx";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import GoBack from "../../../components/GoBack";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";

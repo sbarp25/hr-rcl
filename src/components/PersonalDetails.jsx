@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
-import Loader from "./Loader";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
 import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
-import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "./ui/SearableDropdown";
+import Loader from "./Loader/Loader.jsx";
 
 const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   const [isLoading, setIsLoading] = useState(false);

@@ -24,10 +24,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
-import CheckIn from "./CheckIn";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import axiosInstance from "../lib/axios-Instance";
-import getInitials from "../utils/getInitials";
+import CheckIn from "../Dashboard/CheckIn.jsx";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import axiosInstance from "../../lib/axios-Instance";
+import getInitials from "../../utils/getInitials";
 
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");

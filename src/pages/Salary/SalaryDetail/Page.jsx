@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import { useEffect } from "react";
 import axiosInstance from "../../../lib/axios-Instance";

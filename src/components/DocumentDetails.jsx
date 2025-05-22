@@ -4,11 +4,11 @@ import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
-import Loader from "./Loader";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
 import { useForm, Controller } from "react-hook-form";
-import DatepickerComponent from "./DatepickerComponent";
+import DatepickerComponent from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
+import Loader from "./Loader/Loader.jsx";
 
 const DocumentDetails = ({
   formData,

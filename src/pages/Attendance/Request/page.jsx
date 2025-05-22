@@ -22,14 +22,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import Loader from "../../../components/Loader";
-
+import Loader from "../../../components/Loader/Loader.jsx";
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lateCheckinData, setLateCheckinData] = useState([]);

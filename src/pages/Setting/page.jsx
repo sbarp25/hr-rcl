@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import ButtonComponent from "../../components/ButtonComp";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import {
   Input,
   Avatar,
@@ -17,8 +17,8 @@ import { useNavigate } from "react-router-dom";
 import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
-import UnderlineComponent from "../../components/UnderlineComponent";
-import Loader from "../../components/Loader";
+import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";
+import Loader from "../../components/Loader/Loader.jsx";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();

@@ -1,6 +1,7 @@
+import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
+
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
     <div className="w-60 flex items-center justify-center">
@@ -21,16 +22,15 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
                 isSelected ? "text-gray-900" : "text-gray-400"
               }`}>
               Today <br />
-              WFH
+              Leave
             </span>
           </div>
-          <div className="w-1/2 text-center py-2">
+          <div className="w-1/2 text-center py-2 ">
             <span
               className={`transition-colors duration-300 ${
                 !isSelected ? "text-gray-900" : "text-gray-400"
               }`}>
-              Upcoming <br />
-              WFH
+              Upcoming Leave
             </span>
           </div>
         </div>
@@ -38,29 +38,28 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
     </div>
   );
 };
-
-const WorkFromHome = () => {
+const Leave = () => {
   const [isToday, setIsToday] = useState(true);
-  const [todayWFH, setTodayWFH] = useState([]);
-  const [upComingWFH, setUpComingWFH] = useState([]);
-  const [wfhList, setWFHList] = useState([]);
+  const [todayLeave, setTodayLeave] = useState([]);
+  const [upComingLeave, setUpComingLeave] = useState([]);
+  const [leaveList, setLeaveList] = useState([]);
 
   const handleToggleChange = () => {
     setIsToday(!isToday);
   };
 
-  const fetchWFH = async () => {
+  const fetchTodayLeave = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/work_from_home/approved_today_and_upcoming`
+        `api/leave/approved_today_and_upcoming`
       );
       if (response?.data?.responseCode === "200") {
         const todayData = response?.data?.data?.today || [];
         const upcomingData = response?.data?.data?.upcoming || [];
 
-        setTodayWFH(todayData);
-        setUpComingWFH(upcomingData);
-        setWFHList(isToday ? todayData : upcomingData);
+        setTodayLeave(todayData);
+        setUpComingLeave(upcomingData);
+        setLeaveList(isToday ? todayData : upcomingData);
       } else {
         const errorMessage =
           response?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -74,16 +73,16 @@ const WorkFromHome = () => {
   };
 
   useEffect(() => {
-    fetchWFH();
+    fetchTodayLeave();
   }, []);
 
   useEffect(() => {
     if (isToday) {
-      setWFHList(todayWFH);
+      setLeaveList(todayLeave);
     } else {
-      setWFHList(upComingWFH);
+      setLeaveList(upComingLeave);
     }
-  }, [isToday, todayWFH, upComingWFH]);
+  }, [isToday, todayLeave, upComingLeave]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -93,7 +92,7 @@ const WorkFromHome = () => {
     <>
       <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
         <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
-          <p className="text-xl font-bold">Work From Home</p>
+          <p className="text-xl font-bold">Leave</p>
           <div>
             <CustomToggleButton
               isSelected={isToday}
@@ -102,25 +101,25 @@ const WorkFromHome = () => {
           </div>
         </div>
         <div className="w-full p-2 ">
-          <div className="max-h-[30vh] overflow-auto">
-            {wfhList && wfhList.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2    gap-4">
-                {wfhList.map((data, index) => (
+          <div className="max-h-[30vh] overflow-auto ">
+            {leaveList && leaveList.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {leaveList.map((data, index) => (
                   <div
                     key={index}
                     className="bg-white rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 border border-green-600 text-green-600">
-                          {(data?.userName || data?.fullName || "?").charAt(0)}
+                          {data?.fullName?.charAt(0) || "?"}
                         </div>
                       </div>
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-800">
-                          {data.userName || data.fullName || "Unknown"}
+                          {data.fullName}
                         </h3>
                         <p className="text-sm text-gray-600">
-                          Department: {data.departmentName || "N/A"}
+                          Department: {data.departmentName}
                         </p>
                       </div>
                     </div>
@@ -132,13 +131,13 @@ const WorkFromHome = () => {
                             From:
                           </span>
                           <span className="ml-1 text-gray-800">
-                            {formatDate(data.workFromHomeStartDate)}
+                            {formatDate(data.leaveStartDate)}
                           </span>
                         </div>
                         <div className="text-sm">
                           <span className="font-medium text-gray-500">To:</span>
                           <span className="ml-1 text-gray-800">
-                            {formatDate(data.workFromHomeEndDate)}
+                            {formatDate(data.leaveEndDate)}
                           </span>
                         </div>
                       </div>
@@ -158,4 +157,4 @@ const WorkFromHome = () => {
   );
 };
 
-export default WorkFromHome;
+export default Leave;

@@ -1,13 +1,13 @@
 import { Controller, useForm } from "react-hook-form";
-import InputComponent from "../../../../components/InputComponent";
-import TextAreaComp from "../../../../components/TextAreaComp";
-import ButtonComponent from "../../../../components/ButtonComp";
+import InputComponent from "../../../../components/ui/InputComponent.jsx";
+import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { Checkbox } from "@nextui-org/react";
 import GoBack from "../../../../components/GoBack";
-import Loader from "../../../../components/Loader";
+import Loader from "../../../../components/Loader/Loader.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
 

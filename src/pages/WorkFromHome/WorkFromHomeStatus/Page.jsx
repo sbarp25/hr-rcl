@@ -17,16 +17,16 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
-import TextAreaComp from "../../../components/TextAreaComp";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
 

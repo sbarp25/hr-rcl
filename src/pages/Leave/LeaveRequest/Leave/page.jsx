@@ -16,19 +16,19 @@ import {
 import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import Filter from "../../../../components/Filter";
 import Search from "../../../../components/Search";
-import SkeletonLoader from "../../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../../utils/truncateText";
 import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import DropDownComp from "../../../../components/Dropdown";
-import TextAreaComp from "../../../../components/TextAreaComp";
+import DropDownComp from "../../../../components/ui/Dropdown.jsx";
+import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { useEffect, useState } from "react";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import ButtonComponent from "../../../../components/ButtonComp";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { MdNavigateBefore } from "react-icons/md";
 
 const SelfLeaveStatus = () => {

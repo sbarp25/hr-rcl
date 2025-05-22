@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import DatepickerComponent, {
   formatDate,
-} from "../../../components/DatepickerComponent";
+} from "../../../components/ui/DatepickerComponent.jsx";
 import { useState } from "react";
-import TextAreaComp from "../../../components/TextAreaComp";
-import ButtonComponent from "../../../components/ButtonComp";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";

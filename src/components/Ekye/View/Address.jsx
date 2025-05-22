@@ -1,6 +1,6 @@
 import { Divider, Form } from "@nextui-org/react";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
-import UnderlineComponent from "../../UnderlineComponent";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 
 const EkyeAdreess = ({ employeeData }) => {
   const addresses = employeeData?.addresses || [];

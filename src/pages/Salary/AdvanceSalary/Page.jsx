@@ -1,7 +1,7 @@
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import ButtonComp from "../../../components/ButtonComp";
+import ButtonComp from "../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 

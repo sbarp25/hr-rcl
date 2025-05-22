@@ -1,4 +1,4 @@
-import Logo from "../assets/Images/Logo.png";
+import Logo from "../../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm, IoLogOutOutline, IoLogOutSharp } from "react-icons/io5";
@@ -16,10 +16,9 @@ import { CiLogout } from "react-icons/ci";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Loader from "../components/Loader";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import axiosInstance from "../lib/axios-Instance";
-import getInitials from "../utils/getInitials";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import axiosInstance from "../../lib/axios-Instance";
+import getInitials from "../../utils/getInitials";
 import { TbScanPosition } from "react-icons/tb";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 import { GrStatusGoodSmall } from "react-icons/gr";
@@ -32,7 +31,8 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import truncateText from "../utils/truncateText";
+import truncateText from "../../utils/truncateText";
+import Loader from "../Loader/Loader.jsx";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");

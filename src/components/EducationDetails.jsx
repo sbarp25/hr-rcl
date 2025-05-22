@@ -15,9 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@nextui-org/react";
 import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
 import { Controller } from "react-hook-form";
-import DatepickerComponent from "./DatepickerComponent";
+import DatepickerComponent from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
 
 const MAX_FILE_SIZE = 1024 * 1024;

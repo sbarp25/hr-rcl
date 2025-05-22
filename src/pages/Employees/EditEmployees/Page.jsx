@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
 import GoBack from "../../../components/GoBack";
 import { Controller, useForm } from "react-hook-form";
-import UnderlineComponent from "../../../components/UnderlineComponent";
-import InputComponent from "../../../components/InputComponent";
-import SelectComp from "../../../components/Select";
+import UnderlineComponent from "../../../components/ui/UnderlineComponent.jsx";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
+import SelectComp from "../../../components/ui/Select.jsx";
 import DatepickerComponent, {
   formatDate,
-} from "../../../components/DatepickerComponent";
-import ButtonComponent from "../../../components/ButtonComp";
+} from "../../../components/ui/DatepickerComponent.jsx";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";

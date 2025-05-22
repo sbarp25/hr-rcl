@@ -15,11 +15,11 @@ import axiosInstance from "../../../../lib/axios-Instance";
 import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
 import Search from "../../../../components/Search";
 import Filter from "../../../../components/Filter";
-import DropDownComp from "../../../../components/Dropdown";
+import DropDownComp from "../../../../components/ui/Dropdown.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
-import SkeletonLoader from "../../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../../utils/truncateText";
-import ButtonComponent from "../../../../components/ButtonComp";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
 
 const SelfWorkFromHome = () => {

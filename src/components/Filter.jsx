@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { BsFilter } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 
 const Filter = ({
   onApplyFilters,

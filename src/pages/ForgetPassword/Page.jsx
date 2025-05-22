@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
-import InputComponent from "../../components/InputComponent";
-import ButtonComponent from "../../components/ButtonComp";
+import InputComponent from "../../components/ui/InputComponent.jsx";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";

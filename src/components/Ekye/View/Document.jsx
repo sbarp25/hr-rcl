@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Divider, Form } from "@nextui-org/react";
 import EkyeDetailsComponent from "../../EkyeDetailsComponent";
-import UnderlineComponent from "../../UnderlineComponent";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import { FaRegEye } from "react-icons/fa6";
 
 const EkyeDocumentDetail = ({ employeeData }) => {

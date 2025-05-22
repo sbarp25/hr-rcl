@@ -11,13 +11,13 @@ import {
 import { ImCancelCircle } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";
-import ButtonComponent from "./ButtonComp";
+import ButtonComponent from "./ui/ButtonComp.jsx";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import Loader from "./Loader";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
+import Loader from "./Loader/Loader.jsx";
 
 const RejectComp = ({ employeeData }) => {
   const {

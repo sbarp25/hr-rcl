@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Logo from "../../assets/Images/Logo.png";
 import { MdDashboard } from "react-icons/md";
-import Loader from "../Loader";
+
 import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
 import { Tooltip } from "@nextui-org/react";
+import Loader from "../Loader/Loader.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);

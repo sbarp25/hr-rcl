@@ -1,8 +1,8 @@
 import { useState } from "react";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import { getIpAddress } from "../utils/getIpAddress";
+import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
+import { getIpAddress } from "../../utils/getIpAddress.js";
 import { toast } from "react-toastify";
-import axiosInstance from "../lib/axios-Instance";
+import axiosInstance from "../../lib/axios-Instance.js";
 import { MdRadioButtonChecked } from "react-icons/md";
 import {
   Button,
@@ -12,8 +12,8 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-import Loader from "./Loader";
-import TextAreaComp from "./TextAreaComp";
+import TextAreaComp from "../ui/TextAreaComp.jsx";
+import Loader from "../Loader/Loader.jsx";
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   const [isloading, setIsloading] = useState(false);

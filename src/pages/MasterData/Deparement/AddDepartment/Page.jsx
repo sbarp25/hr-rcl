@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import InputComponent from "../../../../components/InputComponent";
+import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
-import ButtonComponent from "../../../../components/ButtonComp";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
-import Loader from "../../../../components/Loader";
+import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 
 const AddDepartment = () => {

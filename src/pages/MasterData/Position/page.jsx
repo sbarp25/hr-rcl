@@ -22,15 +22,15 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/Loader/Loader.jsx";
 
 const Position = () => {
   const [positionId, setPositionId] = useState(null);
