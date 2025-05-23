@@ -99,11 +99,11 @@ const SelfLeaveStatus = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = true;
+  // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 56)
-  // );
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 56)
+  );
   const hasLeaveUpdateAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 57)
   );

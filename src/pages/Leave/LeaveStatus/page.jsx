@@ -139,7 +139,7 @@ const LeaveStatus = () => {
         onRejectOpen();
         break;
       case "view":
-        navigate(`/Leave/view/${data.rclId}`);
+        navigate(`/Leave/view/${data.leaveId}`);
         break;
       default:
         console.log("Unknown action");
@@ -506,11 +506,11 @@ const LeaveStatus = () => {
             <div className="space-y-4 overflow-y-auto">
               {leaveData.map((leave) => (
                 <div
-                  key={leave.rclId}
+                  key={leave.leaveId}
                   className="border rounded-lg overflow-hidden shadow-sm">
                   <div
                     className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                    onClick={() => toggleExpandedRow(leave.rclId)}>
+                    onClick={() => toggleExpandedRow(leave.leaveId)}>
                     <div className="font-medium">
                       {leave.leaveType || "N/A"}
                     </div>
@@ -524,14 +524,14 @@ const LeaveStatus = () => {
                       <FaChevronDown
                         size={16}
                         className={`transition-transform ${
-                          expandedRow === leave.rclId ? "rotate-180" : ""
+                          expandedRow === leave.leaveId ? "rotate-180" : ""
                         }`}
                       />
                     </div>
                   </div>
                   <div
                     className={`${
-                      expandedRow === leave.rclId ? "block" : "hidden"
+                      expandedRow === leave.leaveId ? "block" : "hidden"
                     } p-3 space-y-2 text-sm`}>
                     <div className="grid grid-cols-2 gap-2">
                       <div className="font-medium">Request Date:</div>

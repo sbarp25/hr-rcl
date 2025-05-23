@@ -202,19 +202,18 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  // const seeProfile = true;
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const editProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 63)
-  );
-  const createProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 50)
-  );
-  const deleteProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
+  const seeProfile = true;
+  // const seeProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 64)
+  // );
+  const editProfile = true;
+  // const editProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 63)
+  // );
+  const deleteProfile = true;
+  // const deleteProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
 
   useEffect(() => {
     if (!seeProfile) {

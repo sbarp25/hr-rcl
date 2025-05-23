@@ -16,7 +16,7 @@ const AdvanceSalary = () => {
   const breadcrumbItems = [
     { label: "Dashboard", href: "/dashboard" },
     { label: "RCL-ID", href: "" },
-    { label: "Add Advance", href: "/AdvanceSalary" },
+    { label: "Add Advance", href: "/advanceSalary" },
   ];
 
   const onSubmit = (data) => {

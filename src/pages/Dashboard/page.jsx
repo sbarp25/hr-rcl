@@ -53,10 +53,6 @@ const Page = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
-
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">

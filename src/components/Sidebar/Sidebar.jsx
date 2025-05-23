@@ -50,7 +50,7 @@ const Sidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Dashboard see status */
   // const seeDashboard = menu?.some((menu) =>
@@ -59,11 +59,11 @@ const Sidebar = () => {
   const seeDashboard = true;
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 44)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 48)
   );
   const seeRole = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 52)
@@ -98,6 +98,12 @@ const Sidebar = () => {
   );
   const seeEKYE = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 32)
+  );
+  const seeWorkFromHome = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 80)
+  );
+  const seeWorkFromHomeAdmin = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 81)
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
@@ -183,13 +189,13 @@ const Sidebar = () => {
     {
       icon: MdMapsHomeWork,
       label: "Work From Home",
-      view: true,
+      view: seeWorkFromHome,
       children: [
         {
           icon: GrStatusGoodSmall,
           label: "WFH Status",
           to: "/WFH/Status",
-          view: true,
+          view: seeWorkFromHome && seeWorkFromHomeAdmin,
         },
         {
           icon: VscGitPullRequestNewChanges,

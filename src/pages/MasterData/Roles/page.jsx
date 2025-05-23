@@ -102,10 +102,10 @@ const Roles = () => {
     menu?.actions?.some((action) => action.actionId === 51)
   );
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 52)
-  // );
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 52)
+  );
   /**To check edit status */
   const hasRoleEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 53)
@@ -411,10 +411,6 @@ const Roles = () => {
                         className={`${
                           expandedRow === role.roleId ? "block" : "hidden"
                         } p-3 space-y-2 text-sm`}>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Role ID:</div>
-                          <div>{role.roleId}</div>
-                        </div>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
                           <div className="bg-gray-50 p-2 rounded">

@@ -99,6 +99,7 @@ const Position = () => {
     menu?.actions?.some((action) => action.actionId === 47)
   );
   /**To read the Data */
+  // const hasaccess = true;
   const hasaccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 48)
   );
@@ -404,11 +405,11 @@ const Position = () => {
                 <div className="space-y-4">
                   {positionData.map((position, index) => (
                     <div
-                      key={position.rclId}
+                      key={position.id}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
                         className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                        onClick={() => toggleExpandedRow(position.rclId)}>
+                        onClick={() => toggleExpandedRow(position.id)}>
                         <div className="font-medium">
                           {position.positionName}
                         </div>
@@ -416,19 +417,15 @@ const Position = () => {
                           <FaChevronDown
                             size={16}
                             className={`transition-transform ${
-                              expandedRow === position.rclId ? "rotate-180" : ""
+                              expandedRow === position.id ? "rotate-180" : ""
                             }`}
                           />
                         </div>
                       </div>
                       <div
                         className={`${
-                          expandedRow === position.rclId ? "block" : "hidden"
+                          expandedRow === position.id ? "block" : "hidden"
                         } p-3 space-y-2 text-sm`}>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Position ID:</div>
-                          <div>{position.rclId}</div>
-                        </div>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
                           <div className="bg-gray-50 p-2 rounded">

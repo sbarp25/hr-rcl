@@ -414,17 +414,17 @@ const Department = () => {
                     .filter((department) => !department.isDeleted)
                     .map((department, index) => (
                       <div
-                        key={department.rclId}
+                        key={department.id}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
                           className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                          onClick={() => toggleExpandedRow(department.rclId)}>
+                          onClick={() => toggleExpandedRow(department.id)}>
                           <div className="font-medium">{department.name}</div>
                           <div className="flex items-center gap-2">
                             <FaChevronDown
                               size={16}
                               className={`transition-transform ${
-                                expandedRow === department.rclId
+                                expandedRow === department.id
                                   ? "rotate-180"
                                   : ""
                               }`}
@@ -433,14 +433,8 @@ const Department = () => {
                         </div>
                         <div
                           className={`${
-                            expandedRow === department.rclId
-                              ? "block"
-                              : "hidden"
+                            expandedRow === department.id ? "block" : "hidden"
                           } p-3 space-y-2 text-sm`}>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="font-medium">Department ID:</div>
-                            <div>{department.rclId}</div>
-                          </div>
                           <div className="grid grid-cols-1 gap-2">
                             <div className="font-medium">Description:</div>
                             <div className="bg-gray-50 p-2 rounded">

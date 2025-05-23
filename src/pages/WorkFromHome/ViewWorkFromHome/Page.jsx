@@ -2,14 +2,26 @@ import { useEffect, useState } from "react";
 import GoBack from "../../../components/GoBack";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const ViewWorkFromHome = () => {
   const [workFromHomeByIdData, setWorkFromHomeByIdData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
+  const navigate = useNavigate();
+  const menu = LocalStorageUtil.getItem("menu");
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 80)
+  );
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
+
   const fetchWFHById = async () => {
     setIsLoading(true);
     try {

@@ -75,12 +75,14 @@ const Bank = () => {
   /**To check Employee see status */
   // const seeAddBank = true;
 
-  const seeAddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
-  const AddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 75)
-  );
+  const seeAddBank = true;
+  // const seeAddBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 76)
+  // );
+  const AddBank = true;
+  // const AddBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 75)
+  // );
 
   useEffect(() => {
     if (!seeAddBank) {

@@ -228,8 +228,10 @@ const WorkFromHomeStatus = () => {
   }, [currentPage, WFHDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasWorkFromHomeReviewAccess = true;
-  const hasLeaveViewAccess = false;
+  const hasWorkFromHomeReviewAccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 81)
+  );
+  const hasLeaveViecwAccess = false;
 
   const handleApplySearch = (result) => {
     if (result.data) {

@@ -145,7 +145,7 @@ const Login = () => {
                 />
               </div>
               <a
-                href="/forgetPassword"
+                href="/fgtPwd"
                 className="text-xl text-black font-medium text-center">
                 Forgot Password?
               </a>

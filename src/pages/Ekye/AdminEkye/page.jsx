@@ -112,10 +112,10 @@ const Page = () => {
   );
 
   const hasViewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 33)
   );
   const hasActionAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 33)
   );
 
   const hasUpdateAccess = menu?.some((menu) =>

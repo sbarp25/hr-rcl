@@ -103,8 +103,14 @@ const SelfWorkFromHome = () => {
 
   const menu = LocalStorageUtil.getItem("menu");
 
-  const hasWorkFromHomeReviewAccess = true;
-  const hasaccess = false;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 80)
+  );
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
 
   const handleApplySearch = (result) => {
     if (result.data) {

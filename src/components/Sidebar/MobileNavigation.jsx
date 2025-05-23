@@ -1,6 +1,6 @@
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm } from "react-icons/io5";
-import { FcLeave } from "react-icons/fc";
+import { FcLeave, FcDepartment } from "react-icons/fc";
 import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
@@ -8,8 +8,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from "react-toastify";
+import { LuMapPinCheckInside } from "react-icons/lu";
 import axios from "axios";
-
+import { GrStatusGoodSmall } from "react-icons/gr";
+import { VscGitPullRequestNewChanges } from "react-icons/vsc";
+import { TbScanPosition } from "react-icons/tb";
 import {
   Drawer,
   DrawerContent,
@@ -44,7 +47,7 @@ const MobileNavigation = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Dashboard see status */
   // const seeDashboard = menu?.some((menu) =>
@@ -53,11 +56,11 @@ const MobileNavigation = () => {
   const seeDashboard = true;
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 44)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 48)
   );
   const seeRole = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 52)
@@ -93,6 +96,12 @@ const MobileNavigation = () => {
   const seeEKYE = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 32)
   );
+  const seeWorkFromHome = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 80)
+  );
+  const seeWorkFromHomeAdmin = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 81)
+  );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
@@ -106,8 +115,9 @@ const MobileNavigation = () => {
       label: "Attendance",
       view: seeAttendance,
       children: [
-        { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
         {
+          icon: LuMapPinCheckInside,
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
@@ -127,12 +137,23 @@ const MobileNavigation = () => {
       view: seeMasterData,
       children: [
         {
+          icon: FcDepartment,
           label: "Department",
           to: "/master-data/Department",
           view: seeDepartment,
         },
-        { label: "Position", to: "/master-data/Position", view: seePosition },
-        { label: "Roles", to: "/master-data/Roles", view: seeRole },
+        {
+          icon: TbScanPosition,
+          label: "Position",
+          to: "/master-data/Position",
+          view: seePosition,
+        },
+        {
+          icon: FcDepartment,
+          label: "Roles",
+          to: "/master-data/Roles",
+          view: seeRole,
+        },
       ],
     },
     // {
@@ -148,17 +169,37 @@ const MobileNavigation = () => {
       // view: seeLeave,
       view: seeLeave,
       children: [
-        { label: "Leave Status", to: "/Leave/Status", view: seeLeaveStatus },
-        { label: "Leave Request", to: "/Leave/Request", view: seeLeaveRequest },
+        {
+          icon: GrStatusGoodSmall,
+          label: "Leave Status",
+          to: "/Leave/Status",
+          view: seeLeaveStatus,
+        },
+        {
+          icon: VscGitPullRequestNewChanges,
+          label: "Leave Request",
+          to: "/Leave/Request",
+          view: seeLeaveRequest,
+        },
       ],
     },
     {
       icon: MdMapsHomeWork,
       label: "Work From Home",
-      view: true,
+      view: seeWorkFromHome,
       children: [
-        { label: "WFH Status", to: "/WFH/Status", view: true },
-        { label: "WFH Request", to: "/WFH", view: true },
+        {
+          icon: GrStatusGoodSmall,
+          label: "WFH Status",
+          to: "/WFH/Status",
+          view: seeWorkFromHome && seeWorkFromHomeAdmin,
+        },
+        {
+          icon: VscGitPullRequestNewChanges,
+          label: "WFH Request",
+          to: "/WFH",
+          view: true,
+        },
       ],
     },
     {
@@ -168,6 +209,7 @@ const MobileNavigation = () => {
       view: seeEKYE,
     },
   ];
+
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };

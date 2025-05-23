@@ -186,7 +186,7 @@ const Page = () => {
   const menu = LocalStorageUtil.getItem("menu");
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
+    menu?.actions?.some((action) => action.actionId === 24)
   );
   const hasHandBookCreateAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 19)
