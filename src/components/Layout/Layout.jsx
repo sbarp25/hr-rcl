@@ -1,4 +1,4 @@
-import Sidebar from "../Sidebar";
+import Sidebar from "../Sidebar/Sidebar";
 
 export const Layout = ({ className, children }) => {
   return (

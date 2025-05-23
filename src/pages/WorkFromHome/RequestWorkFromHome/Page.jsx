@@ -1,17 +1,18 @@
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import InputComponent from "../../../components/InputComponent";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import DatepickerComponent, {
   formatDate,
-} from "../../../components/DatepickerComponent";
-import { useState } from "react";
-import TextAreaComp from "../../../components/TextAreaComp";
-import ButtonComponent from "../../../components/ButtonComp";
+} from "../../../components/ui/DatepickerComponent.jsx";
+import { useEffect, useState } from "react";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getIpAddress } from "../../../utils/getIpAddress";
 import GoBack from "../../../components/GoBack";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +24,7 @@ const RequestWorkFromHome = () => {
 
   const fromDate = watch("fromDate");
   const navigate = useNavigate();
+
   const onSubmit = async (data) => {
     const ipAddress = await getIpAddress();
     setIsLoading(true);
@@ -77,6 +79,17 @@ const RequestWorkFromHome = () => {
     }
   };
 
+  const menu = LocalStorageUtil.getItem("menu");
+
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 79)
+  );
+
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
       <div className="flex items-center justify-between">

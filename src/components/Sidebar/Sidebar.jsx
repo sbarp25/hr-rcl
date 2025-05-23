@@ -1,4 +1,4 @@
-import Logo from "../assets/Images/Logo.png";
+import Logo from "../../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm, IoLogOutOutline, IoLogOutSharp } from "react-icons/io5";
@@ -16,10 +16,9 @@ import { CiLogout } from "react-icons/ci";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Loader from "../components/Loader";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
-import axiosInstance from "../lib/axios-Instance";
-import getInitials from "../utils/getInitials";
+import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import axiosInstance from "../../lib/axios-Instance";
+import getInitials from "../../utils/getInitials";
 import { TbScanPosition } from "react-icons/tb";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 import { GrStatusGoodSmall } from "react-icons/gr";
@@ -32,7 +31,8 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import truncateText from "../utils/truncateText";
+import truncateText from "../../utils/truncateText";
+import Loader from "../Loader/Loader.jsx";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -50,7 +50,7 @@ const Sidebar = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
+    menu?.actions?.some((action) => action.actionId === 10)
   );
   /**To check Dashboard see status */
   // const seeDashboard = menu?.some((menu) =>
@@ -59,11 +59,11 @@ const Sidebar = () => {
   const seeDashboard = true;
   /**To check Department see status */
   const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
+    menu?.actions?.some((action) => action.actionId === 44)
   );
   /**To check Position see status */
   const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
+    menu?.actions?.some((action) => action.actionId === 48)
   );
   const seeRole = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 52)
@@ -98,6 +98,12 @@ const Sidebar = () => {
   );
   const seeEKYE = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 32)
+  );
+  const seeWorkFromHome = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 80)
+  );
+  const seeWorkFromHomeAdmin = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 81)
   );
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
@@ -183,13 +189,13 @@ const Sidebar = () => {
     {
       icon: MdMapsHomeWork,
       label: "Work From Home",
-      view: true,
+      view: seeWorkFromHome,
       children: [
         {
           icon: GrStatusGoodSmall,
           label: "WFH Status",
           to: "/WFH/Status",
-          view: true,
+          view: seeWorkFromHome && seeWorkFromHomeAdmin,
         },
         {
           icon: VscGitPullRequestNewChanges,

@@ -4,12 +4,13 @@ import { FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader from "../../Loader";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../UnderlineComponent";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import Loader from "../../Loader/Loader.jsx";
 
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();

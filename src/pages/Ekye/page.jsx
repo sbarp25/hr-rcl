@@ -4,7 +4,7 @@ import DocumentDetails from "../../components/DocumentDetails";
 import AddressDetails from "../../components/AddressDetails";
 import EducationDetails from "../../components/EducationDetails.jsx";
 import PersonalDetails from "../../components/PersonalDetails.jsx";
-import Loader from "../../components/Loader.jsx";
+
 import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
@@ -12,6 +12,7 @@ import { Button } from "@nextui-org/react";
 import FormStepper from "../../components/FormStepIndicator.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
+import Loader from "../../components/Loader/Loader.jsx";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);

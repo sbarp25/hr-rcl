@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { useEffect, useState } from "react";
@@ -15,9 +15,9 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const Page = () => {
@@ -112,10 +112,10 @@ const Page = () => {
   );
 
   const hasViewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 33)
   );
   const hasActionAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
+    menu?.actions?.some((action) => action.actionId === 33)
   );
 
   const hasUpdateAccess = menu?.some((menu) =>

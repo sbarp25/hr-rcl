@@ -4,7 +4,7 @@ import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { FaRegEye } from "react-icons/fa";
 import { Divider } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import { useNavigate } from "react-router-dom";
 const SalaryDetails = () => {
   const [isLoading, setIsLoading] = useState(false);

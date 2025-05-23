@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Calendar } from "@nextui-org/calendar";
 import { parseDate } from "@internationalized/date";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const Attendance = () => {

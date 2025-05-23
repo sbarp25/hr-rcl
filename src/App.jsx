@@ -34,7 +34,7 @@ import EditEmployees from "./pages/Employees/EditEmployees/Page.jsx";
 import AddPosition from "./pages/MasterData/Position/AddPosition/Page.jsx";
 import EditPosition from "./pages/MasterData/Position/EditPosition/Page.jsx";
 import LeaveView from "./pages/Leave/LeaveView/Page.jsx";
-import MobileNavigation from "./components/MobileNavigation.jsx";
+
 import ForgetPassword from "./pages/ForgetPassword/Page.jsx";
 import ResetForGetPassword from "./pages/ForgetPassword/ValidatePassword/Page.jsx";
 import ChangePassword from "./pages/Setting/ChangePassword/Page.jsx";
@@ -50,6 +50,7 @@ import EditRole from "./pages/MasterData/Roles/EditRoles/Page.jsx";
 import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
 import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
 import SelfWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/SelfWFH/Page.jsx";
+import MobileNavigation from "./components/Sidebar/MobileNavigation.jsx";
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
@@ -73,16 +74,16 @@ function App() {
     "/rstpwd",
     "/resetpwd",
     "/EKYE",
-    "/forgetPassword",
+    "/fgtPwd",
     "/forget-password",
   ];
   const userRoutes = [
     "/settings",
     "/settings/ViewEKYE",
     "/settings/Change",
-    "/Salary",
-    "/SalaryEdit",
-    "/AdvanceSalary",
+    "/salary",
+    "/salaryEdit",
+    "/advanceSalary",
     "/Bank",
     "/Bank/AddBank",
   ];
@@ -102,7 +103,7 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route path="/EKYE" element={<Ekye />} />
             </Route>
-            <Route path="/forgetPassword" element={<ForgetPassword />} />
+            <Route path="/fgtPwd" element={<ForgetPassword />} />
             <Route path="/forget-password" element={<ResetForGetPassword />} />
           </Routes>
         </AuthLayout>
@@ -116,9 +117,9 @@ function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
               <Route path="/settings/Change" element={<ChangePassword />} />
-              <Route path="/Salary" element={<SalaryDetails />} />
-              <Route path="/SalaryEdit" element={<SalaryEdit />} />
-              <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
+              <Route path="/salary" element={<SalaryDetails />} />
+              <Route path="/salaryEdit" element={<SalaryEdit />} />
+              <Route path="/advanceSalary" element={<AdvanceSalary />} />
               <Route path="/Bank" element={<GetBankDetails />} />
               <Route path="/Bank/AddBank" element={<Bank />} />
             </Route>
@@ -174,8 +175,8 @@ function App() {
               <Route path="/AdminEkye" element={<AdminEkye />} />
               <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
               <Route path="/View/:rclId" element={<View />} />
-              <Route path="/WFH" element={<RequestWorkFromHome />} />
-              <Route path="/WFH/Status" element={<SelfWorkFromHome />} />
+              <Route path="/WFH" element={<SelfWorkFromHome />} />
+              <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
               <Route path="/WFH/Add" element={<RequestWorkFromHome />} />
               <Route path="/WRH/view/:rclId" element={<ViewWorkFromHome />} />
             </Route>

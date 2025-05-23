@@ -1,7 +1,7 @@
 import { MdArticle } from "react-icons/md";
 import { Pagination } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
 
@@ -186,7 +186,7 @@ const Page = () => {
   const menu = LocalStorageUtil.getItem("menu");
   /**To check Employee see status */
   const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
+    menu?.actions?.some((action) => action.actionId === 24)
   );
   const hasHandBookCreateAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 19)

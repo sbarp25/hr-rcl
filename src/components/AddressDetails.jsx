@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import axiosInstance from "../lib/axios-Instance";
 import { Button, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
-import Loader from "./Loader";
+
 import { useForm, Controller } from "react-hook-form";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
+import Loader from "./Loader/Loader.jsx";
 
 const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);

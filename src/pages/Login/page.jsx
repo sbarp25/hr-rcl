@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";
-import ButtonComponent from "../../components/ButtonComp";
-import InputComponent from "../../components/InputComponent";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
+import InputComponent from "../../components/ui/InputComponent.jsx";
 import LocationComponent from "../../components/LocationComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 
@@ -145,7 +145,7 @@ const Login = () => {
                 />
               </div>
               <a
-                href="/forgetPassword"
+                href="/fgtPwd"
                 className="text-xl text-black font-medium text-center">
                 Forgot Password?
               </a>

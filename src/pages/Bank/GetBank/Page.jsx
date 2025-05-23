@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import ButtonComponent from "../../../components/ButtonComp";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { CiLocationOn } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
 import { CiCreditCard2 } from "react-icons/ci";
 import { IoPersonSharp } from "react-icons/io5";
+import Loader from "../../../components/Loader/Loader.jsx";
 const GetBankDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bankData, setBankData] = useState(null);
@@ -51,12 +51,14 @@ const GetBankDetails = () => {
   const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const seeBankDetailsAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
-  const AddBankDetailsAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 75)
-  );
+  const seeBankDetailsAccess = true;
+  // const seeBankDetailsAccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 76)
+  // );
+  const AddBankDetailsAccess = true;
+  // const AddBankDetailsAccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 75)
+  // );
   useEffect(() => {
     if (!seeBankDetailsAccess) {
       navigate("/dashboard");

@@ -21,15 +21,15 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import DropDownComp from "../../../components/Dropdown";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/Loader/Loader.jsx";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
@@ -102,10 +102,10 @@ const Roles = () => {
     menu?.actions?.some((action) => action.actionId === 51)
   );
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 52)
-  // );
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 52)
+  );
   /**To check edit status */
   const hasRoleEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 53)
@@ -411,10 +411,6 @@ const Roles = () => {
                         className={`${
                           expandedRow === role.roleId ? "block" : "hidden"
                         } p-3 space-y-2 text-sm`}>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="font-medium">Role ID:</div>
-                          <div>{role.roleId}</div>
-                        </div>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
                           <div className="bg-gray-50 p-2 rounded">

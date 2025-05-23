@@ -1,7 +1,7 @@
-import InputComponent from "../../../components/InputComponent";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import ButtonComp from "../../../components/ButtonComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
+import ButtonComp from "../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -16,7 +16,7 @@ const AdvanceSalary = () => {
   const breadcrumbItems = [
     { label: "Dashboard", href: "/dashboard" },
     { label: "RCL-ID", href: "" },
-    { label: "Add Advance", href: "/AdvanceSalary" },
+    { label: "Add Advance", href: "/advanceSalary" },
   ];
 
   const onSubmit = (data) => {

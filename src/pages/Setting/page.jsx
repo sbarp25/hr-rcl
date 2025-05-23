@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import ButtonComponent from "../../components/ButtonComp";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import {
   Input,
   Avatar,
@@ -14,11 +14,11 @@ import {
   ModalContent,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
-import UnderlineComponent from "../../components/UnderlineComponent";
-import Loader from "../../components/Loader";
+import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";
+import Loader from "../../components/Loader/Loader.jsx";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
@@ -202,19 +202,18 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  // const seeProfile = true;
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const editProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 63)
-  );
-  const createProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 50)
-  );
-  const deleteProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
+  const seeProfile = true;
+  // const seeProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 64)
+  // );
+  const editProfile = true;
+  // const editProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 63)
+  // );
+  const deleteProfile = true;
+  // const deleteProfile = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 2)
+  // );
 
   useEffect(() => {
     if (!seeProfile) {

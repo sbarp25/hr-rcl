@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import InputComponent from "../../components/InputComponent";
-import ButtonComponent from "../../components/ButtonComp";
+import InputComponent from "../../components/ui/InputComponent.jsx";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
@@ -75,12 +75,14 @@ const Bank = () => {
   /**To check Employee see status */
   // const seeAddBank = true;
 
-  const seeAddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
-  const AddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 75)
-  );
+  const seeAddBank = true;
+  // const seeAddBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 76)
+  // );
+  const AddBank = true;
+  // const AddBank = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 75)
+  // );
 
   useEffect(() => {
     if (!seeAddBank) {

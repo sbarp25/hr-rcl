@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Divider, Form } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
-import UnderlineComponent from "../../UnderlineComponent";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 
 const EkyeEducationDetails = ({ employeeData }) => {

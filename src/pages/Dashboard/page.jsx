@@ -1,9 +1,9 @@
-import Attendancereport from "../../components/Attendancereport.jsx";
+import Attendancereport from "../../components/Dashboard/Attendancereport.jsx";
 import { Input } from "@nextui-org/input";
 
-import WorkFromHome from "../../components/WorkFromHome.jsx";
-import Leave from "../../components/Leave.jsx";
-import CheckIn from "../../components/CheckIn.jsx";
+import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";
+import Leave from "../../components/Dashboard/Leave.jsx";
+import CheckIn from "../../components/Dashboard/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -52,10 +52,6 @@ const Page = () => {
   const email = localStorage.getItem("email");
 
   const menu = LocalStorageUtil.getItem("menu");
-
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
 
   return (
     <div className="w-full h-[97vh] overflow-y-auto">

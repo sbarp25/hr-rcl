@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import {
@@ -17,16 +17,16 @@ import {
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
-import SkeletonLoader from "../../../components/SkeletonLoader";
+import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import DropDownComp from "../../../components/Dropdown";
+import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../lib/axios-Instance";
-import TextAreaComp from "../../../components/TextAreaComp";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
 
@@ -228,8 +228,10 @@ const WorkFromHomeStatus = () => {
   }, [currentPage, WFHDataPerPage]);
 
   const menu = LocalStorageUtil.getItem("menu");
-  const hasWorkFromHomeReviewAccess = true;
-  const hasLeaveViewAccess = false;
+  const hasWorkFromHomeReviewAccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 81)
+  );
+  const hasLeaveViecwAccess = false;
 
   const handleApplySearch = (result) => {
     if (result.data) {

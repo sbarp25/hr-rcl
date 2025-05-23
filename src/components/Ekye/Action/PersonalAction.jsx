@@ -1,6 +1,6 @@
 import { Divider, Form } from "@nextui-org/react";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
-import UnderlineComponent from "../../UnderlineComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 const PersonalAction = ({ employeeData }) => {
   return (
     <div className=" relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg px-8 ">

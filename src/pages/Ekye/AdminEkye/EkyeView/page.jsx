@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../../lib/axios-Instance";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Personal from "../../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";

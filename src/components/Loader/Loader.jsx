@@ -1,4 +1,4 @@
-import Logo from "../assets/Images/Logo.png";
+import Logo from "../../assets/Images/Logo.png";
 
 const Loader = ({ message = "Loading..." }) => {
   return (

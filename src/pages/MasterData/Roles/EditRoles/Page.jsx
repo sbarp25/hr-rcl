@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, Input } from "@nextui-org/react";
-import Loader from "../../../../components/Loader";
+import Loader from "../../../../components/Loader/Loader.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import InputComponent from "../../../../components/InputComponent";
-import TextAreaComp from "../../../../components/TextAreaComp";
+import InputComponent from "../../../../components/ui/InputComponent.jsx";
+import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
-import ButtonComponent from "../../../../components/ButtonComp";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
 
 const EditRole = () => {
