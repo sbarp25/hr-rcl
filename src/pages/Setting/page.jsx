@@ -61,7 +61,7 @@ const Settings = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

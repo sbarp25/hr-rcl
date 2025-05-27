@@ -108,8 +108,6 @@ const EditEmployees = () => {
           emergencyNumber: data?.personalDetails?.emergencyNumber,
           emergencyRelation: data?.personalDetails?.emergencyType,
         });
-
-        console.log(data);
       } else {
         toast.error(response?.data?.Message);
       }
@@ -179,7 +177,6 @@ const EditEmployees = () => {
     //   console.error("Error adding Personal Data", error);
     //   toast.error("Error adding personal Data");
     // }
-    console.log(data);
   };
 
   const onCancel = () => {

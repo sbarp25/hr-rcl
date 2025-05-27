@@ -269,7 +269,7 @@ const Sidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      console.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

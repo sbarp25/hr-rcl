@@ -134,7 +134,7 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-              {/* <Route path="/Attendance" element={<Attendance />} /> */}
+              <Route path="/Attendance" element={<Attendance />} />
               <Route
                 path="/Attendance/Request"
                 element={<AttendanceRequest />}

@@ -112,13 +112,12 @@ const LeaveRequest = () => {
           toast.success(response?.data?.message);
         } else {
           const errorMessage = response?.data?.error || "Something went wrong";
-          console.log(errorMessage);
           toast.error(errorMessage);
         }
       } catch (error) {
         const errorMessage =
           error.response?.data?.error || "Something went wrong";
-        console.log(errorMessage);
+
         toast.error(errorMessage);
       } finally {
         setIsLoading(false);

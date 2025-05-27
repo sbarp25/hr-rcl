@@ -95,7 +95,6 @@ const Department = () => {
       case "edit":
         if (hasDepartmentEditAccess) {
           navigate(`/master-data/Department/Edit/${department.id}`);
-          console.log(`Editing Department ID: ${department.id}`);
         } else {
           toast.error("Access denied");
         }
@@ -104,7 +103,6 @@ const Department = () => {
       case "delete":
         if (hasDepartmentDeleteAccess) {
           setDepartmentId(department.id);
-          console.log(`Deleting position ID: ${department.id}`);
           onOpen();
         } else {
           toast.error("Currently You dont have access to this setting.");

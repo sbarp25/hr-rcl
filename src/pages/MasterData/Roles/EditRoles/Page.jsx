@@ -4,62 +4,75 @@ import { Form, Input } from "@nextui-org/react";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
+import { Checkbox } from "@nextui-org/react";
 
 const EditRole = () => {
-  const { roleId } = useParams(); // Get the role ID from URL
+  const { roleId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [menusAndActions, setMenusAndActions] = useState([]);
-  const [roleName, setRoleName] = useState("");
-  const [roleDescription, setRoleDescription] = useState("");
-  const { control, handleSubmit, reset } = useForm();
-  // Breadcrumb setup
+  const { control, handleSubmit, reset, watch } = useForm({
+    defaultValues: {
+      roleName: "",
+      roleDescription: "",
+    },
+  });
+
   const NumroleId = parseInt(roleId);
+
+  // Watch form values to keep them in sync
+  const watchedValues = watch();
+
+  // Check access permissions
+  const menu = LocalStorageUtil.getItem("menu");
+
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 53)
+  );
+
+  // Redirect if no access
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
 
   // Fetch the specific role data and menus/actions when component mounts
   useEffect(() => {
     const fetchRoleData = async () => {
       setIsLoading(true);
       try {
-        // Fetch role details
-        const roleResponse = await axiosInstance.get(
-          `/api/v1/role/get/${NumroleId}`
-        );
+        // Fetch role details and menus/actions in parallel
+        const [roleResponse, menusResponse] = await Promise.all([
+          axiosInstance.get(`/api/v1/role/get/${NumroleId}`),
+          axiosInstance.post("/api/v1/master/menus/and/actions/", {}),
+        ]);
+
         if (roleResponse.data.responseCode === "200") {
           const roleData = roleResponse.data.data;
+
+          // Reset form with fetched data
           reset({
-            roleName: roleData?.roleName,
-            roleDescription: roleData?.roleDescription,
+            roleName: roleData?.roleName || "",
+            roleDescription: roleData?.roleDescription || "",
           });
-          setRoleName(roleData.roleName || "");
-          setRoleDescription(roleData.roleDescription || "");
-        } else {
-          toast.error(
-            roleResponse.data.message || "Failed to fetch role details"
-          );
-        }
 
-        // Fetch menus and actions
-        const menusResponse = await axiosInstance.post(
-          "/api/v1/master/menus/and/actions/",
-          {}
-        );
-        if (menusResponse.data.responseCode === "201") {
-          // First set all menus and actions
-          const allMenusAndActions = menusResponse.data.data;
+          // Get selected action IDs from role data
+          // Adjust this based on your actual API response structure
+          const selectedActionIds =
+            roleData?.selectedActions ||
+            roleData?.actions ||
+            roleData?.permissions ||
+            [];
 
-          // Now fetch selected actions for this role
-          const selectedActionsResponse = await axiosInstance.get(
-            `/api/v1/role/actions/${NumroleId}`
-          );
-          if (selectedActionsResponse.data.responseCode === "200") {
-            const selectedActionIds = selectedActionsResponse.data.data || [];
+          if (menusResponse.data.responseCode === "201") {
+            const allMenusAndActions = menusResponse.data.data;
 
             // Mark actions as selected based on the role's permissions
             const updatedMenusAndActions = allMenusAndActions.map((menu) => {
@@ -71,10 +84,14 @@ const EditRole = () => {
             });
 
             setMenusAndActions(updatedMenusAndActions);
+          } else {
+            toast.error(
+              menusResponse.data.message || "Failed to fetch menus and actions"
+            );
           }
         } else {
           toast.error(
-            menusResponse.data.message || "Failed to fetch menus and actions"
+            roleResponse.data.message || "Failed to fetch role details"
           );
         }
       } catch (error) {
@@ -88,10 +105,10 @@ const EditRole = () => {
       }
     };
 
-    // if (NumroleId) {
-    fetchRoleData();
-    // }
-  }, [NumroleId, reset]);
+    if (NumroleId && hasaccess) {
+      fetchRoleData();
+    }
+  }, [NumroleId, reset, hasaccess]);
 
   // Calculate selected actions for updating
   const selectedActions = menusAndActions
@@ -102,184 +119,266 @@ const EditRole = () => {
     )
     .flat();
 
+  // Handle checkbox change for individual actions
+  const handleActionSelect = (menuIndex, actionIndex, isChecked) => {
+    // Create a deep copy of the menus and actions array
+    const updatedMenusAndActions = [...menusAndActions];
+
+    // Update the selected property of the action
+    updatedMenusAndActions[menuIndex].actions[actionIndex].selected = isChecked;
+
+    // Update state with the new array
+    setMenusAndActions(updatedMenusAndActions);
+  };
+
+  // Select/Deselect all actions across all menus
+  const SelectAll = (isChecked) => {
+    const updatedMenusAndActions = menusAndActions.map((menu) => ({
+      ...menu,
+      actions: menu.actions.map((action) => ({
+        ...action,
+        selected: isChecked,
+      })),
+    }));
+
+    setMenusAndActions(updatedMenusAndActions);
+  };
+
+  // Select/Deselect all actions in a specific menu
+  const selectMenuAll = (menuIndex, isChecked) => {
+    const updatedMenusAndActions = [...menusAndActions];
+
+    updatedMenusAndActions[menuIndex].actions = updatedMenusAndActions[
+      menuIndex
+    ].actions.map((action) => ({
+      ...action,
+      selected: isChecked,
+    }));
+
+    // Update state with the new array
+    setMenusAndActions(updatedMenusAndActions);
+  };
+
   // Handle form submission to update the role
-  const handleUpdateRole = async () => {
-    if (hasaccess) {
-      // e.preventDefault();
-      setIsLoading(true);
+  const handleUpdateRole = async (formData) => {
+    if (!hasaccess) {
+      toast.error("Currently You don't have access to this setting.");
+      return;
+    }
 
-      const updatedRole = {
-        data: {
-          selectedActions: selectedActions,
-          roleName: roleName,
-          description: roleDescription,
-          isActive: true,
-        },
-      };
+    // Check if any actions are selected
+    if (selectedActions.length === 0) {
+      toast.warning("Please select at least one permission");
+      return;
+    }
 
-      try {
-        const response = await axiosInstance.put(
-          `/api/v1/role/update/${NumroleId}`,
-          updatedRole,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    setIsLoading(true);
 
-        if (response.data.responseCode === "200") {
-          toast.success(response.data.messages || "Role updated successfully");
-          // Navigate back to roles list after successful update
-          navigate("/master-data/Roles");
-        } else {
-          toast.error(response.data.message || "Failed to update role");
+    const updatedRole = {
+      data: {
+        selectedActions: selectedActions,
+        roleName: formData.roleName,
+        description: formData.roleDescription,
+        isActive: true,
+      },
+    };
+
+    try {
+      const response = await axiosInstance.put(
+        `/api/v1/role/update/${NumroleId}`,
+        updatedRole,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error) {
-        console.error("Error updating role:", error);
-        toast.error(
-          error.response?.data?.message ||
-            "An error occurred while updating the role"
-        );
-      } finally {
-        setIsLoading(false);
+      );
+
+      if (response.data.responseCode === "200") {
+        toast.success(response.data.messages || "Role updated successfully");
+        // Navigate back to roles list after successful update
+        navigate("/master-data/Roles");
+      } else {
+        toast.error(response.data.message || "Failed to update role");
       }
-    } else {
-      toast.error("Currently You dont have access to this setting.");
+    } catch (error) {
+      console.error("Error updating role:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while updating the role"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
+  // Show loader while fetching data or if no access
+  if (isLoading) {
+    return <Loader message="Loading data, please wait..." />;
+  }
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 53)
-  );
-
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [hasaccess, navigate]);
+  if (!hasaccess) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <>
-      {isLoading && <Loader message="Loading data, please wait..." />}
-      <div className="p-4 md:p-8">
-        <div className="flex justify-between items-center mb-6">
-          <GoBack />
-          <h1 className="text-2xl font-bold text-gray-800">Edit Roles</h1>
-          <div></div>
-        </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="flex flex-col h-full">
+          <div className="flex justify-between items-center mb-6">
+            <GoBack />
+            <h1 className="text-2xl font-bold text-gray-800">Edit Roles</h1>
+            <div></div>
+          </div>
 
-        {/* Edit Form */}
-        <Form
-          onSubmit={handleSubmit(handleUpdateRole)}
-          className="mb-6 p-6 bg-white shadow-md rounded-xl  mx-auto border-2 border-gray-300">
-          <div className="grid grid-cols-1 gap-6 w-full">
-            <div className="flex flex-col gap-6 w-full">
-              <div>
-                <InputComponent
-                  control={control}
-                  name="roleName"
-                  label="Role Title"
-                  variant="bordered"
-                  rules={{
-                    required: "Title is required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9 ]{3,300}$/,
-                      message: "Title must be 3-300 characters long.",
-                    },
-                  }}
-                />
+          <div className="bg-white max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
+            <form
+              onSubmit={handleSubmit(handleUpdateRole)}
+              className="p-6 grid grid-cols-1 gap-6 ">
+              <div className="grid grid-cols-1 gap-6">
+                <div>
+                  <InputComponent
+                    name="roleName"
+                    control={control}
+                    variant="bordered"
+                    label="Role Title"
+                    rules={{
+                      required: "Title is required",
+                      minLength: {
+                        value: 3,
+                        message: "Title must be at least 3 characters long.",
+                      },
+                      maxLengt: {
+                        value: 300,
+                        message: "Title cannot exceed 300 characters.",
+                      },
+                    }}
+                  />
+                </div>
+                <div>
+                  <TextAreaComp
+                    control={control}
+                    name="roleDescription"
+                    label="Role Description"
+                    rules={{
+                      required: "Description is required",
+                      minLength: {
+                        value: 10,
+                        message:
+                          "Description must be at least 10 characters long.",
+                      },
+                    }}
+                  />
+                </div>
               </div>
-              <div>
-                <TextAreaComp
-                  control={control}
-                  name="roleDescription"
-                  label="Role Description"
-                  rules={{
-                    required: "Description is required",
-                    minLength: {
-                      value: 10,
-                      message:
-                        "Description must be at least 10 characters long.",
-                    },
-                  }}
-                />
-              </div>
-            </div>
 
-            {/* Menus and Actions Section */}
-            <div className="w-full max-h-80 overflow-y-auto">
-              <h3 className="text-lg font-medium text-gray-800 mb-4">
-                Menus and Actions
-              </h3>
-              {menusAndActions.length > 0 ? (
-                menusAndActions.map((menu) => (
-                  <div key={menu.menuId} className="mb-6">
-                    <div className="border border-gray-300 p-4 bg-gray-50 rounded-md">
-                      <strong className="text-lg text-gray-800">
-                        {menu.menuName}
-                      </strong>
-                      <p className="text-sm text-gray-600">
-                        {menu.menuDescription}
-                      </p>
-                    </div>
-                    <ul className="pl-6 mt-4">
-                      {menu.actions.map((action) => (
-                        <li key={action.actionId} className="mb-3">
-                          <label className="flex flex-row w-fit items-center gap-3 text-sm text-gray-700">
-                            <Input
-                              type="checkbox"
-                              className="checkbox"
-                              checked={action.selected}
-                              onChange={(e) => {
-                                const updatedMenus = menusAndActions.map(
-                                  (m) => {
-                                    if (m.menuId === menu.menuId) {
-                                      const updatedActions = m.actions.map(
-                                        (a) => {
-                                          if (a.actionId === action.actionId) {
-                                            return {
-                                              ...a,
-                                              selected: e.target.checked,
-                                            };
-                                          }
-                                          return a;
-                                        }
-                                      );
-                                      return { ...m, actions: updatedActions };
-                                    }
-                                    return m;
-                                  }
-                                );
-                                setMenusAndActions(updatedMenus);
-                              }}
-                            />
-                            <span className="ml-2">{action.actionName}</span>
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
+              {/* Menus and Actions Section */}
+              <div className="mt-6">
+                <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
+                  <h3 className="text-lg font-medium text-gray-800 ">
+                    Permissions
+                  </h3>
+                  <div>
+                    <Controller
+                      name="SelectAllRoles"
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          color="primary"
+                          isSelected={field.value}
+                          onValueChange={(isChecked) => {
+                            field.onChange(isChecked);
+                            SelectAll(isChecked);
+                          }}>
+                          Select All
+                        </Checkbox>
+                      )}
+                    />
                   </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No menus found.</p>
-              )}
-            </div>
-          </div>
+                </div>
+                <div className="grid grid-cols-1 gap-6 max-h-96 overflow-y-auto pr-2">
+                  {menusAndActions.length > 0 ? (
+                    menusAndActions.map((menu, menuIndex) => (
+                      <div
+                        key={menu.menuId}
+                        className="border border-gray-200 rounded-lg shadow-sm">
+                        <div className="flex justify-between bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
+                          <div>
+                            <h4 className="text-md font-semibold text-gray-800">
+                              {menu.menuName}
+                            </h4>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {menu.menuDescription}
+                            </p>
+                          </div>
+                          <div>
+                            <Controller
+                              name={`SelectMenu_${menuIndex}`} // Give each menu its own control name
+                              control={control}
+                              render={({ field }) => (
+                                <Checkbox
+                                  color="primary"
+                                  isSelected={field.value}
+                                  onValueChange={(isChecked) => {
+                                    field.onChange(isChecked);
+                                    selectMenuAll(menuIndex, isChecked);
+                                  }}>
+                                  Select All
+                                </Checkbox>
+                              )}
+                            />
+                          </div>
+                        </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center items-center gap-x-4 mt-6">
-            <ButtonComponent
-              type="submit"
-              className="bg-black text-white"
-              content={isLoading ? "Updating..." : "Update"}
-              disabled={isLoading}
-            />
+                        <div className="p-4">
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {menu.actions.map((action, actionIndex) => (
+                              <div
+                                key={action.actionId}
+                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+                                <Checkbox
+                                  size="sm"
+                                  color="primary"
+                                  isSelected={action.selected}
+                                  onChange={(e) =>
+                                    handleActionSelect(
+                                      menuIndex,
+                                      actionIndex,
+                                      e.target.checked
+                                    )
+                                  }
+                                />
+                                <span className="text-sm text-gray-700">
+                                  {action.actionName}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">No permissions available.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-start mt-8 space-x-4">
+                <ButtonComponent
+                  type="submit"
+                  className="bg-black text-white hover:bg-gray-800"
+                  content={isLoading ? "Updating..." : "Update Role"}
+                  disabled={isLoading}
+                />
+              </div>
+            </form>
           </div>
-        </Form>
-      </div>
+        </div>
+      )}
     </>
   );
 };

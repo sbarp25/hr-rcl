@@ -68,7 +68,10 @@ const EditDepartment = () => {
         setTeamLead(response.data.datalist);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +102,10 @@ const EditDepartment = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

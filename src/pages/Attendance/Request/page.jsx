@@ -100,8 +100,6 @@ const AttendanceRequest = () => {
   ];
 
   const handleApplyFilters = (result) => {
-    console.log("Filter result:", result); // Add this debug line
-
     if (result.data) {
       // Filter component returned filtered data
       setLateCheckinData(result.data);
@@ -266,10 +264,6 @@ const AttendanceRequest = () => {
   const toggleExpandedRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
-
-  useEffect(() => {
-    console.log("Selected Data:", selectedData);
-  }, [selectedData]);
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;

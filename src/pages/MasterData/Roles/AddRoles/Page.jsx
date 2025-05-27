@@ -16,7 +16,7 @@ const AddRoles = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, watch } = useForm();
+  const { control, handleSubmit, reset } = useForm();
 
   // Get all selected action IDs from the menus
   const getSelectedActions = () => {
@@ -107,8 +107,6 @@ const AddRoles = () => {
           isActive: true,
         },
       };
-
-      console.log("Submitting role data:", newRole);
 
       try {
         setIsLoading(true);

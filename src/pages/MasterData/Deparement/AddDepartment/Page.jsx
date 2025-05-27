@@ -66,7 +66,10 @@ const AddDepartment = () => {
         setTeamLead(response.data.datalist);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

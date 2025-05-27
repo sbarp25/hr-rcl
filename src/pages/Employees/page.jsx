@@ -177,8 +177,6 @@ const Employees = () => {
   };
 
   const handleApplyFilters = (result) => {
-    console.log("Filter result:", result);
-
     if (result.data) {
       setEmployeesData(result.data);
       if (result.totalPages) setTotalPages(result.totalPages);

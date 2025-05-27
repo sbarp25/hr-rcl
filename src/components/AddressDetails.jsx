@@ -556,10 +556,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "permanent");
-                          console.log(
-                            "Selected permanent district ID:",
-                            selectedKey
-                          );
                         }}>
                         {districts.map((district) => (
                           <SelectItem key={district.id} value={district.id}>
@@ -752,10 +748,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "temporary");
-                          console.log(
-                            "Selected temporary district ID:",
-                            selectedKey
-                          );
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {districts.map((district) => (

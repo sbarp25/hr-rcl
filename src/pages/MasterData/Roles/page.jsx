@@ -23,7 +23,6 @@ import {
 } from "@nextui-org/react";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
@@ -390,7 +389,7 @@ const Roles = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden">
                 <div className="space-y-4">
-                  {roleData.map((role, index) => (
+                  {roleData.map((role) => (
                     <div
                       key={role.roleId}
                       className="border rounded-lg overflow-hidden shadow-sm">

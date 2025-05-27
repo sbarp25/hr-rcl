@@ -157,7 +157,6 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.log(error);
       toast.error("Late Check In Failed");
     } finally {
       setIsloading(false);

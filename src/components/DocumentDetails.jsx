@@ -122,7 +122,6 @@ const DocumentDetails = ({
   }, [setValue, setFormData]);
 
   const onSubmit = async (data) => {
-    console.log("Date of birth", dateOfBirth);
     setIsLoading(true);
     const formDataToSubmit = new FormData();
 
@@ -184,7 +183,6 @@ const DocumentDetails = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error saving document details:", error);
       toast.error("Error saving document details.");
     } finally {
       setIsLoading(false);

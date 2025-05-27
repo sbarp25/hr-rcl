@@ -12,10 +12,6 @@ const LocationComponent = () => {
       LocalStorageUtil.setItem("longitude", longitude);
       LocalStorageUtil.setItem("locationAccuracy", accuracy);
       setAccuracy(accuracy);
-
-      console.log(
-        `Location updated: ${latitude}, ${longitude} (±${accuracy.toFixed(1)}m)`
-      );
     };
 
     // Function to handle location errors
