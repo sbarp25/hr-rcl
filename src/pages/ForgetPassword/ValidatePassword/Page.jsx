@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/Images/Logo.png";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import Loader from "../../../components/Loader/Loader.jsx";
 const ResetForGetPassword = () => {
@@ -155,7 +155,6 @@ const ResetForGetPassword = () => {
       {isLoading && (
         <Loader message="Please wait while the work is being done" />
       )}
-
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">

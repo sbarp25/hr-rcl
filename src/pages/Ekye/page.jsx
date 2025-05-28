@@ -8,7 +8,7 @@ import PersonalDetails from "../../components/PersonalDetails.jsx";
 import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import FormStepper from "../../components/FormStepIndicator.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";

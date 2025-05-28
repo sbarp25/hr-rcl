@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Select, SelectItem, Checkbox } from "@nextui-org/react";
+import { Button, Select, SelectItem, Checkbox } from "@heroui/react";
 import ValidationComponent from "./ValidationComponent";
 
 import { useForm, Controller } from "react-hook-form";

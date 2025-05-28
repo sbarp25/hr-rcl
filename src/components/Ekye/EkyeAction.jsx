@@ -7,7 +7,7 @@ import {
   ModalFooter,
   useDisclosure,
   ScrollShadow,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 import PersonalAction from "./Action/PersonalAction";
 import AddressAction from "./Action/AddressAction";

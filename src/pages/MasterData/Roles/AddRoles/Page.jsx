@@ -5,7 +5,7 @@ import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox } from "@heroui/react";
 import GoBack from "../../../../components/GoBack";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";

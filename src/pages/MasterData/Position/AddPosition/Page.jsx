@@ -3,7 +3,7 @@ import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx"
 import { useForm } from "react-hook-form";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";

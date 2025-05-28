@@ -16,7 +16,7 @@ import {
   ModalContent,
   ModalBody,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";

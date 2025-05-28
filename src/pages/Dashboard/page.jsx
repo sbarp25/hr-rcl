@@ -1,5 +1,5 @@
 import Attendancereport from "../../components/Dashboard/Attendancereport.jsx";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 
 import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";
 import Leave from "../../components/Dashboard/Leave.jsx";
@@ -8,7 +8,7 @@ import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);

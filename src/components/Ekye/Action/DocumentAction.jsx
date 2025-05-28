@@ -1,4 +1,4 @@
-import { Divider, Form } from "@nextui-org/react";
+import { Divider, Form } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import { useEffect, useState } from "react";

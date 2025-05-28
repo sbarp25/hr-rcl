@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";

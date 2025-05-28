@@ -12,7 +12,7 @@ import {
   ModalBody,
   useDisclosure,
   ModalContent,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";

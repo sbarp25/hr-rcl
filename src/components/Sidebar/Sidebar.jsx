@@ -8,7 +8,7 @@ import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
@@ -30,7 +30,7 @@ import {
   ModalContent,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import truncateText from "../../utils/truncateText";
 import Loader from "../Loader/Loader.jsx";
 

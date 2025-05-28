@@ -5,7 +5,7 @@ import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
@@ -25,7 +25,7 @@ import {
   DrawerHeader,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");

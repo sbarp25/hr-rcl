@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";

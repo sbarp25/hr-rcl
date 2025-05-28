@@ -1,5 +1,5 @@
 import { MdArticle } from "react-icons/md";
-import { Pagination } from "@nextui-org/react";
+import { Pagination } from "@heroui/react";
 import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";

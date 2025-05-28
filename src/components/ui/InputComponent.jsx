@@ -1,4 +1,4 @@
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";

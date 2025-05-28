@@ -22,7 +22,7 @@ import {
   Avatar,
   Input,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 import { useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";

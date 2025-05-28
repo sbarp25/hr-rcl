@@ -3,7 +3,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "sonner";
 import { FaRegEye } from "react-icons/fa";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import { useNavigate } from "react-router-dom";
 const SalaryDetails = () => {

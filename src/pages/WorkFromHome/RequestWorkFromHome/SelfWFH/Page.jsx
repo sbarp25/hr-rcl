@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaChevronDown } from "react-icons/fa";
 import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";

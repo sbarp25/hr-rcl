@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalContent,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../ui/TextAreaComp.jsx";
 import Loader from "../Loader/Loader.jsx";

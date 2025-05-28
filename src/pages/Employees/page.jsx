@@ -22,7 +22,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaChevronDown, FaEllipsisV } from "react-icons/fa";
 
 import Search from "../../components/Search";

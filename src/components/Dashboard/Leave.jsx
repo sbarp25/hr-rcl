@@ -159,7 +159,7 @@ const Leave = () => {
 
 export default Leave;
 
-// import { Tabs, Tab } from "@nextui-org/tabs";
+// import { Tabs, Tab } from "@heroui/tabs";
 // import axiosInstance from "../../lib/axios-Instance.js";
 // import { useEffect, useState } from "react";
 // import { toast } from "sonner";

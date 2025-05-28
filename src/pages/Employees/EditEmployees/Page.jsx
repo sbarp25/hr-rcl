@@ -13,7 +13,7 @@ import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
-import { Switch } from "@nextui-org/react";
+import { Switch } from "@heroui/react";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const EditEmployees = () => {
   const navigate = useNavigate();

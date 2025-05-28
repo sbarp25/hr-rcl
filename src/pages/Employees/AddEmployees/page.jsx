@@ -11,7 +11,7 @@ import {
   SelectItem,
   Checkbox,
   Switch,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";

@@ -6,7 +6,7 @@ import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
@@ -18,7 +18,7 @@ import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
-import { Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@heroui/react";
 import Loader from "../Loader/Loader.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");

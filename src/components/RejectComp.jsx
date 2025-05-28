@@ -7,7 +7,7 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ImCancelCircle } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";

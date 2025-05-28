@@ -10,9 +10,9 @@ import {
   Select,
   SelectItem,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
-import { TimeInput } from "@nextui-org/react";
+import { TimeInput } from "@heroui/react";
 import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";

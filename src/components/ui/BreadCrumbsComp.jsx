@@ -1,5 +1,5 @@
 import React from "react";
-import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
+import { Breadcrumbs, BreadcrumbItem } from "@heroui/react";
 
 const BreadcrumbsComponent = ({ items }) => {
   const [currentPage, setCurrentPage] = React.useState("music");

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Select, SelectItem } from "@heroui/select";
 import {
   Button,
   Drawer,
@@ -9,7 +9,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { BsFilter } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { Button, Modal, ModalBody, ModalContent } from "@heroui/react";
 import { toast } from "sonner";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import InputComponent from "../../components/ui/InputComponent.jsx";
 import LocationComponent from "../../components/LocationComponent";

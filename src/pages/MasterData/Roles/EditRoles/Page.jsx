@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input } from "@nextui-org/react";
+import { Form, Input } from "@heroui/react";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
-import { Checkbox } from "@nextui-org/react";
+import { Checkbox } from "@heroui/react";
 
 const EditRole = () => {
   const { roleId } = useParams();

@@ -6,7 +6,7 @@ import {
   ModalContent,
   ModalHeader,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import axiosInstance from "../../lib/axios-Instance";
 import Loader from "../Loader/Loader";
 import { toast } from "sonner";

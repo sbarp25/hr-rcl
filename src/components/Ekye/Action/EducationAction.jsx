@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Divider, Form, Button } from "@nextui-org/react";
+import { Divider, Form, Button } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
