@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import GoBack from "../../../components/GoBack";
 
 import { useNavigate } from "react-router-dom";
@@ -35,7 +35,7 @@ const tabData = [
 ];
 
 const Tabs = ({ activeTab, changeTab }) => (
-  <ul className="nav nav-tabs flex  border">
+  <ul className="flex ">
     {tabData?.map((tab) => (
       <li
         key={tab.name}
@@ -80,7 +80,6 @@ const ViewEKYE = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching RCL ID:", error);
       toast.error("Failed to fetch RCL ID");
     } finally {
       setIsLoading(false);
@@ -102,7 +101,6 @@ const ViewEKYE = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching employee data:", error);
       toast.error("Failed to fetch employee data");
     } finally {
       setIsLoading(false);

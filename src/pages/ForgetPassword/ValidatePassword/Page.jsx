@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/Images/Logo.png";
 import { Button } from "@nextui-org/button";
@@ -90,8 +90,10 @@ const ResetForGetPassword = () => {
         }
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
       navigate("/login");
     } finally {
       setIsLoading(false);
@@ -136,8 +138,10 @@ const ResetForGetPassword = () => {
         }
       } catch (error) {
         setError("An error occurred. Please try again later.");
-        toast.error(error.response?.data?.messages);
-        console.error("An error occurred:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
         navigate("/login");
       } finally {
         setIsLoading(false);

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Form, Input } from "@nextui-org/react";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
@@ -95,7 +95,6 @@ const EditRole = () => {
           );
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         toast.error(
           error.response?.data?.message ||
             "An error occurred while fetching data"
@@ -202,7 +201,6 @@ const EditRole = () => {
         toast.error(response.data.message || "Failed to update role");
       }
     } catch (error) {
-      console.error("Error updating role:", error);
       toast.error(
         error.response?.data?.message ||
           "An error occurred while updating the role"

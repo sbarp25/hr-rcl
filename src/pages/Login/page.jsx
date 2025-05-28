@@ -1,7 +1,7 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";

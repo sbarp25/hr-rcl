@@ -13,7 +13,7 @@ import { RxCross1 } from "react-icons/rx";
 import { useState } from "react";
 import ButtonComponent from "./ui/ButtonComp.jsx";
 import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
@@ -74,7 +74,7 @@ const RejectComp = ({ employeeData }) => {
         setIsLoading(false);
       }
     } else {
-      toast.reject("Access Denied");
+      toast.error("Access Denied");
     }
   };
 

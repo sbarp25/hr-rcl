@@ -1,7 +1,7 @@
 import { useState } from "react";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 import { getIpAddress } from "../../utils/getIpAddress.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { MdRadioButtonChecked } from "react-icons/md";
 import {
@@ -113,8 +113,10 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           toast.error(errorMessage);
         }
       } catch (error) {
-        console.error("Error during checkout", error);
-        toast.error("Check Out Failed");
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsloading(false);
       }

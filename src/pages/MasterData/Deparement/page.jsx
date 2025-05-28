@@ -3,7 +3,7 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import { FaChevronDown } from "react-icons/fa";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Modal,
@@ -75,8 +75,10 @@ const Department = () => {
         toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
-      toast.error("Error fetching departments.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +88,7 @@ const Department = () => {
   }, [currentPage, departmentPerPage]);
 
   const handlePageChange = (page) => {
+    setDepartmentsData([]);
     setCurrentPage(page);
   };
 
@@ -137,8 +140,10 @@ const Department = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting position:", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsDeleteLoading(false);
     }

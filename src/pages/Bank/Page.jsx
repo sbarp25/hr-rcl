@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import InputComponent from "../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";

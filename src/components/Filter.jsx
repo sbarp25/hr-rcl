@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
 import { Select, SelectItem } from "@nextui-org/select";
 import {
@@ -54,10 +54,16 @@ const Filter = ({
         if (response.data.responseCode === "200") {
           setDepartmentsData(response?.data?.datalist);
         } else {
-          toast.error(response?.data?.message);
+          const errorMessage =
+            response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         }
       } catch (error) {
-        toast.error("Error fetching departments.");
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setLoadingDepartments(false);
       }
@@ -77,7 +83,10 @@ const Filter = ({
           toast.error(response.data.message);
         }
       } catch (error) {
-        toast.error("Error fetching positions.");
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setLoadingPositions(false);
       }
@@ -137,7 +146,10 @@ const Filter = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      toast.error("Error fetching data.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

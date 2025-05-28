@@ -3,7 +3,7 @@ import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
 import { Button } from "@nextui-org/react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoDotFill } from "react-icons/go";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";

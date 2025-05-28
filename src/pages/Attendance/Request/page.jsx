@@ -21,7 +21,7 @@ import { FaCheck } from "react-icons/fa";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
@@ -80,6 +80,7 @@ const AttendanceRequest = () => {
   };
 
   const handlePageChange = (page) => {
+    setLateCheckinData([]);
     setCurrentPage(page);
   };
   const menu = LocalStorageUtil.getItem("menu");
@@ -127,8 +128,10 @@ const AttendanceRequest = () => {
             toast.error(response?.data?.message);
           }
         } catch (error) {
-          console.error("Error fetching employees:", error);
-          toast.error("Error fetching employees.");
+          const errorMessage =
+            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         } finally {
           setIsLoading(false);
         }
@@ -251,8 +254,10 @@ const AttendanceRequest = () => {
         toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Error fetching employees.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

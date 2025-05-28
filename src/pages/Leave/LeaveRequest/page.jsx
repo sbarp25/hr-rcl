@@ -4,7 +4,7 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 import DatepickerComponent, {
@@ -151,10 +151,12 @@ const LeaveRequest = () => {
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
-      <div className="flex flex-col sm:flex-row items-center justify-between">
+      <div className="flex items-center justify-between px-4 py-2">
         <GoBack />
-        <h1 className="text-xl sm:text-md font-semibold">Leave Request</h1>
-        <div></div>
+        <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-center flex-1 mx-4">
+          <span className="">Leave Request</span>
+        </h1>
+        <div className="w-8"></div>
       </div>
 
       <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">

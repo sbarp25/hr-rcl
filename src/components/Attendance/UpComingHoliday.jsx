@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import Loader from "../Loader/Loader";
 import { FaDiamond } from "react-icons/fa6";
+import { toast } from "sonner";
 
 const UpComingHoliday = () => {
   const [upComingHoliday, setUpComingHoliday] = useState([]);
@@ -18,7 +19,10 @@ const UpComingHoliday = () => {
         setUpComingHoliday(response.data.datalist);
       }
     } catch (error) {
-      console.error("Error fetching monthly attendance:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

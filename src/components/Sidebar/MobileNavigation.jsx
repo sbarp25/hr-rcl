@@ -7,7 +7,7 @@ import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { LuMapPinCheckInside } from "react-icons/lu";
 import axios from "axios";
 import { GrStatusGoodSmall } from "react-icons/gr";
@@ -239,8 +239,10 @@ const MobileNavigation = () => {
       }
     } catch (error) {
       setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -264,7 +266,7 @@ const MobileNavigation = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.error(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

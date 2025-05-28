@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Divider, Form, Button } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";

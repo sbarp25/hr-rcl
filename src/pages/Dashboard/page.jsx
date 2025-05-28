@@ -6,8 +6,9 @@ import Leave from "../../components/Dashboard/Leave.jsx";
 import CheckIn from "../../components/Dashboard/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
+import { Button } from "@nextui-org/react";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -90,6 +91,7 @@ const Page = () => {
               )}
             </div>
           </div>
+
           <div className="text-sm font-semibold text-right mt-1 mr-4 mb-3">
             <p className="text-green-700 mt-1">
               Total Early Time: {totalEarlyTime || "N/A"}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import GoBack from "../../../components/GoBack";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -35,7 +35,6 @@ const ViewWorkFromHome = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error fetching Leave:", error);
       toast.error("Error fetching Leave.");
     } finally {
       setIsLoading(false);

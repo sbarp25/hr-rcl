@@ -2,7 +2,7 @@ import { Layout } from "./components/Layout/Layout";
 
 import Dashboard from "./pages/Dashboard/page.jsx";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Notices from "./pages/Notices/page.jsx";
+// import Notices from "./pages/Notices/page.jsx";
 import Login from "./pages/Login/page.jsx";
 import Ekye from "./pages/Ekye/page.jsx";
 import LeaveRequest from "./pages/Leave/LeaveRequest/page.jsx";
@@ -15,7 +15,8 @@ import Roles from "./pages/MasterData/Roles/page.jsx";
 
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import { useEffect } from "react";
 import AddEmployees from "./pages/Employees/AddEmployees/page.jsx";
 import ValidateLink from "./pages/resetpassword/validatelink/page.jsx";
@@ -93,7 +94,13 @@ function App() {
   return (
     <>
       <LocationComponent />
-      <ToastContainer autoClose={1500} />
+
+      <Toaster
+        visibleToasts={3}
+        position="top-right"
+        richColors={true}
+        closeButton={true}
+      />
       {isAuthRoute ? (
         <AuthLayout>
           <Routes>

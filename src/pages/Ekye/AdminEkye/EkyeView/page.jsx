@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Personal from "../../../../components/Ekye/View/Personal";
@@ -77,8 +77,10 @@ const Page = () => {
           toast.error(response?.data?.Message);
         }
       } catch (error) {
-        console.error("Error fetching employee data:", error);
-        toast.error("Error fetching employee data.");
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     };
     fetchEmployeeData();

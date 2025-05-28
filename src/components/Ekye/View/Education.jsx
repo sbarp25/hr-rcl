@@ -3,7 +3,7 @@ import { Button, Divider, Form } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";

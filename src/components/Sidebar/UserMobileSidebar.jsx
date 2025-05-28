@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { Avatar } from "@nextui-org/avatar";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
@@ -122,9 +122,10 @@ const UserMobileSidebar = () => {
         navigate("/login");
       }
     } catch (error) {
-      setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +144,7 @@ const UserMobileSidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.error(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

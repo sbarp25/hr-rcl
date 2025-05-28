@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import {
   Input,
@@ -161,7 +161,6 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching RCL ID:", error);
       toast.error("Failed to fetch RCL ID");
     } finally {
       setIsLoading(false);
@@ -183,7 +182,6 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching employee data:", error);
       toast.error("Failed to fetch employee data");
     } finally {
       setIsLoading(false);

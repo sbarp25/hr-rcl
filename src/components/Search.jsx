@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const Search = ({
   onApplySearch,
@@ -50,8 +50,10 @@ const Search = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error searching data:", error);
-      toast.error("Error searching data.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

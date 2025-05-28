@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
 import { Button, Select, SelectItem, Checkbox } from "@nextui-org/react";
 import ValidationComponent from "./ValidationComponent";
@@ -62,7 +62,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           setProvinces(response.data.datalist);
         }
       } catch (error) {
-        console.error("Failed to fetch Province Data.", error);
+        console.log(error);
       } finally {
         setIsLoading(false);
       }
@@ -267,8 +267,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Failed to fetch District Data.", error);
-      toast.error("Failed to fetch District Data.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -389,8 +391,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error saving address data:", error);
-      toast.error("Failed to save address data");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

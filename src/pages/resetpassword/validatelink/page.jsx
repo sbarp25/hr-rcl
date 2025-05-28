@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loader/Loader.jsx";
 import Logo from "../../../assets/Images/Logo.png";
@@ -88,7 +88,6 @@ const ValidateLink = () => {
         }
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
       toast.error(error.response?.data?.message);
       navigate("/login");
     } finally {
@@ -133,7 +132,6 @@ const ValidateLink = () => {
       } catch (error) {
         setError("An error occurred. Please try again later.");
         toast.error(error.response?.data?.messages);
-        console.error("An error occurred:", error);
         navigate("/login");
       } finally {
         setIsLoading(false);

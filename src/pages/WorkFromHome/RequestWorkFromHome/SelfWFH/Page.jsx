@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { FaChevronDown } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../../components/Search";
@@ -69,6 +69,7 @@ const SelfWorkFromHome = () => {
   };
 
   const handlePageChange = (page) => {
+    setWorkFromHome([]);
     setCurrentPage(page);
   };
 

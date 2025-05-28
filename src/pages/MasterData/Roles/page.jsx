@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { BiData } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Modal,
@@ -47,6 +47,7 @@ const Roles = () => {
   const navigate = useNavigate();
 
   const handlePageChange = (page) => {
+    setRoleData([]);
     setCurrentPage(page);
   };
 
@@ -72,7 +73,6 @@ const Roles = () => {
         toast.error(response?.data?.message || "Failed to fetch roles.");
       }
     } catch (error) {
-      console.error("Error fetching roles:", error);
       toast.error("Error fetching roles.");
     } finally {
       setIsLoading(false);
@@ -173,7 +173,6 @@ const Roles = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting role:", error);
       toast.error(error.response?.data?.message || "Error deleting role.");
     } finally {
       setIsDeleteLoading(false);

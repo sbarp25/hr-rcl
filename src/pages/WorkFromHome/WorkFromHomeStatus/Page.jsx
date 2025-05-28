@@ -24,7 +24,7 @@ import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
@@ -195,6 +195,7 @@ const WorkFromHomeStatus = () => {
   };
 
   const handlePageChange = (page) => {
+    setWorkFromHome([]);
     setCurrentPage(page);
   };
 
@@ -303,6 +304,7 @@ const WorkFromHomeStatus = () => {
                   <TableBody
                     items={isLoading ? [] : workFromHome}
                     isLoading={isLoading}
+                    // loadingState={isLoading}
                     loadingContent={<SkeletonLoader />}>
                     {(item) => (
                       <TableRow

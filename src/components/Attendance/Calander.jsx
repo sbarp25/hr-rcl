@@ -8,6 +8,7 @@ import {
 } from "@nextui-org/react";
 import axiosInstance from "../../lib/axios-Instance";
 import Loader from "../Loader/Loader";
+import { toast } from "sonner";
 
 const Calander = () => {
   const [calendarData, setCalanderData] = useState([]);
@@ -26,7 +27,10 @@ const Calander = () => {
         setCalanderData(response.data.datalist);
       }
     } catch (error) {
-      console.error("Error fetching monthly attendance:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

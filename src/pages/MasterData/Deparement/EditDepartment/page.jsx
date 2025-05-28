@@ -7,7 +7,7 @@ import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";

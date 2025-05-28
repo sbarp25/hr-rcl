@@ -3,7 +3,7 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import { FaChevronDown } from "react-icons/fa";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
@@ -50,6 +50,7 @@ const Position = () => {
   const navigate = useNavigate();
 
   const handlePageChange = (page) => {
+    setPositionData([]);
     setCurrentPage(page);
   };
 
@@ -70,7 +71,6 @@ const Position = () => {
         toast.error(response?.data?.message || "Failed to fetch positions.");
       }
     } catch (error) {
-      console.error("Error fetching positions:", error);
       toast.error("Error fetching positions.");
     } finally {
       setIsLoading(false);
@@ -175,7 +175,6 @@ const Position = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting position:", error);
       toast.error(error.response?.data?.message || "Error deleting position.");
     } finally {
       setIsDeleteLoading(false);

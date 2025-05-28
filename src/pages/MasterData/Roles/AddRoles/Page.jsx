@@ -4,7 +4,7 @@ import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Checkbox } from "@nextui-org/react";
 import GoBack from "../../../../components/GoBack";
 import Loader from "../../../../components/Loader/Loader.jsx";

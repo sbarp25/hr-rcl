@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+// import { toast } from "sonner";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -34,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +63,7 @@ const Employees = () => {
   };
 
   const fetchEmployees = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/users/list", {
         pageIndex: currentPage,
@@ -77,8 +79,10 @@ const Employees = () => {
         toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Error fetching employees.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -95,10 +99,10 @@ const Employees = () => {
     menu?.actions?.some((action) => action.actionId === 9)
   );
   /**To read the Data */
-  // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
+  const hasaccess = true;
+  // const hasaccess = menu?.some((menu) =>
+  //   menu?.actions?.some((action) => action.actionId === 10)
+  // );
   /**To check edit status */
   const hasEmployeeEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 11)
@@ -138,8 +142,10 @@ const Employees = () => {
         }
       }
     } catch (error) {
-      console.error("Error deleting employee:", error);
-      toast.error("Error deleting employee.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setDeleteIsLoading(false);
     }
@@ -173,6 +179,7 @@ const Employees = () => {
   };
 
   const handlePageChange = (page) => {
+    setEmployeesData([]);
     setCurrentPage(page);
   };
 
@@ -199,8 +206,10 @@ const Employees = () => {
             toast.error(response?.data?.message);
           }
         } catch (error) {
-          console.error("Error fetching employees:", error);
-          toast.error("Error fetching employees.");
+          const errorMessage =
+            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         } finally {
           setIsLoading(false);
         }
@@ -291,6 +300,7 @@ const Employees = () => {
             <TableBody
               items={isLoading ? [] : filteredEmployees}
               isLoading={isLoading}
+              loadingState={isLoading}
               loadingContent={<SkeletonLoader />}>
               {filteredEmployees.map((employee, index) => (
                 <TableRow
@@ -339,7 +349,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Medium screens */}
-        <div className="hidden md:block lg:hidden bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto">
+        <div className="hidden md:block lg:hidden bg-white rounded-lg p-2 max-h-[70vh] overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader className="bg-gray-50">
               <TableColumn>Name</TableColumn>

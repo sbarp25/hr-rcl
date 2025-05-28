@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
@@ -76,8 +76,10 @@ const AddEmployeeForm = () => {
           toast.error(response?.data?.data?.message);
         }
       } catch (error) {
-        console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -97,8 +99,10 @@ const AddEmployeeForm = () => {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching positions:", error);
-        toast.error("Error fetching positions.", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -118,8 +122,10 @@ const AddEmployeeForm = () => {
           toast.error(response?.data?.message);
         }
       } catch (error) {
-        toast.error("Error fetching roles.", error);
-        console.error(error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }

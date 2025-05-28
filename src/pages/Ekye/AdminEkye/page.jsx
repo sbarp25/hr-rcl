@@ -12,7 +12,7 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
@@ -41,6 +41,7 @@ const Page = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
   const handlePageChange = (page) => {
+    setEkyeData([]);
     setCurrentPage(page);
   };
 
@@ -84,8 +85,10 @@ const Page = () => {
         toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
-      toast.error("Error fetching departments.", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

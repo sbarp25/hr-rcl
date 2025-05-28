@@ -9,7 +9,6 @@ const parseStringToCalendarDate = (dateString) => {
     // Parse YYYY-MM-DD string to CalendarDate
     return parseDate(dateString);
   } catch (e) {
-    console.error("Error parsing date:", e);
     return null;
   }
 };

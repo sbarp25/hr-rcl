@@ -16,7 +16,6 @@ const LocationComponent = () => {
 
     // Function to handle location errors
     const handleError = (error) => {
-      console.error("Error getting location:", error);
       LocalStorageUtil.setItem("locationError", error.message);
     };
 
@@ -28,7 +27,6 @@ const LocationComponent = () => {
 
     // Check if geolocation is supported
     if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
       LocalStorageUtil.setItem("locationError", "Geolocation not supported");
       return;
     }

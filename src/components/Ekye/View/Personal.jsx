@@ -4,18 +4,18 @@ import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="bg-gray-50  h-[75vh] pt-4 overflow-auto rounded-b-xl border border-gray-300">
-      <div className="rounded-xl space-y-6 pt-6 ">
+    <div className="bg-gray-50 h-[75vh] pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
+      <div className="rounded-xl space-y-4 sm:space-y-6 pt-4 sm:pt-6">
         {/**Basic Information */}
-        <div className="bg-white rounded-xl mb-4 mx-4  p-5">
-          <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-xl ">
-            <h1 className="text-xl font-semibold flex mb-6">
+        <div className="bg-white rounded-xl mb-4 mx-2 sm:mx-4 p-3 sm:p-5">
+          <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-xl">
+            <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
               <span className="relative">
                 Personal Information Details
                 <UnderlineComponent />
               </span>
             </h1>
-            <div className="flex items-center justify-end gap-4">
+            <div className="flex items-center justify-end gap-2 sm:gap-4">
               <div className="flex gap-1 items-end justify-end text-right">
                 <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
                 <div className="flex w-2 h-2 rounded-full bg-black"></div>
@@ -24,8 +24,8 @@ const Personal = ({ employeeData }) => {
             </div>
           </div>
 
-          <form className="container  pb-4 space-y-4 ">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-20">
+          <form className="container pb-4 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-20">
               <EkyeDetailsComponent
                 label="FullName"
                 placeholder={employeeData?.personalDetails?.fullName || "N/A"}
@@ -40,7 +40,7 @@ const Personal = ({ employeeData }) => {
               />
             </div>
             <Divider />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-20">
               <EkyeDetailsComponent
                 label="Phone"
                 placeholder={employeeData?.personalDetails?.phone || "N/A"}
@@ -57,7 +57,7 @@ const Personal = ({ employeeData }) => {
               />
             </div>
             <Divider />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-20">
               <EkyeDetailsComponent
                 label="Blood Type"
                 placeholder={employeeData?.personalDetails?.bloodGroup || "N/A"}
@@ -77,7 +77,7 @@ const Personal = ({ employeeData }) => {
             </div>
 
             <Divider />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-20">
               <EkyeDetailsComponent
                 label="Marital Status"
                 placeholder={
@@ -90,29 +90,28 @@ const Personal = ({ employeeData }) => {
               />
             </div>
             <Divider />
-            {/* 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-20"></div> */}
           </form>
         </div>
+
         {/**Guardians && Emergency Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/**Guardians Information */}
-          <div className="bg-white rounded-2xl pb-2 ml-4 p-5">
-            <div className="flex items-center gap-4 justify-between bg-white text-lg pr-4 rounded-2xl">
-              <h1 className="text-xl font-semibold flex mb-6">
+          <div className="bg-white rounded-2xl pb-2 mx-2 sm:ml-4 lg:ml-4 p-3 sm:p-5">
+            <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
+              <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
                 <span className="relative">
                   Guardian Details
                   <UnderlineComponent />
                 </span>
               </h1>
-              <div className="flex gap-1 items-end justify-end text-right ">
+              <div className="flex gap-1 items-end justify-end text-right">
                 <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
                 <div className="flex w-2 h-2 rounded-full bg-black"></div>
                 <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
               </div>
             </div>
             <form className="container space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 px-20">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-8 lg:px-20">
                 <EkyeDetailsComponent
                   label="Guardian's Name"
                   placeholder={
@@ -127,7 +126,7 @@ const Personal = ({ employeeData }) => {
                 />
               </div>
               <Divider />
-              <div className="grid grid-cols-1 md:grid-cols-2 px-20">
+              <div className="grid grid-cols-1 gap-4 px-4 sm:px-8 lg:px-20">
                 <EkyeDetailsComponent
                   label="Guardian's Relation"
                   placeholder={
@@ -137,10 +136,11 @@ const Personal = ({ employeeData }) => {
               </div>
             </form>
           </div>
-          {/**Emerency Information */}
-          <div className="bg-white rounded-2xl  pb-2  mr-4 p-5">
-            <div className="flex items-center justify-between bg-white text-lg pr-4 rounded-2xl">
-              <h1 className="text-xl font-semibold flex mb-6">
+
+          {/**Emergency Information */}
+          <div className="bg-white rounded-2xl pb-2 mx-2 sm:mr-4 lg:mr-4 p-3 sm:p-5">
+            <div className="flex items-center justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
+              <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
                 <span className="relative">
                   Emergency Details
                   <UnderlineComponent />
@@ -153,7 +153,7 @@ const Personal = ({ employeeData }) => {
               </div>
             </div>
             <form className="container space-y-4">
-              <div className=" grid grid-cols-1 md:grid-cols-2 px-20">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-8 lg:px-20">
                 <EkyeDetailsComponent
                   label="Guardian's Name"
                   placeholder={
@@ -168,7 +168,7 @@ const Personal = ({ employeeData }) => {
                 />
               </div>
               <Divider />
-              <div className=" grid grid-cols-1 md:grid-cols-2 px-20">
+              <div className="grid grid-cols-1 gap-4 px-4 sm:px-8 lg:px-20">
                 <EkyeDetailsComponent
                   label="Guardian's Relation"
                   placeholder={

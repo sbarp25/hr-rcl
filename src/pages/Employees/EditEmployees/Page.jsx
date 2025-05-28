@@ -12,7 +12,7 @@ import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Switch } from "@nextui-org/react";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 const EditEmployees = () => {
@@ -67,8 +67,10 @@ const EditEmployees = () => {
         toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
-      toast.error("Error fetching departments.", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +114,7 @@ const EditEmployees = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching employee data:", error);
+      console.error(error);
       // toast.error("Error fetching employee data.");
     }
   };
@@ -127,8 +129,10 @@ const EditEmployees = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error fetching positions:", error);
-      toast.error("Error fetching positions.", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

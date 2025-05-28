@@ -1,6 +1,6 @@
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
@@ -162,7 +162,7 @@ export default Leave;
 // import { Tabs, Tab } from "@nextui-org/tabs";
 // import axiosInstance from "../../lib/axios-Instance.js";
 // import { useEffect, useState } from "react";
-// import { toast } from "react-toastify";
+// import { toast } from "sonner";
 // const Leave = () => {
 //   const [todayLeave, setTodayLeave] = useState([]);
 //   const [upComingLeave, setUpComingLeave] = useState([]);

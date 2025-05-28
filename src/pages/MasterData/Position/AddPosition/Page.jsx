@@ -6,7 +6,7 @@ import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@nextui-org/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";

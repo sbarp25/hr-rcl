@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
     <div className="w-60 flex items-center justify-center">

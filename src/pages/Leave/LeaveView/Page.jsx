@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -31,8 +31,10 @@ const LeaveView = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error fetching Leave:", error);
-      toast.error("Error fetching Leave.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

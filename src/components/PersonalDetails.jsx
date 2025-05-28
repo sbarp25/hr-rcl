@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import InputComponent from "./ui/InputComponent.jsx";
 import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
@@ -98,8 +98,10 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error adding Personal Data", error);
-      toast.error("Error adding personal Data");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +134,10 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
           });
         }
       } catch (error) {
-        console.error("Error fetching personal details:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     };
 

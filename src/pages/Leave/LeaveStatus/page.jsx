@@ -16,7 +16,7 @@ import {
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
@@ -53,6 +53,7 @@ const LeaveStatus = () => {
   const { reset, control, handleSubmit } = useForm();
 
   const handlePageChange = (page) => {
+    setLeaveData([]);
     setCurrentPage(page);
   };
 

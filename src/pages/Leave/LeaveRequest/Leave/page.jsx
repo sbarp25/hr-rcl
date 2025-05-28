@@ -22,7 +22,7 @@ import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";
 import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { useEffect, useState } from "react";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
@@ -55,6 +55,7 @@ const SelfLeaveStatus = () => {
   const { reset, control, handleSubmit } = useForm();
 
   const handlePageChange = (page) => {
+    setLeaveData([]);
     setCurrentPage(page);
   };
 
