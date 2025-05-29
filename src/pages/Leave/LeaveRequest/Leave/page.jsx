@@ -258,8 +258,8 @@ const SelfLeaveStatus = () => {
     }
   };
   return (
-    <>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+    <div className="max-h-[90vh] overflow-y-auto">
+      <div className="container px-2 md:px-8">
         {/**Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -302,11 +302,8 @@ const SelfLeaveStatus = () => {
         <div className="bg-white rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
-              <Table
-                bordered
-                aria-label="Table of Leave"
-                className="max-h-[75vh]">
+            <div className="shadow-md rounded-lg   text-left">
+              <Table bordered aria-label="Table of Leave" className="">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>Full Name</TableColumn>
@@ -373,7 +370,7 @@ const SelfLeaveStatus = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+            <div className="shadow-md rounded-lg   text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>Leave</TableColumn>
@@ -653,7 +650,7 @@ const SelfLeaveStatus = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

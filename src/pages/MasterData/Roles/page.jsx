@@ -256,10 +256,10 @@ const Roles = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+            <div className="bg-white rounded-lg overflow-y-auto p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className="rounded-lg max-h-[80vh] text-left">
+                <div className="rounded-lg  text-left">
                   <Table bordered aria-label="Roles Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>
@@ -325,7 +325,7 @@ const Roles = () => {
 
               {/* Medium screens - Simplified table */}
               <div className="hidden md:block lg:hidden">
-                <div className="shadow-md rounded-lg max-h-[80vh] text-left">
+                <div className="shadow-md rounded-lg text-left">
                   <Table bordered aria-label="Roles Table">
                     <TableHeader>
                       <TableColumn>Role</TableColumn>

@@ -134,9 +134,9 @@ const Page = () => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   return (
-    <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
+    <div className="px-4 md:px-8 max-h-[85vh] overflow-y-auto space-y-4">
       <div className="flex justify-between items-center px-8">
         <div className="flex flex-col  space-y-10">
           <BreadcrumbsComponent items={breadcrumbItems} />

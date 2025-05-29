@@ -63,7 +63,8 @@ const Employees = () => {
   };
 
   const fetchEmployees = async () => {
-    // setIsLoading(true);
+    setEmployeesData([]);
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/users/list", {
         pageIndex: currentPage,
@@ -99,10 +100,10 @@ const Employees = () => {
     menu?.actions?.some((action) => action.actionId === 9)
   );
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 10)
-  // );
+  // const hasaccess = true;
+  const hasaccess = menu?.some((menu) =>
+    menu?.actions?.some((action) => action.actionId === 10)
+  );
   /**To check edit status */
   const hasEmployeeEditAccess = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 11)
@@ -235,9 +236,9 @@ const Employees = () => {
   );
 
   return (
-    <>
+    <div className="max-h-[90vh] overflow-y-auto">
       {isDeleteLoading && <Loader />}
-      <div className="px-4 md:px-8 space-y-4">
+      <div className="px-4 md:px-8 space-y-4 ">
         {/* Breadcrumbs and Header */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -286,7 +287,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Large screens */}
-        <div className="hidden lg:block bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto">
+        <div className="hidden xl:block bg-white rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader>
               <TableColumn>S.N</TableColumn>
@@ -349,7 +350,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Medium screens */}
-        <div className="hidden md:block lg:hidden bg-white rounded-lg p-2 max-h-[70vh] overflow-y-auto">
+        <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader className="bg-gray-50">
               <TableColumn>Name</TableColumn>
@@ -421,11 +422,11 @@ const Employees = () => {
         </div>
 
         {/* Employee Cards - Small screens */}
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
           {isLoading ? (
             <SkeletonLoader />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               {filteredEmployees.map((employee, index) => (
                 <div
                   key={employee.rclId}
@@ -573,7 +574,7 @@ const Employees = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

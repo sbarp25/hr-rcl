@@ -210,12 +210,12 @@ const Position = () => {
   };
 
   return (
-    <>
+    <div className="max-h-[90vh] overflow-y-auto">
       {isDeleteLoading ? (
         <Loader />
       ) : (
         <>
-          <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
+          <div className="px-2 md:px-8  space-y-4">
             {/* Header Section */}
             <div className="flex flex-col space-y-4">
               <div className="text-sm">
@@ -266,10 +266,10 @@ const Position = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+            <div className="bg-white rounded-lg  p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className="rounded-lg max-h-[80vh] text-left">
+                <div className="rounded-lg  text-left">
                   <Table bordered aria-label="Position Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>
@@ -339,7 +339,7 @@ const Position = () => {
 
               {/* Medium screens - Simplified table */}
               <div className="hidden md:block lg:hidden">
-                <div className="shadow-md rounded-lg max-h-[80vh] text-left">
+                <div className="shadow-md rounded-lg text-left">
                   <Table bordered aria-label="Position Table">
                     <TableHeader>
                       <TableColumn>Position</TableColumn>
@@ -535,7 +535,7 @@ const Position = () => {
           </Modal>
         </>
       )}
-    </>
+    </div>
   );
 };
 

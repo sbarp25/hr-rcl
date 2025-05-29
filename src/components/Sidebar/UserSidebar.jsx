@@ -12,19 +12,27 @@ import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
-import { IoShieldCheckmark } from "react-icons/io5";
+import { IoLogOutOutline, IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
-import { Tooltip } from "@heroui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Tooltip,
+  useDisclosure,
+} from "@heroui/react";
 import Loader from "../Loader/Loader.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
@@ -253,10 +261,12 @@ const UserSidebar = () => {
                     <GoGear className="text-2xl" />
                   </a>
                   <button className="">
-                    <CiLogout
-                      onClick={handleLogOut}
-                      className="text-2xl text-red-500  hover:scale-125"
-                    />
+                    <button className="">
+                      <IoLogOutOutline
+                        onClick={onOpen}
+                        className="text-2xl text-red-500  hover:scale-125"
+                      />
+                    </button>
                   </button>
                 </div>
               )}
@@ -264,6 +274,29 @@ const UserSidebar = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center">
+                <p>Are you sure you want to Log out ?</p>
+                <div className="flex gap-2 justify-end mt-4 ">
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => handleLogOut()}>
+                    Log Out
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

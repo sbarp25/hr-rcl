@@ -259,10 +259,10 @@ const Department = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto space-y-4 p-2">
+            <div className="bg-white rounded-lg  overflow-y-auto space-y-4 p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className=" rounded-lg max-h-[80vh]  text-left">
+                <div className=" rounded-lg   text-left">
                   <Table bordered aria-label="Department Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>

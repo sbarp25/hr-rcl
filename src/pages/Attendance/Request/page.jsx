@@ -284,7 +284,7 @@ const AttendanceRequest = () => {
     }
   };
   return (
-    <>
+    <div className="max-h-[85vh] overflow-y-auto">
       {isLoading ? (
         <Loader />
       ) : (
@@ -331,7 +331,7 @@ const AttendanceRequest = () => {
           <div className="bg-white rounded-lg p-2">
             {/* Large screens - Full table */}
             <div className="hidden lg:block">
-              <div className="shadow-md rounded-lg max-h-[80vh]  overflow-y-auto text-left">
+              <div className="shadow-md rounded-lg  text-left">
                 <Table bordered aria-label="List of Review for Late Checkin">
                   <TableHeader>
                     <TableColumn>S.N</TableColumn>
@@ -451,7 +451,7 @@ const AttendanceRequest = () => {
 
             {/* Medium screens - Simplified table */}
             <div className="hidden md:block lg:hidden">
-              <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+              <div className="shadow-md rounded-lg  overflow-y-auto text-left">
                 <Table bordered aria-label="List of Review for Late Checkin">
                   <TableHeader>
                     <TableColumn>Employee</TableColumn>
@@ -534,7 +534,7 @@ const AttendanceRequest = () => {
 
             {/* Small screens - Card-like view */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[80vh] overflow-y-auto">
+              <div className="space-y-4 overflow-y-auto">
                 {lateCheckinData.map((late) => (
                   <div
                     key={late.lateCheckInId}
@@ -919,7 +919,7 @@ const AttendanceRequest = () => {
           </Modal>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

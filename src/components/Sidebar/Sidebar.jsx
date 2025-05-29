@@ -40,7 +40,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
@@ -281,15 +281,15 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <>
+    <div className="">
       {isLoading && <Loader />}
-      <div className="flex ">
+      <div className="flex h-screen bg-black">
         <div
-          className={`min-h-screen h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
+          className={` h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
             isSidebarExpanded ? "w-64" : "w-20"
           }`}>
           {/* Hamburger menu */}
-          <div className="flex items-center gap-4 p-4">
+          <div className="flex items-center gap-4 p-4 flex-shrink-0">
             <GiHamburgerMenu
               className="text-2xl cursor-pointer"
               onClick={toggleSidebar}
@@ -302,7 +302,7 @@ const Sidebar = () => {
           </div>
 
           {/* Navigation items */}
-          <div className="flex-grow">
+          <div className="flex-grow overflow-y-auto">
             {navbarElements.map((service, index) => {
               if (!service.view) return null;
               return (
@@ -360,7 +360,7 @@ const Sidebar = () => {
           </div>
 
           {/* Profile section */}
-          <div className="p-4">
+          <div className="p-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <Link to="/settings">
                 {imageURL ? (
@@ -376,7 +376,7 @@ const Sidebar = () => {
               </Link>
 
               {isSidebarExpanded && (
-                <Link to="/settings">
+                <Link to="/settings" className="flex-grow min-w-0">
                   <div>
                     <p className="text-xl">
                       <Tooltip content={username}>
@@ -431,7 +431,7 @@ const Sidebar = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 
