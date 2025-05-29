@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
+
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import DatepickerComponent, {
   formatDate,
@@ -13,14 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { getIpAddress } from "../../../utils/getIpAddress";
 import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
+import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, watch, reset } = useForm();
-  const breadcrumbItems = [
-    { label: "Leave", href: "" },
-    { label: "Leave Request", href: "/Leave/Request" },
-  ];
 
   const fromDate = watch("fromDate");
   const navigate = useNavigate();
@@ -77,11 +74,7 @@ const RequestWorkFromHome = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 79)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.WORKFROMHOME);
 
   useEffect(() => {
     if (!hasaccess) {

@@ -30,6 +30,13 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { MdNavigateBefore } from "react-icons/md";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,22 +105,12 @@ const SelfLeaveStatus = () => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const hasLeaveUpdateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 57)
-  );
-  const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 58)
-  );
-  const hasLeaveCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 55)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveUpdateAccess = hasUpdateAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVESTATUS);
 
   useEffect(() => {
     if (!hasaccess) {

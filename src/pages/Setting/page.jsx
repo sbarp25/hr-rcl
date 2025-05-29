@@ -44,7 +44,6 @@ const Settings = () => {
   const navigate = useNavigate();
 
   const name = localStorage.getItem("fullName");
-  const menu = LocalStorageUtil.getItem("menu");
   const auth = localStorage.getItem("accessToken");
 
   const fetchProfilephoto = async () => {
@@ -201,17 +200,9 @@ const Settings = () => {
   }, [rclId]);
 
   const seeProfile = true;
-  // const seeProfile = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 64)
-  // );
+
   const editProfile = true;
-  // const editProfile = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 63)
-  // );
   const deleteProfile = true;
-  // const deleteProfile = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
 
   useEffect(() => {
     if (!seeProfile) {

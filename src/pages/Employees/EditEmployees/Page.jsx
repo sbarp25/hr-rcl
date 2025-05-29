@@ -15,6 +15,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { Switch } from "@heroui/react";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 const EditEmployees = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -186,12 +187,9 @@ const EditEmployees = () => {
   const onCancel = () => {
     navigate("/Employees");
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 11)
-  );
+  const hasaccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {

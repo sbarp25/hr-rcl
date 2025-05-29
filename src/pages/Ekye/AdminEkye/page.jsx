@@ -19,6 +19,12 @@ import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
@@ -98,7 +104,6 @@ const Page = () => {
     fetchEkye();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
   const handleApplySearch = (result) => {
     if (result.data) {
       // Search component returned filtered data
@@ -110,26 +115,14 @@ const Page = () => {
     }
   };
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
-  const hasViewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
-  const hasActionAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
+  const hasViewAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
 
-  const hasUpdateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
-  const hasCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 31)
-  );
-  const hasDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 34)
-  );
+  const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasCreateAccess = hasCreateAccess(MENU_NAMES.EKYE);
+  const hasDeleteAccess = hasDeleteAccess(MENU_NAMES.EKYE);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

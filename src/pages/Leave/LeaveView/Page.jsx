@@ -6,18 +6,15 @@ import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
+import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils";
 const LeaveView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
 
   const fetchLeaveById = async () => {
     setIsLoading(true);

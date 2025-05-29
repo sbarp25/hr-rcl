@@ -10,6 +10,10 @@ import GoBack from "../../../../components/GoBack";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const AddRoles = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,11 +32,8 @@ const AddRoles = () => {
       )
       .flat();
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 51)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
 
   useEffect(() => {
     if (!hasaccess) {

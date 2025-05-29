@@ -10,6 +10,10 @@ import GoBack from "../../../../components/GoBack";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -127,12 +131,8 @@ const AddDepartment = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 43)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
 
   useEffect(() => {
     if (!hasaccess) {

@@ -91,14 +91,6 @@ const Page = () => {
   ];
   const navigate = useNavigate();
 
-  const menu = LocalStorageUtil.getItem("menu");
-
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
-  const ApproveEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
   const hasaccess = true;
 
   useEffect(() => {

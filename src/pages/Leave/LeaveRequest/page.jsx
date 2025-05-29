@@ -14,6 +14,13 @@ import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import GoBack from "../../../components/GoBack";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -127,22 +134,13 @@ const LeaveRequest = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveRequestaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const hasLeaveRequestaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 59)
-  );
-  const hasLeaveEditaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 61)
-  );
-  const hasLeavedeleteaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 62)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+
+  const hasLeaveRequestaccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveEditaccess = hasUpdateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeavedeleteaccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

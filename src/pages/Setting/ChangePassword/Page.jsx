@@ -62,18 +62,11 @@ const ChangePassword = () => {
       toast.error("You currently dont have access to this setting ");
     }
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
   const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 72)
-  // );
 
   const changePasswordAccess = true;
-  // const changePasswordAccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 71)
-  // );
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

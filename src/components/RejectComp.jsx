@@ -18,6 +18,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
 import Loader from "./Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../utils/permissionUtils.js";
 
 const RejectComp = ({ employeeData }) => {
   const {
@@ -30,10 +35,8 @@ const RejectComp = ({ employeeData }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
 
-  const menu = LocalStorageUtil.getItem("menu");
-  const hasApproveAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 18)
-  );
+  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+
   const onReject = async (data) => {
     if (hasApproveAccess) {
       const rejectData = {

@@ -29,6 +29,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
+import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -228,11 +229,7 @@ const WorkFromHomeStatus = () => {
     fetchWorkFromHome();
   }, [currentPage, WFHDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-  const hasWorkFromHomeReviewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 81)
-  );
-  const hasLeaveViecwAccess = false;
+  const hasWorkFromHomeReviewAccess = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
 
   const handleApplySearch = (result) => {
     if (result.data) {

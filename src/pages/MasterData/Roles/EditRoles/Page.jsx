@@ -11,6 +11,10 @@ import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import { Checkbox } from "@heroui/react";
+import {
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const EditRole = () => {
   const { roleId } = useParams();
@@ -29,12 +33,7 @@ const EditRole = () => {
   // Watch form values to keep them in sync
   const watchedValues = watch();
 
-  // Check access permissions
-  const menu = LocalStorageUtil.getItem("menu");
-
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 53)
-  );
+  const hasaccess = hasUpdateAccess(MENU_NAMES.ROLES);
 
   // Redirect if no access
   useEffect(() => {

@@ -136,11 +136,7 @@ const Ekye = () => {
     "Document Details",
     "Educational Details",
   ];
-  const menu = LocalStorageUtil.getItem("menu");
 
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

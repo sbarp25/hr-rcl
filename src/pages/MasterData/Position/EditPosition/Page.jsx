@@ -10,6 +10,10 @@ import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
+import {
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const EditPosition = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -123,12 +127,9 @@ const EditPosition = () => {
       toast.error("Currently You dont have access to this setting.");
     }
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 49)
-  );
+  const hasaccess = hasUpdateAccess(MENU_NAMES.POSITION);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

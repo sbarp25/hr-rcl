@@ -10,6 +10,10 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const AddPosition = () => {
   const navigate = useNavigate();
@@ -58,11 +62,8 @@ const AddPosition = () => {
       toast.error("Currently You dont have access to this setting.");
     }
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 47)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.POSITION);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

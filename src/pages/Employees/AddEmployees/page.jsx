@@ -20,6 +20,7 @@ import GoBack from "../../../components/GoBack";
 import DatepickerComponent from "../../../components/ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 import Loader from "../../../components/Loader/Loader.jsx";
+import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -46,20 +47,10 @@ const AddEmployeeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const menu = LocalStorageUtil.getItem("menu");
   const breadcrumbItems = [
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
-  const hasemployeecreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 1)
-  );
-
-  // useEffect(() => {
-  //   if (!hasemployeecreateaccess) {
-  //     navigate("/Employees");
-  //   }
-  // }, []);
 
   //FetchDepartment
   useEffect(() => {
@@ -195,10 +186,7 @@ const AddEmployeeForm = () => {
     }
   };
 
-  // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 9)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {

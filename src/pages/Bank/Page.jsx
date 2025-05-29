@@ -70,19 +70,11 @@ const Bank = () => {
     } else toast.error("You currently dont have access to this setting");
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  // const seeAddBank = true;
 
   const seeAddBank = true;
-  // const seeAddBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 76)
-  // );
+
   const AddBank = true;
-  // const AddBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 75)
-  // );
 
   useEffect(() => {
     if (!seeAddBank) {

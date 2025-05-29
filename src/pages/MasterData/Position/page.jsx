@@ -31,6 +31,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Position = () => {
   const [positionId, setPositionId] = useState(null);
@@ -92,25 +99,15 @@ const Position = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasPositioncreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 47)
-  );
+  const hasPositioncreateaccess = hasCreateAccess(MENU_NAMES.POSITION);
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 48)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.POSITION);
   /**To check edit status */
-  const hasPositionEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 49)
-  );
+  const hasPositionEditAccess = hasUpdateAccess(MENU_NAMES.POSITION);
   /**To check Delete Access */
-  const hasPositionDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 50)
-  );
+  const hasPositionDeleteAccess = hasDeleteAccess(MENU_NAMES.POSITION);
 
   useEffect(() => {
     if (!hasaccess) {

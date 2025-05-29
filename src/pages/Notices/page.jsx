@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils.js";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -183,20 +190,11 @@ const Page = () => {
 
   const breadcrumbItems = [{ label: "Notice", href: "/notice" }];
 
-  const menu = LocalStorageUtil.getItem("menu");
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 24)
-  );
-  const hasHandBookCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 19)
-  );
-  const hasHandBookEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 21)
-  );
-  const hasHandBookDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 22)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.NOTICE);
+  const hasHandBookCreateAccess = hasCreateAccess(MENU_NAMES.NOTICE);
+  const hasHandBookEditAccess = hasUpdateAccess(MENU_NAMES.NOTICE);
+  const hasHandBookDeleteAccess = hasDeleteAccess(MENU_NAMES.NOTICE);
 
   useEffect(() => {
     if (!hasaccess) {

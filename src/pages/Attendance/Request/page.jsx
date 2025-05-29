@@ -29,6 +29,11 @@ import Filter from "../../../components/Filter";
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lateCheckinData, setLateCheckinData] = useState([]);
@@ -83,18 +88,12 @@ const AttendanceRequest = () => {
     setLateCheckinData([]);
     setCurrentPage(page);
   };
-  const menu = LocalStorageUtil.getItem("menu");
   // const hasAttendanceEditAccess = true;
   // const hasaccess = true;
   /**To Update Late Check   */
-  const hasAttendanceEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 41)
-  );
+  const hasAttendanceEditAccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
   /**To read the Data */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-
+  const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },

@@ -24,7 +24,13 @@ import {
   DropdownItem,
 } from "@heroui/react";
 import { FaChevronDown, FaEllipsisV } from "react-icons/fa";
-
+import {
+  hasCreateAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  hasDeleteAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
@@ -93,25 +99,16 @@ const Employees = () => {
     fetchEmployees();
   }, [currentPage, employeeDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasemployeecreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 9)
-  );
+  const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
+
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
-  const hasEmployeeEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 11)
-  );
+  const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
-  const hasEmployeeDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 12)
-  );
+  const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {

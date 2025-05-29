@@ -32,6 +32,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const Department = () => {
   const [departmentsData, setDepartmentsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -154,26 +161,16 @@ const Department = () => {
     { label: "Department", href: "/master-data/Department" },
   ];
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasDepartmentCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 43)
-  );
+  const hasDepartmentCreateAccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
 
   /**To read the Data */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 44)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.DEPARTMENT);
   // const hasaccess = true;
   /**To check edit status */
-  const hasDepartmentEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 45)
-  );
+  const hasDepartmentEditAccess = hasUpdateAccess(MENU_NAMES.DEPARTMENT);
   /**To check Delete Access */
-  const hasDepartmentDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 46)
-  );
+  const hasDepartmentDeleteAccess = hasDeleteAccess(MENU_NAMES.DEPARTMENT);
 
   useEffect(() => {
     if (!hasaccess) {

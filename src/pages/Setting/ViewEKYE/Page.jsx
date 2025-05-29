@@ -119,13 +119,8 @@ const ViewEKYE = () => {
     }
   }, [rclId]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
   const seeEKYEAccess = true;
-  // const seeEKYEAccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 68)
-  // );
 
   useEffect(() => {
     if (!seeEKYEAccess) {

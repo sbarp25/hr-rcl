@@ -11,6 +11,7 @@ import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../Loader/Loader.jsx";
+import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -27,11 +28,8 @@ const EducationAction = ({ employeeData }) => {
       setEducationDocument(docStatus);
     }
   }, [employeeData]);
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasApproveAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 17)
-  );
+  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
   const onApprove = async () => {
     const submitData = {
       userId: rclId,

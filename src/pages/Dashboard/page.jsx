@@ -52,8 +52,6 @@ const Page = () => {
   }, [checkedInStatus]);
   const email = localStorage.getItem("email");
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">

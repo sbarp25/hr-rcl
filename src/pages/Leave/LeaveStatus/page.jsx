@@ -28,6 +28,13 @@ import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import truncateText from "../../../utils/truncateText";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,22 +103,12 @@ const LeaveStatus = () => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const hasLeaveUpdateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 57)
-  );
-  const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 58)
-  );
-  const hasLeaveCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 55)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveUpdateAccess = hasUpdateAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVESTATUS);
 
   useEffect(() => {
     if (!hasaccess) {

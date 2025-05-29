@@ -46,9 +46,7 @@ const Sidebar = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
-
   const menu = LocalStorageUtil.getItem("menu");
-
   const seeEmployee = menu?.some((menu) =>
     menu?.actions?.some((action) => action.actionId === 10)
   );

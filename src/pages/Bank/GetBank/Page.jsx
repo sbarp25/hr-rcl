@@ -48,17 +48,11 @@ const GetBankDetails = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
   const seeBankDetailsAccess = true;
-  // const seeBankDetailsAccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 76)
-  // );
+
   const AddBankDetailsAccess = true;
-  // const AddBankDetailsAccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 75)
-  // );
+
   useEffect(() => {
     if (!seeBankDetailsAccess) {
       navigate("/dashboard");

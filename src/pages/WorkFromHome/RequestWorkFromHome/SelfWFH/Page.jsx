@@ -22,6 +22,10 @@ import truncateText from "../../../../utils/truncateText";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../../components/Loader/Loader.jsx";
+import {
+  hasReadAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 const SelfWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [workFromHome, setWorkFromHome] = useState([]);
@@ -103,11 +107,7 @@ const SelfWorkFromHome = () => {
     fetchWorkFromHome();
   }, [currentPage, WFHDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 80)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.WORKFROMHOME);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

@@ -11,6 +11,10 @@ import { toast } from "sonner";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
+import {
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -163,11 +167,8 @@ const EditDepartment = () => {
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 45)
-  );
+  const hasaccess = hasUpdateAccess(MENU_NAMES.DEPARTMENT);
 
   // const hasaccess = true;
   useEffect(() => {

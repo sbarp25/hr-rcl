@@ -29,6 +29,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
@@ -94,25 +101,15 @@ const Roles = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasRoleAddAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 51)
-  );
+  const hasRoleAddAccess = hasCreateAccess(MENU_NAMES.ROLES);
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.ROLES);
   /**To check edit status */
-  const hasRoleEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 53)
-  );
+  const hasRoleEditAccess = hasUpdateAccess(MENU_NAMES.ROLES);
   /**To check Delete Access */
-  const hasRoleDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 54)
-  );
+  const hasRoleDeleteAccess = hasDeleteAccess(MENU_NAMES.ROLES);
 
   useEffect(() => {
     if (!hasaccess) {
