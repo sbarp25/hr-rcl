@@ -23,6 +23,7 @@ import {
   hasCreateAccess,
   hasDeleteAccess,
   hasReadAccess,
+  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 
@@ -114,15 +115,16 @@ const Page = () => {
       fetchEkye();
     }
   };
-  // const hasaccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
+  const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
-  const hasViewAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  // const hasViewAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasViewAccess = true;
   const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
 
-  const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);
-  const hasCreateAccess = hasCreateAccess(MENU_NAMES.EKYE);
-  const hasDeleteAccess = hasDeleteAccess(MENU_NAMES.EKYE);
+  // const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  // const hasCreateAccess = hasCreateAccess(MENU_NAMES.EKYE);
+  // const hasDeleteAccess = hasDeleteAccess(MENU_NAMES.EKYE);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

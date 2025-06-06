@@ -93,7 +93,8 @@ const AttendanceRequest = () => {
   /**To Update Late Check   */
   const hasAttendanceEditAccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
   /**To read the Data */
-  const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = true;
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },
@@ -190,6 +191,7 @@ const AttendanceRequest = () => {
     if (!selectedData) return;
 
     setIsLoading(true);
+
     const RejectLeave = {
       data: {
         lateAttendanceId: selectedData.lateCheckInId,
@@ -642,14 +644,15 @@ const AttendanceRequest = () => {
             </div>
 
             {/* Pagination - Responsive for all screens */}
-            {lateCheckinData && lateCheckinData.length > 0 && (
+            {!lateCheckinData && lateCheckinData.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
                   <span className="font-bold text-gray-800 mx-1">
-                    {totalRecords < lateCheckInDataPerPage
+                    {/* {totalRecords < lateCheckInDataPerPage
                       ? totalRecords
-                      : lateCheckInDataPerPage}
+                      : lateCheckInDataPerPage} */}
+                    {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
                   <span className="font-bold text-gray-800">

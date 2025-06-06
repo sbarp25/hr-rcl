@@ -166,14 +166,11 @@ const Settings = () => {
     }
   };
 
+  // const
   const fetchEmployeeData = async () => {
-    if (!rclId) return;
-
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get(
-        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
-      );
+      const response = await axiosInstance.get(`/api/v1/auth/get-logged-user`);
       if (response.data.responseCode === "200") {
         const data = response?.data?.data;
         setEmployeeData(data);
@@ -217,37 +214,37 @@ const Settings = () => {
   }, [auth, navigate]);
 
   return (
-    <>
+    <div className="">
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="max-h-[97vh] overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 ">
+        <div className="max-h-screen overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 pb-4">
           {/* Breadcrumbs */}
           <div className="mb-6">
             <BreadcrumbsComponent items={breadcrumbItems} />
           </div>
 
           {/* Profile Settings Card */}
-          <div className="bg-white dark:bg-neutral-900 shadow-xl rounded-3xl p-8 border border-gray-200">
+          <div className="bg-white shadow-xl rounded-3xl p-8 border border-gray-200">
             {" "}
             <h2 className="text-2xl font-bold text-center mb-8">
               Profile Settings
             </h2>
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10">
+            <div className="flex flex-col  items-center justify-center gap-8 mb-10">
               {/* Profile Image Upload */}
               <div
-                className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
+                className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300  hover:shadow-md transition cursor-pointer"
                 onClick={onOpen}>
-                {imageURL ? (
-                  <Avatar
-                    className="h-full w-full object-cover"
-                    src={imageURL}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-9xl ">
-                    {getInitials(name)}
-                  </div>
-                )}
+                <Avatar
+                  className="h-full w-full object-cover"
+                  showFallback
+                  fallback={
+                    <div className="flex items-center justify-center h-full w-full text-black text-9xl ">
+                      {getInitials(name)}
+                    </div>
+                  }
+                  src={imageURL}
+                />
               </div>
 
               {/* Upload Button */}
@@ -260,7 +257,7 @@ const Settings = () => {
               </div>
             </div>
             {/* Personal Information Card */}
-            <div className="bg-gray-50 dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
+            <div className=" dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold">
                   <span className="relative">
@@ -279,17 +276,15 @@ const Settings = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <EkyeDetailsComponent
                     label="Full Name"
-                    placeholder={
-                      employeeData?.personalDetails?.fullName || "N/A"
-                    }
+                    placeholder={employeeData?.fullName || "N/A"}
                   />
                   <EkyeDetailsComponent
                     label="RCL ID"
-                    placeholder={rclId || "N/A"}
+                    placeholder={employeeData?.rclId || "N/A"}
                   />
                   <EkyeDetailsComponent
                     label="Email"
-                    placeholder={employeeData?.personalDetails?.email || "N/A"}
+                    placeholder={employeeData?.email || "N/A"}
                   />
                 </div>
 
@@ -298,43 +293,20 @@ const Settings = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <EkyeDetailsComponent
                     label="Phone"
-                    placeholder={employeeData?.personalDetails?.phone || "N/A"}
+                    placeholder={employeeData?.phone || "N/A"}
                   />
 
                   <EkyeDetailsComponent
-                    label="Date of Birth"
-                    placeholder={
-                      employeeData?.personalDetails?.dateOfBirthAd || "N/A"
-                    }
+                    label="Department"
+                    placeholder={employeeData?.departmentName || "N/A"}
                   />
                   <EkyeDetailsComponent
-                    label="Department"
-                    placeholder={
-                      employeeData?.personalDetails?.departmentName || "N/A"
-                    }
+                    label="Position"
+                    placeholder={employeeData?.postionName || "N/A"}
                   />
                 </div>
 
                 <Divider />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <EkyeDetailsComponent
-                    label="Position"
-                    placeholder={
-                      employeeData?.personalDetails?.postionName || "N/A"
-                    }
-                  />
-                </div>
-                <EkyeDetailsComponent
-                  label="Marital Status"
-                  placeholder={
-                    employeeData?.personalDetails?.married === true
-                      ? "Married"
-                      : employeeData?.personalDetails?.married === false
-                      ? "Unmarried"
-                      : "N/A"
-                  }
-                />
               </form>
             </div>
           </div>
@@ -356,7 +328,7 @@ const Settings = () => {
                   className="flex flex-col items-center justify-center gap-8 mb-10">
                   {/* Profile Image Upload */}
                   <div
-                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
+                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer mt-10"
                     onClick={handleIconClick}>
                     {imageURL ? (
                       <Avatar
@@ -410,7 +382,7 @@ const Settings = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

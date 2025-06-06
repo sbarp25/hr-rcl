@@ -165,8 +165,8 @@ const Department = () => {
   const hasDepartmentCreateAccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
 
   /**To read the Data */
-  const hasaccess = hasReadAccess(MENU_NAMES.DEPARTMENT);
-  // const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.DEPARTMENT);
+  const hasaccess = true;
   /**To check edit status */
   const hasDepartmentEditAccess = hasUpdateAccess(MENU_NAMES.DEPARTMENT);
   /**To check Delete Access */

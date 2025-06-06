@@ -5,7 +5,7 @@ import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from "sonner";
 import { LuMapPinCheckInside } from "react-icons/lu";
@@ -36,6 +36,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../utils/permissionUtils.js";
+import truncateText from "../../utils/truncateText.js";
 
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
@@ -253,7 +254,7 @@ const MobileNavigation = () => {
   };
   return (
     <>
-      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
+      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full  shadow-lg">
         <div className="flex justify-center items-center">
           <button
             onClick={onOpen}
@@ -262,17 +263,20 @@ const MobileNavigation = () => {
           </button>
         </div>
         <Tooltip content={email}>
-          <div
-            className="h-10 w-10 overflow-hidden rounded-full"
-            onClick={handleProfileChange}>
-            {imageURL ? (
-              <Avatar className="h-full w-full object-cover" src={imageURL} />
-            ) : (
-              <div className="flex rounded-full items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-lg font-medium">
-                {getInitials(username)}
-              </div>
-            )}
-          </div>
+          <Link to="/settings">
+            <div className="h-12 w-12">
+              <Avatar
+                className="h-full w-full object-cover"
+                showFallback
+                fallback={
+                  <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                    {getInitials(username)}
+                  </div>
+                }
+                src={imageURL}
+              />
+            </div>
+          </Link>
         </Tooltip>
       </div>
 
@@ -289,11 +293,22 @@ const MobileNavigation = () => {
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">
-                <Avatar size="md" src={imageURL} />
+                <div className="h-12 w-12">
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
+                    src={imageURL}
+                  />
+                </div>
 
                 <div>
                   <p className="text-sm">
-                    <Tooltip content={email}>{email}</Tooltip>
+                    <Tooltip content={email}>{truncateText(email, 20)}</Tooltip>
                   </p>
                 </div>
               </div>

@@ -117,6 +117,7 @@ const Sidebar = () => {
       view: seeAttendance,
       children: [
         // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        // { label: "Auto CheckOut", to: "/Attendance", view: seeMyAttendance },
         {
           icon: LuMapPinCheckInside,
           label: "Late Checkin ",
@@ -208,6 +209,18 @@ const Sidebar = () => {
       label: "Ekye",
       to: "/AdminEkye",
       view: seeEKYE,
+    },
+    {
+      icon: IoIosPeople,
+      label: "Auto-Checkout",
+      to: "/autoCheckOut",
+      view: true,
+    },
+    {
+      icon: IoIosPeople,
+      label: "Auto-Checkout",
+      to: "/selfAutoCheckOut",
+      view: true,
     },
   ];
 
@@ -361,16 +374,18 @@ const Sidebar = () => {
           <div className="p-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <Link to="/settings">
-                {imageURL ? (
+                <div className="h-12 w-12">
                   <Avatar
                     className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
                     src={imageURL}
                   />
-                ) : (
-                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                    {getInitials(username)}
-                  </div>
-                )}
+                </div>
               </Link>
 
               {isSidebarExpanded && (

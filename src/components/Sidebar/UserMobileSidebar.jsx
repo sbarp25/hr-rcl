@@ -147,7 +147,7 @@ const UserMobileSidebar = () => {
 
   return (
     <>
-      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
+      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full  shadow-lg">
         <div className="flex justify-center items-center">
           <button
             onClick={onOpen}
@@ -156,16 +156,17 @@ const UserMobileSidebar = () => {
           </button>
         </div>
         <Tooltip content={email}>
-          <div
-            className="h-10 w-10 overflow-hidden rounded-full"
-            onClick={handleProfileChange}>
-            {imageURL ? (
-              <Avatar className="h-full w-full object-cover" src={imageURL} />
-            ) : (
-              <div className="flex rounded-full items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-lg font-medium">
-                {getInitials(username)}
-              </div>
-            )}
+          <div className="h-12 w-12">
+            <Avatar
+              className="h-full w-full object-cover"
+              showFallback
+              fallback={
+                <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                  {getInitials(username)}
+                </div>
+              }
+              src={imageURL}
+            />
           </div>
         </Tooltip>
       </div>
@@ -183,11 +184,22 @@ const UserMobileSidebar = () => {
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">
-                <Avatar size="md" src={imageURL} />
+                <div className="h-12 w-12">
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
+                    src={imageURL}
+                  />
+                </div>
 
                 <div>
                   <p className="text-sm">
-                    <Tooltip content={email}>{email}</Tooltip>
+                    <Tooltip content={email}>{truncateText(email, 20)}</Tooltip>
                   </p>
                 </div>
               </div>

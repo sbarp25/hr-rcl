@@ -135,6 +135,7 @@ const EditPosition = () => {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
+
   return (
     <>
       {isLoading ? (

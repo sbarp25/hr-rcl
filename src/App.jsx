@@ -52,6 +52,10 @@ import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
 import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
 import SelfWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/SelfWFH/Page.jsx";
 import MobileNavigation from "./components/Sidebar/MobileNavigation.jsx";
+import AutoCheckout from "./pages/Attendance/AutoCheckout/TeamLeadView/page.jsx";
+import SelfAutoCheckout from "./pages/Attendance/AutoCheckout/SelfView/page.jsx";
+import ViewEmployeeDetails from "./pages/Employees/ViewEmployees/page.jsx";
+
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
@@ -142,6 +146,8 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/dashboard" element={<Dashboard />} /> */}
               <Route path="/Attendance" element={<Attendance />} />
+              <Route path="/autoCheckOut" element={<AutoCheckout />} />
+              <Route path="/selfAutoCheckOut" element={<SelfAutoCheckout />} />
               <Route
                 path="/Attendance/Request"
                 element={<AttendanceRequest />}
@@ -149,6 +155,10 @@ function App() {
               <Route path="/Employees" element={<Employees />} />
               <Route path="/AddEmployees" element={<AddEmployees />} />
               <Route path="/Employees/Edit/:id" element={<EditEmployees />} />
+              <Route
+                path="/Employees/view/:rclId"
+                element={<ViewEmployeeDetails />}
+              />
               <Route path="/master-data/Department" element={<Department />} />
               <Route
                 path="/master-data/Department/Add"

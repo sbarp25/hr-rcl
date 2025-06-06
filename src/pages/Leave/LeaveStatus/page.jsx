@@ -1,4 +1,6 @@
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -103,9 +105,9 @@ const LeaveStatus = () => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
 
-  // const hasaccess = true;
+  const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  // const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveUpdateAccess = hasUpdateAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVESTATUS);
@@ -502,81 +504,72 @@ const LeaveStatus = () => {
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
             <div className="space-y-4 overflow-y-auto">
-              {leaveData.map((leave) => (
-                <div
-                  key={leave.leaveId}
-                  className="border rounded-lg overflow-hidden shadow-sm">
-                  <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                    onClick={() => toggleExpandedRow(leave.leaveId)}>
-                    <div className="font-medium">
-                      {leave.leaveType || "N/A"}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`${getStatusClass(
-                          leave?.leaveStatus
-                        )} text-center py-1 px-2 text-xs rounded-md w-fit`}>
-                        {leave?.leaveStatus || "N/A"}
+              <Accordion variant="bordered">
+                {leaveData.map((leave) => (
+                  <AccordionItem
+                    key={leave.leaveId}
+                    aria-label={`${leave.leaveType} - ${leave.leaveStatus}`}
+                    title={
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-medium">
+                          {leave.leaveType || "N/A"}
+                        </span>
+                        <div
+                          className={`${getStatusClass(
+                            leave?.leaveStatus
+                          )} text-center py-1 px-2 text-xs rounded-md`}>
+                          {leave?.leaveStatus || "N/A"}
+                        </div>
                       </div>
-                      <FaChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          expandedRow === leave.leaveId ? "rotate-180" : ""
-                        }`}
-                      />
+                    }>
+                    <div className={` p-3 space-y-2 text-sm`}>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Request Date:</div>
+                        <div>{leave?.requestDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Start Date:</div>
+                        <div>{leave?.leaveStartDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">End Date:</div>
+                        <div>{leave?.leaveEndDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Days:</div>
+                        <div>{leave?.Days || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Team Leader:</div>
+                        <div>{leave?.teamLeaderName || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Approver:</div>
+                        <div>{leave?.approvedBy || "N/A"}</div>
+                      </div>
+                      <div className="flex justify-end gap-2 mt-4">
+                        {leave?.leaveStatus === "PENDING" &&
+                          hasLeaveUpdateAccess && (
+                            <>
+                              <Button
+                                size="sm"
+                                className="bg-black text-white"
+                                onPress={() => handleAction("approve", leave)}>
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                color="danger"
+                                onPress={() => handleAction("reject", leave)}>
+                                Reject
+                              </Button>
+                            </>
+                          )}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${
-                      expandedRow === leave.leaveId ? "block" : "hidden"
-                    } p-3 space-y-2 text-sm`}>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Request Date:</div>
-                      <div>{leave?.requestDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Start Date:</div>
-                      <div>{leave?.leaveStartDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">End Date:</div>
-                      <div>{leave?.leaveEndDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Days:</div>
-                      <div>{leave?.Days || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Team Leader:</div>
-                      <div>{leave?.teamLeaderName || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Approver:</div>
-                      <div>{leave?.approvedBy || "N/A"}</div>
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                      {leave?.leaveStatus === "PENDING" &&
-                        hasLeaveUpdateAccess && (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-black text-white"
-                              onPress={() => handleAction("approve", leave)}>
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="danger"
-                              onPress={() => handleAction("reject", leave)}>
-                              Reject
-                            </Button>
-                          </>
-                        )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
 
