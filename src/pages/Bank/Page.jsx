@@ -23,23 +23,17 @@ const Bank = () => {
   const fetchBankDetails = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
-        `/api/v1/banking/bank_details_by_id`
-      );
+      const response = await axiosInstance.get(`/api/v1/banking/getById`);
       if (response.data.responseCode === "200") {
-        // Set the data object directly instead of expecting a datalist
         const bankData = response.data.data;
         reset({
           accountNumber: bankData?.accountNumber || "",
           accountName: bankData?.accountName || "",
         });
-      } else {
-        toast.error(response.data.message);
       }
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +62,7 @@ const Bank = () => {
         }
 
         const response = await axiosInstance.post(
-          "/api/v1/banking/bank_details_create",
+          "/api/v1/banking/save",
           BankDetails,
           {
             headers: {

@@ -38,12 +38,9 @@ const Page = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [eKyeData, setEkyeData] = useState([]);
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(30);
-  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
-  const endIndex = startIndex + ekyeDashboardDataPerPage;
-  const paginatedEkye = eKyeData.length
-    ? eKyeData.slice(startIndex, endIndex)
-    : [];
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+
+  const paginatedEkye = eKyeData;
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -76,7 +73,7 @@ const Page = () => {
   const fetchEkye = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosInstance.post(
         "/api/v1/admin/completed_ekye_users",
         {
           // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
@@ -163,7 +160,7 @@ const Page = () => {
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
-            className="max-h-[75vh]">
+            className="">
             <TableHeader className="">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
@@ -181,7 +178,7 @@ const Page = () => {
                 <TableRow
                   key={data.rclId}
                   className="h-16 justify-center items-center border-b-2 border-gray-300">
-                  <TableCell>{startIndex + index + 1}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>
                   <TableCell>{data.email}</TableCell>

@@ -23,7 +23,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
-import { FaChevronDown, FaEllipsisV } from "react-icons/fa";
+import { FaChevronDown, FaEllipsisV, FaEye } from "react-icons/fa";
 import {
   hasCreateAccess,
   hasReadAccess,
@@ -103,8 +103,8 @@ const Employees = () => {
   const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
 
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
   const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
@@ -167,6 +167,13 @@ const Employees = () => {
         if (hasEmployeeDeleteAccess) {
           setDeletingId(employeeId);
           onOpen();
+        } else {
+          toast.error("Currently You dont have access to this setting.");
+        }
+        break;
+      case "view":
+        if (hasaccess) {
+          navigate(`/Employees/view/${employeeId}`);
         } else {
           toast.error("Currently You dont have access to this setting.");
         }
@@ -314,6 +321,15 @@ const Employees = () => {
                   <TableCell>{employee.postionName}</TableCell>
                   <TableCell>
                     <div className="flex justify-center gap-4">
+                      <FaEye
+                        className={`${
+                          hasaccess
+                            ? "text-green-500 hover:text-green-700 cursor-pointer "
+                            : "text-gray-300"
+                        }`}
+                        title="View"
+                        onClick={() => handleAction("view", employee.rclId)}
+                      />
                       <HiPencilSquare
                         className={`${
                           hasEmployeeEditAccess
@@ -486,6 +502,15 @@ const Employees = () => {
                         onPress={() => handleAction("edit", employee.rclId)}>
                         <HiPencilSquare className="w-4 h-4" />
                         Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        className="flex-1 bg-black text-white"
+                        isDisabled={!hasEmployeeEditAccess}
+                        onPress={() => handleAction("view", employee.rclId)}>
+                        <HiPencilSquare className="w-4 h-4" />
+                        View
                       </Button>
                       <Button
                         size="sm"

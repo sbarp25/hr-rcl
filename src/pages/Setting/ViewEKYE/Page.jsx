@@ -10,7 +10,7 @@ import Personal from "../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../components/Ekye/View/Address";
 import UserEducation from "../../../components/Ekye/View/UserEducation";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-
+import Loader from "../../../components/Loader/Loader";
 const tabData = [
   {
     name: "Personal Information",
@@ -132,8 +132,11 @@ const ViewEKYE = () => {
       {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
       <h1 className="page-title my-3 ml-6">EKYE</h1>
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
-
-      <Content activeTab={activeTab} employeeData={employeeData} />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Content activeTab={activeTab} employeeData={employeeData} />
+      )}
     </div>
   );
 };

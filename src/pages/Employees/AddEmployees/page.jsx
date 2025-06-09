@@ -187,6 +187,7 @@ const AddEmployeeForm = () => {
   };
 
   const hasaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
+  // const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {

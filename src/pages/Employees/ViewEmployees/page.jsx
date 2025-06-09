@@ -9,6 +9,7 @@ import Salary from "./Components/Salary/Salary.jsx";
 import EkyeDetails from "./Components/EKYE/page.jsx";
 import AttendanceDetails from "./Components/Attendance/page.jsx";
 import GoBack from "../../../components/GoBack.jsx";
+import Loader from "../../../components/Loader/Loader.jsx";
 
 const tabData = [
   {
@@ -70,6 +71,7 @@ const Content = ({ activeTab, employeeData }) => {
 const ViewEmployeeDetails = () => {
   const [employeeData, setEmployeeData] = useState(null);
   const [activeTab, setActiveTab] = useState(tabData[0]);
+  const [isLoading, setIsloading] = useState(false);
   const { rclId } = useParams();
 
   const fetchEmployeeData = async () => {
@@ -78,6 +80,7 @@ const ViewEmployeeDetails = () => {
         rclId: rclId,
       },
     };
+    setIsloading(true);
     try {
       const response = await axiosInstance.post(
         `/api/v1/admin/complete-details/rclId`,
@@ -91,13 +94,17 @@ const ViewEmployeeDetails = () => {
       if (response.data.responseCode === "200") {
         setEmployeeData(response.data.data);
       } else {
-        toast.error(response?.data?.Message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage;
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.data?.error?.errorList?.[0]?.errorMessage ||
         "Something went wrong";
       toast.error(errorMessage);
+    } finally {
+      setIsloading(false);
     }
   };
   useEffect(() => {
@@ -122,9 +129,13 @@ const ViewEmployeeDetails = () => {
     <div className="container">
       <BreadcrumbsComponent items={breadcrumbItems} />
       <GoBack />
-      <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
-      <Content activeTab={activeTab} employeeData={employeeData} />
+      <Tabs activeTab={activeTab} changeTab={setActiveTab} />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Content activeTab={activeTab} employeeData={employeeData} />
+      )}
     </div>
   );
 };

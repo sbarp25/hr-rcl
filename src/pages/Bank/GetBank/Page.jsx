@@ -18,18 +18,20 @@ const GetBankDetails = () => {
   const fetchBankDetails = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
-        `/api/v1/banking/bank_details_by_id`
-      );
+      const response = await axiosInstance.get(`/api/v1/banking/getById`);
       if (response.data.responseCode === "200") {
         // Set the data object directly instead of expecting a datalist
         setBankData(response.data.data);
       } else {
-        toast.error(response.data.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went Wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.error || "Something went wrong";
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);

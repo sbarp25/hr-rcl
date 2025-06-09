@@ -33,6 +33,11 @@ import {
 } from "@heroui/react";
 import truncateText from "../../utils/truncateText";
 import Loader from "../Loader/Loader.jsx";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils.js";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -47,62 +52,32 @@ const Sidebar = () => {
 
   const navigate = useNavigate();
   const menu = LocalStorageUtil.getItem("menu");
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
-  /**To check Dashboard see status */
-  // const seeDashboard = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
-  const seeDashboard = true;
-  /**To check Department see status */
-  const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 44)
-  );
-  /**To check Position see status */
-  const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 48)
-  );
-  const seeRole = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
-  const seeMasterData = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
-  );
-  const seeAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 6)
-  );
-  const seeMyAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 36)
-  );
-  const seeLateCheckIn = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-  const seeHandbook = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
-  );
-  const seeNotices = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 24)
-  );
-  const seeLeave = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 28)
-  );
 
-  const seeLeaveStatus = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const seeLeaveRequest = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
-  );
-  const seeWorkFromHome = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 80)
-  );
-  const seeWorkFromHomeAdmin = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 81)
-  );
+  const seeEmployee = hasReadAccess(MENU_NAMES.EMPLOYEES);
+
+  const seeDashboard = true;
+
+  const seeDepartment = hasReadAccess(MENU_NAMES.DEPARTMENT);
+  /**To check Position see status */
+  const seePosition = hasReadAccess(MENU_NAMES.POSITION);
+  const seeRole = hasReadAccess(MENU_NAMES.ROLES);
+  const seeMasterData = hasReadAccess(MENU_NAMES.MASTERDATA);
+  const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
+
+  const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
+  const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
+
+  const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
+  const seeLeave = hasReadAccess(MENU_NAMES.LEAVE);
+
+  const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+  const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
+
+  const seeWorkFromHome = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+
+  const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
@@ -123,6 +98,12 @@ const Sidebar = () => {
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
+        },
+        {
+          icon: IoIosPeople,
+          label: "Auto-Checkout",
+          to: "/autoCheckOut",
+          view: true,
         },
       ],
     },
@@ -210,18 +191,13 @@ const Sidebar = () => {
       to: "/AdminEkye",
       view: seeEKYE,
     },
-    {
-      icon: IoIosPeople,
-      label: "Auto-Checkout",
-      to: "/autoCheckOut",
-      view: true,
-    },
-    {
-      icon: IoIosPeople,
-      label: "Auto-Checkout",
-      to: "/selfAutoCheckOut",
-      view: true,
-    },
+
+    // {
+    //   icon: IoIosPeople,
+    //   label: "Auto-Checkout",
+    //   to: "/selfAutoCheckOut",
+    //   view: true,
+    // },
   ];
 
   const toggleSidebar = () => {
