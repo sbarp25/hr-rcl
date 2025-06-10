@@ -13,7 +13,7 @@ const ViewWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const hasaccess = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+  const hasaccess = hasReadAccess(MENU_NAMES.WFHSTATUS);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

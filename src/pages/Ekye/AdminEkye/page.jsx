@@ -24,6 +24,7 @@ import {
   hasDeleteAccess,
   hasReadAccess,
   hasUpdateAccess,
+  hasViewSingleAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 
@@ -112,11 +113,10 @@ const Page = () => {
       fetchEkye();
     }
   };
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
-  // const hasViewAccess = hasUpdateAccess(MENU_NAMES.EKYE);
-  const hasViewAccess = true;
+  const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
   const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
 
   // const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);

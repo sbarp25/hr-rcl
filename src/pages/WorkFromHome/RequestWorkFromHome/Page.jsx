@@ -74,7 +74,7 @@ const RequestWorkFromHome = () => {
     }
   };
 
-  const hasaccess = hasCreateAccess(MENU_NAMES.WORKFROMHOME);
+  const hasaccess = hasCreateAccess(MENU_NAMES.WFHREQUEST);
 
   useEffect(() => {
     if (!hasaccess) {

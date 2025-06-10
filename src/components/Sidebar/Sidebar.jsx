@@ -62,7 +62,8 @@ const Sidebar = () => {
   const seePosition = hasReadAccess(MENU_NAMES.POSITION);
   const seeRole = hasReadAccess(MENU_NAMES.ROLES);
   const seeMasterData = hasReadAccess(MENU_NAMES.MASTERDATA);
-  const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
+  // const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
+  const seeAttendance = true;
 
   const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
   const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);

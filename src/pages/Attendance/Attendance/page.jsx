@@ -13,8 +13,8 @@ const Attendance = () => {
     { label: "Attendance", href: "/Attendance" },
     { label: "My Attendance", href: "/Attendance" },
   ];
-  const hasaccess = hasReadAccess(MENU_NAMES.MYATTENDANCE);
-  // const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.MYATTENDANCE);
+  const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {

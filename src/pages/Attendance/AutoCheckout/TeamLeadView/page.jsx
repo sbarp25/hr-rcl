@@ -19,6 +19,8 @@ import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
 import { HiPencilSquare } from "react-icons/hi2";
 import { FaChevronDown } from "react-icons/fa6";
 import axiosInstance from "../../../../lib/axios-Instance";
+import { Pagination } from "@heroui/pagination";
+import DropDownComp from "../../../../components/ui/Dropdown";
 
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +31,8 @@ const AutoCheckout = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [originalAutoCheckOutata, setOriginalAutoCheckOutata] = useState(false);
   const navigate = useNavigate();
+  const dropdownItems = [5, 10, 20, 30, 50, 100];
+
   const breadcrumbItems = [
     { label: "Attendance", href: "/Attendance" },
     { label: "Auto-Checkout", href: "/autoCheckOut" },
@@ -67,8 +71,8 @@ const AutoCheckout = () => {
     fetchAutoCheckout();
   }, [currentPage, autoCheckOutDataPerPage]);
 
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -122,6 +126,10 @@ const AutoCheckout = () => {
       fetchEmployees();
     }
   };
+  const handlePageChange = (page) => {
+    setAutoCheckoutData([]);
+    setCurrentPage(page);
+  };
   return (
     <div>
       <div className="flex flex-col space-y-4">
@@ -163,7 +171,7 @@ const AutoCheckout = () => {
         </div>
       </div>
       {/* Auto Checkout Table - Large screens */}
-      <div className="hidden xl:block bg-white rounded-lg p-2  overflow-y-auto">
+      <div className="hidden xl:block bg-white rounded-lg p-2 pb-4  overflow-y-auto">
         <Table bordered aria-label="List of Employees">
           <TableHeader>
             <TableColumn>S.N</TableColumn>
@@ -199,7 +207,7 @@ const AutoCheckout = () => {
         )}
       </div>
       {/* Auto Checkout - Medium screens */}
-      <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2  overflow-y-auto">
+      <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2 pb-4  overflow-y-auto">
         <Table bordered aria-label="List of Employees">
           <TableHeader className="bg-gray-50">
             <TableColumn>Name</TableColumn>
@@ -238,7 +246,7 @@ const AutoCheckout = () => {
       </div>
 
       {/* Auto Checkout - Small screens */}
-      <div className="block lg:hidden">
+      <div className="block lg:hidden pb-4">
         {isLoading ? (
           <SkeletonLoader />
         ) : (
@@ -294,6 +302,35 @@ const AutoCheckout = () => {
           </div>
         )}
       </div>
+      {autoCheckOutData && autoCheckOutData.length > 0 && (
+        <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
+            <span className="mr-1">Showing</span>
+            <span className="font-bold text-gray-800 mx-1">
+              {Math.min(totalRecords, autoCheckOutDataPerPage)}
+            </span>
+            <span className="mr-1">of</span>
+            <span className="font-bold text-gray-800">{totalRecords}</span>
+          </div>
+
+          <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+            <Pagination
+              showControls
+              total={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              size="sm"
+            />
+          </div>
+          <div className="flex justify-center items-center order-3">
+            <span className="text-xs mr-2">Lines Per Page:</span>
+            <DropDownComp
+              items={dropdownItems}
+              onSelect={setAutoCheckOutDataPerPage}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

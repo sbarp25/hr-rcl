@@ -40,11 +40,11 @@ const LeaveView = () => {
     fetchLeaveById();
   }, [id]);
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   if (isLoading) {
     return (

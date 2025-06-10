@@ -33,6 +33,7 @@ import { useNavigate } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { MdNavigateBefore } from "react-icons/md";
 import {
+  hasApproveAccess,
   hasCreateAccess,
   hasDeleteAccess,
   hasReadAccess,
@@ -110,7 +111,7 @@ const SelfLeaveStatus = () => {
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
   const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeaveUpdateAccess = hasUpdateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveUpdateAccess = hasApproveAccess(MENU_NAMES.LEAVEREQUEST);
   const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
   const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
 

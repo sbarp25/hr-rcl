@@ -29,7 +29,11 @@ import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
-import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -230,7 +234,12 @@ const WorkFromHomeStatus = () => {
   }, [currentPage, WFHDataPerPage]);
 
   const hasWorkFromHomeReviewAccess = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
-
+  const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   const handleApplySearch = (result) => {
     if (result.data) {
       // Search component returned filtered data

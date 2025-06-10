@@ -67,8 +67,7 @@ const SelfAutoCheckout = () => {
     fetchAutoCheckout();
   }, [currentPage, autoCheckOutDataPerPage]);
 
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
 
   useEffect(() => {
     if (!hasaccess) {

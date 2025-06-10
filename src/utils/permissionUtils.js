@@ -47,7 +47,7 @@ export const hasCreateAccess = (menuName) =>
   permissionManager.hasPermission(menuName, "CREATE");
 
 export const hasReadAccess = (menuName) =>
-  permissionManager.hasPermission(menuName, "READ");
+  permissionManager.hasPermission(menuName, "VIEW");
 
 export const hasUpdateAccess = (menuName) =>
   permissionManager.hasPermission(menuName, "UPDATE");
@@ -56,13 +56,17 @@ export const hasDeleteAccess = (menuName) =>
   permissionManager.hasPermission(menuName, "DELETE");
 
 export const hasApproveAccess = (menuName) =>
-  permissionManager.hasPermission(menuName, "APPROVE");
+  permissionManager.hasPermission(menuName, "ACTION");
 
 export const hasRejectAccess = (menuName) =>
-  permissionManager.hasPermission(menuName, "REJECT");
+  permissionManager.hasPermission(menuName, "ACTION");
+
+export const hasViewSingleAccess = (menuName) =>
+  permissionManager.hasPermission(menuName, "VIEW_SIDEBAR");
 
 // Menu name constants based on backend data
 export const MENU_NAMES = {
+  DASHBOARD: "DASHBOARD",
   ATTENDANCE: "ATTENDANCE",
   EMPLOYEES: "EMPLOYEES",
   MASTERDATA: "MASTERDATA",
@@ -70,27 +74,31 @@ export const MENU_NAMES = {
   NOTICE: "NOTICE",
   LEAVE: "LEAVE",
   EKYE: "EKYE",
-  MYATTENDANCE: "MYATTENDANCE",
-  LATECHECKIN: "LATECHECKIN",
   DEPARTMENT: "DEPARTMENT",
   POSITION: "POSITION",
   ROLES: "ROLES",
-  LEAVESTATUS: "LEAVESTATUS",
-  LEAVEREQUEST: "LEAVEREQUEST",
   PROFILE: "PROFILE",
   MYKYE: "MYKYE",
   SECURITY: "SECURITY",
+  MYATTENDANCE: "MYATTENDANCE",
+  LATECHECKIN: "LATECHECKIN",
+  LEAVESTATUS: "LEAVESTATUS",
+  LEAVEREQUEST: "LEAVEREQUEST",
   BANKDETAILS: "BANKDETAILS",
-  DASHBOARD: "DASHBOARD",
   WORKFROMHOME: "WORKFROMHOME",
+  WFHSTATUS: "WFHSTATUS",
+  WFHREQUEST: "WFHREQUEST",
+  SELFCHECKOUT: "SELFCHECKOUT",
 };
 
 // Action name constants
 export const ACTION_NAMES = {
   CREATE: "CREATE",
-  READ: "READ",
+  VIEW: "VIEW",
   UPDATE: "UPDATE",
   DELETE: "DELETE",
+  ACTION: "ACTION",
   APPROVE: "APPROVE",
   REJECT: "REJECT",
+  VIEW_SIDEBAR: "VIEW_SIDEBAR",
 };

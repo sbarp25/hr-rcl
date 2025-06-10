@@ -30,6 +30,7 @@ import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import Loader from "../../../components/Loader/Loader.jsx";
 import {
+  hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
   MENU_NAMES,
@@ -91,7 +92,7 @@ const AttendanceRequest = () => {
   // const hasAttendanceEditAccess = true;
   // const hasaccess = true;
   /**To Update Late Check   */
-  const hasAttendanceEditAccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
+  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   /**To read the Data */
   // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
   const hasaccess = true;

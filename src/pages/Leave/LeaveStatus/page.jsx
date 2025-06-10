@@ -31,6 +31,7 @@ import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import truncateText from "../../../utils/truncateText";
 import {
+  hasApproveAccess,
   hasCreateAccess,
   hasDeleteAccess,
   hasReadAccess,
@@ -108,7 +109,7 @@ const LeaveStatus = () => {
   const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
   // const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
-  const hasLeaveUpdateAccess = hasUpdateAccess(MENU_NAMES.LEAVESTATUS);
+  const hasLeaveUpdateAccess = hasApproveAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVESTATUS);
 

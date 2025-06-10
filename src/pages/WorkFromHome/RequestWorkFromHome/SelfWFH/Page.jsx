@@ -107,7 +107,7 @@ const SelfWorkFromHome = () => {
     fetchWorkFromHome();
   }, [currentPage, WFHDataPerPage]);
 
-  const hasaccess = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+  const hasaccess = hasReadAccess(MENU_NAMES.WFHSTATUS);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

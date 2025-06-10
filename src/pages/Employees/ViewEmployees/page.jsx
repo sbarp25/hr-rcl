@@ -1,143 +1,257 @@
 import { useEffect, useState } from "react";
+import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
-import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../../../lib/axios-Instance.js";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
-import LeaveDetails from "./Components/Leave/page.jsx";
-import WFHdetails from "./Components/WFH/page.jsx";
-import Salary from "./Components/Salary/Salary.jsx";
-import EkyeDetails from "./Components/EKYE/page.jsx";
-import AttendanceDetails from "./Components/Attendance/page.jsx";
-import GoBack from "../../../components/GoBack.jsx";
-import Loader from "../../../components/Loader/Loader.jsx";
+import GoBack from "../../../components/GoBack";
+
+import { useNavigate } from "react-router-dom";
+import EkyeDocumentDetail from "../../../components/Ekye/View/Document";
+import Personal from "../../../components/Ekye/View/Personal";
+import EkyeAddress from "../../../components/Ekye/View/Address";
+import UserEducation from "../../../components/Ekye/View/UserEducation";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import Loader from "../../../components/Loader/Loader";
 
 const tabData = [
   {
-    name: "Leave Details",
-    component: LeaveDetails,
+    name: "Personal Information",
+    shortName: "Personal", // Short name for mobile
+    component: Personal,
     panelClass: "panel-success",
   },
   {
-    name: "WFH details",
-    component: WFHdetails,
+    name: "Address Details",
+    shortName: "Address",
+    component: EkyeAddress,
     panelClass: "panel-warning",
   },
   {
-    name: "Salary details",
-    component: Salary,
+    name: "Document Details",
+    shortName: "Documents",
+    component: EkyeDocumentDetail,
     panelClass: "panel-danger",
   },
   {
-    name: "Ekye Details",
-    component: EkyeDetails,
-    panelClass: "panel-info",
-  },
-  {
-    name: "Attendance Details",
-    component: AttendanceDetails,
+    name: "Education Details",
+    shortName: "Education",
+    component: UserEducation,
     panelClass: "panel-info",
   },
 ];
 
-const Tabs = ({ activeTab, changeTab }) => (
-  <ul className="nav nav-tabs flex  ">
-    {tabData?.map((tab) => (
-      <li
-        key={tab.name}
-        onClick={(e) => {
-          e.preventDefault();
-          changeTab(tab);
-        }}
-        className={` cursor-pointer py-2 px-8 text-center w-40 font-semibold rounded-t-2xl border  transition-all duration-300 ${
-          activeTab.name === tab.name
-            ? " bg-gray-50 border border-gray-300 "
-            : "hover:border-gray-300 hover:bg-gray-100"
-        }`}>
-        <span>{tab.name}</span>
-      </li>
-    ))}
-  </ul>
-);
+const Tabs = ({ activeTab, changeTab }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Desktop tabs
+  const DesktopTabs = () => (
+    <ul className="hidden md:flex nav nav-tabs overflow-x-auto">
+      {tabData?.map((tab) => (
+        <li
+          key={tab.name}
+          onClick={(e) => {
+            e.preventDefault();
+            changeTab(tab);
+          }}
+          className={`cursor-pointer py-2 px-4 lg:px-8 text-center min-w-fit lg:w-40 font-semibold rounded-t-2xl border transition-all duration-300 whitespace-nowrap ${
+            activeTab.name === tab.name
+              ? "bg-gray-50 border border-gray-300"
+              : "hover:border-gray-300 hover:bg-gray-100"
+          }`}>
+          <span className="text-sm lg:text-base">{tab.name}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  // Mobile dropdown
+  const MobileDropdown = () => (
+    <div className="md:hidden relative">
+      <button
+        onClick={() => setShowDropdown(!showDropdown)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <span className="font-medium text-gray-900">{activeTab.name}</span>
+        <svg
+          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+            showDropdown ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {showDropdown && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+          {tabData?.map((tab) => (
+            <button
+              key={tab.name}
+              onClick={(e) => {
+                e.preventDefault();
+                changeTab(tab);
+                setShowDropdown(false);
+              }}
+              className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-150 ${
+                activeTab.name === tab.name
+                  ? "bg-blue-50 text-blue-700 font-medium"
+                  : "text-gray-900"
+              } ${
+                tab !== tabData[tabData.length - 1]
+                  ? "border-b border-gray-100"
+                  : ""
+              }`}>
+              {tab.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // Mobile horizontal scroll tabs (alternative approach)
+  const MobileScrollTabs = () => (
+    <div className="md:hidden">
+      <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
+        <div className="flex space-x-1 px-4">
+          {tabData?.map((tab) => (
+            <button
+              key={tab.name}
+              onClick={(e) => {
+                e.preventDefault();
+                changeTab(tab);
+              }}
+              className={`flex-shrink-0 px-3 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200 ${
+                activeTab.name === tab.name
+                  ? "bg-blue-50 text-blue-700 border-b-2 border-blue-700"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}>
+              <span className="whitespace-nowrap">
+                {/* Show short names on very small screens */}
+                <span className="sm:hidden">{tab.shortName}</span>
+                <span className="hidden sm:inline">{tab.name}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="mb-4">
+      <DesktopTabs />
+      {/* Choose one of the mobile approaches below */}
+      <MobileDropdown />
+      {/* Alternative: <MobileScrollTabs /> */}
+    </div>
+  );
+};
 
 const Content = ({ activeTab, employeeData }) => {
   const ActiveComponent = activeTab.component;
   return (
-    <section className={`panel ${activeTab.panelClass}`}>
+    <section className={`panel ${activeTab.panelClass} p-4 sm:p-6`}>
       <ActiveComponent employeeData={employeeData} />
     </section>
   );
 };
 
-const ViewEmployeeDetails = () => {
+const ViewEKYE = () => {
   const [employeeData, setEmployeeData] = useState(null);
   const [activeTab, setActiveTab] = useState(tabData[0]);
-  const [isLoading, setIsloading] = useState(false);
-  const { rclId } = useParams();
+  const [rclId, setRclId] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const fetchEmployeeData = async () => {
-    const requestBody = {
-      data: {
-        rclId: rclId,
-      },
-    };
-    setIsloading(true);
+  const fetchrcl = async () => {
     try {
-      const response = await axiosInstance.post(
-        `/api/v1/admin/complete-details/rclId`,
-        requestBody,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      setIsLoading(true);
+      const response = await axiosInstance.get(`/api/v1/auth/ekye/details`);
       if (response.data.responseCode === "200") {
-        setEmployeeData(response.data.data);
+        const data = response?.data?.data?.rclId;
+        setRclId(data);
       } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage;
-        toast.error(errorMessage);
+        toast.error(response?.data?.Message);
       }
     } catch (error) {
-      const errorMessage =
-        error.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
+      toast.error("Failed to fetch RCL ID");
     } finally {
-      setIsloading(false);
+      setIsLoading(false);
     }
   };
+
+  const fetchEmployeeData = async () => {
+    if (!rclId) return;
+
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.get(
+        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+      );
+      if (response.data.responseCode === "200") {
+        const data = response?.data?.data;
+        setEmployeeData(data);
+      } else {
+        toast.error(response?.data?.Message);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch employee data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // First fetch the rclId
+  useEffect(() => {
+    fetchrcl();
+  }, []);
+
+  // Then fetch employee data once rclId is available
   useEffect(() => {
     if (rclId) {
       fetchEmployeeData();
     }
   }, [rclId]);
-  const breadcrumbItems = [
-    { label: "Employee", href: "/AdminEkye" },
-    { label: activeTab.name, href: "" },
-  ];
-  const navigate = useNavigate();
 
-  const hasaccess = true;
+  /**To check Employee see status */
+  const seeEKYEAccess = true;
 
   useEffect(() => {
-    if (!hasaccess) {
+    if (!seeEKYEAccess) {
       navigate("/dashboard");
     }
   }, []);
-  return (
-    <div className="container">
-      <BreadcrumbsComponent items={breadcrumbItems} />
-      <GoBack />
 
+  return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <h1 className="page-title my-3 text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
+        EKYE
+      </h1>
+
+      {/* Go back button */}
+      <div className="mb-4">
+        <GoBack />
+      </div>
+
+      {/* Responsive tabs */}
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <Content activeTab={activeTab} employeeData={employeeData} />
-      )}
+
+      {/* Content area */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[400px]">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader />
+          </div>
+        ) : (
+          <Content activeTab={activeTab} employeeData={employeeData} />
+        )}
+      </div>
     </div>
   );
 };
 
-export default ViewEmployeeDetails;
+export default ViewEKYE;

@@ -109,6 +109,7 @@ const Employees = () => {
   const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
   const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
+  const hasSingleView = hasSingleView(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -172,7 +173,7 @@ const Employees = () => {
         }
         break;
       case "view":
-        if (hasaccess) {
+        if (hasSingleView) {
           navigate(`/Employees/view/${employeeId}`);
         } else {
           toast.error("Currently You dont have access to this setting.");
