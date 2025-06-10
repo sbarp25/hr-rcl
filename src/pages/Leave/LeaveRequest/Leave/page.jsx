@@ -1,4 +1,6 @@
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -12,7 +14,7 @@ import {
   TableRow,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Filter from "../../../../components/Filter";
 import Search from "../../../../components/Search";
@@ -22,7 +24,7 @@ import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";
 import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { useEffect, useState } from "react";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
@@ -30,6 +32,14 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { MdNavigateBefore } from "react-icons/md";
+import {
+  hasApproveAccess,
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,6 +65,7 @@ const SelfLeaveStatus = () => {
   const { reset, control, handleSubmit } = useForm();
 
   const handlePageChange = (page) => {
+    setLeaveData([]);
     setCurrentPage(page);
   };
 
@@ -97,22 +108,12 @@ const SelfLeaveStatus = () => {
     fetchLeave();
   }, [currentPage, leaveDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const hasLeaveUpdateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 57)
-  );
-  const hasLeaveDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 58)
-  );
-  const hasLeaveCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 55)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveUpdateAccess = hasApproveAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -257,8 +258,8 @@ const SelfLeaveStatus = () => {
     }
   };
   return (
-    <>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+    <div className="max-h-[90vh] overflow-y-auto">
+      <div className="container px-2 md:px-8">
         {/**Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -301,11 +302,8 @@ const SelfLeaveStatus = () => {
         <div className="bg-white rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
-              <Table
-                bordered
-                aria-label="Table of Leave"
-                className="max-h-[75vh]">
+            <div className="shadow-md rounded-lg   text-left">
+              <Table bordered aria-label="Table of Leave" className="">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>Full Name</TableColumn>
@@ -372,7 +370,7 @@ const SelfLeaveStatus = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh]  text-left">
+            <div className="shadow-md rounded-lg   text-left">
               <Table bordered aria-label="Table of Leave">
                 <TableHeader>
                   <TableColumn>Leave</TableColumn>
@@ -436,59 +434,50 @@ const SelfLeaveStatus = () => {
 
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
-            <div className="space-y-4">
-              {leaveData.map((leave) => (
-                <div
-                  key={leave.leaveId}
-                  className="border rounded-lg overflow-hidden shadow-sm">
-                  <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
-                    onClick={() => toggleExpandedRow(leave.rclId)}>
-                    <div className="font-medium">
-                      {leave.leaveType || "N/A"}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`${getStatusClass(
-                          leave?.leaveStatus
-                        )} text-center py-1 px-2 text-xs rounded-md w-fit`}>
-                        {leave?.leaveStatus || "N/A"}
+            <div>
+              <Accordion variant="bordered">
+                {leaveData.map((leave) => (
+                  <AccordionItem
+                    key={leave.leaveId}
+                    aria-label={`${leave.leaveType} - ${leave.leaveStatus}`}
+                    title={
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-medium">
+                          {leave.leaveType || "N/A"}
+                        </span>
+                        <div
+                          className={`${getStatusClass(
+                            leave?.leaveStatus
+                          )} text-center py-1 px-2 text-xs rounded-md`}>
+                          {leave?.leaveStatus || "N/A"}
+                        </div>
                       </div>
-                      <FaChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          expandedRow === leave.rclId ? "rotate-180" : ""
-                        }`}
-                      />
+                    }>
+                    <div className="space-y-2 text-sm">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Request Date:</div>
+                        <div>{leave?.requestDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Start Date:</div>
+                        <div>{leave?.leaveStartDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">End Date:</div>
+                        <div>{leave?.leaveEndDate || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Days:</div>
+                        <div>{leave?.Days || "N/A"}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Team Leader:</div>
+                        <div>{leave?.teamLeaderName || "N/A"}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${
-                      expandedRow === leave.rclId ? "block" : "hidden"
-                    } p-3 space-y-2 text-sm`}>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Request Date:</div>
-                      <div>{leave?.requestDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Start Date:</div>
-                      <div>{leave?.leaveStartDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">End Date:</div>
-                      <div>{leave?.leaveEndDate || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Days:</div>
-                      <div>{leave?.Days || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Team Leader:</div>
-                      <div>{leave?.teamLeaderName || "N/A"}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </div>
 
@@ -652,7 +641,7 @@ const SelfLeaveStatus = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

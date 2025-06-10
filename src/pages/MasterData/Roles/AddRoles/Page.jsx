@@ -4,19 +4,23 @@ import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../../lib/axios-Instance";
-import { toast } from "react-toastify";
-import { Checkbox } from "@nextui-org/react";
+import { toast } from "sonner";
+import { Button, Checkbox } from "@heroui/react";
 import GoBack from "../../../../components/GoBack";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const AddRoles = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, watch } = useForm();
+  const { control, handleSubmit, reset } = useForm();
 
   // Get all selected action IDs from the menus
   const getSelectedActions = () => {
@@ -28,64 +32,72 @@ const AddRoles = () => {
       )
       .flat();
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 51)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
+  // const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
-  useEffect(() => {
-    const fetchMenusAndActions = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/v1/master/menus/and/actions/",
-          {}
-        );
 
-        if (response.data.responseCode === "201") {
-          // Add selected property to each action
-          const processedData = response.data.data.map((menu) => ({
+  const fetchMenusAndActions = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(
+        "/api/v1/master/menus/and/actions/",
+        {}
+      );
+
+      if (response.data.responseCode === "201") {
+        // Remove duplicates and add selected property to each action
+        const processedData = response.data.data.map((menu) => {
+          // Remove duplicate actions based on actionId
+          const uniqueActions = menu.actions.filter(
+            (action, index, self) =>
+              index === self.findIndex((a) => a.actionId === action.actionId)
+          );
+
+          return {
             ...menu,
-            actions: menu.actions.map((action) => ({
+            actions: uniqueActions.map((action) => ({
               ...action,
               selected: action.selected || false,
             })),
-          }));
-
-          setMenusAndActions(processedData);
-        } else {
-          toast.error(
-            response.data.message || "Failed to fetch menus and actions"
-          );
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
+          };
+        });
+        setMenusAndActions(processedData);
+      } else {
+        toast.error(
+          response.data.message || "Failed to fetch menus and actions"
+        );
       }
-    };
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMenusAndActions();
   }, []);
 
   const handleActionSelect = (menuIndex, actionIndex, isChecked) => {
-    // Create a deep copy of the menus and actions array
-    const updatedMenusAndActions = [...menusAndActions];
-
-    // Update the selected property of the action
-    updatedMenusAndActions[menuIndex].actions[actionIndex].selected = isChecked;
-
-    // Update state with the new array
-    setMenusAndActions(updatedMenusAndActions);
+    setMenusAndActions((prevMenus) => {
+      const updatedMenus = [...prevMenus];
+      updatedMenus[menuIndex] = {
+        ...updatedMenus[menuIndex],
+        actions: updatedMenus[menuIndex].actions.map((action, idx) =>
+          idx === actionIndex ? { ...action, selected: isChecked } : action
+        ),
+      };
+      return updatedMenus;
+    });
   };
 
   const handleAddRole = async (data) => {
@@ -108,8 +120,6 @@ const AddRoles = () => {
         },
       };
 
-      console.log("Submitting role data:", newRole);
-
       try {
         setIsLoading(true);
         const response = await axiosInstance.post(
@@ -128,14 +138,15 @@ const AddRoles = () => {
           navigate("/master-data/Roles");
 
           // Reset all selections
-          const resetMenus = menusAndActions.map((menu) => ({
-            ...menu,
-            actions: menu.actions.map((action) => ({
-              ...action,
-              selected: false,
-            })),
-          }));
-          setMenusAndActions(resetMenus);
+          setMenusAndActions((prevMenus) =>
+            prevMenus.map((menu) => ({
+              ...menu,
+              actions: menu.actions.map((action) => ({
+                ...action,
+                selected: false,
+              })),
+            }))
+          );
         } else {
           toast.error(response.data.message || "Failed to create role");
         }
@@ -153,29 +164,29 @@ const AddRoles = () => {
   };
 
   const SelectAll = (isChecked) => {
-    const updatedMenusAndActions = menusAndActions.map((menu) => ({
-      ...menu,
-      actions: menu.actions.map((action) => ({
-        ...action,
-        selected: isChecked,
-      })),
-    }));
-
-    setMenusAndActions(updatedMenusAndActions);
+    setMenusAndActions((prevMenus) =>
+      prevMenus.map((menu) => ({
+        ...menu,
+        actions: menu.actions.map((action) => ({
+          ...action,
+          selected: isChecked,
+        })),
+      }))
+    );
   };
 
   const selectMenuAll = (menuIndex, isChecked) => {
-    const updatedMenusAndActions = [...menusAndActions];
-
-    updatedMenusAndActions[menuIndex].actions = updatedMenusAndActions[
-      menuIndex
-    ].actions.map((action) => ({
-      ...action,
-      selected: isChecked,
-    }));
-
-    // Update state with the new array
-    setMenusAndActions(updatedMenusAndActions);
+    setMenusAndActions((prevMenus) => {
+      const updatedMenus = [...prevMenus];
+      updatedMenus[menuIndex] = {
+        ...updatedMenus[menuIndex],
+        actions: updatedMenus[menuIndex].actions.map((action) => ({
+          ...action,
+          selected: isChecked,
+        })),
+      };
+      return updatedMenus;
+    });
   };
 
   return (
@@ -189,6 +200,7 @@ const AddRoles = () => {
             <h1 className="text-2xl font-bold text-gray-800">Add Roles</h1>
             <div></div>
           </div>
+          {/* <Button onPress={fetchMenusAndActions}>Reload</Button> */}
 
           <div className="bg-white max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
             <form
@@ -244,7 +256,7 @@ const AddRoles = () => {
                       render={({ field }) => (
                         <Checkbox
                           color="primary"
-                          isSelected={field.value}
+                          isSelected={field.value || false}
                           onValueChange={(isChecked) => {
                             field.onChange(isChecked);
                             SelectAll(isChecked);
@@ -259,25 +271,25 @@ const AddRoles = () => {
                   {menusAndActions.length > 0 ? (
                     menusAndActions.map((menu, menuIndex) => (
                       <div
-                        key={menu.menuId}
+                        key={`menu-${menu.menuId}-${menuIndex}`}
                         className="border border-gray-200 rounded-lg shadow-sm">
                         <div className="flex justify-between bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
                           <div>
                             <h4 className="text-md font-semibold text-gray-800">
-                              {menu.menuName}
-                            </h4>
-                            <p className="text-sm text-gray-600 mt-1">
                               {menu.menuDescription}
-                            </p>
+                            </h4>
+                            {/* <p className="text-sm text-gray-600 mt-1">
+                              {menu.menuDescription}
+                            </p> */}
                           </div>
                           <div>
                             <Controller
-                              name={`SelectMenu_${menuIndex}`} // Give each menu its own control name
+                              name={`SelectMenu_${menuIndex}`}
                               control={control}
                               render={({ field }) => (
                                 <Checkbox
                                   color="primary"
-                                  isSelected={field.value}
+                                  isSelected={field.value || false}
                                   onValueChange={(isChecked) => {
                                     field.onChange(isChecked);
                                     selectMenuAll(menuIndex, isChecked);
@@ -293,23 +305,28 @@ const AddRoles = () => {
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {menu.actions.map((action, actionIndex) => (
                               <div
-                                key={action.actionId}
+                                key={`action-${action.actionId}-${menuIndex}-${actionIndex}`}
                                 className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
                                 <Checkbox
                                   size="sm"
                                   color="primary"
-                                  isSelected={action.selected}
-                                  onChange={(e) =>
+                                  isSelected={action.selected || false}
+                                  onValueChange={(isChecked) =>
                                     handleActionSelect(
                                       menuIndex,
                                       actionIndex,
-                                      e.target.checked
+                                      isChecked
                                     )
                                   }
                                 />
-                                <span className="text-sm text-gray-700">
-                                  {action.actionName}
-                                </span>
+                                <div className="flex flex-col">
+                                  <span className="text-sm text-gray-700">
+                                    {action.actionName}
+                                  </span>
+                                  <span className="text-sm text-gray-700">
+                                    {action.actionDescription}
+                                  </span>
+                                </div>
                               </div>
                             ))}
                           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 
 const TextAreaComp = ({
   name,

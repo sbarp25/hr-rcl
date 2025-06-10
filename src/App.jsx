@@ -2,7 +2,7 @@ import { Layout } from "./components/Layout/Layout";
 
 import Dashboard from "./pages/Dashboard/page.jsx";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Notices from "./pages/Notices/page.jsx";
+// import Notices from "./pages/Notices/page.jsx";
 import Login from "./pages/Login/page.jsx";
 import Ekye from "./pages/Ekye/page.jsx";
 import LeaveRequest from "./pages/Leave/LeaveRequest/page.jsx";
@@ -15,7 +15,8 @@ import Roles from "./pages/MasterData/Roles/page.jsx";
 
 import LeaveStatus from "./pages/Leave/LeaveStatus/page.jsx";
 import Settings from "./pages/Setting/page.jsx";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import { useEffect } from "react";
 import AddEmployees from "./pages/Employees/AddEmployees/page.jsx";
 import ValidateLink from "./pages/resetpassword/validatelink/page.jsx";
@@ -51,6 +52,10 @@ import SelfLeaveStatus from "./pages/Leave/LeaveRequest/Leave/page.jsx";
 import UserMobileSidebar from "./components/Sidebar/UserMobileSidebar.jsx";
 import SelfWorkFromHome from "./pages/WorkFromHome/RequestWorkFromHome/SelfWFH/Page.jsx";
 import MobileNavigation from "./components/Sidebar/MobileNavigation.jsx";
+import AutoCheckout from "./pages/Attendance/AutoCheckout/TeamLeadView/page.jsx";
+import SelfAutoCheckout from "./pages/Attendance/AutoCheckout/SelfView/page.jsx";
+import ViewEmployeeDetails from "./pages/Employees/ViewEmployees/page.jsx";
+
 // import HandBook from "./pages/HandBook/page.jsx";
 
 function App() {
@@ -93,7 +98,13 @@ function App() {
   return (
     <>
       <LocationComponent />
-      <ToastContainer autoClose={1500} />
+
+      <Toaster
+        visibleToasts={3}
+        position="top-right"
+        richColors={true}
+        closeButton={true}
+      />
       {isAuthRoute ? (
         <AuthLayout>
           <Routes>
@@ -134,7 +145,9 @@ function App() {
             <Route element={<PrivateRoutes />}>
               <Route path="/dashboard" element={<Dashboard />} />
               {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-              {/* <Route path="/Attendance" element={<Attendance />} /> */}
+              <Route path="/Attendance" element={<Attendance />} />
+              <Route path="/autoCheckOut" element={<AutoCheckout />} />
+              <Route path="/selfAutoCheckOut" element={<SelfAutoCheckout />} />
               <Route
                 path="/Attendance/Request"
                 element={<AttendanceRequest />}
@@ -142,6 +155,10 @@ function App() {
               <Route path="/Employees" element={<Employees />} />
               <Route path="/AddEmployees" element={<AddEmployees />} />
               <Route path="/Employees/Edit/:id" element={<EditEmployees />} />
+              <Route
+                path="/Employees/view/:rclId"
+                element={<ViewEmployeeDetails />}
+              />
               <Route path="/master-data/Department" element={<Department />} />
               <Route
                 path="/master-data/Department/Add"

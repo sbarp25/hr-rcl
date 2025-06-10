@@ -1,6 +1,6 @@
 import { Controller } from "react-hook-form";
 import { getLocalTimeZone, parseDate } from "@internationalized/date";
-import { DatePicker } from "@nextui-org/react";
+import { DatePicker } from "@heroui/react";
 
 // Helper function to convert string date to CalendarDate
 const parseStringToCalendarDate = (dateString) => {
@@ -9,7 +9,6 @@ const parseStringToCalendarDate = (dateString) => {
     // Parse YYYY-MM-DD string to CalendarDate
     return parseDate(dateString);
   } catch (e) {
-    console.error("Error parsing date:", e);
     return null;
   }
 };

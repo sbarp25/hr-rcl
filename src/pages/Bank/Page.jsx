@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import InputComponent from "../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,28 @@ const Bank = () => {
     },
   });
   const navigate = useNavigate();
+
+  const fetchBankDetails = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(`/api/v1/banking/getById`);
+      if (response.data.responseCode === "200") {
+        const bankData = response.data.data;
+        reset({
+          accountNumber: bankData?.accountNumber || "",
+          accountName: bankData?.accountName || "",
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchBankDetails();
+  }, []);
 
   const onSubmit = async (data) => {
     if (AddBank) {
@@ -40,7 +62,7 @@ const Bank = () => {
         }
 
         const response = await axiosInstance.post(
-          "/api/v1/banking/bank_details_create",
+          "/api/v1/banking/save",
           BankDetails,
           {
             headers: {
@@ -70,19 +92,11 @@ const Bank = () => {
     } else toast.error("You currently dont have access to this setting");
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  // const seeAddBank = true;
 
   const seeAddBank = true;
-  // const seeAddBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 76)
-  // );
+
   const AddBank = true;
-  // const AddBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 75)
-  // );
 
   useEffect(() => {
     if (!seeAddBank) {

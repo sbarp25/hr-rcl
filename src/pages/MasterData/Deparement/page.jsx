@@ -3,7 +3,7 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import { FaChevronDown } from "react-icons/fa";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Modal,
@@ -12,7 +12,7 @@ import {
   Pagination,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BiData } from "react-icons/bi";
 import {
@@ -22,7 +22,7 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
@@ -32,6 +32,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const Department = () => {
   const [departmentsData, setDepartmentsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,8 +82,10 @@ const Department = () => {
         toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
-      toast.error("Error fetching departments.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +95,7 @@ const Department = () => {
   }, [currentPage, departmentPerPage]);
 
   const handlePageChange = (page) => {
+    setDepartmentsData([]);
     setCurrentPage(page);
   };
 
@@ -95,7 +105,6 @@ const Department = () => {
       case "edit":
         if (hasDepartmentEditAccess) {
           navigate(`/master-data/Department/Edit/${department.id}`);
-          console.log(`Editing Department ID: ${department.id}`);
         } else {
           toast.error("Access denied");
         }
@@ -104,7 +113,6 @@ const Department = () => {
       case "delete":
         if (hasDepartmentDeleteAccess) {
           setDepartmentId(department.id);
-          console.log(`Deleting position ID: ${department.id}`);
           onOpen();
         } else {
           toast.error("Currently You dont have access to this setting.");
@@ -139,8 +147,10 @@ const Department = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting position:", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsDeleteLoading(false);
     }
@@ -151,26 +161,16 @@ const Department = () => {
     { label: "Department", href: "/master-data/Department" },
   ];
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasDepartmentCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 43)
-  );
+  const hasDepartmentCreateAccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
 
   /**To read the Data */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 44)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.DEPARTMENT);
   // const hasaccess = true;
   /**To check edit status */
-  const hasDepartmentEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 45)
-  );
+  const hasDepartmentEditAccess = hasUpdateAccess(MENU_NAMES.DEPARTMENT);
   /**To check Delete Access */
-  const hasDepartmentDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 46)
-  );
+  const hasDepartmentDeleteAccess = hasDeleteAccess(MENU_NAMES.DEPARTMENT);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -256,10 +256,10 @@ const Department = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto space-y-4 p-2">
+            <div className="bg-white rounded-lg  overflow-y-auto space-y-4 p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className=" rounded-lg max-h-[80vh]  text-left">
+                <div className=" rounded-lg   text-left">
                   <Table bordered aria-label="Department Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>

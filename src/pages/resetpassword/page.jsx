@@ -1,8 +1,8 @@
-import { Button, Form, Input } from "@nextui-org/react";
+import { Button, Form, Input } from "@heroui/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import bcrypt from "bcryptjs";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../lib/axios-Instance";
@@ -61,7 +61,6 @@ const Rstpwd = () => {
         }
       } catch (error) {
         toast.error(error.response?.data?.messages);
-        console.error("An error occurred:", error);
         // navigate("/login");
       } finally {
         setIsLoading(false); // Hide loading state
@@ -122,7 +121,6 @@ const Rstpwd = () => {
         }
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
       toast.error(error.response?.data?.message);
       navigate("/login");
     } finally {

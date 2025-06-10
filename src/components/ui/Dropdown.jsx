@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 const DropDownComp = ({ items, onSelect }) => {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(["10"]));

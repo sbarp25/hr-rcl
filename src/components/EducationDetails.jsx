@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Checkbox,
@@ -10,9 +10,9 @@ import {
   Select,
   SelectItem,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
-import { TimeInput } from "@nextui-org/react";
+import { TimeInput } from "@heroui/react";
 import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
@@ -227,7 +227,6 @@ const EducationalDetails = ({
         }
         setEducationalDocument(true);
       } catch (error) {
-        console.error("Error fetching education details:", error);
         // Initialize with empty education array on error
         setFormData((prev) => ({
           ...prev,
@@ -375,12 +374,10 @@ const EducationalDetails = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error(error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An error occurred while saving educational details.");
-      }
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -5,9 +5,9 @@ import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { LuMapPinCheckInside } from "react-icons/lu";
 import axios from "axios";
 import { GrStatusGoodSmall } from "react-icons/gr";
@@ -22,7 +22,7 @@ import {
   Avatar,
   Input,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 import { useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
@@ -31,6 +31,12 @@ import CheckIn from "../Dashboard/CheckIn.jsx";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import axiosInstance from "../../lib/axios-Instance";
 import getInitials from "../../utils/getInitials";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils.js";
+import truncateText from "../../utils/truncateText.js";
 
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
@@ -44,64 +50,31 @@ const MobileNavigation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
-  const menu = LocalStorageUtil.getItem("menu");
+  const seeEmployee = hasReadAccess(MENU_NAMES.EMPLOYEES);
 
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
-  /**To check Dashboard see status */
-  // const seeDashboard = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
   const seeDashboard = true;
-  /**To check Department see status */
-  const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 44)
-  );
-  /**To check Position see status */
-  const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 48)
-  );
-  const seeRole = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
-  const seeMasterData = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
-  );
-  const seeAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 6)
-  );
-  const seeMyAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 36)
-  );
-  const seeLateCheckIn = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-  const seeHandbook = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
-  );
-  const seeNotices = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 24)
-  );
-  const seeLeave = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 28)
-  );
 
-  const seeLeaveStatus = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const seeLeaveRequest = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
-  );
-  const seeWorkFromHome = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 80)
-  );
-  const seeWorkFromHomeAdmin = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 81)
-  );
+  const seeDepartment = hasReadAccess(MENU_NAMES.DEPARTMENT);
+  /**To check Position see status */
+  const seePosition = hasReadAccess(MENU_NAMES.POSITION);
+  const seeRole = hasReadAccess(MENU_NAMES.ROLES);
+  const seeMasterData = hasReadAccess(MENU_NAMES.MASTERDATA);
+  const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
+
+  const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
+  const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
+
+  const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
+  const seeLeave = hasReadAccess(MENU_NAMES.LEAVE);
+
+  const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+  const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
+
+  const seeWorkFromHome = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+
+  const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
@@ -239,8 +212,10 @@ const MobileNavigation = () => {
       }
     } catch (error) {
       setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -264,7 +239,7 @@ const MobileNavigation = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -279,7 +254,7 @@ const MobileNavigation = () => {
   };
   return (
     <>
-      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
+      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full  shadow-lg">
         <div className="flex justify-center items-center">
           <button
             onClick={onOpen}
@@ -288,17 +263,20 @@ const MobileNavigation = () => {
           </button>
         </div>
         <Tooltip content={email}>
-          <div
-            className="h-10 w-10 overflow-hidden rounded-full"
-            onClick={handleProfileChange}>
-            {imageURL ? (
-              <Avatar className="h-full w-full object-cover" src={imageURL} />
-            ) : (
-              <div className="flex rounded-full items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-lg font-medium">
-                {getInitials(username)}
-              </div>
-            )}
-          </div>
+          <Link to="/settings">
+            <div className="h-12 w-12">
+              <Avatar
+                className="h-full w-full object-cover"
+                showFallback
+                fallback={
+                  <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                    {getInitials(username)}
+                  </div>
+                }
+                src={imageURL}
+              />
+            </div>
+          </Link>
         </Tooltip>
       </div>
 
@@ -315,11 +293,22 @@ const MobileNavigation = () => {
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">
-                <Avatar size="md" src={imageURL} />
+                <div className="h-12 w-12">
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
+                    src={imageURL}
+                  />
+                </div>
 
                 <div>
                   <p className="text-sm">
-                    <Tooltip content={email}>{email}</Tooltip>
+                    <Tooltip content={email}>{truncateText(email, 20)}</Tooltip>
                   </p>
                 </div>
               </div>

@@ -6,19 +6,27 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  hasViewSingleAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
@@ -31,16 +39,14 @@ const Page = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [eKyeData, setEkyeData] = useState([]);
-  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(30);
-  const startIndex = (currentPage - 1) * ekyeDashboardDataPerPage;
-  const endIndex = startIndex + ekyeDashboardDataPerPage;
-  const paginatedEkye = eKyeData.length
-    ? eKyeData.slice(startIndex, endIndex)
-    : [];
+  const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
+
+  const paginatedEkye = eKyeData;
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
   const handlePageChange = (page) => {
+    setEkyeData([]);
     setCurrentPage(page);
   };
 
@@ -68,7 +74,7 @@ const Page = () => {
   const fetchEkye = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosInstance.post(
         "/api/v1/admin/completed_ekye_users",
         {
           // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
@@ -84,8 +90,10 @@ const Page = () => {
         toast.error(response?.data?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching departments:", error);
-      toast.error("Error fetching departments.", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +103,6 @@ const Page = () => {
     fetchEkye();
   }, [currentPage, ekyeDashboardDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
   const handleApplySearch = (result) => {
     if (result.data) {
       // Search component returned filtered data
@@ -107,33 +114,21 @@ const Page = () => {
     }
   };
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
-  const hasViewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
-  const hasActionAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
+  const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
+  const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
 
-  const hasUpdateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 33)
-  );
-  const hasCreateAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 31)
-  );
-  const hasDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 34)
-  );
+  // const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  // const hasCreateAccess = hasCreateAccess(MENU_NAMES.EKYE);
+  // const hasDeleteAccess = hasDeleteAccess(MENU_NAMES.EKYE);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
   return (
-    <div className="px-4 md:px-8 max-h-[85vh] space-y-4">
+    <div className="px-4 md:px-8 max-h-[85vh] overflow-y-auto space-y-4">
       <div className="flex justify-between items-center px-8">
         <div className="flex flex-col  space-y-10">
           <BreadcrumbsComponent items={breadcrumbItems} />
@@ -165,7 +160,7 @@ const Page = () => {
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
-            className="max-h-[75vh]">
+            className="">
             <TableHeader className="">
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
@@ -183,7 +178,7 @@ const Page = () => {
                 <TableRow
                   key={data.rclId}
                   className="h-16 justify-center items-center border-b-2 border-gray-300">
-                  <TableCell>{startIndex + index + 1}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{data.rclId}</TableCell>
                   <TableCell>{data.fullName}</TableCell>
                   <TableCell>{data.email}</TableCell>

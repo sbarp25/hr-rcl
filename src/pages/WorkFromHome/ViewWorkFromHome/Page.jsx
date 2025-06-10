@@ -1,21 +1,19 @@
 import { useEffect, useState } from "react";
 import GoBack from "../../../components/GoBack";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils";
 
 const ViewWorkFromHome = () => {
   const [workFromHomeByIdData, setWorkFromHomeByIdData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const menu = LocalStorageUtil.getItem("menu");
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 80)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.WFHSTATUS);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -35,7 +33,6 @@ const ViewWorkFromHome = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error fetching Leave:", error);
       toast.error("Error fetching Leave.");
     } finally {
       setIsLoading(false);

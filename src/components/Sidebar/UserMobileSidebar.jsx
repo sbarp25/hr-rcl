@@ -5,9 +5,9 @@ import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
@@ -25,7 +25,7 @@ import {
   DrawerHeader,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -41,28 +41,12 @@ const UserMobileSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   const seeProfile = true;
-  // const seeProfile = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 64)
-  // );
+
   const seeDashboard = true;
-  // const seeDashboard = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
   const seeEKYE = true;
-  // const seeEKYE = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 68)
-  // );
   const seeSecurity = true;
-  // const seeSecurity = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 72)
-  // );
   const seeBank = true;
-  // const seeBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 76)
-  // );
   const navbarElements = [
     {
       icon: MdDashboard,
@@ -122,9 +106,10 @@ const UserMobileSidebar = () => {
         navigate("/login");
       }
     } catch (error) {
-      setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +128,7 @@ const UserMobileSidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -162,7 +147,7 @@ const UserMobileSidebar = () => {
 
   return (
     <>
-      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full bg-gray-300 shadow-lg">
+      <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full  shadow-lg">
         <div className="flex justify-center items-center">
           <button
             onClick={onOpen}
@@ -171,16 +156,17 @@ const UserMobileSidebar = () => {
           </button>
         </div>
         <Tooltip content={email}>
-          <div
-            className="h-10 w-10 overflow-hidden rounded-full"
-            onClick={handleProfileChange}>
-            {imageURL ? (
-              <Avatar className="h-full w-full object-cover" src={imageURL} />
-            ) : (
-              <div className="flex rounded-full items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-lg font-medium">
-                {getInitials(username)}
-              </div>
-            )}
+          <div className="h-12 w-12">
+            <Avatar
+              className="h-full w-full object-cover"
+              showFallback
+              fallback={
+                <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                  {getInitials(username)}
+                </div>
+              }
+              src={imageURL}
+            />
           </div>
         </Tooltip>
       </div>
@@ -198,11 +184,22 @@ const UserMobileSidebar = () => {
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">
-                <Avatar size="md" src={imageURL} />
+                <div className="h-12 w-12">
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
+                    src={imageURL}
+                  />
+                </div>
 
                 <div>
                   <p className="text-sm">
-                    <Tooltip content={email}>{email}</Tooltip>
+                    <Tooltip content={email}>{truncateText(email, 20)}</Tooltip>
                   </p>
                 </div>
               </div>

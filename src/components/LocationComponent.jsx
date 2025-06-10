@@ -12,15 +12,10 @@ const LocationComponent = () => {
       LocalStorageUtil.setItem("longitude", longitude);
       LocalStorageUtil.setItem("locationAccuracy", accuracy);
       setAccuracy(accuracy);
-
-      console.log(
-        `Location updated: ${latitude}, ${longitude} (±${accuracy.toFixed(1)}m)`
-      );
     };
 
     // Function to handle location errors
     const handleError = (error) => {
-      console.error("Error getting location:", error);
       LocalStorageUtil.setItem("locationError", error.message);
     };
 
@@ -32,7 +27,6 @@ const LocationComponent = () => {
 
     // Check if geolocation is supported
     if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
       LocalStorageUtil.setItem("locationError", "Geolocation not supported");
       return;
     }

@@ -16,12 +16,12 @@ import {
   ModalContent,
   ModalBody,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
@@ -29,6 +29,12 @@ import Filter from "../../../components/Filter";
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasApproveAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lateCheckinData, setLateCheckinData] = useState([]);
@@ -80,28 +86,22 @@ const AttendanceRequest = () => {
   };
 
   const handlePageChange = (page) => {
+    setLateCheckinData([]);
     setCurrentPage(page);
   };
-  const menu = LocalStorageUtil.getItem("menu");
   // const hasAttendanceEditAccess = true;
   // const hasaccess = true;
   /**To Update Late Check   */
-  const hasAttendanceEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 41)
-  );
+  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   /**To read the Data */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-
+  // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = true;
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },
   ];
 
   const handleApplyFilters = (result) => {
-    console.log("Filter result:", result); // Add this debug line
-
     if (result.data) {
       // Filter component returned filtered data
       setLateCheckinData(result.data);
@@ -129,8 +129,10 @@ const AttendanceRequest = () => {
             toast.error(response?.data?.message);
           }
         } catch (error) {
-          console.error("Error fetching employees:", error);
-          toast.error("Error fetching employees.");
+          const errorMessage =
+            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         } finally {
           setIsLoading(false);
         }
@@ -190,6 +192,7 @@ const AttendanceRequest = () => {
     if (!selectedData) return;
 
     setIsLoading(true);
+
     const RejectLeave = {
       data: {
         lateAttendanceId: selectedData.lateCheckInId,
@@ -253,8 +256,10 @@ const AttendanceRequest = () => {
         toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Error fetching employees.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -266,10 +271,6 @@ const AttendanceRequest = () => {
   const toggleExpandedRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
-
-  useEffect(() => {
-    console.log("Selected Data:", selectedData);
-  }, [selectedData]);
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
@@ -285,7 +286,7 @@ const AttendanceRequest = () => {
     }
   };
   return (
-    <>
+    <div className="max-h-[85vh] overflow-y-auto">
       {isLoading ? (
         <Loader />
       ) : (
@@ -332,7 +333,7 @@ const AttendanceRequest = () => {
           <div className="bg-white rounded-lg p-2">
             {/* Large screens - Full table */}
             <div className="hidden lg:block">
-              <div className="shadow-md rounded-lg max-h-[80vh]  overflow-y-auto text-left">
+              <div className="shadow-md rounded-lg  text-left">
                 <Table bordered aria-label="List of Review for Late Checkin">
                   <TableHeader>
                     <TableColumn>S.N</TableColumn>
@@ -452,7 +453,7 @@ const AttendanceRequest = () => {
 
             {/* Medium screens - Simplified table */}
             <div className="hidden md:block lg:hidden">
-              <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+              <div className="shadow-md rounded-lg  overflow-y-auto text-left">
                 <Table bordered aria-label="List of Review for Late Checkin">
                   <TableHeader>
                     <TableColumn>Employee</TableColumn>
@@ -535,7 +536,7 @@ const AttendanceRequest = () => {
 
             {/* Small screens - Card-like view */}
             <div className="block md:hidden">
-              <div className="space-y-4 max-h-[80vh] overflow-y-auto">
+              <div className="space-y-4 overflow-y-auto">
                 {lateCheckinData.map((late) => (
                   <div
                     key={late.lateCheckInId}
@@ -644,14 +645,15 @@ const AttendanceRequest = () => {
             </div>
 
             {/* Pagination - Responsive for all screens */}
-            {lateCheckinData && lateCheckinData.length > 0 && (
+            {!lateCheckinData && lateCheckinData.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
                   <span className="font-bold text-gray-800 mx-1">
-                    {totalRecords < lateCheckInDataPerPage
+                    {/* {totalRecords < lateCheckInDataPerPage
                       ? totalRecords
-                      : lateCheckInDataPerPage}
+                      : lateCheckInDataPerPage} */}
+                    {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
                   <span className="font-bold text-gray-800">
@@ -920,7 +922,7 @@ const AttendanceRequest = () => {
           </Modal>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

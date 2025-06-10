@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
@@ -11,7 +11,7 @@ import {
   SelectItem,
   Checkbox,
   Switch,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { IoIosPeople } from "react-icons/io";
 import Submit from "../../../assets/svgs/Submit.svg";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
@@ -20,6 +20,7 @@ import GoBack from "../../../components/GoBack";
 import DatepickerComponent from "../../../components/ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 import Loader from "../../../components/Loader/Loader.jsx";
+import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 const AddEmployeeForm = () => {
   const {
     register,
@@ -46,20 +47,10 @@ const AddEmployeeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const menu = LocalStorageUtil.getItem("menu");
   const breadcrumbItems = [
     { label: "Employees", href: "/Employees" },
     { label: "Add Employees", href: "/AddEmployees" },
   ];
-  const hasemployeecreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 1)
-  );
-
-  // useEffect(() => {
-  //   if (!hasemployeecreateaccess) {
-  //     navigate("/Employees");
-  //   }
-  // }, []);
 
   //FetchDepartment
   useEffect(() => {
@@ -76,8 +67,10 @@ const AddEmployeeForm = () => {
           toast.error(response?.data?.data?.message);
         }
       } catch (error) {
-        console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -97,8 +90,10 @@ const AddEmployeeForm = () => {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching positions:", error);
-        toast.error("Error fetching positions.", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -118,8 +113,10 @@ const AddEmployeeForm = () => {
           toast.error(response?.data?.message);
         }
       } catch (error) {
-        toast.error("Error fetching roles.", error);
-        console.error(error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -189,10 +186,8 @@ const AddEmployeeForm = () => {
     }
   };
 
+  const hasaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 9)
-  );
 
   useEffect(() => {
     if (!hasaccess) {

@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
+import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils";
 const LeaveView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
 
   const fetchLeaveById = async () => {
     setIsLoading(true);
@@ -31,8 +28,10 @@ const LeaveView = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error fetching Leave:", error);
-      toast.error("Error fetching Leave.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -41,11 +40,11 @@ const LeaveView = () => {
     fetchLeaveById();
   }, [id]);
 
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   if (isLoading) {
     return (

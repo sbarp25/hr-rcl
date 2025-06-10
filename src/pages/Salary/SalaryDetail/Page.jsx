@@ -4,7 +4,7 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import { useEffect } from "react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 const SalaryEdit = () => {
@@ -34,7 +34,6 @@ const SalaryEdit = () => {
           toast.error(response?.data?.message);
         }
       } catch (error) {
-        console.error("Error fetching departments:", error);
         toast.error("Error fetching departments.", error);
       } finally {
         setIsLoading(false);

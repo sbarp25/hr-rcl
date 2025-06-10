@@ -3,7 +3,7 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import { FaChevronDown } from "react-icons/fa";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoReturnDownBack } from "react-icons/io5";
 import {
@@ -20,7 +20,7 @@ import {
   TableRow,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
@@ -31,6 +31,13 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Position = () => {
   const [positionId, setPositionId] = useState(null);
@@ -50,6 +57,7 @@ const Position = () => {
   const navigate = useNavigate();
 
   const handlePageChange = (page) => {
+    setPositionData([]);
     setCurrentPage(page);
   };
 
@@ -70,7 +78,6 @@ const Position = () => {
         toast.error(response?.data?.message || "Failed to fetch positions.");
       }
     } catch (error) {
-      console.error("Error fetching positions:", error);
       toast.error("Error fetching positions.");
     } finally {
       setIsLoading(false);
@@ -92,25 +99,15 @@ const Position = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasPositioncreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 47)
-  );
+  const hasPositioncreateaccess = hasCreateAccess(MENU_NAMES.POSITION);
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 48)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.POSITION);
   /**To check edit status */
-  const hasPositionEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 49)
-  );
+  const hasPositionEditAccess = hasUpdateAccess(MENU_NAMES.POSITION);
   /**To check Delete Access */
-  const hasPositionDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 50)
-  );
+  const hasPositionDeleteAccess = hasDeleteAccess(MENU_NAMES.POSITION);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -175,7 +172,6 @@ const Position = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting position:", error);
       toast.error(error.response?.data?.message || "Error deleting position.");
     } finally {
       setIsDeleteLoading(false);
@@ -211,12 +207,12 @@ const Position = () => {
   };
 
   return (
-    <>
+    <div className="max-h-[90vh] overflow-y-auto">
       {isDeleteLoading ? (
         <Loader />
       ) : (
         <>
-          <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
+          <div className="px-2 md:px-8  space-y-4">
             {/* Header Section */}
             <div className="flex flex-col space-y-4">
               <div className="text-sm">
@@ -267,10 +263,10 @@ const Position = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+            <div className="bg-white rounded-lg  p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className="rounded-lg max-h-[80vh] text-left">
+                <div className="rounded-lg  text-left">
                   <Table bordered aria-label="Position Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>
@@ -340,7 +336,7 @@ const Position = () => {
 
               {/* Medium screens - Simplified table */}
               <div className="hidden md:block lg:hidden">
-                <div className="shadow-md rounded-lg max-h-[80vh] text-left">
+                <div className="shadow-md rounded-lg text-left">
                   <Table bordered aria-label="Position Table">
                     <TableHeader>
                       <TableColumn>Position</TableColumn>
@@ -536,7 +532,7 @@ const Position = () => {
           </Modal>
         </>
       )}
-    </>
+    </div>
   );
 };
 

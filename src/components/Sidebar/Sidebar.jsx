@@ -8,12 +8,12 @@ import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { CiLogout } from "react-icons/ci";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
@@ -30,9 +30,14 @@ import {
   ModalContent,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import truncateText from "../../utils/truncateText";
 import Loader from "../Loader/Loader.jsx";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils.js";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -40,71 +45,40 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
   const navigate = useNavigate();
-
   const menu = LocalStorageUtil.getItem("menu");
 
-  const seeEmployee = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
-  /**To check Dashboard see status */
-  // const seeDashboard = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
-  const seeDashboard = true;
-  /**To check Department see status */
-  const seeDepartment = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 44)
-  );
-  /**To check Position see status */
-  const seePosition = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 48)
-  );
-  const seeRole = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
-  const seeMasterData = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 14)
-  );
-  const seeAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 6)
-  );
-  const seeMyAttendance = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 36)
-  );
-  const seeLateCheckIn = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 40)
-  );
-  const seeHandbook = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 20)
-  );
-  const seeNotices = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 24)
-  );
-  const seeLeave = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 28)
-  );
+  const seeEmployee = hasReadAccess(MENU_NAMES.EMPLOYEES);
 
-  const seeLeaveStatus = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-  const seeLeaveRequest = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 32)
-  );
-  const seeWorkFromHome = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 80)
-  );
-  const seeWorkFromHomeAdmin = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 81)
-  );
+  const seeDashboard = true;
+
+  const seeDepartment = hasReadAccess(MENU_NAMES.DEPARTMENT);
+  /**To check Position see status */
+  const seePosition = hasReadAccess(MENU_NAMES.POSITION);
+  const seeRole = hasReadAccess(MENU_NAMES.ROLES);
+  const seeMasterData = hasReadAccess(MENU_NAMES.MASTERDATA);
+  // const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
+  const seeAttendance = true;
+
+  const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
+  const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
+
+  const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
+  const seeLeave = hasReadAccess(MENU_NAMES.LEAVE);
+
+  const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+  const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
+
+  const seeWorkFromHome = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+
+  const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
@@ -119,11 +93,18 @@ const Sidebar = () => {
       view: seeAttendance,
       children: [
         // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
+        // { label: "Auto CheckOut", to: "/Attendance", view: seeMyAttendance },
         {
           icon: LuMapPinCheckInside,
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
+        },
+        {
+          icon: IoIosPeople,
+          label: "Auto-Checkout",
+          to: "/autoCheckOut",
+          view: true,
         },
       ],
     },
@@ -211,6 +192,13 @@ const Sidebar = () => {
       to: "/AdminEkye",
       view: seeEKYE,
     },
+
+    // {
+    //   icon: IoIosPeople,
+    //   label: "Auto-Checkout",
+    //   to: "/selfAutoCheckOut",
+    //   view: true,
+    // },
   ];
 
   const toggleSidebar = () => {
@@ -245,9 +233,10 @@ const Sidebar = () => {
         navigate("/login");
       }
     } catch (error) {
-      setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -269,7 +258,7 @@ const Sidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -280,15 +269,15 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <>
+    <div className="">
       {isLoading && <Loader />}
-      <div className="flex ">
+      <div className="flex h-screen bg-black">
         <div
-          className={`min-h-screen h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
+          className={` h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
             isSidebarExpanded ? "w-64" : "w-20"
           }`}>
           {/* Hamburger menu */}
-          <div className="flex items-center gap-4 p-4">
+          <div className="flex items-center gap-4 p-4 flex-shrink-0">
             <GiHamburgerMenu
               className="text-2xl cursor-pointer"
               onClick={toggleSidebar}
@@ -301,7 +290,7 @@ const Sidebar = () => {
           </div>
 
           {/* Navigation items */}
-          <div className="flex-grow">
+          <div className="flex-grow overflow-y-auto">
             {navbarElements.map((service, index) => {
               if (!service.view) return null;
               return (
@@ -359,23 +348,25 @@ const Sidebar = () => {
           </div>
 
           {/* Profile section */}
-          <div className="p-4">
+          <div className="p-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <Link to="/settings">
-                {imageURL ? (
+                <div className="h-12 w-12">
                   <Avatar
                     className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
                     src={imageURL}
                   />
-                ) : (
-                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                    {getInitials(username)}
-                  </div>
-                )}
+                </div>
               </Link>
 
               {isSidebarExpanded && (
-                <Link to="/settings">
+                <Link to="/settings" className="flex-grow min-w-0">
                   <div>
                     <p className="text-xl">
                       <Tooltip content={username}>
@@ -430,7 +421,7 @@ const Sidebar = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

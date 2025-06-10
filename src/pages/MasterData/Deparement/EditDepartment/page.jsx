@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
+import {
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const EditDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -68,7 +72,10 @@ const EditDepartment = () => {
         setTeamLead(response.data.datalist);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +106,10 @@ const EditDepartment = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -157,11 +167,8 @@ const EditDepartment = () => {
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 45)
-  );
+  const hasaccess = hasUpdateAccess(MENU_NAMES.DEPARTMENT);
 
   // const hasaccess = true;
   useEffect(() => {

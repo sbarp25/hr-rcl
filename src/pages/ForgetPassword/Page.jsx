@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import InputComponent from "../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 
 const ForgetPassword = () => {

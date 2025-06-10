@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
-import { toast } from "react-toastify";
+import { Button, Modal, ModalBody, ModalContent } from "@heroui/react";
+import { toast } from "sonner";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
 import InputComponent from "./ui/InputComponent.jsx";
@@ -112,7 +112,7 @@ const DocumentDetails = ({
         setPhotoPAN(true);
       }
     } catch (error) {
-      console.error("Error fetching document details:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +122,6 @@ const DocumentDetails = ({
   }, [setValue, setFormData]);
 
   const onSubmit = async (data) => {
-    console.log("Date of birth", dateOfBirth);
     setIsLoading(true);
     const formDataToSubmit = new FormData();
 
@@ -184,8 +183,10 @@ const DocumentDetails = ({
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error saving document details:", error);
-      toast.error("Error saving document details.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

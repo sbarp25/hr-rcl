@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoDotFill } from "react-icons/go";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
@@ -62,18 +62,11 @@ const ChangePassword = () => {
       toast.error("You currently dont have access to this setting ");
     }
   };
-  const menu = LocalStorageUtil.getItem("menu");
 
   /**To check Employee see status */
   const hasaccess = true;
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 72)
-  // );
 
   const changePasswordAccess = true;
-  // const changePasswordAccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 71)
-  // );
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");

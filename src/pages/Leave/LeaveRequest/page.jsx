@@ -4,7 +4,7 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 import DatepickerComponent, {
@@ -14,6 +14,13 @@ import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import GoBack from "../../../components/GoBack";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -112,13 +119,12 @@ const LeaveRequest = () => {
           toast.success(response?.data?.message);
         } else {
           const errorMessage = response?.data?.error || "Something went wrong";
-          console.log(errorMessage);
           toast.error(errorMessage);
         }
       } catch (error) {
         const errorMessage =
           error.response?.data?.error || "Something went wrong";
-        console.log(errorMessage);
+
         toast.error(errorMessage);
       } finally {
         setIsLoading(false);
@@ -128,22 +134,13 @@ const LeaveRequest = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveRequestaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const hasLeaveRequestaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 59)
-  );
-  const hasLeaveEditaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 61)
-  );
-  const hasLeavedeleteaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 62)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+
+  const hasLeaveRequestaccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveEditaccess = hasUpdateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeavedeleteaccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -152,10 +149,12 @@ const LeaveRequest = () => {
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
-      <div className="flex flex-col sm:flex-row items-center justify-between">
+      <div className="flex items-center justify-between px-4 py-2">
         <GoBack />
-        <h1 className="text-xl sm:text-md font-semibold">Leave Request</h1>
-        <div></div>
+        <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-center flex-1 mx-4">
+          <span className="">Leave Request</span>
+        </h1>
+        <div className="w-8"></div>
       </div>
 
       <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">

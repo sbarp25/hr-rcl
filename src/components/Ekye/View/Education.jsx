@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Button, Divider, Form } from "@nextui-org/react";
+import { Button, Divider, Form } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
 const EkyeEducationDetails = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -25,11 +26,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
       setEducationDocuments(docStatus);
     }
   }, [employeeData]);
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const hasApproveAccess = menu.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 17)
-  );
+  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
   const onApprove = async () => {
     const approve = {
       userId: rclId,

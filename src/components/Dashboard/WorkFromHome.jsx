@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance.js";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
     <div className="w-60 flex items-center justify-center">
@@ -93,7 +93,8 @@ const WorkFromHome = () => {
     <>
       <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
         <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
-          <p className="text-xl font-bold">Work From Home</p>
+          <p className="hidden md:block text-xl font-bold">Work From Home</p>
+          <p className="flex md:hidden text-xl font-bold">WFH</p>
           <div>
             <CustomToggleButton
               isSelected={isToday}

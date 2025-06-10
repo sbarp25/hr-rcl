@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
-import { Textarea } from "@nextui-org/react";
-import { toast } from "react-toastify";
+import { Textarea } from "@heroui/react";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
@@ -10,6 +10,10 @@ import GoBack from "../../../../components/GoBack";
 import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
 
 const AddDepartment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +70,10 @@ const AddDepartment = () => {
         setTeamLead(response.data.datalist);
       }
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -124,12 +131,8 @@ const AddDepartment = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 43)
-  );
+  const hasaccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
 
   useEffect(() => {
     if (!hasaccess) {

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+// import { toast } from "sonner";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -21,9 +22,15 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-} from "@nextui-org/react";
-import { FaChevronDown, FaEllipsisV } from "react-icons/fa";
-
+} from "@heroui/react";
+import { FaChevronDown, FaEllipsisV, FaEye } from "react-icons/fa";
+import {
+  hasCreateAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  hasDeleteAccess,
+  MENU_NAMES,
+} from "../../utils/permissionUtils";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
@@ -34,6 +41,7 @@ import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +69,7 @@ const Employees = () => {
   };
 
   const fetchEmployees = async () => {
+    setEmployeesData([]);
     setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/users/list", {
@@ -77,8 +86,10 @@ const Employees = () => {
         toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      toast.error("Error fetching employees.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -88,25 +99,17 @@ const Employees = () => {
     fetchEmployees();
   }, [currentPage, employeeDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasemployeecreateaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 9)
-  );
+  const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
+
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 10)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
-  const hasEmployeeEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 11)
-  );
+  const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
-  const hasEmployeeDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 12)
-  );
+  const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
+  const hasSingleView = hasSingleView(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -138,8 +141,10 @@ const Employees = () => {
         }
       }
     } catch (error) {
-      console.error("Error deleting employee:", error);
-      toast.error("Error deleting employee.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setDeleteIsLoading(false);
     }
@@ -167,18 +172,24 @@ const Employees = () => {
           toast.error("Currently You dont have access to this setting.");
         }
         break;
+      case "view":
+        if (hasSingleView) {
+          navigate(`/Employees/view/${employeeId}`);
+        } else {
+          toast.error("Currently You dont have access to this setting.");
+        }
+        break;
       default:
         console.log("Unknown action");
     }
   };
 
   const handlePageChange = (page) => {
+    setEmployeesData([]);
     setCurrentPage(page);
   };
 
   const handleApplyFilters = (result) => {
-    console.log("Filter result:", result);
-
     if (result.data) {
       setEmployeesData(result.data);
       if (result.totalPages) setTotalPages(result.totalPages);
@@ -201,8 +212,10 @@ const Employees = () => {
             toast.error(response?.data?.message);
           }
         } catch (error) {
-          console.error("Error fetching employees:", error);
-          toast.error("Error fetching employees.");
+          const errorMessage =
+            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+            "Something went wrong";
+          toast.error(errorMessage);
         } finally {
           setIsLoading(false);
         }
@@ -228,9 +241,9 @@ const Employees = () => {
   );
 
   return (
-    <>
+    <div className="max-h-[90vh] overflow-y-auto">
       {isDeleteLoading && <Loader />}
-      <div className="px-4 md:px-8 space-y-4">
+      <div className="px-4 md:px-8 space-y-4 ">
         {/* Breadcrumbs and Header */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -279,7 +292,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Large screens */}
-        <div className="hidden lg:block bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto">
+        <div className="hidden xl:block bg-white rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader>
               <TableColumn>S.N</TableColumn>
@@ -293,6 +306,7 @@ const Employees = () => {
             <TableBody
               items={isLoading ? [] : filteredEmployees}
               isLoading={isLoading}
+              loadingState={isLoading}
               loadingContent={<SkeletonLoader />}>
               {filteredEmployees.map((employee, index) => (
                 <TableRow
@@ -308,6 +322,15 @@ const Employees = () => {
                   <TableCell>{employee.postionName}</TableCell>
                   <TableCell>
                     <div className="flex justify-center gap-4">
+                      <FaEye
+                        className={`${
+                          hasaccess
+                            ? "text-green-500 hover:text-green-700 cursor-pointer "
+                            : "text-gray-300"
+                        }`}
+                        title="View"
+                        onClick={() => handleAction("view", employee.rclId)}
+                      />
                       <HiPencilSquare
                         className={`${
                           hasEmployeeEditAccess
@@ -341,7 +364,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Medium screens */}
-        <div className="hidden md:block lg:hidden bg-white rounded-lg p-2 max-h-[80vh] overflow-y-auto">
+        <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader className="bg-gray-50">
               <TableColumn>Name</TableColumn>
@@ -413,11 +436,11 @@ const Employees = () => {
         </div>
 
         {/* Employee Cards - Small screens */}
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
           {isLoading ? (
             <SkeletonLoader />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               {filteredEmployees.map((employee, index) => (
                 <div
                   key={employee.rclId}
@@ -480,6 +503,15 @@ const Employees = () => {
                         onPress={() => handleAction("edit", employee.rclId)}>
                         <HiPencilSquare className="w-4 h-4" />
                         Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        className="flex-1 bg-black text-white"
+                        isDisabled={!hasEmployeeEditAccess}
+                        onPress={() => handleAction("view", employee.rclId)}>
+                        <HiPencilSquare className="w-4 h-4" />
+                        View
                       </Button>
                       <Button
                         size="sm"
@@ -565,7 +597,7 @@ const Employees = () => {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 };
 

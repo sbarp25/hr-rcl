@@ -16,7 +16,7 @@ import {
   TableRow,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -24,11 +24,16 @@ import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
+import {
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -195,6 +200,7 @@ const WorkFromHomeStatus = () => {
   };
 
   const handlePageChange = (page) => {
+    setWorkFromHome([]);
     setCurrentPage(page);
   };
 
@@ -227,12 +233,13 @@ const WorkFromHomeStatus = () => {
     fetchWorkFromHome();
   }, [currentPage, WFHDataPerPage]);
 
-  const menu = LocalStorageUtil.getItem("menu");
-  const hasWorkFromHomeReviewAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 81)
-  );
-  const hasLeaveViecwAccess = false;
-
+  const hasWorkFromHomeReviewAccess = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
+  const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
   const handleApplySearch = (result) => {
     if (result.data) {
       // Search component returned filtered data
@@ -303,6 +310,7 @@ const WorkFromHomeStatus = () => {
                   <TableBody
                     items={isLoading ? [] : workFromHome}
                     isLoading={isLoading}
+                    // loadingState={isLoading}
                     loadingContent={<SkeletonLoader />}>
                     {(item) => (
                       <TableRow

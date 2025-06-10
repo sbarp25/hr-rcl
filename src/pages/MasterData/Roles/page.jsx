@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { BiData } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Modal,
@@ -20,16 +20,22 @@ import {
   TableRow,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
@@ -48,6 +54,7 @@ const Roles = () => {
   const navigate = useNavigate();
 
   const handlePageChange = (page) => {
+    setRoleData([]);
     setCurrentPage(page);
   };
 
@@ -73,7 +80,6 @@ const Roles = () => {
         toast.error(response?.data?.message || "Failed to fetch roles.");
       }
     } catch (error) {
-      console.error("Error fetching roles:", error);
       toast.error("Error fetching roles.");
     } finally {
       setIsLoading(false);
@@ -95,25 +101,15 @@ const Roles = () => {
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check create status */
-  const hasRoleAddAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 51)
-  );
+  const hasRoleAddAccess = hasCreateAccess(MENU_NAMES.ROLES);
   /**To read the Data */
   // const hasaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 52)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.ROLES);
   /**To check edit status */
-  const hasRoleEditAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 53)
-  );
+  const hasRoleEditAccess = hasUpdateAccess(MENU_NAMES.ROLES);
   /**To check Delete Access */
-  const hasRoleDeleteAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 54)
-  );
+  const hasRoleDeleteAccess = hasDeleteAccess(MENU_NAMES.ROLES);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -174,7 +170,6 @@ const Roles = () => {
         toast.error("Access denied");
       }
     } catch (error) {
-      console.error("Error deleting role:", error);
       toast.error(error.response?.data?.message || "Error deleting role.");
     } finally {
       setIsDeleteLoading(false);
@@ -258,10 +253,10 @@ const Roles = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg max-h-[80vh] overflow-y-auto p-2">
+            <div className="bg-white rounded-lg overflow-y-auto p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
-                <div className="rounded-lg max-h-[80vh] text-left">
+                <div className="rounded-lg  text-left">
                   <Table bordered aria-label="Roles Table">
                     <TableHeader>
                       <TableColumn>S.N</TableColumn>
@@ -327,7 +322,7 @@ const Roles = () => {
 
               {/* Medium screens - Simplified table */}
               <div className="hidden md:block lg:hidden">
-                <div className="shadow-md rounded-lg max-h-[80vh] text-left">
+                <div className="shadow-md rounded-lg text-left">
                   <Table bordered aria-label="Roles Table">
                     <TableHeader>
                       <TableColumn>Role</TableColumn>
@@ -390,7 +385,7 @@ const Roles = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden">
                 <div className="space-y-4">
-                  {roleData.map((role, index) => (
+                  {roleData.map((role) => (
                     <div
                       key={role.roleId}
                       className="border rounded-lg overflow-hidden shadow-sm">

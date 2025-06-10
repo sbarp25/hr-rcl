@@ -1,13 +1,14 @@
 import Attendancereport from "../../components/Dashboard/Attendancereport.jsx";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 
 import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";
 import Leave from "../../components/Dashboard/Leave.jsx";
 import CheckIn from "../../components/Dashboard/CheckIn.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
+import { Button } from "@heroui/react";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -51,8 +52,6 @@ const Page = () => {
   }, [checkedInStatus]);
   const email = localStorage.getItem("email");
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   return (
     <div className="w-full h-[97vh] overflow-y-auto">
       <div className="w-full flex flex-col gap-4 ">
@@ -90,6 +89,7 @@ const Page = () => {
               )}
             </div>
           </div>
+
           <div className="text-sm font-semibold text-right mt-1 mr-4 mb-3">
             <p className="text-green-700 mt-1">
               Total Early Time: {totalEarlyTime || "N/A"}

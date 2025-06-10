@@ -6,25 +6,33 @@ import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
-import { IoShieldCheckmark } from "react-icons/io5";
+import { IoLogOutOutline, IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
-import { Tooltip } from "@nextui-org/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Tooltip,
+  useDisclosure,
+} from "@heroui/react";
 import Loader from "../Loader/Loader.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
@@ -33,28 +41,11 @@ const UserSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   const seeProfile = true;
-  // const seeProfile = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 64)
-  // );
   const seeDashboard = true;
-  // const seeDashboard = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
   const seeEKYE = true;
-  // const seeEKYE = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 68)
-  // );
   const seeSecurity = true;
-  // const seeSecurity = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 72)
-  // );
   const seeBank = true;
-  // const seeBank = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 76)
-  // );
   const navbarElements = [
     {
       icon: MdDashboard,
@@ -115,8 +106,10 @@ const UserSidebar = () => {
       }
     } catch (error) {
       setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +128,7 @@ const UserSidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -251,10 +244,12 @@ const UserSidebar = () => {
                     <GoGear className="text-2xl" />
                   </a>
                   <button className="">
-                    <CiLogout
-                      onClick={handleLogOut}
-                      className="text-2xl text-red-500  hover:scale-125"
-                    />
+                    <button className="">
+                      <IoLogOutOutline
+                        onClick={onOpen}
+                        className="text-2xl text-red-500  hover:scale-125"
+                      />
+                    </button>
                   </button>
                 </div>
               )}
@@ -262,6 +257,29 @@ const UserSidebar = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center">
+                <p>Are you sure you want to Log out ?</p>
+                <div className="flex gap-2 justify-end mt-4 ">
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => handleLogOut()}>
+                    Log Out
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };
