@@ -64,6 +64,9 @@ export const hasRejectAccess = (menuName) =>
 export const hasViewSingleAccess = (menuName) =>
   permissionManager.hasPermission(menuName, "VIEW_SIDEBAR");
 
+export const hasViewone = (menuName) =>
+  permissionManager.hasPermission(menuName, "VIEW_ONE");
+
 // Menu name constants based on backend data
 export const MENU_NAMES = {
   DASHBOARD: "DASHBOARD",
@@ -101,4 +104,5 @@ export const ACTION_NAMES = {
   APPROVE: "APPROVE",
   REJECT: "REJECT",
   VIEW_SIDEBAR: "VIEW_SIDEBAR",
+  VIEW_ONE: "VIEW_ONE",
 };

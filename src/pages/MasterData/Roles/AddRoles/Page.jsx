@@ -33,8 +33,8 @@ const AddRoles = () => {
       .flat();
   };
 
-  const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
-  // const hasaccess = true;
+  // const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
+  const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {
