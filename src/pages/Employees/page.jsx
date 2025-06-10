@@ -30,6 +30,7 @@ import {
   hasUpdateAccess,
   hasDeleteAccess,
   MENU_NAMES,
+  hasViewone,
 } from "../../utils/permissionUtils";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
@@ -109,7 +110,7 @@ const Employees = () => {
   const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
   const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
-  const hasSingleView = hasSingleView(MENU_NAMES.EMPLOYEES);
+  const hasSingle = hasViewone(MENU_NAMES.EMPLOYEES);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -173,7 +174,7 @@ const Employees = () => {
         }
         break;
       case "view":
-        if (hasSingleView) {
+        if (hasSingle) {
           navigate(`/Employees/view/${employeeId}`);
         } else {
           toast.error("Currently You dont have access to this setting.");

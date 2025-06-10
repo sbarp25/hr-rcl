@@ -36,6 +36,7 @@ import Loader from "../Loader/Loader.jsx";
 import {
   hasReadAccess,
   hasUpdateAccess,
+  hasViewSingleAccess,
   MENU_NAMES,
 } from "../../utils/permissionUtils.js";
 
@@ -61,22 +62,22 @@ const Sidebar = () => {
   /**To check Position see status */
   const seePosition = hasReadAccess(MENU_NAMES.POSITION);
   const seeRole = hasReadAccess(MENU_NAMES.ROLES);
-  const seeMasterData = hasReadAccess(MENU_NAMES.MASTERDATA);
-  // const seeAttendance = hasReadAccess(MENU_NAMES.ATTENDANCE);
-  const seeAttendance = true;
+  const seeMasterData = hasViewSingleAccess(MENU_NAMES.MASTERDATA);
+  const seeAttendance = hasViewSingleAccess(MENU_NAMES.ATTENDANCE);
+  // const seeAttendance = true;
 
   const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
   const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
   const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
 
   const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
-  const seeLeave = hasReadAccess(MENU_NAMES.LEAVE);
+  const seeLeave = hasViewSingleAccess(MENU_NAMES.LEAVE);
 
   const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
   const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
   const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
 
-  const seeWorkFromHome = hasReadAccess(MENU_NAMES.WORKFROMHOME);
+  const seeWorkFromHome = hasViewSingleAccess(MENU_NAMES.WORKFROMHOME);
 
   const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const navbarElements = [
