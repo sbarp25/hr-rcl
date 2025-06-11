@@ -38,10 +38,12 @@ import {
   hasUpdateAccess,
   hasViewSingleAccess,
   MENU_NAMES,
+  permissionManager,
 } from "../../utils/permissionUtils.js";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
+  const [permissionsLoaded, setPermissionsLoaded] = useState(false);
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -52,36 +54,90 @@ const Sidebar = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
-  const menu = LocalStorageUtil.getItem("menu");
 
-  const seeEmployee = hasReadAccess(MENU_NAMES.EMPLOYEES);
+  // Force re-evaluation of permissions
+  const [, forceUpdate] = useState({});
+  const triggerRerender = () => forceUpdate({});
 
-  const seeDashboard = true;
+  // Check if permissions are loaded
+  useEffect(() => {
+    const checkPermissions = () => {
+      const menu = LocalStorageUtil.getItem("menu");
+      if (menu && Array.isArray(menu) && menu.length > 0) {
+        setPermissionsLoaded(true);
+        permissionManager.refresh(); // Refresh the permission manager
+        triggerRerender(); // Force component re-render
+      } else {
+        // If permissions not loaded, check again after a short delay
+        setTimeout(checkPermissions, 100);
+      }
+    };
 
-  const seeDepartment = hasReadAccess(MENU_NAMES.DEPARTMENT);
-  /**To check Position see status */
-  const seePosition = hasReadAccess(MENU_NAMES.POSITION);
-  const seeRole = hasReadAccess(MENU_NAMES.ROLES);
-  const seeMasterData = hasViewSingleAccess(MENU_NAMES.MASTERDATA);
-  const seeAttendance = hasViewSingleAccess(MENU_NAMES.ATTENDANCE);
-  // const seeAttendance = true;
+    checkPermissions();
+  }, []);
 
-  const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
-  const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
-  const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
+  // Listen for localStorage changes (useful if menu data is set after component mounts)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "menu" && e.newValue) {
+        permissionManager.refresh();
+        setPermissionsLoaded(true);
+        triggerRerender();
+      }
+    };
 
-  const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
-  const seeLeave = hasViewSingleAccess(MENU_NAMES.LEAVE);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
-  const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
-  const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
-  const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
+  // Get permission values (will be recalculated when component re-renders)
+  const seeEmployee = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.EMPLOYEES)
+    : false;
+  const seeDashboard = true; // Dashboard is always visible
+  const seeDepartment = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.DEPARTMENT)
+    : false;
+  const seePosition = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.POSITION)
+    : false;
+  const seeRole = permissionsLoaded ? hasReadAccess(MENU_NAMES.ROLES) : false;
+  const seeMasterData = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.MASTERDATA)
+    : false;
+  const seeAttendance = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.ATTENDANCE)
+    : false;
+  const seeMyAttendance = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.MYATTENDANCE)
+    : false;
+  const seeLateCheckIn = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LATECHECKIN)
+    : false;
+  const seeHandbook = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.HANDBOOK)
+    : false;
+  const seeNotices = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.NOTICE)
+    : false;
+  const seeLeave = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.LEAVE)
+    : false;
+  const seeLeaveStatus = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LEAVESTATUS)
+    : false;
+  const seeLeaveRequest = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LEAVEREQUEST)
+    : false;
+  const seeEKYE = permissionsLoaded ? hasReadAccess(MENU_NAMES.EKYE) : false;
+  const seeWorkFromHome = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.WORKFROMHOME)
+    : false;
+  const seeWorkFromHomeAdmin = permissionsLoaded
+    ? hasUpdateAccess(MENU_NAMES.WORKFROMHOME)
+    : false;
 
-  const seeWorkFromHome = hasViewSingleAccess(MENU_NAMES.WORKFROMHOME);
-
-  const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const navbarElements = [
-    // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
       icon: MdDashboard,
       label: "Dashboard",
@@ -93,8 +149,6 @@ const Sidebar = () => {
       label: "Attendance",
       view: seeAttendance,
       children: [
-        // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
-        // { label: "Auto CheckOut", to: "/Attendance", view: seeMyAttendance },
         {
           icon: LuMapPinCheckInside,
           label: "Late Checkin ",
@@ -115,7 +169,6 @@ const Sidebar = () => {
       to: "/Employees",
       view: seeEmployee,
     },
-
     {
       icon: BiData,
       label: "Master Data",
@@ -141,17 +194,9 @@ const Sidebar = () => {
         },
       ],
     },
-    // {
-    //   icon: FaBookBookmark,
-    //   label: "HandBook",
-    //   to: "/handbook",
-    //   view: seeHandbook,
-    // },
-    // { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",
-      // view: seeLeave,
       view: seeLeave,
       children: [
         {
@@ -193,13 +238,6 @@ const Sidebar = () => {
       to: "/AdminEkye",
       view: seeEKYE,
     },
-
-    // {
-    //   icon: IoIosPeople,
-    //   label: "Auto-Checkout",
-    //   to: "/selfAutoCheckOut",
-    //   view: true,
-    // },
   ];
 
   const toggleSidebar = () => {
@@ -242,6 +280,7 @@ const Sidebar = () => {
       setIsLoading(false);
     }
   };
+
   const fetchProfilephoto = async () => {
     setIsLoading(true);
     try {
@@ -268,6 +307,22 @@ const Sidebar = () => {
   useEffect(() => {
     fetchProfilephoto();
   }, []);
+
+  // Show loading state if permissions not loaded
+  if (!permissionsLoaded) {
+    return (
+      <div className="flex h-screen bg-black">
+        <div className="w-20 h-full bg-black text-white flex flex-col">
+          <div className="flex items-center gap-4 p-4 flex-shrink-0">
+            <GiHamburgerMenu className="text-2xl cursor-pointer" />
+          </div>
+          <div className="flex-grow flex items-center justify-center">
+            <div className="text-white text-sm">Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -304,7 +359,6 @@ const Sidebar = () => {
                         : "hover:bg-gray-700"
                     }`}
                     onClick={() => service.children && toggleDropdown(index)}>
-                    {/* {location.pathname === service.to && <BsArrowReturnRight />} */}
                     <service.icon className="text-2xl" />
                     {isSidebarExpanded && (
                       <span className="text-base">{service.label}</span>

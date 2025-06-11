@@ -270,11 +270,11 @@ const WorkFromHomeStatus = () => {
                     onApplySearch={handleApplySearch}
                     url="/api/work_from_home/review"
                     searchFields={[
-                      "fullName",
-                      "email",
-                      "rclId",
-                      "Department",
-                      "position",
+                      "userFullName",
+                      "departmentName",
+                      "requestDate",
+                      "workFromHomeStartDate",
+                      "workFromHomeEndDate",
                     ]}
                     placeholder="Search Employee..."
                   />

@@ -277,10 +277,11 @@ const SelfLeaveStatus = () => {
                   url="/api/v1/leave_management/list"
                   searchFields={[
                     "fullName",
-                    "email",
-                    "rclId",
-                    "Department",
-                    "position",
+                    "departmentName",
+                    "requestDate",
+                    "leaveType",
+                    "leaveStartDate",
+                    "leaveEndDate",
                   ]}
                 />
                 <Filter

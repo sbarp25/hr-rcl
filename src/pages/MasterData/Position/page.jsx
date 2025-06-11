@@ -227,14 +227,8 @@ const Position = () => {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                     <Search
                       onApplySearch={handleApplySearch}
-                      url="/api/v1/departments/list"
-                      searchFields={[
-                        "fullName",
-                        "email",
-                        "rclId",
-                        "Department",
-                        "position",
-                      ]}
+                      url="/api/v1/positions/list"
+                      searchFields={["positionName", "description"]}
                       placeholder="Search Position..."
                     />
                     <Filter
@@ -286,8 +280,8 @@ const Position = () => {
                             className="h-14 justify-center items-center border-b-2 border-gray-300">
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                              {position.positionName.length < 15 ? (
-                                position.positionName
+                              {position?.positionName?.length < 15 ? (
+                                position?.positionName
                               ) : (
                                 <Tooltip content={position.positionName}>
                                   {truncateText(position.positionName, 15)}

@@ -17,12 +17,12 @@ import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
 import { Controller } from "react-hook-form";
-import DatepickerComponent from "./ui/DatepickerComponent.jsx";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
-const degrees = ["SEE/SLC", "+2/A levels", "Bachelor's", "Master's", "PhD"];
+const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
 
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
@@ -165,12 +165,32 @@ const EducationalDetails = ({
           // Create an empty education array based on degrees
           const initialEducation = degrees.map(() => ({}));
 
-          // Map each fetched education item to its corresponding degree position
+          // Group data by degree and get the most recent entry for each degree
+          const degreeMap = {};
+
+          data.forEach((edu) => {
+            const degree = edu.degree;
+            // Handle degree name variations
+            const normalizedDegree = degree === "+2" ? "+2/A levels" : degree;
+
+            if (degrees.includes(normalizedDegree)) {
+              // If we haven't seen this degree before, or if this entry is more recent
+              if (
+                !degreeMap[normalizedDegree] ||
+                new Date(edu.startYear) >
+                  new Date(degreeMap[normalizedDegree].startYear)
+              ) {
+                degreeMap[normalizedDegree] = edu;
+              }
+            }
+          });
+
+          // Map each degree to its corresponding position
           let hasInProgressItem = false;
           let inProgressIndex = -1;
 
-          data.forEach((edu) => {
-            const degreeIndex = degrees.indexOf(edu.degree);
+          Object.entries(degreeMap).forEach(([degree, edu]) => {
+            const degreeIndex = degrees.indexOf(degree);
             const startyear = formatDate(edu.startYear);
             const endyear = formatDate(edu.endYear);
 
@@ -204,11 +224,14 @@ const EducationalDetails = ({
           }));
 
           // Update selected degree if we have education data
-          if (data.length > 0) {
-            let highestDegreeIndex = data.reduce((highest, edu) => {
-              const index = degrees.indexOf(edu.degree);
-              return index > highest ? index : highest;
-            }, 0);
+          if (Object.keys(degreeMap).length > 0) {
+            let highestDegreeIndex = Object.keys(degreeMap).reduce(
+              (highest, degree) => {
+                const index = degrees.indexOf(degree);
+                return index > highest ? index : highest;
+              },
+              0
+            );
 
             // If there's an IN_PROGRESS degree, limit to that level
             if (hasInProgressItem && highestDegreeIndex > inProgressIndex) {
@@ -227,6 +250,7 @@ const EducationalDetails = ({
         }
         setEducationalDocument(true);
       } catch (error) {
+        console.error("Error fetching education details:", error);
         // Initialize with empty education array on error
         setFormData((prev) => ({
           ...prev,
@@ -389,8 +413,8 @@ const EducationalDetails = ({
       ? formData.education
       : degrees.map(() => ({}));
 
-  const formatDate = (date) =>
-    date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
+  // const formatDate = (date) =>
+  //   date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
 
   const shouldShowFaculty = (degreeIndex) => {
     const degree = degrees[degreeIndex];
@@ -636,12 +660,27 @@ const EducationalDetails = ({
                     validate: (value) => {
                       const startDate = getValues(`startYear_${index}`);
                       if (!startDate || !value) return true;
-                      const startDateObj = startDate.toDate(getLocalTimeZone());
-                      const endDateObj = value.toDate(getLocalTimeZone());
-                      return (
-                        endDateObj >= startDateObj ||
-                        "End date cannot be before start date"
-                      );
+
+                      try {
+                        // Check if startDate has toDate method, if not it might already be a Date object
+                        const startDateObj =
+                          typeof startDate?.toDate === "function"
+                            ? startDate.toDate(getLocalTimeZone())
+                            : new Date(startDate);
+
+                        const endDateObj =
+                          typeof value?.toDate === "function"
+                            ? value.toDate(getLocalTimeZone())
+                            : new Date(value);
+
+                        return (
+                          endDateObj >= startDateObj ||
+                          "End date cannot be before start date"
+                        );
+                      } catch (error) {
+                        console.error("Date validation error:", error);
+                        return true; // Skip validation if there's an error
+                      }
                     },
                   }}
                 />
@@ -652,168 +691,166 @@ const EducationalDetails = ({
 
             {/**Files */}
             {education[index]?.status !== "IN_PROGRESS" ? (
-              <div>
-                <div className="col-span-2">
-                  <Controller
-                    name={`files_${index}`}
-                    control={control}
-                    rules={{
-                      validate: {
-                        required: (files) => {
-                          const currentStatus = getValues(`status_${index}`);
-                          // Skip validation if we already have a file URL from the API
-                          if (education[index]?.file) return true;
+              <div className="col-span-2">
+                <Controller
+                  name={`files_${index}`}
+                  control={control}
+                  rules={{
+                    validate: {
+                      required: (files) => {
+                        const currentStatus = getValues(`status_${index}`);
+                        // Skip validation if we already have a file URL from the API
+                        if (education[index]?.file) return true;
 
-                          // Otherwise check if file is required for COMPLETED status
-                          if (currentStatus === "COMPLETED") {
-                            return files && files.length > 0
-                              ? true
-                              : "File is required.";
-                          }
-                          return true;
-                        },
-                        fileValidation: (files) => {
-                          // Use the validateFile function to validate the file
-                          if (
-                            !files ||
-                            files === "existing_file" ||
-                            files.length === 0
-                          )
-                            return true;
-                          return validateFile(files[0], education[index]?.file);
-                        },
+                        // Otherwise check if file is required for COMPLETED status
+                        if (currentStatus === "COMPLETED") {
+                          return files && files.length > 0
+                            ? true
+                            : "File is required.";
+                        }
+                        return true;
                       },
-                    }}
-                    render={({ field: { onChange, value, ref } }) => (
-                      <div className="space-y-2">
-                        {/* Input styled like text input */}
-                        <div
-                          className={`relative flex items-center w-full ${
-                            errors[`files_${index}`]
-                              ? "border-danger"
-                              : education[index]?.file ||
-                                (value?.length > 0 && value !== "existing_file")
-                          } border-2 rounded-xl p-1 overflow-hidden `}>
-                          {/* Left icon */}
-                          <div className="pl-3 flex items-center">
-                            {education[index]?.file || (
-                              <CiImageOn className="text-3xl text-gray-400" />
-                            )}
-                          </div>
-
-                          {/* Text area (fake input) */}
-                          <div className="flex-1 px-2 py-2.5">
-                            <span
-                              className={`text-sm ${
-                                education[index]?.file ||
-                                (value?.length > 0 && value !== "existing_file")
-                                  ? "text-gray-700 font-medium"
-                                  : "text-gray-500"
-                              } truncate block`}>
-                              {education[index]?.file
-                                ? "Document already uploaded"
-                                : value?.length > 0 && value !== "existing_file"
-                                ? value[0].name
-                                : "Upload Education Certificate"}
-                            </span>
-                          </div>
-
-                          {/* Browse button */}
-                          <div className="pr-1">
-                            <button
-                              type="button"
-                              className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
-                              onClick={() => {
-                                // This is just for visual feedback, the actual input is below
-                              }}>
-                              Browse
-                            </button>
-                          </div>
-
-                          {/* Hidden file input */}
-                          <input
-                            type="file"
-                            accept=".png,.jpg,.jpeg"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer focus:outline-none"
-                            ref={ref}
-                            onChange={(e) => {
-                              const files = Array.from(e.target.files);
-                              onChange(files);
-                              handleFileChange(index, files);
-                            }}
-                          />
+                      fileValidation: (files) => {
+                        // Use the validateFile function to validate the file
+                        if (
+                          !files ||
+                          files === "existing_file" ||
+                          files.length === 0
+                        )
+                          return true;
+                        return validateFile(files[0], education[index]?.file);
+                      },
+                    },
+                  }}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <div className="space-y-2">
+                      {/* Input styled like text input */}
+                      <div
+                        className={`relative flex items-center w-full ${
+                          errors[`files_${index}`]
+                            ? "border-danger"
+                            : education[index]?.file ||
+                              (value?.length > 0 && value !== "existing_file")
+                            ? "border-gray-300"
+                            : "border-gray-300"
+                        } border-2 rounded-xl p-1 overflow-hidden`}>
+                        {/* Left icon */}
+                        <div className="pl-3 flex items-center">
+                          <CiImageOn className="text-3xl text-gray-400" />
                         </div>
 
-                        {/* Error message */}
-                        {errors[`files_${index}`] && (
-                          <p className="text-danger text-sm">
-                            {errors[`files_${index}`].message}
-                          </p>
-                        )}
-
-                        {/* Help text and view document section */}
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                          <p className="text-xs text-gray-500">
-                            Please upload the image of type either PNG or JPG
-                            under 1 MB
-                          </p>
-
-                          {educationalDocument &&
-                            education &&
-                            education[index] && (
-                              <div className="mt-1 sm:mt-0">
-                                {education[index]?.file && (
-                                  <div
-                                    onClick={onOpen}
-                                    className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
-                                    <svg
-                                      className="h-4 w-4 mr-1"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg">
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    View Certificate
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                        {/* Text area (fake input) */}
+                        <div className="flex-1 px-2 py-2.5">
+                          <span
+                            className={`text-sm ${
+                              education[index]?.file ||
+                              (value?.length > 0 && value !== "existing_file")
+                                ? "text-gray-700 font-medium"
+                                : "text-gray-500"
+                            } truncate block`}>
+                            {education[index]?.file
+                              ? `Document uploaded (${degrees[index]} Certificate)` // Show friendly message instead of URL
+                              : value?.length > 0 && value !== "existing_file"
+                              ? value[0].name
+                              : "Upload Education Certificate"}
+                          </span>
                         </div>
 
-                        <Modal
-                          isOpen={isOpen}
-                          onOpenChange={onOpenChange}
-                          isDismissable={true}
-                          isKeyboardDismissDisabled={false}>
-                          <ModalContent>
-                            {() => (
-                              <>
-                                <ModalBody>
-                                  <div className="h-96 w-96">
-                                    <img
-                                      src={education[index].file}
-                                      alt="Education Certificate"
-                                    />
-                                  </div>
-                                </ModalBody>
-                              </>
-                            )}
-                          </ModalContent>
-                        </Modal>
+                        {/* Browse button */}
+                        <div className="pr-1">
+                          <button
+                            type="button"
+                            className="bg-gray-100 py-1.5 px-3 border-l text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none"
+                            onClick={() => {
+                              // This is just for visual feedback, the actual input is below
+                            }}>
+                            Browse
+                          </button>
+                        </div>
+
+                        {/* Hidden file input */}
+                        <input
+                          type="file"
+                          accept=".png,.jpg,.jpeg"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer focus:outline-none"
+                          ref={ref}
+                          onChange={(e) => {
+                            const files = Array.from(e.target.files);
+                            onChange(files);
+                            handleFileChange(index, files);
+                          }}
+                        />
                       </div>
-                    )}
-                  />
-                </div>
+
+                      {/* Error message */}
+                      {errors[`files_${index}`] && (
+                        <p className="text-danger text-sm">
+                          {errors[`files_${index}`].message}
+                        </p>
+                      )}
+
+                      {/* Help text and view document section */}
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                        <p className="text-xs text-gray-500">
+                          Please upload the image of type either PNG or JPG
+                          under 1 MB
+                        </p>
+
+                        {educationalDocument &&
+                          education &&
+                          education[index] && (
+                            <div className="mt-1 sm:mt-0">
+                              {education[index]?.file && (
+                                <div
+                                  onClick={onOpen}
+                                  className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
+                                  <svg
+                                    className="h-4 w-4 mr-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                  </svg>
+                                  View Certificate
+                                </div>
+                              )}
+                            </div>
+                          )}
+                      </div>
+
+                      <Modal
+                        isOpen={isOpen}
+                        onOpenChange={onOpenChange}
+                        isDismissable={true}
+                        isKeyboardDismissDisabled={false}>
+                        <ModalContent>
+                          {() => (
+                            <>
+                              <ModalBody>
+                                <div className="h-96 w-96">
+                                  <img
+                                    src={education[index].file}
+                                    alt="Education Certificate"
+                                  />
+                                </div>
+                              </ModalBody>
+                            </>
+                          )}
+                        </ModalContent>
+                      </Modal>
+                    </div>
+                  )}
+                />
               </div>
             ) : (
               ""

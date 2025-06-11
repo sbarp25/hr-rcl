@@ -72,6 +72,7 @@ const Page = () => {
   };
 
   const fetchEkye = async () => {
+    setEkyeData([]);
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
@@ -113,8 +114,8 @@ const Page = () => {
       fetchEkye();
     }
   };
-  // const hasaccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
+  const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
   const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
   const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
@@ -143,8 +144,8 @@ const Page = () => {
               "fullName",
               "email",
               "rclId",
-              "Department",
-              "position",
+              "departmentName",
+              "positionName",
             ]}
             placeholder="Search employees..."
           />
@@ -217,7 +218,7 @@ const Page = () => {
           )}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-4">
           <div className="text-sm font-medium text-gray-600  flex items-center">
             <span className="mr-1">Showing:</span>
             <span className="font-bold text-gray-800 mx-1">

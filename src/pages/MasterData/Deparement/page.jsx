@@ -222,11 +222,10 @@ const Department = () => {
                       onApplySearch={handleApplySearch}
                       url="/api/v1/departments/list"
                       searchFields={[
-                        "fullName",
-                        "email",
-                        "rclId",
-                        "Department",
-                        "position",
+                        "name",
+                        "description",
+                        "teamLeadName",
+                        "associateTeamLeadName",
                       ]}
                       placeholder="Search Departments..."
                     />

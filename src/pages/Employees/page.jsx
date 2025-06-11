@@ -104,8 +104,8 @@ const Employees = () => {
   const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
 
   /**To read the Data */
-  // const hasaccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
+  const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
   const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
@@ -264,8 +264,8 @@ const Employees = () => {
                     "fullName",
                     "email",
                     "rclId",
-                    "Department",
-                    "position",
+                    "departmentName",
+                    "postionName",
                   ]}
                   placeholder="Search employees..."
                 />

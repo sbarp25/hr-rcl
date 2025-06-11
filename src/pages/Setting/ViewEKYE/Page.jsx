@@ -41,7 +41,7 @@ const tabData = [
 const Tabs = ({ activeTab, changeTab }) => (
   <div className="w-full">
     {/* Desktop Tabs */}
-    <ul className="hidden md:flex">
+    <ul className="hidden md:flex flex-wrap">
       {tabData?.map((tab) => (
         <li
           key={tab.name}
@@ -49,12 +49,15 @@ const Tabs = ({ activeTab, changeTab }) => (
             e.preventDefault();
             changeTab(tab);
           }}
-          className={`cursor-pointer py-2 px-4 lg:px-8 text-center min-w-0 flex-1 font-semibold rounded-t-2xl border transition-all duration-300 ${
+          className={`cursor-pointer py-2 px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 text-center min-w-0 flex-1 font-semibold rounded-t-2xl border transition-all duration-300 ${
             activeTab.name === tab.name
               ? "bg-gray-50 border border-gray-300"
               : "hover:border-gray-300 hover:bg-gray-100"
           }`}>
-          <span className="text-sm lg:text-base truncate">{tab.name}</span>
+          <span className="text-xs sm:text-sm md:text-sm lg:text-base xl:text-base truncate block">
+            <span className="hidden lg:inline">{tab.name}</span>
+            <span className="lg:hidden">{tab.shortName}</span>
+          </span>
         </li>
       ))}
     </ul>
@@ -83,30 +86,6 @@ const Tabs = ({ activeTab, changeTab }) => (
         </svg>
       </div>
     </div>
-
-    {/* Alternative Mobile: Horizontal Scrollable Tabs */}
-    {/* Uncomment this section if you prefer scrollable tabs over dropdown
-    <div className="md:hidden overflow-x-auto">
-      <ul className="flex min-w-max">
-        {tabData?.map((tab) => (
-          <li
-            key={tab.name}
-            onClick={(e) => {
-              e.preventDefault();
-              changeTab(tab);
-            }}
-            className={`cursor-pointer py-2 px-4 text-center whitespace-nowrap font-semibold rounded-t-2xl border transition-all duration-300 ${
-              activeTab.name === tab.name
-                ? "bg-gray-50 border border-gray-300"
-                : "hover:border-gray-300 hover:bg-gray-100"
-            }`}
-          >
-            <span className="text-sm">{tab.shortName}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-    */}
   </div>
 );
 
@@ -114,7 +93,7 @@ const Content = ({ activeTab, employeeData }) => {
   const ActiveComponent = activeTab.component;
   return (
     <section className={`panel ${activeTab.panelClass} mt-0`}>
-      <div className="p-4 md:p-6">
+      <div className="p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8">
         <ActiveComponent employeeData={employeeData} />
       </div>
     </section>
@@ -188,16 +167,16 @@ const ViewEKYE = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-      <h1 className="page-title my-3 text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
+    <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 max-w-full sm:max-w-full md:max-w-6xl lg:max-w-7xl xl:max-w-screen-2xl">
+      <h1 className="page-title my-2 sm:my-3 md:my-4 lg:my-5 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800">
         EKYE
       </h1>
 
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="">
         <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
         {isLoading ? (
-          <div className="flex justify-center items-center p-8 md:p-12">
+          <div className="flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 xl:p-16">
             <Loader />
           </div>
         ) : (
