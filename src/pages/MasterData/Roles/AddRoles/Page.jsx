@@ -20,7 +20,7 @@ const AddRoles = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset, setValue } = useForm();
 
   // Get all selected action IDs from the menus
   const getSelectedActions = () => {
@@ -33,8 +33,8 @@ const AddRoles = () => {
       .flat();
   };
 
-  // const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
-  const hasaccess = true;
+  const hasaccess = hasCreateAccess(MENU_NAMES.ROLES);
+  // const hasaccess = true;
 
   useEffect(() => {
     if (!hasaccess) {
@@ -96,6 +96,39 @@ const AddRoles = () => {
           idx === actionIndex ? { ...action, selected: isChecked } : action
         ),
       };
+
+      // Check if all actions in this menu are selected to update menu select all
+      const allActionsInMenuSelected = updatedMenus[menuIndex].actions.every(
+        (action) => action.selected
+      );
+      const noActionsInMenuSelected = updatedMenus[menuIndex].actions.every(
+        (action) => !action.selected
+      );
+
+      if (allActionsInMenuSelected) {
+        setValue(`SelectMenu_${menuIndex}`, true);
+      } else if (noActionsInMenuSelected) {
+        setValue(`SelectMenu_${menuIndex}`, false);
+      } else {
+        setValue(`SelectMenu_${menuIndex}`, false);
+      }
+
+      // Check if all menus are now selected/unselected to update main Select All
+      const allMenusSelected = updatedMenus.every((menu) =>
+        menu.actions.every((action) => action.selected)
+      );
+      const noMenusSelected = updatedMenus.every((menu) =>
+        menu.actions.every((action) => !action.selected)
+      );
+
+      if (allMenusSelected) {
+        setValue("SelectAllRoles", true);
+      } else if (noMenusSelected) {
+        setValue("SelectAllRoles", false);
+      } else {
+        setValue("SelectAllRoles", false);
+      }
+
       return updatedMenus;
     });
   };
@@ -164,6 +197,7 @@ const AddRoles = () => {
   };
 
   const SelectAll = (isChecked) => {
+    // Update all menu actions
     setMenusAndActions((prevMenus) =>
       prevMenus.map((menu) => ({
         ...menu,
@@ -173,6 +207,11 @@ const AddRoles = () => {
         })),
       }))
     );
+
+    // Update all individual menu select all checkboxes
+    menusAndActions.forEach((menu, menuIndex) => {
+      setValue(`SelectMenu_${menuIndex}`, isChecked);
+    });
   };
 
   const selectMenuAll = (menuIndex, isChecked) => {
@@ -185,6 +224,23 @@ const AddRoles = () => {
           selected: isChecked,
         })),
       };
+
+      // Check if all menus are now selected/unselected to update main Select All
+      const allMenusSelected = updatedMenus.every((menu) =>
+        menu.actions.every((action) => action.selected)
+      );
+      const noMenusSelected = updatedMenus.every((menu) =>
+        menu.actions.every((action) => !action.selected)
+      );
+
+      if (allMenusSelected) {
+        setValue("SelectAllRoles", true);
+      } else if (noMenusSelected) {
+        setValue("SelectAllRoles", false);
+      } else {
+        setValue("SelectAllRoles", false);
+      }
+
       return updatedMenus;
     });
   };
