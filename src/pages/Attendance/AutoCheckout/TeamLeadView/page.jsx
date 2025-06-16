@@ -25,11 +25,10 @@ import { autoCheckout } from "../../../../api/auth";
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [autoCheckOutDataPerPage, setAutoCheckOutDataPerPage] = useState(10);
-  const [autoCheckOutData, setAutoCheckoutData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [originalAutoCheckOutata, setOriginalAutoCheckOutata] = useState(false);
+  const [expandedRow, setExpandedRow] = useState(null);
+  const [searchFilters, setSearchFilters] = useState(null);
+  const [activeFilters, setActiveFilters] = useState(null);
+
   const navigate = useNavigate();
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
@@ -37,113 +36,91 @@ const AutoCheckout = () => {
     { label: "Attendance", href: "/Attendance" },
     { label: "Auto-Checkout", href: "/autoCheckOut" },
   ];
-  const [expandedRow, setExpandedRow] = useState(null);
 
-  const toggleExpandedRow = (rclId) => {
-    setExpandedRow(expandedRow === rclId ? null : rclId);
-  };
-
-  // const fetchAutoCheckout = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await axiosInstance.post("/api/auto-checkout/records", {
-  //       pageIndex: currentPage,
-  //       pageSize: autoCheckOutDataPerPage,
-  //     });
-  //     if (response?.data?.responseCode === "200") {
-  //       setOriginalAutoCheckOutata(response?.data?.datalist || []);
-  //       setAutoCheckoutData(response?.data?.datalist || []);
-  //       setTotalPages(response.data.totalPages);
-  //       setTotalRecords(response.data.totalRecords);
-  //     } else {
-  //       toast.error(response?.data?.message);
-  //     }
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-  //       "Something went wrong";
-  //     toast.error(errorMessage);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["Employee", currentPage, autoCheckOutDataPerPage],
-    queryFn: () => autoCheckout(currentPage, autoCheckOutDataPerPage),
-    onSuccess: (data) => {
-      setOriginalAutoCheckOutata(data?.datalist);
+  // Main query for auto checkout data
+  const {
+    data: autoCheckoutResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: [
+      "autoCheckout",
+      currentPage,
+      autoCheckOutDataPerPage,
+      searchFilters,
+      activeFilters,
+    ],
+    queryFn: async () => {
+      if (searchFilters) {
+        return searchFilters;
+      }
+      if (activeFilters) {
+        return activeFilters;
+      }
+      return autoCheckout(currentPage, autoCheckOutDataPerPage);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(error.message || "Failed to fetch auto checkout data");
     },
+    keepPreviousData: true,
   });
-  // useEffect(() => {
-  //   fetchAutoCheckout();
-  // }, [currentPage, autoCheckOutDataPerPage]);
 
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
+  // Permission check
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    if (searchFilters || activeFilters) {
+      setCurrentPage(1);
+    }
+  }, [searchFilters, activeFilters]);
+
+  const toggleExpandedRow = (rclId) => {
+    setExpandedRow(expandedRow === rclId ? null : rclId);
+  };
+
   const handleApplySearch = (result) => {
     if (result.data) {
-      setAutoCheckoutData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setSearchFilters(result);
+      setActiveFilters(null); // Clear other filters
     } else {
-      refetch();
-      // fetchAutoCheckout();
+      setSearchFilters(null);
+      // This will trigger a refetch with the base query
     }
   };
-  const handleApplyFilters = (result) => {
+
+  const handleApplyFilters = async (result) => {
     if (result.data) {
-      setAutoCheckoutData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setActiveFilters(result);
+      setSearchFilters(null); // Clear search filters
     } else {
-      const fetchFilter = async () => {
-        // setIsLoading(true);
-        try {
-          const response = await axiosInstance.post(
-            "/api/auto-checkout/records",
-            {
-              pageIndex: currentPage,
-              pageSize: autoCheckOutDataPerPage,
-            }
-          );
-
-          if (response?.data?.responseCode === "200") {
-            setOriginalAutoCheckOutata(response?.data?.datalist || []);
-            setAutoCheckoutData(response?.data?.datalist || []);
-            setTotalPages(response.data.totalPages);
-            setTotalRecords(response.data.totalRecords);
-          } else {
-            toast.error(response?.data?.message);
-          }
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        } finally {
-          // setIsLoading(false);
-        }
-      };
-
-      fetchFilter();
+      setActiveFilters(null);
+      // This will trigger a refetch with the base query
     }
   };
+
   const handlePageChange = (page) => {
-    setAutoCheckoutData([]);
     setCurrentPage(page);
   };
 
-  const displayData = data?.datalist || [];
+  const handlePageSizeChange = (newPageSize) => {
+    setAutoCheckOutDataPerPage(newPageSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  // Derived data from the query response
+  const displayData = autoCheckoutResponse?.datalist || [];
+  const totalPages = autoCheckoutResponse?.totalPages || 1;
+  const totalRecords = autoCheckoutResponse?.totalRecords || 0;
+
   return (
     <div>
       <div className="flex flex-col space-y-4">
@@ -183,19 +160,19 @@ const AutoCheckout = () => {
           </div>
         </div>
       </div>
+
       {/* Auto Checkout Table - Large screens */}
-      <div className="hidden xl:block bg-white rounded-lg p-2 pb-4  overflow-y-auto">
+      <div className="hidden xl:block bg-white rounded-lg p-2 pb-4 overflow-y-auto">
         <Table bordered aria-label="List of Employees">
           <TableHeader>
             <TableColumn>S.N</TableColumn>
             <TableColumn>RCL-ID</TableColumn>
             <TableColumn>Name</TableColumn>
             <TableColumn>Attendance Date</TableColumn>
-            {/* <TableColumn>Attendance To</TableColumn> */}
             <TableColumn>Department</TableColumn>
           </TableHeader>
           <TableBody
-            items={isLoading ? [] : data?.datalist}
+            items={isLoading ? [] : displayData}
             isLoading={isLoading}
             loadingState={isLoading}
             loadingContent={<SkeletonLoader />}>
@@ -209,27 +186,26 @@ const AutoCheckout = () => {
                 <TableCell>{employee.rclId}</TableCell>
                 <TableCell>{employee.fullName}</TableCell>
                 <TableCell>{employee.attendanceDate}</TableCell>
-                {/* <TableCell>{employee.attendanceDateTo}</TableCell> */}
                 <TableCell>{employee.departmentName}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        {!isLoading && (!autoCheckOutData || autoCheckOutData.length === 0) && (
+        {!isLoading && displayData.length === 0 && (
           <div className="p-8 text-center text-gray-500">No Data available</div>
         )}
       </div>
+
       {/* Auto Checkout - Medium screens */}
-      <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2 pb-4  overflow-y-auto">
+      <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2 pb-4 overflow-y-auto">
         <Table bordered aria-label="List of Employees">
           <TableHeader className="bg-gray-50">
             <TableColumn>Name</TableColumn>
             <TableColumn>Attendance Date</TableColumn>
-            {/* <TableColumn>Attendance To Date</TableColumn> */}
-            <TableColumn>departmentName</TableColumn>
+            <TableColumn>Department</TableColumn>
           </TableHeader>
           <TableBody
-            items={isLoading ? [] : data}
+            items={isLoading ? [] : displayData}
             isLoading={isLoading}
             loadingContent={<SkeletonLoader />}>
             {displayData?.map((employee, index) => (
@@ -243,7 +219,6 @@ const AutoCheckout = () => {
                   </div>
                 </TableCell>
                 <TableCell>{employee.attendanceDate}</TableCell>
-                {/* <TableCell>{employee.attendanceDateTo}</TableCell> */}
                 <TableCell>
                   <div>
                     <div>{employee.departmentName}</div>
@@ -253,7 +228,7 @@ const AutoCheckout = () => {
             ))}
           </TableBody>
         </Table>
-        {!isLoading && (!autoCheckOutData || autoCheckOutData.length === 0) && (
+        {!isLoading && displayData.length === 0 && (
           <div className="p-8 text-center text-gray-500">No Data available</div>
         )}
       </div>
@@ -307,7 +282,7 @@ const AutoCheckout = () => {
               </div>
             ))}
 
-            {(!autoCheckOutData || autoCheckOutData.length === 0) && (
+            {displayData.length === 0 && (
               <div className="p-8 text-center text-gray-500 bg-white rounded-lg">
                 No Data available
               </div>
@@ -315,7 +290,9 @@ const AutoCheckout = () => {
           </div>
         )}
       </div>
-      {autoCheckOutData && autoCheckOutData.length > 0 && (
+
+      {/* Pagination and controls */}
+      {displayData.length > 0 && (
         <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
             <span className="mr-1">Showing</span>
@@ -339,7 +316,7 @@ const AutoCheckout = () => {
             <span className="text-xs mr-2">Lines Per Page:</span>
             <DropDownComp
               items={dropdownItems}
-              onSelect={setAutoCheckOutDataPerPage}
+              onSelect={handlePageSizeChange}
             />
           </div>
         </div>

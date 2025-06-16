@@ -222,7 +222,8 @@ const Sidebar = () => {
           icon: GrStatusGoodSmall,
           label: "WFH Status",
           to: "/WFH/Status",
-          view: seeWorkFromHome && seeWorkFromHomeAdmin,
+          // view: seeWorkFromHome && seeWorkFromHomeAdmin,
+          view: true,
         },
         {
           icon: VscGitPullRequestNewChanges,

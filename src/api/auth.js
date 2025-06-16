@@ -90,7 +90,7 @@ export const checkOutAPI = async (requestData) => {
   return response.data;
 };
 
-//Late Check-IN API
+// Check-IN Late API
 export const lateCheckInAPI = async (requestData) => {
   const response = await axiosInstance.post(
     "/api/attendance/late_check_in",
@@ -102,6 +102,19 @@ export const lateCheckInAPI = async (requestData) => {
     }
   );
   return response.data;
+};
+
+// fetch Late checkin's
+export const fetchlateCheckin = async (currentPage, lateCheckInDataPerPage) => {
+  const response = await axiosInstance.post(
+    "/api/v1/attendance/late-check-in/role-based-reviews",
+    { pageIndex: currentPage, pageSize: lateCheckInDataPerPage }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+  }
 };
 
 //Late Check-In Approve
@@ -144,4 +157,28 @@ export const autoCheckout = async (currentPage, autoCheckOutDataPerPage) => {
   }
 };
 
-/** */
+/**Fetch Employees */
+export const fetchEmployees = async (currentPage, employeeDataPerPage) => {
+  const response = await axiosInstance.post("/api/v1/users/list", {
+    pageIndex: currentPage,
+    pageSize: employeeDataPerPage,
+  });
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch employees");
+  }
+};
+
+/**Delete Employees */
+export const deleteEmployees = async (deletingId) => {
+  const response = await axiosInstance.delete(
+    `/api/v1/auth/toggle/${deletingId}`
+  );
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+  }
+};

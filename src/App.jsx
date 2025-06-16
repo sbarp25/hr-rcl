@@ -73,6 +73,7 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
   const location = useLocation();
   const authRoutes = [
     "/login",
@@ -87,9 +88,9 @@ function App() {
     "/settings",
     "/settings/ViewEKYE",
     "/settings/Change",
-    "/salary",
-    "/salaryEdit",
-    "/advanceSalary",
+    "/Salary",
+    "/SalaryEdit",
+    "/AdvanceSalary",
     "/Bank",
     "/Bank/AddBank",
   ];
@@ -133,9 +134,9 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
                 <Route path="/settings/Change" element={<ChangePassword />} />
-                <Route path="/salary" element={<SalaryDetails />} />
+                <Route path="/Salary" element={<SalaryDetails />} />
                 <Route path="/salaryEdit" element={<SalaryEdit />} />
-                <Route path="/advanceSalary" element={<AdvanceSalary />} />
+                <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
                 <Route path="/Bank" element={<GetBankDetails />} />
                 <Route path="/Bank/AddBank" element={<Bank />} />
               </Route>

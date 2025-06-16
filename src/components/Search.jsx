@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Input, Select, SelectItem } from "@heroui/react";
 import axiosInstance from "../lib/axios-Instance";
@@ -29,7 +29,7 @@ const Search = ({
       pageSize: 10,
       searchCriteria: {
         [selectedField]: searchValue.trim(),
-        // searchItem: searchValue.trim(),
+        searchItem: searchValue.trim(),
       },
     };
 
@@ -71,7 +71,9 @@ const Search = ({
       onSubmit();
     }
   };
-
+  // useEffect(() => {
+  //   onSubmit();
+  // }, [searchValue]);
   return (
     <>
       {isLoading ? (

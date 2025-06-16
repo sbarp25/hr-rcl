@@ -78,7 +78,6 @@ const Page = () => {
       const response = await axiosInstance.post(
         "/api/v1/admin/completed_ekye_users",
         {
-          // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
           pageIndex: currentPage,
           pageSize: ekyeDashboardDataPerPage,
         }

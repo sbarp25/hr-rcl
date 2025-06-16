@@ -207,11 +207,11 @@ const WorkFromHomeStatus = () => {
   const fetchWorkFromHome = async () => {
     setIsLoading(true);
     try {
-      // const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
-      //   pageIndex: currentPage,
-      //   pageSize: WFHDataPerPage,
-      // });
-      const response = await axiosInstance.get(`/api/work_from_home/requests`);
+      const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
+        pageIndex: currentPage,
+        pageSize: WFHDataPerPage,
+      });
+      // const response = await axiosInstance.get(`/api/work_from_home/requests`);
       if (response.data.responseCode === "200") {
         setWorkFromHome(response.data.datalist);
         setOriginalLeaveData(response.data.datalist);
@@ -268,7 +268,7 @@ const WorkFromHomeStatus = () => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                   <Search
                     onApplySearch={handleApplySearch}
-                    url="/api/work_from_home/review"
+                    url="/api/v1/work_from_home/list"
                     searchFields={[
                       "userFullName",
                       "departmentName",
@@ -280,7 +280,7 @@ const WorkFromHomeStatus = () => {
                   />
                   <Filter
                     onApplyFilters={handleApplyFilters}
-                    url="/api/work_from_home/review"
+                    url="/api/v1/work_from_home/list"
                     className="w-full sm:w-auto"
                   />
                 </div>

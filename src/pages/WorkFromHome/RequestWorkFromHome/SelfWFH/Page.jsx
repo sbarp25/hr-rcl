@@ -81,22 +81,26 @@ const SelfWorkFromHome = () => {
     setWorkFromHome([]);
     setIsLoading(true);
     try {
-      // const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
-      //   pageIndex: currentPage,
-      //   pageSize: WFHDataPerPage,
-      // });
-      const response = await axiosInstance.get(`/api/work_from_home/requests`);
+      const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
+        pageIndex: currentPage,
+        pageSize: WFHDataPerPage,
+      });
+      // const response = await axiosInstance.get(`/api/work_from_home/requests`);
       if (response.data.responseCode === "200") {
         setWorkFromHome(response.data.datalist);
         setOriginalLeaveData(response.data.datalist);
         setTotalPages(response.data.totalPages);
         setTotalRecords(response.data.totalRecords);
       } else {
-        toast.error(response.data.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       const errorMessage =
-        error.response?.data?.error || "Something went wrong";
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -146,7 +150,8 @@ const SelfWorkFromHome = () => {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                     <Search
                       onApplySearch={handleApplySearch}
-                      url="/api/work_from_home/review"
+                      url="/api/v1/work_from_home/list"
+                      // url="/api/v1/work_from_home/list"
                       searchFields={[
                         "userFullName",
                         "departmentName",
@@ -158,7 +163,8 @@ const SelfWorkFromHome = () => {
                     />
                     <Filter
                       onApplyFilters={handleApplyFilters}
-                      url="/api/work_from_home/review"
+                      url="/api/v1/work_from_home/list"
+                      // url="/api/work_from_home/review"
                       className="w-full sm:w-auto"
                     />
                     <ButtonComponent
@@ -192,15 +198,19 @@ const SelfWorkFromHome = () => {
                       loadingContent={<SkeletonLoader />}>
                       {(item) => (
                         <TableRow
-                          key={item.rclId}
+                          key={item.id || item.workFromHomeId}
                           className="h-14 border-b-2 border-gray-300">
                           <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                           <TableCell>
-                            {item?.userFullName.length < 7 ? (
+                            {item?.userFullName?.length < 7 ? (
                               item?.userFullName
                             ) : (
-                              <Tooltip content={item?.userFullName}>
-                                {truncateText(item?.userFullName, 7)}
+                              <Tooltip
+                                content={item?.userFullName || item?.fullName}>
+                                {truncateText(
+                                  item?.userFullName || item?.fullName,
+                                  7
+                                )}
                               </Tooltip>
                             )}
                           </TableCell>
@@ -259,7 +269,7 @@ const SelfWorkFromHome = () => {
                       loadingContent={<SkeletonLoader />}>
                       {(item) => (
                         <TableRow
-                          key={Math.random()}
+                          key={item.id || item.workFromHomeId}
                           className="hover:bg-gray-50">
                           <TableCell>{item?.fullName}</TableCell>
                           <TableCell>
@@ -300,7 +310,7 @@ const SelfWorkFromHome = () => {
                   <div className="space-y-4">
                     {workFromHome.map((WFH) => (
                       <div
-                        key={WFH.id}
+                        key={WFH.id || WFH.workFromHomeId}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
                           className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
