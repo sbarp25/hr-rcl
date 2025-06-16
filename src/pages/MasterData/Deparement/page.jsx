@@ -28,7 +28,6 @@ import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
@@ -339,7 +338,7 @@ const Department = () => {
                     <TableBody>
                       {departmentsData
                         .filter((department) => !department.isDeleted)
-                        .map((department, index) => (
+                        .map((department) => (
                           <TableRow
                             key={department.rclId}
                             className="hover:bg-gray-50">
@@ -411,7 +410,7 @@ const Department = () => {
                 <div className="space-y-4">
                   {departmentsData
                     .filter((department) => !department.isDeleted)
-                    .map((department, index) => (
+                    .map((department) => (
                       <div
                         key={department.id}
                         className="border rounded-lg overflow-hidden shadow-sm">

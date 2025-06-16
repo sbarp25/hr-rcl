@@ -1,80 +1,63 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Spinner } from "@heroui/react";
-import ButtonComponent from "../../components/ui/ButtonComp.jsx";
-import InputComponent from "../../components/ui/InputComponent.jsx";
-import LocationComponent from "../../components/LocationComponent";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
-
+import { loginUser } from "../../api/auth";
+import ButtonComponent from "../../components/ui/ButtonComp";
+import InputComponent from "../../components/ui/InputComponent";
+import LocationComponent from "../../components/LocationComponent";
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const { handleSubmit, control } = useForm();
 
-  const handleLogin = async (formState) => {
-    setIsLoading(true);
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      const accessToken = data?.data?.accessToken;
+      const refreshToken = data?.data?.refreshToken;
+      const FullName = data?.data?.fullName;
+      const Email = data?.data?.email;
+      const ekeyStep = data?.data?.ekeyStep;
+      const Menu = data?.data?.menuActionsAndPermissions;
+      const CheckinStatus = data?.data?.isCheckedInToday;
+      const isCurrentlyStudying = data?.data?.isCurrentlyStudying;
 
-    const LoginData = {
-      data: {
-        email: formState.email,
-        password: formState.password,
-      },
-    };
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login`,
-        LoginData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data?.responseCode === "200") {
-        const accessToken = response?.data?.data?.accessToken;
-        const refreshToken = response?.data?.data?.refreshToken;
-        const FullName = response?.data?.data?.fullName;
-        const Email = response?.data?.data?.email;
-        const ekeyStep = response?.data?.data?.ekeyStep;
-        const Menu = response?.data?.data?.menuActionsAndPermissions;
-        const isCurrentlyStudying = response?.data?.data?.isCurrentlyStudying;
-        localStorage.setItem("isCurrentlyStudying", isCurrentlyStudying);
-        localStorage.setItem("ekeyStep", ekeyStep);
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("fullName", FullName);
-        localStorage.setItem("email", Email);
-        LocalStorageUtil.setItem("menu", Menu);
-
-        if (
-          response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
-          response?.data?.data?.ekyeStatus === "COMPLETED"
-        ) {
-          navigate("/dashboard");
-        } else {
-          navigate("/EKYE");
-        }
+      localStorage.setItem("isCurrentlyStudying", isCurrentlyStudying);
+      localStorage.setItem("CheckinStatus", CheckinStatus);
+      localStorage.setItem("ekeyStep", ekeyStep);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("fullName", FullName);
+      localStorage.setItem("email", Email);
+      LocalStorageUtil.setItem("menu", Menu);
+      if (
+        data?.data?.ekyeStatus === "NOT_REQUIRED" ||
+        data?.data?.ekyeStatus === "COMPLETED"
+      ) {
+        navigate("/dashboard");
       } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage;
-        toast.error(errorMessage || "Log In Failed");
+        navigate("/EKYE");
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
         "Login failed. Try again.";
       toast.error(errorMessage);
-      // toast.error("Login failed. Try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
+
+  // const handleLogin = async (formState) => {
+  //   loginMutation.mutate(formState);
+  // };
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/") {
       LocalStorageUtil.removeItem("accessToken");
@@ -99,7 +82,7 @@ const Login = () => {
           </div>
           <div className="px-16 pt-64 bg-white rounded-2xl md:rounded-r-3xl md:rounded-l-none">
             <form
-              onSubmit={handleSubmit(handleLogin)}
+              onSubmit={handleSubmit(loginMutation.mutateAsync)}
               className="flex flex-col space-y-4 gap-6 w-full">
               <p className="text-2xl sm:text-xl font-bold text-center">
                 Log in
@@ -135,11 +118,13 @@ const Login = () => {
                 <ButtonComponent
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white rounded-xl  py-6 shadow-lg transition duration-300 "
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                   content={
                     <>
                       <span className="text-xl font-bold">Log In</span>
-                      {isLoading && <Spinner size="sm" color="danger" />}
+                      {loginMutation?.isPending && (
+                        <Spinner size="sm" color="danger" />
+                      )}
                     </>
                   }
                 />

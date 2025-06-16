@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 import { Button } from "@heroui/react";
+import TemporaryAdmin from "../../components/TemporaryAdmin.jsx";
 
 const Page = () => {
   const [attendanceData, setAttendanceData] = useState([]);
@@ -65,6 +66,7 @@ const Page = () => {
             />
           )}
         </div>
+        <TemporaryAdmin />
 
         {/* Welcome Banner */}
         <div className="flex justify-center bg-white items-center rounded-md w-full shadow-sm">

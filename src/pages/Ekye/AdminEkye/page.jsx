@@ -114,8 +114,8 @@ const Page = () => {
       fetchEkye();
     }
   };
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
   const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
   const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);

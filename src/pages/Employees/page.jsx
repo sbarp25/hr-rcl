@@ -13,7 +13,6 @@ import {
   TableRow,
   Pagination,
   Button,
-  Switch,
   useDisclosure,
   Modal,
   ModalContent,
@@ -26,11 +25,11 @@ import {
 import { FaChevronDown, FaEllipsisV, FaEye } from "react-icons/fa";
 import {
   hasCreateAccess,
-  hasReadAccess,
   hasUpdateAccess,
   hasDeleteAccess,
   MENU_NAMES,
   hasViewone,
+  hasReadAccess,
 } from "../../utils/permissionUtils";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
@@ -39,10 +38,8 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
-import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 
 const Employees = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -104,8 +101,8 @@ const Employees = () => {
   const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
 
   /**To read the Data */
-  const hasaccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
+  // const hasaccess = true;
+  const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
   const hasEmployeeEditAccess = hasUpdateAccess(MENU_NAMES.EMPLOYEES);
   /**To check Delete Access */
@@ -442,7 +439,7 @@ const Employees = () => {
             <SkeletonLoader />
           ) : (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {filteredEmployees.map((employee, index) => (
+              {filteredEmployees.map((employee) => (
                 <div
                   key={employee.rclId}
                   className="border rounded-lg overflow-hidden shadow-sm bg-white">

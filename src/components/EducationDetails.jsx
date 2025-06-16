@@ -19,6 +19,7 @@ import InputComponent from "./ui/InputComponent.jsx";
 import { Controller } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
+import { FaEye } from "react-icons/fa";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
@@ -170,18 +171,18 @@ const EducationalDetails = ({
 
           data.forEach((edu) => {
             const degree = edu.degree;
-            // Handle degree name variations
-            const normalizedDegree = degree === "+2" ? "+2/A levels" : degree;
 
-            if (degrees.includes(normalizedDegree)) {
+            // The API returns exact degree names, so we don't need normalization
+            if (degrees.includes(degree)) {
               // If we haven't seen this degree before, or if this entry is more recent
               if (
-                !degreeMap[normalizedDegree] ||
-                new Date(edu.startYear) >
-                  new Date(degreeMap[normalizedDegree].startYear)
+                !degreeMap[degree] ||
+                new Date(edu.startYear) > new Date(degreeMap[degree].startYear)
               ) {
-                degreeMap[normalizedDegree] = edu;
+                degreeMap[degree] = edu;
               }
+            } else {
+              console.warn(`Degree "${degree}" not found in degrees array`);
             }
           });
 
@@ -191,16 +192,26 @@ const EducationalDetails = ({
 
           Object.entries(degreeMap).forEach(([degree, edu]) => {
             const degreeIndex = degrees.indexOf(degree);
-            const startyear = formatDate(edu.startYear);
-            const endyear = formatDate(edu.endYear);
 
             if (degreeIndex !== -1) {
+              // Parse dates - handle different date formats
+              let startYear, endYear;
+
+              try {
+                startYear = edu.startYear ? formatDate(edu.startYear) : "";
+                endYear = edu.endYear ? formatDate(edu.endYear) : "";
+              } catch (error) {
+                console.error("Error formatting dates:", error);
+                startYear = edu.startYear || "";
+                endYear = edu.endYear || "";
+              }
+
               initialEducation[degreeIndex] = {
                 degree: edu.degree || "",
                 institution: edu.institution || "",
                 faculty: edu.faculty || "",
-                startYear: startyear,
-                endYear: endyear,
+                startYear: startYear,
+                endYear: endYear,
                 status: edu.status || "",
                 file: edu.documentUrl || "",
                 files: [],
@@ -264,19 +275,31 @@ const EducationalDetails = ({
     fetchEducationDetails();
   }, [setFormData, setValue]);
 
-  // Set form values when education data is loaded
+  // Set form values when education data is loaded - Fixed this section
   useEffect(() => {
     if (formData?.education && Array.isArray(formData.education)) {
       formData.education.forEach((edu, index) => {
-        if (edu.institution) setValue(`institution_${index}`, edu.institution);
-        if (edu.faculty) setValue(`faculty_${index}`, edu.faculty);
-        if (edu.startYear) setValue(`startYear_${index}`, edu.startYear);
-        if (edu.endYear) setValue(`endYear_${index}`, edu.endYear);
-        if (edu.status) setValue(`status_${index}`, edu.status);
-        if (edu.file) setValue(`files_${index}`, "existing_file");
+        if (edu.institution) {
+          setValue(`institution_${index}`, edu.institution);
+        }
+        if (edu.faculty) {
+          setValue(`faculty_${index}`, edu.faculty);
+        }
+        if (edu.startYear) {
+          setValue(`startYear_${index}`, edu.startYear);
+        }
+        if (edu.endYear) {
+          setValue(`endYear_${index}`, edu.endYear);
+        }
+        if (edu.status) {
+          setValue(`status_${index}`, edu.status);
+        }
+        if (edu.file) {
+          setValue(`files_${index}`, "existing_file");
+        }
       });
     }
-  }, [formData.education, setValue]);
+  }, [formData?.education, setValue]);
 
   const validateFile = (file, existingUrl) => {
     // If we already have a file URL from the API, skip validation
@@ -319,7 +342,6 @@ const EducationalDetails = ({
           : degrees.map(() => ({}));
 
         // Update the element at index with new file info
-        // If there was an existing file URL, retain it but add the new files as well
         updatedEducation[index] = {
           ...updatedEducation[index],
           files,
@@ -398,6 +420,7 @@ const EducationalDetails = ({
         toast.error(errorMessage);
       }
     } catch (error) {
+      console.error("Submit error:", error); // Debug log
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
         "Something went wrong";
@@ -412,9 +435,6 @@ const EducationalDetails = ({
     formData?.education && Array.isArray(formData.education)
       ? formData.education
       : degrees.map(() => ({}));
-
-  // const formatDate = (date) =>
-  //   date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
 
   const shouldShowFaculty = (degreeIndex) => {
     const degree = degrees[degreeIndex];
@@ -433,17 +453,62 @@ const EducationalDetails = ({
     if (!previousLevelEndDate || previousLevelStatus === "IN_PROGRESS")
       return true;
 
-    // Convert dates to comparable format
-    const previousEndDateObj = previousLevelEndDate.toDate(getLocalTimeZone());
-    const currentStartDateObj = value.toDate(getLocalTimeZone());
+    try {
+      // Convert dates to comparable format - handle different date formats
+      let previousEndDateObj;
+      let currentStartDateObj;
 
-    // Check if current start date is after previous end date
-    return (
-      currentStartDateObj >= previousEndDateObj ||
-      `Start date must be after the end date of your ${
-        degrees[index - 1]
-      } education`
-    );
+      // Handle previousLevelEndDate conversion
+      if (typeof previousLevelEndDate?.toDate === "function") {
+        // If it has toDate method (likely from a date picker library)
+        previousEndDateObj = previousLevelEndDate.toDate(getLocalTimeZone());
+      } else if (previousLevelEndDate instanceof Date) {
+        // If it's already a Date object
+        previousEndDateObj = previousLevelEndDate;
+      } else if (typeof previousLevelEndDate === "string") {
+        // If it's a string, parse it
+        previousEndDateObj = new Date(previousLevelEndDate);
+      } else {
+        // If we can't determine the format, skip validation
+        return true;
+      }
+
+      // Handle current value conversion
+      if (typeof value?.toDate === "function") {
+        // If it has toDate method (likely from a date picker library)
+        currentStartDateObj = value.toDate(getLocalTimeZone());
+      } else if (value instanceof Date) {
+        // If it's already a Date object
+        currentStartDateObj = value;
+      } else if (typeof value === "string") {
+        // If it's a string, parse it
+        currentStartDateObj = new Date(value);
+      } else {
+        // If we can't determine the format, skip validation
+        return true;
+      }
+
+      // Check if dates are valid
+      if (
+        isNaN(previousEndDateObj.getTime()) ||
+        isNaN(currentStartDateObj.getTime())
+      ) {
+        // If either date is invalid, skip validation
+        return true;
+      }
+
+      // Check if current start date is after previous end date
+      return (
+        currentStartDateObj >= previousEndDateObj ||
+        `Start date must be after the end date of your ${
+          degrees[index - 1]
+        } education`
+      );
+    } catch (error) {
+      console.error("Date validation error:", error);
+      // If there's any error in date conversion, skip validation
+      return true;
+    }
   };
 
   // Handle status change
@@ -590,21 +655,7 @@ const EducationalDetails = ({
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value);
-
-                        // Keep local formData in sync
-                        setFormData((prev) => {
-                          // Ensure education array exists
-                          const updated = Array.isArray(prev.education)
-                            ? [...prev.education]
-                            : degrees.map(() => ({}));
-
-                          // Ensure the element at index exists
-                          updated[index] = {
-                            ...updated[index],
-                            status: value,
-                          };
-                          return { ...prev, education: updated };
-                        });
+                        handleStatusChange(index, value);
                       }}
                       className="w-full"
                       isInvalid={!!errors[`status_${index}`]}
@@ -691,7 +742,7 @@ const EducationalDetails = ({
 
             {/**Files */}
             {education[index]?.status !== "IN_PROGRESS" ? (
-              <div className="col-span-2">
+              <div className="">
                 <Controller
                   name={`files_${index}`}
                   control={control}
@@ -804,23 +855,7 @@ const EducationalDetails = ({
                                 <div
                                   onClick={onOpen}
                                   className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
-                                  <svg
-                                    className="h-4 w-4 mr-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                  </svg>
+                                  <FaEye />
                                   View Certificate
                                 </div>
                               )}

@@ -29,12 +29,14 @@ import Filter from "../../../components/Filter";
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import Loader from "../../../components/Loader/Loader.jsx";
+import { useMutation } from "@tanstack/react-query";
 import {
   hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { lateCheckInApprove, lateCheckInReject } from "../../../api/auth";
 const AttendanceRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lateCheckinData, setLateCheckinData] = useState([]);
@@ -53,12 +55,6 @@ const AttendanceRequest = () => {
   const { reset, handleSubmit } = useForm();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isRejectOpen,
-    onOpen: onRejectOpen,
-    onOpenChange: onRejectOpenChange,
-    onClose: onRejectClose,
-  } = useDisclosure();
 
   useEffect(() => {
     if (!hasaccess) {
@@ -89,13 +85,12 @@ const AttendanceRequest = () => {
     setLateCheckinData([]);
     setCurrentPage(page);
   };
-  // const hasAttendanceEditAccess = true;
-  // const hasaccess = true;
   /**To Update Late Check   */
   const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   /**To read the Data */
   // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
   const hasaccess = true;
+
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },
@@ -142,97 +137,67 @@ const AttendanceRequest = () => {
     }
   };
 
+  const useApprove = useMutation({
+    mutationFn: lateCheckInApprove,
+    onSuccess: (data) => {
+      if (data?.data?.responseCode === "200") {
+        toast.success(data?.data?.message);
+        fetchLateCheckInData();
+        onClose();
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+
+  const useReject = useMutation({
+    mutationFn: lateCheckInReject,
+    onSuccess: (data) => {
+      if (data?.data?.responseCode === "200") {
+        toast.success(data?.data?.message);
+        fetchLateCheckInData();
+        onClose();
+        reset();
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error?.response?.data?.error || "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+
   const onApprove = async () => {
     if (!selectedData) return;
 
-    setIsLoading(true);
+    // setIsLoading(true);
     const updateLeave = {
       data: {
         lateAttendanceId: selectedData.lateCheckInId,
         isApproved: true,
       },
     };
-
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.post(
-        "/api/attendance/review_late_check_in",
-        updateLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
-        onClose();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    useApprove.mutate(updateLeave);
   };
 
   const onReject = async () => {
     if (!selectedData) return;
 
-    setIsLoading(true);
-
+    // setIsLoading(true);
     const RejectLeave = {
       data: {
         lateAttendanceId: selectedData.lateCheckInId,
         isApproved: false,
       },
     };
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.post(
-        "/api/attendance/review_late_check_in",
-        RejectLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
-        onRejectClose();
-        reset();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    useReject.mutate(RejectLeave);
   };
 
   const fetchLateCheckInData = async () => {
@@ -653,9 +618,6 @@ const AttendanceRequest = () => {
                 <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
                   <span className="font-bold text-gray-800 mx-1">
-                    {/* {totalRecords < lateCheckInDataPerPage
-                      ? totalRecords
-                      : lateCheckInDataPerPage} */}
                     {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
@@ -810,114 +772,6 @@ const AttendanceRequest = () => {
                       </Button>
                       <Button onPress={onClose}>Cancel</Button>
                     </div>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-
-          {/* Reject Modal */}
-          <Modal
-            isOpen={isRejectOpen}
-            size="4xl"
-            onOpenChange={onRejectOpenChange}
-            // isDismissable={true}
-            placement="center"
-            isKeyboardDismissDisabled={false}>
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalBody>
-                    <form onSubmit={handleSubmit(onReject)}>
-                      <h3 className="text-lg font-medium">
-                        <p>
-                          Are you sure you want to reject this late checkin?
-                        </p>
-                      </h3>
-                      {selectedData && (
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
-                          {/**Personal details */}
-                          <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
-                            <div className="flex  items-center">
-                              <span className="font-semibold text-gray-700">
-                                Employee:
-                              </span>
-                              <span className="text-gray-800">
-                                {selectedData?.fullName}
-                              </span>
-                            </div>
-                            <div className="flex  items-center">
-                              <span className="font-semibold text-gray-700">
-                                RCL-ID:
-                              </span>
-                              <span className="font-mono text-gray-800">
-                                {selectedData?.rclId}
-                              </span>
-                            </div>
-                          </div>
-                          {/**Date and Time */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
-                            <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
-                                Date:
-                              </span>
-                              <span className="text-gray-800">
-                                {selectedData?.attendanceDate}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
-                                Expected Time:
-                              </span>
-                              <span className="text-gray-800">
-                                {selectedData?.expectedCheckInTime || "N/A"}
-                              </span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
-                                Actual Time:
-                              </span>
-                              <span className="text-gray-800">
-                                {selectedData?.checkInTime}
-                              </span>
-                            </div>
-                          </div>
-                          {/**Justification  */}
-                          <div className="flex flex-col h-60">
-                            <span className="font-semibold text-gray-700 mb-2">
-                              Justification:
-                            </span>
-                            <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
-                              {selectedData?.lateReason ||
-                                "No justification provided"}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      {/* <TextAreaComp
-                    control={control}
-                    name="RejectReason"
-                    label="Reason To Reject This leave"
-                    rules={{
-                      required: "reason is required",
-                      minLength: {
-                        value: 10,
-                        message: "Reason must be at least 10 characters long.",
-                      },
-                    }}
-                  /> */}
-                      <div className="flex gap-2 justify-end mt-4">
-                        <Button
-                          className="bg-black text-white"
-                          type="submit"
-                          // onPress={onReject}
-                        >
-                          Reject
-                        </Button>
-                        <Button onPress={onClose}>Cancel</Button>
-                      </div>
-                    </form>
                   </ModalBody>
                 </>
               )}

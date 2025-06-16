@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { hasReadAccess, MENU_NAMES } from "../../../../utils/permissionUtils";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,6 @@ import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp";
 import Search from "../../../../components/Search";
 import { IoIosPeople } from "react-icons/io";
 import Filter from "../../../../components/Filter";
-import { Button } from "@heroui/button";
 import {
   Table,
   TableBody,
@@ -16,17 +16,17 @@ import {
   TableRow,
 } from "@heroui/table";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
-import { HiPencilSquare } from "react-icons/hi2";
 import { FaChevronDown } from "react-icons/fa6";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { Pagination } from "@heroui/pagination";
 import DropDownComp from "../../../../components/ui/Dropdown";
+import { autoCheckout } from "../../../../api/auth";
 
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [autoCheckOutDataPerPage, setAutoCheckOutDataPerPage] = useState(10);
   const [autoCheckOutData, setAutoCheckoutData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [originalAutoCheckOutata, setOriginalAutoCheckOutata] = useState(false);
@@ -43,36 +43,47 @@ const AutoCheckout = () => {
     setExpandedRow(expandedRow === rclId ? null : rclId);
   };
 
-  const fetchAutoCheckout = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/auto-checkout/records", {
-        pageIndex: currentPage,
-        pageSize: autoCheckOutDataPerPage,
-      });
-      if (response?.data?.responseCode === "200") {
-        setOriginalAutoCheckOutata(response?.data?.datalist || []);
-        setAutoCheckoutData(response?.data?.datalist || []);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchAutoCheckout();
-  }, [currentPage, autoCheckOutDataPerPage]);
+  // const fetchAutoCheckout = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axiosInstance.post("/api/auto-checkout/records", {
+  //       pageIndex: currentPage,
+  //       pageSize: autoCheckOutDataPerPage,
+  //     });
+  //     if (response?.data?.responseCode === "200") {
+  //       setOriginalAutoCheckOutata(response?.data?.datalist || []);
+  //       setAutoCheckoutData(response?.data?.datalist || []);
+  //       setTotalPages(response.data.totalPages);
+  //       setTotalRecords(response.data.totalRecords);
+  //     } else {
+  //       toast.error(response?.data?.message);
+  //     }
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+  //       "Something went wrong";
+  //     toast.error(errorMessage);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  // const hasaccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["Employee", currentPage, autoCheckOutDataPerPage],
+    queryFn: () => autoCheckout(currentPage, autoCheckOutDataPerPage),
+    onSuccess: (data) => {
+      setOriginalAutoCheckOutata(data?.datalist);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  // useEffect(() => {
+  //   fetchAutoCheckout();
+  // }, [currentPage, autoCheckOutDataPerPage]);
+
+  const hasaccess = true;
+  // const hasaccess = hasReadAccess(MENU_NAMES.SELFCHECKOUT);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -85,7 +96,8 @@ const AutoCheckout = () => {
       if (result.totalPages) setTotalPages(result.totalPages);
       if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
-      fetchAutoCheckout();
+      refetch();
+      // fetchAutoCheckout();
     }
   };
   const handleApplyFilters = (result) => {
@@ -94,8 +106,8 @@ const AutoCheckout = () => {
       if (result.totalPages) setTotalPages(result.totalPages);
       if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
-      const fetchEmployees = async () => {
-        setIsLoading(true);
+      const fetchFilter = async () => {
+        // setIsLoading(true);
         try {
           const response = await axiosInstance.post(
             "/api/auto-checkout/records",
@@ -119,17 +131,19 @@ const AutoCheckout = () => {
             "Something went wrong";
           toast.error(errorMessage);
         } finally {
-          setIsLoading(false);
+          // setIsLoading(false);
         }
       };
 
-      fetchEmployees();
+      fetchFilter();
     }
   };
   const handlePageChange = (page) => {
     setAutoCheckoutData([]);
     setCurrentPage(page);
   };
+
+  const displayData = data?.datalist || [];
   return (
     <div>
       <div className="flex flex-col space-y-4">
@@ -181,11 +195,11 @@ const AutoCheckout = () => {
             <TableColumn>Department</TableColumn>
           </TableHeader>
           <TableBody
-            items={isLoading ? [] : autoCheckOutData}
+            items={isLoading ? [] : data?.datalist}
             isLoading={isLoading}
             loadingState={isLoading}
             loadingContent={<SkeletonLoader />}>
-            {autoCheckOutData.map((employee, index) => (
+            {displayData?.map((employee, index) => (
               <TableRow
                 key={employee.rclId}
                 className="h-14 border-b-2 border-gray-300">
@@ -215,10 +229,10 @@ const AutoCheckout = () => {
             <TableColumn>departmentName</TableColumn>
           </TableHeader>
           <TableBody
-            items={isLoading ? [] : autoCheckOutData}
+            items={isLoading ? [] : data}
             isLoading={isLoading}
             loadingContent={<SkeletonLoader />}>
-            {autoCheckOutData.map((employee, index) => (
+            {displayData?.map((employee, index) => (
               <TableRow key={employee.rclId} className="hover:bg-gray-50">
                 <TableCell>
                   <div>
@@ -250,7 +264,7 @@ const AutoCheckout = () => {
           <SkeletonLoader />
         ) : (
           <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-            {autoCheckOutData.map((employee, index) => (
+            {displayData?.map((employee, index) => (
               <div
                 key={employee.rclId}
                 className="border rounded-lg overflow-hidden shadow-sm bg-white">

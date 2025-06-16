@@ -208,7 +208,7 @@ const Filter = ({
               <Select
                 label={loadingDepartments ? "Loading..." : "Department"}
                 variant="bordered"
-                isDisabled={isLoading}
+                // isDisabled={isLoading}
                 selectedKeys={watch("department") ? [watch("department")] : []}
                 onSelectionChange={(keys) =>
                   setValue("department", Array.from(keys)[0] || "")
@@ -228,7 +228,7 @@ const Filter = ({
               <Select
                 label={loadingPositions ? "Loading..." : "Position"}
                 variant="bordered"
-                isDisabled={isLoading}
+                // isDisabled={isLoading}
                 selectedKeys={watch("position") ? [watch("position")] : []}
                 onSelectionChange={(keys) =>
                   setValue("position", Array.from(keys)[0] || "")

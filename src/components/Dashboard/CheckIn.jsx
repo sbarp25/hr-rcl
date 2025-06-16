@@ -14,9 +14,11 @@ import {
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../ui/TextAreaComp.jsx";
 import Loader from "../Loader/Loader.jsx";
+import { useMutation } from "@tanstack/react-query";
+import { checkInAPI, checkOutAPI, lateCheckInAPI } from "../../api/auth.js";
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
-  const [isloading, setIsloading] = useState(false);
+  // const [isloading, setIsloading] = useState(false);
   const { control, handleSubmit, reset } = useForm();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
@@ -28,15 +30,73 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   const latitude = LocalStorageUtil.getItem("latitude");
   const longitude = LocalStorageUtil.getItem("longitude");
 
-  const lateCheckinCheck = () => {
-    onOpen();
-  };
   const handleLateCheckInConfirm = () => {
     onOpenChange(false);
     onOpenSecondModal();
   };
 
   const isStudent = localStorage.getItem("isCurrentlyStudying") === "true";
+
+  const checkInMutation = useMutation({
+    mutationFn: checkInAPI,
+    onSuccess: (data) => {
+      if (data.response === "200") {
+        toast.success(data?.message || "Checked in");
+        onStatusChange(true);
+      } else if (data.responseCode === "406") {
+        onOpen(); // Open late check-in modal
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error?.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Check In Failed";
+      toast.error(errorMessage);
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: checkOutAPI,
+    onSuccess: (data) => {
+      if (data?.responseCode === "200") {
+        toast.success("Checked out successfully!");
+        onStatusChange(false);
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+
+  const lateCheckInMutation = useMutation({
+    mutationFn: lateCheckInAPI,
+    onSuccess: (data) => {
+      if (data?.responseCode === "200") {
+        toast.success("Late check-in processed successfully!");
+        onOpenChangeSecondModal(false);
+        onStatusChange(true);
+        reset();
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: () => {
+      toast.error("Late Check In Failed");
+    },
+  });
 
   const handleAttendance = async () => {
     const ipAddress = await getIpAddress();
@@ -52,36 +112,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           isStudent: isStudent,
         },
       };
-      setIsloading(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/attendance/check_in",
-          requestData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.data.responseCode === "200") {
-          toast.success(response?.data?.message || "Checked in successfully!");
-          // Update parent component's state via callback
-          onStatusChange(true);
-        } else if (response.data.responseCode === "406") {
-          lateCheckinCheck();
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
-        toast.error(errorMessage || "Check In Failed");
-      } finally {
-        setIsloading(false);
-      }
+      checkInMutation.mutate(requestData);
     } else {
       const requestData = {
         data: {
@@ -90,39 +121,9 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           requestIp: ipAddress,
         },
       };
-      setIsloading(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/attendance/check_out",
-          requestData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response?.data?.responseCode === "200") {
-          toast.success("Checked out successfully!");
-          // Update parent component's state via callback
-          onStatusChange(false);
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsloading(false);
-      }
+      checkOutMutation.mutate(requestData);
     }
   };
-
   const handleSecondModalConfirm = async (data) => {
     const ipAddress = await getIpAddress();
     const lateCheckin = {
@@ -136,40 +137,17 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         justification: data.reason,
       },
     };
-    setIsloading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/attendance/late_check_in",
-        lateCheckin,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success("Late check-in processed successfully!");
-        onOpenChangeSecondModal(false);
-        // Update parent component's state via callback
-        onStatusChange(true);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      toast.error("Late Check In Failed");
-    } finally {
-      setIsloading(false);
-    }
+    lateCheckInMutation.mutate(lateCheckin);
   };
 
   const closeRejectModal = () => {
     onOpenChangeSecondModal(false);
     reset();
   };
-
+  const isloading =
+    checkInMutation.isPending ||
+    checkOutMutation.isPending ||
+    lateCheckInMutation.isPending;
   return (
     <>
       {isloading && <Loader />}
