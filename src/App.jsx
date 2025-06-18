@@ -55,9 +55,10 @@ import MobileNavigation from "./components/Sidebar/MobileNavigation.jsx";
 import AutoCheckout from "./pages/Attendance/AutoCheckout/TeamLeadView/page.jsx";
 import SelfAutoCheckout from "./pages/Attendance/AutoCheckout/SelfView/page.jsx";
 import ViewEmployeeDetails from "./pages/Employees/ViewEmployees/page.jsx";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 // import HandBook from "./pages/HandBook/page.jsx";
-
+const queryClient = new QueryClient();
 function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -72,6 +73,7 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
   const location = useLocation();
   const authRoutes = [
     "/login",
@@ -86,9 +88,9 @@ function App() {
     "/settings",
     "/settings/ViewEKYE",
     "/settings/Change",
-    "/salary",
-    "/salaryEdit",
-    "/advanceSalary",
+    "/Salary",
+    "/SalaryEdit",
+    "/AdvanceSalary",
     "/Bank",
     "/Bank/AddBank",
   ];
@@ -96,111 +98,122 @@ function App() {
   const isAuthRoute = authRoutes.includes(location.pathname);
 
   return (
-    <>
-      <LocationComponent />
+    <QueryClientProvider client={queryClient}>
+      <>
+        <LocationComponent />
 
-      <Toaster
-        visibleToasts={3}
-        position="top-right"
-        richColors={true}
-        closeButton={true}
-      />
-      {isAuthRoute ? (
-        <AuthLayout>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Login />} />
-            <Route path="/rstpwd" element={<ValidateLink />} />
-            <Route element={<PrivateRoutes />}>
-              <Route path="/EKYE" element={<Ekye />} />
-            </Route>
-            <Route path="/fgtPwd" element={<ForgetPassword />} />
-            <Route path="/forget-password" element={<ResetForGetPassword />} />
-          </Routes>
-        </AuthLayout>
-      ) : isUserRoutes ? (
-        <UserLayout>
-          <div className="flex md:hidden mb-1">
-            <UserMobileSidebar />
-          </div>
-          <Routes>
-            <Route element={<PrivateRoutes />}>
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
-              <Route path="/settings/Change" element={<ChangePassword />} />
-              <Route path="/salary" element={<SalaryDetails />} />
-              <Route path="/salaryEdit" element={<SalaryEdit />} />
-              <Route path="/advanceSalary" element={<AdvanceSalary />} />
-              <Route path="/Bank" element={<GetBankDetails />} />
-              <Route path="/Bank/AddBank" element={<Bank />} />
-            </Route>
-          </Routes>
-        </UserLayout>
-      ) : (
-        <Layout>
-          <div className="flex md:hidden mb-1">
-            <MobileNavigation />
-          </div>
-          <Routes>
-            <Route element={<PrivateRoutes />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-              <Route path="/Attendance" element={<Attendance />} />
-              <Route path="/autoCheckOut" element={<AutoCheckout />} />
-              <Route path="/selfAutoCheckOut" element={<SelfAutoCheckout />} />
+        <Toaster
+          visibleToasts={3}
+          position="top-right"
+          richColors={true}
+          closeButton={true}
+        />
+        {isAuthRoute ? (
+          <AuthLayout>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Login />} />
+              <Route path="/rstpwd" element={<ValidateLink />} />
+              <Route element={<PrivateRoutes />}>
+                <Route path="/EKYE" element={<Ekye />} />
+              </Route>
+              <Route path="/fgtPwd" element={<ForgetPassword />} />
               <Route
-                path="/Attendance/Request"
-                element={<AttendanceRequest />}
+                path="/forget-password"
+                element={<ResetForGetPassword />}
               />
-              <Route path="/Employees" element={<Employees />} />
-              <Route path="/AddEmployees" element={<AddEmployees />} />
-              <Route path="/Employees/Edit/:id" element={<EditEmployees />} />
-              <Route
-                path="/Employees/view/:rclId"
-                element={<ViewEmployeeDetails />}
-              />
-              <Route path="/master-data/Department" element={<Department />} />
-              <Route
-                path="/master-data/Department/Add"
-                element={<AddDepartment />}
-              />
-              <Route
-                path="/master-data/Department/Edit/:id"
-                element={<EditDepartment />}
-              />
-              <Route path="/master-data/Position" element={<Position />} />
-              <Route
-                path="/master-data/AddPosition"
-                element={<AddPosition />}
-              />
-              <Route
-                path="/master-data/Position/Edit/:id"
-                element={<EditPosition />}
-              />
-              <Route path="/master-data/Roles" element={<Roles />} />
-              <Route path="/master-data/Roles/add" element={<AddRoles />} />
-              <Route
-                path="/master-data/Roles/edit/:roleId"
-                element={<EditRole />}
-              />
-              {/* <Route path="/HandBook" element={<HandBook />} /> */}
-              {/* <Route path="/Notice" element={<Notices />} /> */}
-              <Route path="/Leave/status" element={<LeaveStatus />} />
-              <Route path="/Leave/Request" element={<SelfLeaveStatus />} />
-              <Route path="/Leave/addRequest" element={<LeaveRequest />} />
-              <Route path="/Leave/view/:id" element={<LeaveView />} />
-              <Route path="/AdminEkye" element={<AdminEkye />} />
-              <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
-              <Route path="/View/:rclId" element={<View />} />
-              <Route path="/WFH" element={<SelfWorkFromHome />} />
-              <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
-              <Route path="/WFH/Add" element={<RequestWorkFromHome />} />
-              <Route path="/WRH/view/:rclId" element={<ViewWorkFromHome />} />
-            </Route>
-          </Routes>
-        </Layout>
-      )}
-    </>
+            </Routes>
+          </AuthLayout>
+        ) : isUserRoutes ? (
+          <UserLayout>
+            <div className="flex md:hidden mb-1">
+              <UserMobileSidebar />
+            </div>
+            <Routes>
+              <Route element={<PrivateRoutes />}>
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
+                <Route path="/settings/Change" element={<ChangePassword />} />
+                <Route path="/Salary" element={<SalaryDetails />} />
+                <Route path="/salaryEdit" element={<SalaryEdit />} />
+                <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
+                <Route path="/Bank" element={<GetBankDetails />} />
+                <Route path="/Bank/AddBank" element={<Bank />} />
+              </Route>
+            </Routes>
+          </UserLayout>
+        ) : (
+          <Layout>
+            <div className="flex md:hidden mb-1">
+              <MobileNavigation />
+            </div>
+            <Routes>
+              <Route element={<PrivateRoutes />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+                <Route path="/Attendance" element={<Attendance />} />
+                <Route path="/autoCheckOut" element={<AutoCheckout />} />
+                <Route
+                  path="/selfAutoCheckOut"
+                  element={<SelfAutoCheckout />}
+                />
+                <Route
+                  path="/Attendance/Request"
+                  element={<AttendanceRequest />}
+                />
+                <Route path="/Employees" element={<Employees />} />
+                <Route path="/AddEmployees" element={<AddEmployees />} />
+                <Route path="/Employees/Edit/:id" element={<EditEmployees />} />
+                <Route
+                  path="/Employees/view/:rclId"
+                  element={<ViewEmployeeDetails />}
+                />
+                <Route
+                  path="/master-data/Department"
+                  element={<Department />}
+                />
+                <Route
+                  path="/master-data/Department/Add"
+                  element={<AddDepartment />}
+                />
+                <Route
+                  path="/master-data/Department/Edit/:id"
+                  element={<EditDepartment />}
+                />
+                <Route path="/master-data/Position" element={<Position />} />
+                <Route
+                  path="/master-data/AddPosition"
+                  element={<AddPosition />}
+                />
+                <Route
+                  path="/master-data/Position/Edit/:id"
+                  element={<EditPosition />}
+                />
+                <Route path="/master-data/Roles" element={<Roles />} />
+                <Route path="/master-data/Roles/add" element={<AddRoles />} />
+                <Route
+                  path="/master-data/Roles/edit/:roleId"
+                  element={<EditRole />}
+                />
+                {/* <Route path="/HandBook" element={<HandBook />} /> */}
+                {/* <Route path="/Notice" element={<Notices />} /> */}
+                <Route path="/Leave/status" element={<LeaveStatus />} />
+                <Route path="/Leave/Request" element={<SelfLeaveStatus />} />
+                <Route path="/Leave/addRequest" element={<LeaveRequest />} />
+                <Route path="/Leave/view/:id" element={<LeaveView />} />
+                <Route path="/AdminEkye" element={<AdminEkye />} />
+                <Route path="/EkyeAction/:rclId" element={<EkyeAction />} />
+                <Route path="/View/:rclId" element={<View />} />
+                <Route path="/WFH" element={<SelfWorkFromHome />} />
+                <Route path="/WFH/Status" element={<WorkFromHomeStatus />} />
+                <Route path="/WFH/Add" element={<RequestWorkFromHome />} />
+                <Route path="/WRH/view/:rclId" element={<ViewWorkFromHome />} />
+              </Route>
+            </Routes>
+          </Layout>
+        )}
+      </>
+    </QueryClientProvider>
   );
 }
 

@@ -26,6 +26,7 @@
       "@heroui/theme": "2.4.15",
       "@hookform/resolvers": "^3.10.0",
       "@internationalized/date": "^3.8.1",
+      "@tanstack/react-query": "^5.80.7",
       "axios": "^1.7.9",
       "bcryptjs": "^2.4.3",
       "crypto-js": "^4.2.0",

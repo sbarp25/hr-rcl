@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
-import { Select, SelectItem } from "@heroui/select";
 import {
   Button,
   Drawer,
@@ -13,6 +12,7 @@ import {
 import { BsFilter } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
+import ReusableAutocomplete from "./ui/SearableDropdown.jsx";
 
 const Filter = ({
   onApplyFilters,
@@ -161,15 +161,21 @@ const Filter = ({
     onClose();
   };
 
-  const filteredDepartments = useMemo(
-    () => departmentsData?.filter((d) => !d?.isDeleted),
-    [departmentsData]
-  );
+  // Transform departments data for ReusableAutocomplete
+  const departmentItems = departmentsData
+    ?.filter((d) => !d?.isDeleted)
+    ?.map((department) => ({
+      key: department?.id,
+      label: department?.name,
+    }));
 
-  const filteredPositions = useMemo(
-    () => positionData?.filter((p) => !p?.isDeleted),
-    [positionData]
-  );
+  // Transform positions data for ReusableAutocomplete
+  const positionItems = positionData
+    ?.filter((p) => !p?.isDeleted)
+    ?.map((position) => ({
+      key: position?.id,
+      label: position?.positionName,
+    }));
 
   return (
     <div className="bg-white rounded-xl">
@@ -178,7 +184,7 @@ const Filter = ({
         <p>Filters</p>
       </Button>
 
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Drawer isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
         <DrawerContent>
           <DrawerHeader>Filter Options</DrawerHeader>
           <DrawerBody>
@@ -205,47 +211,25 @@ const Filter = ({
                 />
               </div>
 
-              <Select
-                label={loadingDepartments ? "Loading..." : "Department"}
-                variant="bordered"
-                isDisabled={isLoading}
-                selectedKeys={watch("department") ? [watch("department")] : []}
-                onSelectionChange={(keys) =>
-                  setValue("department", Array.from(keys)[0] || "")
-                }
-                placeholder="Select a department">
-                {loadingDepartments ? (
-                  <SelectItem key="loading">Loading departments...</SelectItem>
-                ) : (
-                  filteredDepartments.map((dept) => (
-                    <SelectItem key={dept.id.toString()} value={dept.name}>
-                      {dept.name}
-                    </SelectItem>
-                  ))
-                )}
-              </Select>
+              <div>
+                <ReusableAutocomplete
+                  name="department"
+                  control={control}
+                  label={loadingDepartments ? "Loading..." : "Department"}
+                  items={departmentItems}
+                  isDisabled={isLoading || loadingDepartments}
+                />
+              </div>
 
-              <Select
-                label={loadingPositions ? "Loading..." : "Position"}
-                variant="bordered"
-                isDisabled={isLoading}
-                selectedKeys={watch("position") ? [watch("position")] : []}
-                onSelectionChange={(keys) =>
-                  setValue("position", Array.from(keys)[0] || "")
-                }
-                placeholder="Select a position">
-                {loadingPositions ? (
-                  <SelectItem key="loading">Loading positions...</SelectItem>
-                ) : (
-                  filteredPositions.map((pos) => (
-                    <SelectItem
-                      key={pos.id.toString()}
-                      value={pos.positionName}>
-                      {pos.positionName}
-                    </SelectItem>
-                  ))
-                )}
-              </Select>
+              <div>
+                <ReusableAutocomplete
+                  name="position"
+                  control={control}
+                  label={loadingPositions ? "Loading..." : "Position"}
+                  items={positionItems}
+                  isDisabled={isLoading || loadingPositions}
+                />
+              </div>
 
               <div className="flex justify-between">
                 <Button

@@ -13,7 +13,6 @@ import {
   TableRow,
   Pagination,
   Button,
-  Switch,
   useDisclosure,
   Modal,
   ModalContent,
@@ -26,11 +25,11 @@ import {
 import { FaChevronDown, FaEllipsisV, FaEye } from "react-icons/fa";
 import {
   hasCreateAccess,
-  hasReadAccess,
   hasUpdateAccess,
   hasDeleteAccess,
   MENU_NAMES,
   hasViewone,
+  hasReadAccess,
 } from "../../utils/permissionUtils";
 import Search from "../../components/Search";
 import Filter from "../../components/Filter";
@@ -39,13 +38,13 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
-import ButtonComponent from "../../components/ui/ButtonComp.jsx";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteEmployees, fetchEmployees } from "../../api/auth.js";
 
 const Employees = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isDeleteLoading, setDeleteIsLoading] = useState(false);
   const [employeesData, setEmployeesData] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
@@ -53,8 +52,6 @@ const Employees = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
   const navigate = useNavigate();
   const [deletingId, setDeletingId] = useState(null);
@@ -69,36 +66,13 @@ const Employees = () => {
     setExpandedRow(expandedRow === rclId ? null : rclId);
   };
 
-  const fetchEmployees = async () => {
-    setEmployeesData([]);
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/users/list", {
-        pageIndex: currentPage,
-        pageSize: employeeDataPerPage,
-      });
-
-      if (response?.data?.responseCode === "200") {
-        setOriginalEmployeeData(response?.data?.datalist || []);
-        setEmployeesData(response?.data?.datalist || []);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEmployees();
-  }, [currentPage, employeeDataPerPage]);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["employees", currentPage, employeeDataPerPage],
+    queryFn: () => fetchEmployees(currentPage, employeeDataPerPage),
+    onError: (error) => {
+      console.error("Employee fetch error:", error);
+    },
+  });
 
   /**To check create status */
   const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
@@ -126,31 +100,20 @@ const Employees = () => {
     }
   };
 
-  const onDelete = async () => {
-    setDeleteIsLoading(true);
-    try {
-      if (hasEmployeeDeleteAccess) {
-        const response = await axiosInstance.delete(
-          `/api/v1/auth/toggle/${deletingId}`
-        );
-        if (response.data.responseCode === "204") {
-          toast.success(response.data.message);
-          fetchEmployees();
-          onClose();
-        } else {
-          toast.error(response.data.message);
-        }
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setDeleteIsLoading(false);
+  const deleteMutation = useMutation({
+    mutationFn: deleteEmployees,
+    onSuccess: () => {
+      toast.success(data.message || "Employee deleted successfully");
+      refetch();
+      onClose();
+    },
+  });
+
+  const onDelete = () => {
+    if (hasEmployeeDeleteAccess && deletingId) {
+      deleteMutation.mutate(deletingId);
     }
   };
-
   const handleAction = async (action, employeeId) => {
     switch (action) {
       case "edit":
@@ -193,53 +156,29 @@ const Employees = () => {
   const handleApplyFilters = (result) => {
     if (result.data) {
       setEmployeesData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      // if (result.totalPages) setTotalPages(result.totalPages);
+      // if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
-      const fetchEmployees = async () => {
-        setIsLoading(true);
-        try {
-          const response = await axiosInstance.post("/api/v1/users/list", {
-            pageIndex: currentPage,
-            pageSize: employeeDataPerPage,
-          });
-
-          if (response?.data?.responseCode === "200") {
-            setOriginalEmployeeData(response?.data?.datalist || []);
-            setEmployeesData(response?.data?.datalist || []);
-            setTotalPages(response.data.totalPages);
-            setTotalRecords(response.data.totalRecords);
-          } else {
-            toast.error(response?.data?.message);
-          }
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchEmployees();
+      refetch();
     }
   };
 
   const handleApplySearch = (result) => {
     if (result.data) {
       setEmployeesData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      // if (result.totalPages) setTotalPages(result.totalPages);
+      // if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
       fetchEmployees();
     }
   };
 
   // Filtered employees
-  const filteredEmployees = employeesData.filter(
-    (employee) => employee.isActive
-  );
+  const employees =
+    employeesData.length > 0 ? employeesData : data?.datalist || [];
+  let totalPages = data?.totalPages || 0;
+  let totalRecords = data?.totalRecords || 0;
+  const filteredEmployees = employees.filter((employee) => employee.isActive);
 
   return (
     <div className="max-h-[90vh] overflow-y-auto">
@@ -264,8 +203,8 @@ const Employees = () => {
                     "fullName",
                     "email",
                     "rclId",
-                    "Department",
-                    "position",
+                    "departmentName",
+                    "postionName",
                   ]}
                   placeholder="Search employees..."
                 />
@@ -442,7 +381,7 @@ const Employees = () => {
             <SkeletonLoader />
           ) : (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {filteredEmployees.map((employee, index) => (
+              {filteredEmployees.map((employee) => (
                 <div
                   key={employee.rclId}
                   className="border rounded-lg overflow-hidden shadow-sm bg-white">

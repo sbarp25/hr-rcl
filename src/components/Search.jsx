@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Input, Select, SelectItem } from "@heroui/react";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "sonner";
+import Loader from "./Loader/Loader";
 
 const Search = ({
   onApplySearch,
@@ -28,6 +29,7 @@ const Search = ({
       pageSize: 10,
       searchCriteria: {
         [selectedField]: searchValue.trim(),
+        searchItem: searchValue.trim(),
       },
     };
 
@@ -69,39 +71,46 @@ const Search = ({
       onSubmit();
     }
   };
-
+  // useEffect(() => {
+  //   onSubmit();
+  // }, [searchValue]);
   return (
-    <div className="bg-white rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
-      <Select
-        aria-label="Search by field"
-        size="sm"
-        className="max-w-xs"
-        selectedKeys={[selectedField]}
-        onChange={(e) => setSelectedField(e.target.value)}>
-        {searchFields.map((field) => (
-          <SelectItem key={field} value={field}>
-            {field}
-          </SelectItem>
-        ))}
-      </Select>
-
-      <Input
-        className={width}
-        onKeyDown={handleKeyPress}
-        variant="bordered"
-        placeholder={placeholder}
-        value={searchValue}
-        onChange={(e) => handleChange(e.target.value)}
-        startContent={<CiSearch className="text-default-400" />}
-        type="search"
-        isLoading={isLoading}
-        onClear={() => {
-          setSearchValue("");
-          onApplySearch?.({});
-        }}
-        isClearable
-      />
-    </div>
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="bg-white rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
+          <Select
+            aria-label="Search by field"
+            size="sm"
+            className="max-w-xs"
+            selectedKeys={[selectedField]}
+            onChange={(e) => setSelectedField(e.target.value)}>
+            {searchFields.map((field) => (
+              <SelectItem key={field} value={field}>
+                {field}
+              </SelectItem>
+            ))}
+          </Select>
+          <Input
+            className={width}
+            onKeyDown={handleKeyPress}
+            variant="bordered"
+            placeholder={placeholder}
+            value={searchValue}
+            onChange={(e) => handleChange(e.target.value)}
+            startContent={<CiSearch className="text-default-400" />}
+            type="search"
+            isLoading={isLoading}
+            onClear={() => {
+              setSearchValue("");
+              onApplySearch?.({});
+            }}
+            isClearable
+          />
+        </div>
+      )}
+    </>
   );
 };
 

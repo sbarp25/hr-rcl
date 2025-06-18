@@ -7,6 +7,9 @@ import Logo from "../../../assets/Images/Logo.png";
 import { Button } from "@heroui/button";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import Loader from "../../../components/Loader/Loader.jsx";
+import { useMutation } from "@tanstack/react-query";
+import { resetPassword } from "../../../api/auth";
+
 const ResetForGetPassword = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(true);
@@ -37,68 +40,40 @@ const ResetForGetPassword = () => {
     }
   }, []);
 
-  const onSubmit = async (data) => {
-    setIsLoading(true);
-    let encryptedData = localStorage.getItem("resetpasswordData");
+  const mutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      localStorage.setItem("accessToken", data.data.accessToken);
+      localStorage.setItem("refreshToken", data.data.refreshToken);
+      localStorage.setItem("fullName", data.data.fullName);
+      localStorage.setItem("email", data.data.email);
 
-    if (encryptedData) {
-      encryptedData = encryptedData.replace(/\s/g, "");
-    }
-    if (!encryptedData) {
-      toast.error("No reset password data found");
-      navigate("/login");
-      return;
-    }
-    try {
-      const newData = {
-        data: {
-          encryptedData: encryptedData,
-          newPassword: password,
-        },
-      };
-
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/api/v1/auth/forget-password-set-new`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        const accessToken = response.data.data.accessToken;
-        const refreshToken = response.data.data.refreshToken;
-        const userName = response.data.data.fullName;
-        const email = response.data.data.email;
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("fullName", userName);
-        localStorage.setItem("email", email);
-
-        if (
-          response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
-          response?.data?.data?.ekyeStatus === "COMPLETED"
-        ) {
-          navigate("/dashboard");
-        } else {
-          navigate("/EKYE");
-        }
+      if (
+        data.data.ekyeStatus === "NOT_REQUIRED" ||
+        data.data.ekyeStatus === "COMPLETED"
+      ) {
+        navigate("/dashboard");
+      } else {
+        navigate("/EKYE");
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
         "Something went wrong";
       toast.error(errorMessage);
       navigate("/login");
-    } finally {
+    },
+    onSettled: () => {
       setIsLoading(false);
       localStorage.removeItem("resetpasswordData");
-    }
+    },
+  });
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    mutation.mutate({ newPassword: data.password });
   };
 
   {

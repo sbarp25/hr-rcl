@@ -306,11 +306,14 @@ const AttendanceRequest = () => {
                     onApplySearch={handleApplySearch}
                     url="/api/v1/attendance/late-check-in/role-based-reviews"
                     searchFields={[
-                      "fullName",
-                      "email",
                       "rclId",
-                      "Department",
-                      "position",
+                      "departmentName",
+                      "email",
+                      "attendanceDate",
+                      "expectedCheckInTime",
+                      "status",
+                      "checkInTime",
+                      "lateReason",
                     ]}
                     placeholder="Search employees..."
                   />

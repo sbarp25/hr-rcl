@@ -39,6 +39,7 @@ const AddEmployeeForm = () => {
       performEKYC: true,
       salary: "",
     },
+    mode: "onChange",
   });
 
   const [departmentsData, setDepartmentsData] = useState([]);
@@ -279,6 +280,14 @@ const AddEmployeeForm = () => {
                           message: "Please enter a valid email",
                         },
                       })}
+                      onBlur={(e) => {
+                        const trimmedValue = e.target.value.trim();
+                        e.target.value = trimmedValue;
+                        // Trigger validation
+                        register("email").onChange({
+                          target: { name: "email", value: trimmedValue },
+                        });
+                      }}
                       label="Email"
                       variant="bordered"
                       isInvalid={!!errors.email}

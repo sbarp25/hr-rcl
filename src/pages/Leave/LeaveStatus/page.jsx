@@ -288,10 +288,11 @@ const LeaveStatus = () => {
                   url="/api/v1/leave_management/by-role"
                   searchFields={[
                     "fullName",
-                    "email",
-                    "rclId",
-                    "Department",
-                    "position",
+                    "departmentName",
+                    "requestDate",
+                    "leaveType",
+                    "leaveStartDate",
+                    "leaveEndDate",
                   ]}
                   placeholder="Search employees..."
                 />

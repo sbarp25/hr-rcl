@@ -72,12 +72,12 @@ const Page = () => {
   };
 
   const fetchEkye = async () => {
+    setEkyeData([]);
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
         "/api/v1/admin/completed_ekye_users",
         {
-          // const response = await axiosInstance.post("/api/v1/ekye_status/list", {
           pageIndex: currentPage,
           pageSize: ekyeDashboardDataPerPage,
         }
@@ -143,8 +143,8 @@ const Page = () => {
               "fullName",
               "email",
               "rclId",
-              "Department",
-              "position",
+              "departmentName",
+              "positionName",
             ]}
             placeholder="Search employees..."
           />
@@ -217,7 +217,7 @@ const Page = () => {
           )}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-4">
           <div className="text-sm font-medium text-gray-600  flex items-center">
             <span className="mr-1">Showing:</span>
             <span className="font-bold text-gray-800 mx-1">
