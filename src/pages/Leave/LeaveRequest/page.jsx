@@ -118,7 +118,9 @@ const LeaveRequest = () => {
           navigate("/dashboard");
           toast.success(response?.data?.message);
         } else {
-          const errorMessage = response?.data?.error || "Something went wrong";
+          const errorMessage =
+            response?.data?.error?.errorList[0]?.errorMessage ||
+            "Something went wrong";
           toast.error(errorMessage);
         }
       } catch (error) {

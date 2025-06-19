@@ -27,13 +27,14 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
+import { useLogout } from "../../hooks/useAuth.js";
 const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
-
+  const logoutMutation = useLogout();
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
   const navigate = useNavigate();
@@ -82,37 +83,9 @@ const UserMobileSidebar = () => {
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
-  const handleLogOut = async () => {
-    try {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      const newData = {
-        data: {
-          jwtToken: accessToken,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        localStorage.clear();
-        navigate("/login");
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+
+  const handleLogOut = () => {
+    logoutMutation.mutate();
   };
   const fetchProfilephoto = async () => {
     setIsLoading(true);

@@ -38,63 +38,51 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useFetchDepartment } from "../../../hooks/useAuth.js";
 const Department = () => {
-  const [departmentsData, setDepartmentsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [departmentPerPage, setDepartmentPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [expandedRow, setExpandedRow] = useState(null);
+
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const accessToken = localStorage.getItem("accessToken");
+
   const [departmentId, setDepartmentId] = useState(null);
   const navigate = useNavigate();
-  const [originalDepartmentsData, setOriginalDepartmentsData] = useState([]);
+
+  const { data, isLoading, refetch } = useFetchDepartment(
+    currentPage,
+    departmentPerPage
+  );
+
+  const departmentsData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, departmentPerPage]);
 
   const handleApplyFilters = (result) => {
     if (result.data) {
-      setDepartmentsData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      setDepartmentsData(originalDepartmentsData);
-    }
-  };
-
-  // Fetch departments data
-  const fetchDepartments = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/departments/list", {
-        pageIndex: currentPage,
-        pageSize: departmentPerPage,
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
       });
-      if (response.data.responseCode === "200") {
-        setOriginalDepartmentsData(response?.data?.datalist || []); // Store original data
-        setDepartmentsData(response?.data?.datalist || []); // Initially set filtered data to original data
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      refetch();
     }
   };
-  useEffect(() => {
-    fetchDepartments();
-  }, [currentPage, departmentPerPage]);
 
   const handlePageChange = (page) => {
-    setDepartmentsData([]);
+    setFilteredData(null);
+    setFilteredPagination(null);
     setCurrentPage(page);
   };
 
@@ -130,7 +118,6 @@ const Department = () => {
           `/api/v1/departments/delete/${departmentId}`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
               "Content-Type": "application/json",
             },
           }

@@ -5,7 +5,6 @@ import { FaChevronDown } from "react-icons/fa";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { IoReturnDownBack } from "react-icons/io5";
 import {
   Button,
   Modal,
@@ -27,7 +26,6 @@ import Filter from "../../../components/Filter";
 import Search from "../../../components/Search";
 import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
@@ -38,75 +36,30 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-
-const Position = () => {
+import { useFetchPosition } from "../../../hooks/useAuth.js";
+const TotalPage = () => {
   const [positionId, setPositionId] = useState(null);
-  const [positionData, setPositionData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [positionPerPage, setPositionPerPage] = useState(10);
-  const [positionDataPerPage, setPositionDataPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [originalPositionsData, setOriginalPositionsData] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const navigate = useNavigate();
 
-  const handlePageChange = (page) => {
-    setPositionData([]);
-    setCurrentPage(page);
-  };
+  const breadcrumbItems = [
+    { label: "MasterData", href: "" },
+    { label: "Position", href: "/master-data/Position" },
+  ];
 
-  /**Start of Get API for Getting the Positions */
-  const fetchPositions = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/positions/list", {
-        pageIndex: currentPage,
-        pageSize: positionPerPage,
-      });
-      if (response.data.responseCode === "200") {
-        setOriginalPositionsData(response?.data?.datalist || []); // Store original data
-        setPositionData(response?.data?.datalist || []); // Initially set filtered data to original data
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.message || "Failed to fetch positions.");
-      }
-    } catch (error) {
-      toast.error("Error fetching positions.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPositions();
-  }, [currentPage, positionPerPage]);
-
-  // Enhanced filter handler to match Department implementation
-  const handleApplyFilters = (result) => {
-    if (result.data) {
-      setPositionData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      setPositionData(originalPositionsData);
-    }
-  };
-
-  /**To check create status */
+  /**Permission Check  */
   const hasPositioncreateaccess = hasCreateAccess(MENU_NAMES.POSITION);
-  /**To read the Data */
   // const hasaccess = true;
   const hasaccess = hasReadAccess(MENU_NAMES.POSITION);
-  /**To check edit status */
   const hasPositionEditAccess = hasUpdateAccess(MENU_NAMES.POSITION);
-  /**To check Delete Access */
   const hasPositionDeleteAccess = hasDeleteAccess(MENU_NAMES.POSITION);
 
   useEffect(() => {
@@ -115,7 +68,15 @@ const Position = () => {
     }
   }, [hasaccess, navigate]);
 
-  /**Start Of handleActions*/
+  const { data, isLoading, refetch } = useFetchPosition(
+    currentPage,
+    positionPerPage
+  );
+  const positionData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
   const handleAction = async (action, position) => {
     switch (action) {
       // Start Of Edit Operation
@@ -153,7 +114,7 @@ const Position = () => {
           toast.success(
             response.data.message || "Position deleted successfully!"
           );
-          fetchPositions();
+          refetch();
           onClose();
 
           // Refresh the data after deletion
@@ -177,12 +138,40 @@ const Position = () => {
       setIsDeleteLoading(false);
     }
   };
+  const handlePageChange = (page) => {
+    //To change the page as well as to reset the data
+    setCurrentPage(page);
+    setFilteredData(null);
+    setFilteredPagination(null);
+  };
+  const handleApplyFilters = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      // Reset case - refetch original data
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
 
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Position", href: "/master-data/Position" },
-  ];
-
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
   const navigateAdd = () => {
     if (hasPositioncreateaccess) {
       navigate("/master-data/AddPosition");
@@ -194,18 +183,6 @@ const Position = () => {
   const toggleExpandedRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
-
-  const handleApplySearch = (result) => {
-    if (result.data) {
-      // Search component returned filtered data
-      setPositionData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      fetchPositions();
-    }
-  };
-
   return (
     <div className="max-h-[90vh] overflow-y-auto">
       {isDeleteLoading ? (
@@ -529,5 +506,4 @@ const Position = () => {
     </div>
   );
 };
-
-export default Position;
+export default TotalPage;

@@ -1,7 +1,6 @@
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
 import { IoAlarm } from "react-icons/io5";
 import { FcLeave, FcDepartment } from "react-icons/fc";
-import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { useEffect, useState } from "react";
@@ -9,7 +8,6 @@ import { Link, useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { toast } from "sonner";
 import { LuMapPinCheckInside } from "react-icons/lu";
-import axios from "axios";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 import { TbScanPosition } from "react-icons/tb";
@@ -20,15 +18,12 @@ import {
   DrawerBody,
   useDisclosure,
   Avatar,
-  Input,
   Tooltip,
 } from "@heroui/react";
 
 import { useNavigate } from "react-router-dom";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
-import CheckIn from "../Dashboard/CheckIn.jsx";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import axiosInstance from "../../lib/axios-Instance";
 import getInitials from "../../utils/getInitials";
 import {
@@ -38,6 +33,7 @@ import {
   MENU_NAMES,
 } from "../../utils/permissionUtils.js";
 import truncateText from "../../utils/truncateText.js";
+import { useLogout } from "../../hooks/useAuth.js";
 
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
@@ -45,7 +41,7 @@ const MobileNavigation = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-
+  const logoutMutation = useLogout();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -189,38 +185,8 @@ const MobileNavigation = () => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
 
-  const handleLogOut = async () => {
-    try {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      const newData = {
-        data: {
-          jwtToken: accessToken,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        localStorage.clear();
-        navigate("/login");
-      }
-    } catch (error) {
-      setIsLoading(true);
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogOut = () => {
+    logoutMutation.mutate();
   };
   const handleNavigation = (path) => {
     navigate(path);
@@ -251,9 +217,6 @@ const MobileNavigation = () => {
     fetchProfilephoto();
   }, []);
 
-  const handleProfileChange = () => {
-    navigate("/settings");
-  };
   return (
     <>
       <div className="flex justify-between gap-6 px-2 mt-1 h-12 w-full mx-1 rounded-full  shadow-lg">

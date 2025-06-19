@@ -36,11 +36,12 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useFetchRoles } from "../../../hooks/useAuth.js";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
-  const [roleData, setRoleData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [, setRoleData] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,13 +55,15 @@ const Roles = () => {
   const navigate = useNavigate();
 
   const handlePageChange = (page) => {
-    setRoleData([]);
+    // setRoleData([]);
     setCurrentPage(page);
   };
 
+  const { data, isLoading, refetch } = useFetchRoles();
+  const roleData = data?.datalist;
   /**Start of Get API for Getting the Roles */
   const fetchRoles = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/v1/role/get/all", {
         pageIndex: currentPage,
@@ -68,7 +71,7 @@ const Roles = () => {
       });
       if (response.data.responseCode === "200") {
         setOriginalRolesData(response?.data?.datalist || []); // Store original data
-        setRoleData(response?.data?.datalist || []); // Initially set filtered data to original data
+        // setRoleData(response?.data?.datalist || []); // Initially set filtered data to original data
         setTotalPages(
           response.data.totalPages ||
             Math.ceil(response.data.datalist.length / rolesPerPage)
@@ -82,24 +85,13 @@ const Roles = () => {
     } catch (error) {
       toast.error("Error fetching roles.");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchRoles();
   }, [currentPage, rolesPerPage]);
-
-  // Enhanced filter handler to match Department implementation
-  const handleApplyFilters = (result) => {
-    if (result.data) {
-      setRoleData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      setRoleData(originalRolesData);
-    }
-  };
 
   /**To check create status */
   const hasRoleAddAccess = hasCreateAccess(MENU_NAMES.ROLES);
@@ -196,7 +188,7 @@ const Roles = () => {
   const handleApplySearch = (result) => {
     if (result.data) {
       // Search component returned filtered data
-      setRoleData(result.data);
+      // setRoleData(result.data);
       if (result.totalPages) setTotalPages(result.totalPages);
       if (result.totalRecords) setTotalRecords(result.totalRecords);
     } else {
@@ -229,17 +221,6 @@ const Roles = () => {
                       searchFields={["roleName", "roleDescription"]}
                       placeholder="Search Roles..."
                     />
-                    {/* <Filter
-                      onApplyFilters={handleApplyFilters}
-                      url="/api/v1/role/get/all"
-                      fieldNames={{
-                        departmentField: "id",
-                        fromDateField: "createdAt",
-                        toDateField: "toDate",
-                        positionField: "id",
-                      }}
-                      className="w-full sm:w-auto"
-                    /> */}
                   </div>
                   <Button
                     className="flex bg-black text-white w-full sm:w-auto"
@@ -268,17 +249,17 @@ const Roles = () => {
                       items={isLoading ? [] : roleData}
                       isLoading={isLoading}
                       loadingContent={<SkeletonLoader />}>
-                      {roleData.map((role, index) => (
+                      {roleData?.map((role, index) => (
                         <TableRow
                           key={role.roleId}
                           className="h-14 justify-center items-center border-b-2 border-gray-300">
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
-                            {role.roleName.length < 7 ? (
-                              role.roleName
+                            {role?.roleName?.length < 7 ? (
+                              role?.roleName
                             ) : (
                               <Tooltip content={role.roleName}>
-                                {truncateText(role.roleName, 15)}
+                                {truncateText(role?.roleName, 15)}
                               </Tooltip>
                             )}
                           </TableCell>
@@ -330,7 +311,7 @@ const Roles = () => {
                       <TableColumn>Actions</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {roleData.map((role, index) => (
+                      {roleData?.map((role, index) => (
                         <TableRow
                           key={role.roleId}
                           className="hover:bg-gray-50">
@@ -385,7 +366,7 @@ const Roles = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden">
                 <div className="space-y-4">
-                  {roleData.map((role) => (
+                  {roleData?.map((role) => (
                     <div
                       key={role.roleId}
                       className="border rounded-lg overflow-hidden shadow-sm">

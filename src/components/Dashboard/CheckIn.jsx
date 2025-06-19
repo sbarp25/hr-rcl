@@ -16,6 +16,11 @@ import TextAreaComp from "../ui/TextAreaComp.jsx";
 import Loader from "../Loader/Loader.jsx";
 import { useMutation } from "@tanstack/react-query";
 import { checkInAPI, checkOutAPI, lateCheckInAPI } from "../../api/auth.js";
+import {
+  useCheckin,
+  useCheckOut,
+  useLateCheckin,
+} from "../../hooks/useAuth.js";
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   // const [isloading, setIsloading] = useState(false);
@@ -37,66 +42,10 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
 
   const isStudent = localStorage.getItem("isCurrentlyStudying") === "true";
 
-  const checkInMutation = useMutation({
-    mutationFn: checkInAPI,
-    onSuccess: (data) => {
-      if (data.response === "200") {
-        toast.success(data?.message || "Checked in");
-        onStatusChange(true);
-      } else if (data.responseCode === "406") {
-        onOpen(); // Open late check-in modal
-      } else {
-        const errorMessage =
-          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
-        toast.error(errorMessage);
-      }
-    },
-    onError: (error) => {
-      const errorMessage =
-        error?.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Check In Failed";
-      toast.error(errorMessage);
-    },
-  });
+  const checkInMutation = useCheckin();
 
-  const checkOutMutation = useMutation({
-    mutationFn: checkOutAPI,
-    onSuccess: (data) => {
-      if (data?.responseCode === "200") {
-        toast.success("Checked out successfully!");
-        onStatusChange(false);
-      } else {
-        const errorMessage =
-          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
-        toast.error(errorMessage);
-      }
-    },
-    onError: (error) => {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    },
-  });
-
-  const lateCheckInMutation = useMutation({
-    mutationFn: lateCheckInAPI,
-    onSuccess: (data) => {
-      if (data?.responseCode === "200") {
-        toast.success("Late check-in processed successfully!");
-        onOpenChangeSecondModal(false);
-        onStatusChange(true);
-        reset();
-      } else {
-        const errorMessage =
-          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
-        toast.error(errorMessage);
-      }
-    },
-    onError: () => {
-      toast.error("Late Check In Failed");
-    },
-  });
+  const checkOutMutation = useCheckOut();
+  const lateCheckInMutation = useLateCheckin();
 
   const handleAttendance = async () => {
     const ipAddress = await getIpAddress();
@@ -112,7 +61,21 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           isStudent: isStudent,
         },
       };
-      checkInMutation.mutate(requestData);
+      checkInMutation.mutate(requestData, {
+        onSuccess: (data) => {
+          if (data.responseCode === "200") {
+            toast.success(data?.message || "Checked in successfully!");
+            onStatusChange(true);
+          } else if (data.responseCode === "406") {
+            onOpen(); // Open late check-in modal
+          } else {
+            const errorMessage =
+              data?.error?.errorList?.[0]?.errorMessage ||
+              "Something went wrong";
+            toast.error(errorMessage);
+          }
+        },
+      });
     } else {
       const requestData = {
         data: {
@@ -121,9 +84,22 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           requestIp: ipAddress,
         },
       };
-      checkOutMutation.mutate(requestData);
+      checkOutMutation.mutate(requestData, {
+        onSuccess: (data) => {
+          if (data.responseCode === "200") {
+            toast.success(data?.message || "Checked in successfully!");
+            onStatusChange(false);
+          } else {
+            const errorMessage =
+              data?.error?.errorList?.[0]?.errorMessage ||
+              "Something went wrong";
+            toast.error(errorMessage);
+          }
+        },
+      });
     }
   };
+
   const handleSecondModalConfirm = async (data) => {
     const ipAddress = await getIpAddress();
     const lateCheckin = {
@@ -137,7 +113,20 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         justification: data.reason,
       },
     };
-    lateCheckInMutation.mutate(lateCheckin);
+    lateCheckInMutation.mutate(lateCheckin, {
+      onSuccess: (data) => {
+        if (data?.responseCode === "200") {
+          toast.success("Late check-in processed successfully!");
+          onOpenChangeSecondModal(false);
+          onStatusChange(true);
+          reset();
+        } else {
+          const errorMessage =
+            data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+          toast.error(errorMessage);
+        }
+      },
+    });
   };
 
   const closeRejectModal = () => {

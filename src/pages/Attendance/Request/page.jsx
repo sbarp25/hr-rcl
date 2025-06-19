@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown } from "react-icons/fa";
-import { FaCircleCheck, FaXmark } from "react-icons/fa6";
+import { FaCircleCheck } from "react-icons/fa6";
 import {
   Table,
   TableBody,
@@ -18,10 +18,7 @@ import {
   Tooltip,
 } from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { MdDelete } from "react-icons/md";
-import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
@@ -32,21 +29,21 @@ import Loader from "../../../components/Loader/Loader.jsx";
 import {
   hasApproveAccess,
   hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import {
+  useFetchLateCheckin,
+  useLateCheckInApprove,
+  useLateCheckinReject,
+} from "../../../hooks/useAuth.js";
+
 const AttendanceRequest = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [lateCheckinData, setLateCheckinData] = useState([]);
-  const [selectedData, setSelectedData] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
   const [expandedRow, setExpandedRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [selectedData, setSelectedData] = useState(null);
   const [lateCheckInDataPerPage, setLateCheckInDataPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [originalLateCheckInDataData, setOriginalLateCheckInDataData] =
-    useState([]);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const navigate = useNavigate();
 
@@ -60,11 +57,75 @@ const AttendanceRequest = () => {
     onClose: onRejectClose,
   } = useDisclosure();
 
+  const breadcrumbItems = [
+    { label: "Attendance", href: "" },
+    { label: "Late Checkin", href: "/Attendance/Request" },
+  ];
+
+  /**Permission Check */
+  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [hasaccess, navigate]);
+
+  const { data, isLoading, refetch } = useFetchLateCheckin(
+    currentPage,
+    lateCheckInDataPerPage
+  );
+
+  const lateCheckinData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
+  const approveMutation = useLateCheckInApprove();
+  const rejectMutation = useLateCheckinReject();
+
+  // Reset filtered data when page size changes
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, lateCheckInDataPerPage]);
+
+  const handlePageChange = (page) => {
+    //To change the page as well as to reset the data
+    setCurrentPage(page);
+    setFilteredData(null);
+    setFilteredPagination(null);
+  };
+
+  const handleApplyFilters = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      // Reset case - refetch original data
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
+
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
 
   const handleAction = async (action, dataId) => {
     const item = lateCheckinData.find((item) => item.lateCheckInId === dataId);
@@ -84,68 +145,9 @@ const AttendanceRequest = () => {
         console.log("Unknown action");
     }
   };
-
-  const handlePageChange = (page) => {
-    setLateCheckinData([]);
-    setCurrentPage(page);
-  };
-  // const hasAttendanceEditAccess = true;
-  // const hasaccess = true;
-  /**To Update Late Check   */
-  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
-  /**To read the Data */
-  // const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
-  const hasaccess = true;
-  const breadcrumbItems = [
-    { label: "Attendance", href: "" },
-    { label: "Late Checkin", href: "/Attendance/Request" },
-  ];
-
-  const handleApplyFilters = (result) => {
-    if (result.data) {
-      // Filter component returned filtered data
-      setLateCheckinData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      // Reset case - refetch original data
-      const fetchLateCheckInData = async () => {
-        setIsLoading(true);
-        try {
-          const response = await axiosInstance.post(
-            "/api/v1/attendance/late-check-in/pending-reviews",
-            {
-              pageIndex: currentPage,
-              pageSize: lateCheckInDataPerPage,
-            }
-          );
-
-          if (response?.data?.responseCode === "200") {
-            setOriginalLateCheckInDataData(response?.data?.datalist || []);
-            setLateCheckinData(response?.data?.datalist || []);
-            setTotalPages(response.data.totalPages);
-            setTotalRecords(response.data.totalRecords);
-          } else {
-            toast.error(response?.data?.message);
-          }
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      fetchLateCheckInData();
-    }
-  };
-
   const onApprove = async () => {
     if (!selectedData) return;
 
-    setIsLoading(true);
     const updateLeave = {
       data: {
         lateAttendanceId: selectedData.lateCheckInId,
@@ -154,44 +156,15 @@ const AttendanceRequest = () => {
     };
 
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.post(
-        "/api/attendance/review_late_check_in",
-        updateLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
-        onClose();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
+      await approveMutation.mutateAsync(updateLeave);
+      onClose();
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+      console.error("Approval failed:", error);
     }
   };
 
   const onReject = async () => {
     if (!selectedData) return;
-
-    setIsLoading(true);
 
     const RejectLeave = {
       data: {
@@ -199,75 +172,15 @@ const AttendanceRequest = () => {
         isApproved: false,
       },
     };
+
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      if (!accessToken) {
-        toast.error("Authentication is missing.");
-        return;
-      }
-      const response = await axiosInstance.post(
-        "/api/attendance/review_late_check_in",
-        RejectLeave,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-        fetchLateCheckInData(); // Fixed: was calling lateCheckinData as a function
-        onRejectClose();
-        reset();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
+      await rejectMutation.mutateAsync(RejectLeave);
+      onRejectClose();
+      reset();
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+      console.error("Rejection failed:", error);
     }
   };
-
-  const fetchLateCheckInData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/attendance/late-check-in/role-based-reviews",
-        {
-          // const response = await axiosInstance.post("/api/v1/auth/get/all", {
-          pageIndex: currentPage,
-          pageSize: lateCheckInDataPerPage,
-        }
-      );
-
-      if (response?.data?.responseCode === "200") {
-        setOriginalLateCheckInDataData(response?.data?.datalist || []);
-        setLateCheckinData(response?.data?.datalist || []);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchLateCheckInData();
-  }, [currentPage, lateCheckInDataPerPage]);
-
   const toggleExpandedRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
@@ -275,16 +188,6 @@ const AttendanceRequest = () => {
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
 
-  const handleApplySearch = (result) => {
-    if (result.data) {
-      // Search component returned filtered data
-      setLateCheckinData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      fetchLateCheckInData();
-    }
-  };
   return (
     <div className="max-h-[85vh] overflow-y-auto">
       {isLoading ? (
@@ -653,9 +556,6 @@ const AttendanceRequest = () => {
                 <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
                   <span className="font-bold text-gray-800 mx-1">
-                    {/* {totalRecords < lateCheckInDataPerPage
-                      ? totalRecords
-                      : lateCheckInDataPerPage} */}
                     {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
@@ -687,7 +587,6 @@ const AttendanceRequest = () => {
           <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
-            // isDismissable={true}
             placement="center"
             size="4xl"
             isKeyboardDismissDisabled={false}>
@@ -801,11 +700,7 @@ const AttendanceRequest = () => {
                         onPress={() => onApprove()}>
                         Approve
                       </Button>
-                      <Button
-                        color="danger"
-                        // className="bg-black text-white"
-                        type="submit"
-                        onPress={onReject}>
+                      <Button color="danger" type="submit" onPress={onReject}>
                         Reject
                       </Button>
                       <Button onPress={onClose}>Cancel</Button>
@@ -895,24 +790,8 @@ const AttendanceRequest = () => {
                           </div>
                         </div>
                       )}
-                      {/* <TextAreaComp
-                    control={control}
-                    name="RejectReason"
-                    label="Reason To Reject This leave"
-                    rules={{
-                      required: "reason is required",
-                      minLength: {
-                        value: 10,
-                        message: "Reason must be at least 10 characters long.",
-                      },
-                    }}
-                  /> */}
                       <div className="flex gap-2 justify-end mt-4">
-                        <Button
-                          className="bg-black text-white"
-                          type="submit"
-                          // onPress={onReject}
-                        >
+                        <Button className="bg-black text-white" type="submit">
                           Reject
                         </Button>
                         <Button onPress={onClose}>Cancel</Button>

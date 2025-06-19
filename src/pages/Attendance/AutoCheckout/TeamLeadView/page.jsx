@@ -17,10 +17,10 @@ import {
 } from "@heroui/table";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
 import { FaChevronDown } from "react-icons/fa6";
-import axiosInstance from "../../../../lib/axios-Instance";
 import { Pagination } from "@heroui/pagination";
 import DropDownComp from "../../../../components/ui/Dropdown";
 import { autoCheckout } from "../../../../api/auth";
+import { useAutoCheckout } from "../../../../hooks/useAuth";
 
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,28 +43,12 @@ const AutoCheckout = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery({
-    queryKey: [
-      "autoCheckout",
-      currentPage,
-      autoCheckOutDataPerPage,
-      searchFilters,
-      activeFilters,
-    ],
-    queryFn: async () => {
-      if (searchFilters) {
-        return searchFilters;
-      }
-      if (activeFilters) {
-        return activeFilters;
-      }
-      return autoCheckout(currentPage, autoCheckOutDataPerPage);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to fetch auto checkout data");
-    },
-    keepPreviousData: true,
-  });
+  } = useAutoCheckout(
+    currentPage,
+    autoCheckOutDataPerPage,
+    searchFilters,
+    activeFilters
+  );
 
   // Permission check
   // const hasaccess = true;

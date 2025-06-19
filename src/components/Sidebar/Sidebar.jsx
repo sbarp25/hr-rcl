@@ -1,9 +1,8 @@
 import Logo from "../../assets/Images/Logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdDashboard, MdMapsHomeWork } from "react-icons/md";
-import { IoAlarm, IoLogOutOutline, IoLogOutSharp } from "react-icons/io5";
+import { IoAlarm, IoLogOutOutline } from "react-icons/io5";
 import { FcLeave, FcDepartment } from "react-icons/fc";
-import { FaBookBookmark, FaNewspaper } from "react-icons/fa6";
 import { GoGear } from "react-icons/go";
 import { BiData } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
@@ -12,7 +11,6 @@ import { Avatar } from "@heroui/avatar";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { CiLogout } from "react-icons/ci";
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -40,19 +38,22 @@ import {
   MENU_NAMES,
   permissionManager,
 } from "../../utils/permissionUtils.js";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../../api/auth.js";
+import { useLogout } from "../../hooks/useAuth.js";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [permissionsLoaded, setPermissionsLoaded] = useState(false);
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-
+  const logoutMutation = useLogout();
   const navigate = useNavigate();
 
   // Force re-evaluation of permissions
@@ -249,39 +250,6 @@ const Sidebar = () => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
   };
 
-  const handleLogOut = async () => {
-    try {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      const newData = {
-        data: {
-          jwtToken: accessToken,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        localStorage.clear();
-        navigate("/login");
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const fetchProfilephoto = async () => {
     setIsLoading(true);
     try {
@@ -308,6 +276,10 @@ const Sidebar = () => {
   useEffect(() => {
     fetchProfilephoto();
   }, []);
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   // Show loading state if permissions not loaded
   if (!permissionsLoaded) {
@@ -467,7 +439,7 @@ const Sidebar = () => {
                 <div className="flex gap-2 justify-end mt-4 ">
                   <Button
                     className="bg-black text-white"
-                    onPress={() => handleLogOut()}>
+                    onPress={handleLogout}>
                     Log Out
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>

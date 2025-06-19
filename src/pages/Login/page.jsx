@@ -1,66 +1,24 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Spinner } from "@heroui/react";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { loginUser } from "../../api/auth";
 import ButtonComponent from "../../components/ui/ButtonComp";
 import InputComponent from "../../components/ui/InputComponent";
 import LocationComponent from "../../components/LocationComponent";
+import { useLogin } from "../../hooks/useAuth";
 const Login = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
+  const loginMutation = useLogin();
   const { handleSubmit, control } = useForm();
 
-  const loginMutation = useMutation({
-    mutationFn: loginUser,
-    onSuccess: (data) => {
-      const accessToken = data?.data?.accessToken;
-      const refreshToken = data?.data?.refreshToken;
-      const FullName = data?.data?.fullName;
-      const Email = data?.data?.email;
-      const ekeyStep = data?.data?.ekeyStep;
-      const Menu = data?.data?.menuActionsAndPermissions;
-      const CheckinStatus = data?.data?.isCheckedInToday;
-      const isCurrentlyStudying = data?.data?.isCurrentlyStudying;
-
-      localStorage.setItem("isCurrentlyStudying", isCurrentlyStudying);
-      localStorage.setItem("CheckinStatus", CheckinStatus);
-      localStorage.setItem("ekeyStep", ekeyStep);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("fullName", FullName);
-      localStorage.setItem("email", Email);
-      LocalStorageUtil.setItem("menu", Menu);
-      if (
-        data?.data?.ekyeStatus === "NOT_REQUIRED" ||
-        data?.data?.ekyeStatus === "COMPLETED"
-      ) {
-        navigate("/dashboard");
-      } else {
-        navigate("/EKYE");
-      }
-    },
-    onError: (error) => {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        error.message ||
-        "Login failed. Try again.";
-      toast.error(errorMessage);
-    },
-  });
-
-  // const handleLogin = async (formState) => {
-  //   loginMutation.mutate(formState);
-  // };
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/") {
-      LocalStorageUtil.removeItem("accessToken");
+      localStorage.clear();
     }
   }, []);
   return (
