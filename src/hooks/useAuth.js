@@ -6,6 +6,7 @@ import {
   checkOutAPI,
   createEmployees,
   deleteEmployees,
+  deleteRole,
   fetchDepartment,
   fetchEmployees,
   fetchlateCheckin,
@@ -357,6 +358,18 @@ export const useFetchRoles = (currentPage, rolesPerPage) => {
     queryFn: () => fetchrole(currentPage, rolesPerPage),
     onError: (error) => {
       console.error("Error fetching Roles", error);
+    },
+  });
+};
+
+/**Use Role Delete */
+export const useDeleteRoles = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteRole,
+    onSuccess: (data) => {
+      toast.success(data.message || "Employee deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
     },
   });
 };

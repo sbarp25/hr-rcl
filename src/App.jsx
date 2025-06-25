@@ -213,6 +213,7 @@ function App() {
           </Layout>
         )}
       </>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

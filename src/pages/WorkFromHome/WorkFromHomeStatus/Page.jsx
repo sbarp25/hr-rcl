@@ -328,7 +328,7 @@ const WorkFromHomeStatus = () => {
                         </TableCell>
 
                         <TableCell>
-                          {item?.departmentName.length < 7 ? (
+                          {item?.departmentName?.length < 7 ? (
                             item?.departmentName
                           ) : (
                             <Tooltip content={item?.departmentName}>

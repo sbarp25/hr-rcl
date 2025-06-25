@@ -41,6 +41,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { logoutUser } from "../../api/auth.js";
 import { useLogout } from "../../hooks/useAuth.js";
+import { ThemeSwitcher } from "../ThemeSwitcher.jsx";
 
 const Sidebar = () => {
   const [imageURL, setImageURL] = useState("");
@@ -317,6 +318,7 @@ const Sidebar = () => {
               </Link>
             )}
           </div>
+          <ThemeSwitcher />
 
           {/* Navigation items */}
           <div className="flex-grow overflow-y-auto">

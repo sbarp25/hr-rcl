@@ -37,12 +37,47 @@ export default {
   darkMode: "class",
   plugins: [
     heroui({
-      layout: {
-        // boxShadow: {
-        //   small: "0px 4px 8px rgba(0,0,0,1)",
-        //   medium: "0px 8px 16px rgba(0,0,0,1)",
-        //   large: "0px 16px 24px rgba(0,0,0,1)",
-        // },
+      prefix: "heroui",
+      addCommonColors: false,
+      defaultTheme: "light",
+      defaultExtendTheme: "light",
+      layout: {},
+      themes: {
+        light: {
+          layout: {}, // light theme layout tokens
+          danger: {
+            50: "#ffe5e5",
+            100: "#fdb8b8",
+            200: "#fa8a8a",
+            300: "#f75c5c",
+            400: "#f42e2e",
+            500: "#f20000", // your custom red
+            600: "#c20000",
+            700: "#920000",
+            800: "#610000",
+            900: "#310000",
+            foreground: "#fff",
+          }, // light theme colors
+        },
+        dark: {
+          layout: {}, // dark theme layout tokens
+          colors: {
+            danger: {
+              50: "#ffe5e5",
+              100: "#fdb8b8",
+              200: "#fa8a8a",
+              300: "#f75c5c",
+              400: "#f42e2e",
+              500: "#f20000", // your custom red
+              600: "#c20000",
+              700: "#920000",
+              800: "#610000",
+              900: "#310000",
+              foreground: "#fff",
+            },
+          }, // dark theme colors
+        },
+        // ... custom themes
       },
     }),
   ],

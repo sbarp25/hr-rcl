@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
-import { Button } from "@heroui/react";
+import { Button, Switch } from "@heroui/react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { GoDotFill } from "react-icons/go";
@@ -17,7 +17,16 @@ const ChangePassword = () => {
     watch,
     reset,
   } = useForm();
+
+  const {
+    control: twoFactorControl,
+    handleSubmit: handletwoFactorSubmit,
+    formState: { errors: twoFactorErrors, isSubmitting: isTwoFactorSubmitting },
+    reset: resetTwoFactor,
+  } = useForm();
+
   const [isLoading, setIsLoading] = useState(false);
+  const [mfaEnabled, setMfaEnabled] = useState(false);
   const navigate = useNavigate();
   const password = watch("password");
 
@@ -73,27 +82,54 @@ const ChangePassword = () => {
     }
   }, [hasaccess, navigate]);
 
+  const updateMfaSettings = async (formData) => {
+    const payload = {
+      mfaEnabled,
+      currentPassword: formData.currentPassword,
+    };
+
+    try {
+      const response = await axiosInstance.put(
+        "/api/v1/auth/update/mfa",
+        payload
+      );
+
+      if (response.data.responseCode === "200") {
+        resetTwoFactor(); // Use the correct reset function
+        toast.success(
+          response.data.message || "MFA settings updated successfully"
+        );
+      } else {
+        toast.error(response.data.message || "Failed to update MFA settings");
+      }
+    } catch (error) {
+      console.error("Error updating MFA settings:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to update MFA settings";
+      toast.error(errorMessage);
+    }
+  };
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="mx-auto bg-white   rounded-xl shadow-lg">
+        <div className="mx-auto bg-white dark:bg-black rounded-xl shadow-lg">
           <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800 ">
             Security
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50  dark:bg-black rounded-xl">
             {/* Change Password Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-6 bg-white border border-gray-200 shadow-sm p-6 rounded-2xl">
+              className="space-y-6 bg-white border border-gray-200 dark:bg-gray-800 shadow-sm p-6 rounded-2xl">
               <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
                 Change Password
               </h2>
 
               {/* Password Guidelines */}
-              <div className="bg-gray-100 rounded-xl p-4 text-sm text-gray-700">
+              <div className="bg-gray-100 dark:bg-slate-500 rounded-xl p-4 text-sm text-gray-700">
                 <h3 className="font-semibold text-base mb-2">
                   Your password must:
                 </h3>
@@ -102,10 +138,10 @@ const ChangePassword = () => {
                     <GoDotFill className="mt-1 text-gray-600" />
                     Be between 8 and 20 characters long
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2 ">
                     <GoDotFill className="mt-1 text-gray-600" />
                     Only contain letters, numbers, and special characters:
-                    <span className="font-mono bg-white px-1 rounded text-xs">
+                    <span className="font-mono bg-white dark:bg-slate-800 dark:text-white dark:p-2  px-1 rounded text-xs">
                       !@#$%^&amp;*()_+={}[]:.;&quot;&#39;&lt;&gt;,.?\|
                     </span>
                   </li>
@@ -179,13 +215,71 @@ const ChangePassword = () => {
                 {isLoading ? "Loading..." : "Submit"}
               </Button>
             </form>
-
             {/* Two Factor Auth Section */}
-            <div className="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+            {/* <div className="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col items-center justify-center text-center">
               <h2 className="text-3xl font-bold text-gray-800 mb-2">
                 Two-Factor Authentication
               </h2>
               <p className="text-lg text-gray-600">Currently Unavailable</p>
+            </div> */}
+            <div className="bg-white border border-gray-200 dark:bg-gray-800 shadow-sm p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+              <div className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-gray-700 border border-gray-200 dark:border-gray-700">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                    Multi-Factor Authentication
+                  </h2>
+                </div>
+
+                <form
+                  onSubmit={handletwoFactorSubmit(updateMfaSettings)}
+                  className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div className="flex-1">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Two-Factor Authentication
+                      </label>
+                    </div>
+                    <Switch
+                      isSelected={mfaEnabled}
+                      onValueChange={setMfaEnabled}
+                      color="default"
+                      size="lg"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <InputComponent
+                      type="password"
+                      name="currentPassword"
+                      control={twoFactorControl}
+                      variant="bordered"
+                      className="w-full"
+                      label="Current Password"
+                      placeholder="Enter your current password"
+                      rules={{
+                        required: "Password is required to update MFA settings",
+                        pattern: {
+                          value:
+                            /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                          message:
+                            "Password must be 8-20 characters long and can include letters, numbers, and special characters.",
+                        },
+                      }}
+                      isDisabled={isTwoFactorSubmitting}
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full py-3 bg-black hover:bg-slate-700 dark:bg-gray-700 dark:hover:bg-slate-800 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    isDisabled={isTwoFactorSubmitting}
+                    isLoading={isTwoFactorSubmitting}>
+                    {isTwoFactorSubmitting
+                      ? "Updating..."
+                      : "Update MFA Settings"}
+                  </Button>
+                </form>
+              </div>
             </div>
           </div>
         </div>

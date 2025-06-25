@@ -25,7 +25,6 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
@@ -36,64 +35,28 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-import { useFetchRoles } from "../../../hooks/useAuth.js";
-
+import { useEmployeeDelete, useFetchRoles } from "../../../hooks/useAuth.js";
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
-  // const [, setRoleData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [rolesPerPage, setRolesPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [originalRolesData, setOriginalRolesData] = useState([]);
+
   const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const navigate = useNavigate();
 
-  const handlePageChange = (page) => {
-    // setRoleData([]);
-    setCurrentPage(page);
-  };
+  const breadcrumbItems = [
+    { label: "MasterData", href: "" },
+    { label: "Roles", href: "/master-data/Roles" },
+  ];
 
-  const { data, isLoading, refetch } = useFetchRoles();
-  const roleData = data?.datalist;
-  /**Start of Get API for Getting the Roles */
-  const fetchRoles = async () => {
-    // setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/role/get/all", {
-        pageIndex: currentPage,
-        pageSize: rolesPerPage,
-      });
-      if (response.data.responseCode === "200") {
-        setOriginalRolesData(response?.data?.datalist || []); // Store original data
-        // setRoleData(response?.data?.datalist || []); // Initially set filtered data to original data
-        setTotalPages(
-          response.data.totalPages ||
-            Math.ceil(response.data.datalist.length / rolesPerPage)
-        );
-        setTotalRecords(
-          response.data.totalRecords || response.data.datalist.length
-        );
-      } else {
-        toast.error(response?.data?.message || "Failed to fetch roles.");
-      }
-    } catch (error) {
-      toast.error("Error fetching roles.");
-    } finally {
-      // setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRoles();
-  }, [currentPage, rolesPerPage]);
-
-  /**To check create status */
+  /**Permission Checking */
   const hasRoleAddAccess = hasCreateAccess(MENU_NAMES.ROLES);
   /**To read the Data */
   // const hasaccess = true;
@@ -109,7 +72,40 @@ const Roles = () => {
     }
   }, [hasaccess, navigate]);
 
-  /**Start Of handleActions*/
+  const { data, isLoading, refetch } = useFetchRoles();
+  const roleData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, rolesPerPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setFilteredData(null);
+    setFilteredPagination(null);
+  };
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
+
+  const toggleExpandedRow = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
+  };
+
   const handleAction = async (action, role) => {
     switch (action) {
       // Start Of Edit Operation
@@ -135,64 +131,12 @@ const Roles = () => {
         console.log("Unknown action");
     }
   };
-
-  const onDelete = async () => {
-    setIsDeleteLoading(true);
-    try {
-      if (hasRoleDeleteAccess) {
-        const response = await axiosInstance.delete(
-          `/api/v1/role/delete/${roleId}`
-        );
-        if (response.data.responseCode === "204") {
-          toast.success(response.data.message || "Role deleted successfully!");
-          fetchRoles();
-          onClose();
-
-          // Refresh the data after deletion
-          const updatedPage =
-            roleData.length === 1 && currentPage > 1
-              ? currentPage - 1
-              : currentPage;
-
-          setCurrentPage(updatedPage);
-        } else {
-          toast.error(response.data.message || "Failed to delete the role.");
-        }
-      } else {
-        toast.error("Access denied");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error deleting role.");
-    } finally {
-      setIsDeleteLoading(false);
-    }
-  };
-
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Roles", href: "/master-data/Roles" },
-  ];
-
+  const onDelete = useEmployeeDelete();
   const navigateAdd = () => {
     if (hasRoleAddAccess) {
       navigate("/master-data/Roles/add");
     } else {
       toast.error("You don't have Create Access");
-    }
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
-
-  const handleApplySearch = (result) => {
-    if (result.data) {
-      // Search component returned filtered data
-      // setRoleData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      fetchRoles();
     }
   };
 
@@ -311,7 +255,7 @@ const Roles = () => {
                       <TableColumn>Actions</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {roleData?.map((role, index) => (
+                      {roleData?.map((role) => (
                         <TableRow
                           key={role.roleId}
                           className="hover:bg-gray-50">

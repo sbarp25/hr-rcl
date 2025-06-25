@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Input, Select, SelectItem } from "@heroui/react";
 import axiosInstance from "../lib/axios-Instance";

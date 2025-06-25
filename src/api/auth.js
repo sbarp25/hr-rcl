@@ -54,14 +54,7 @@ export const logoutUser = async () => {
     }
   );
   if (response.data?.responseCode === "200") {
-    localStorage.removeItem("accesstoken");
-    localStorage.removeItem("isCurrentlyStudying");
-    localStorage.removeItem("ekeyStep");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("fullName");
-    localStorage.removeItem("email");
-    localStorage.removeItem("menu");
+    localStorage.clear();
   } else {
     const errorMessage = response?.data?.error?.errorList?.[0]?.errorMessage;
     throw new Error(errorMessage || "Log In Failed");
@@ -303,3 +296,61 @@ export const fetchrole = async (currentPage, rolesPerPage) => {
     throw new Error(response?.data?.message || "Failed to fetch Roles");
   }
 };
+
+export const deleteRole = async (roleId) => {
+  const response = await axiosInstance.delete(`/api/v1/role/delete/${roleId}`);
+  if (response.data.responseCode === "204") {
+    return response?.data;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to delete Role");
+  }
+};
+
+// // API function to fetch menus and actions
+// export const fetchMenusAndActions = async () => {
+//   const response = await axiosInstance.post(
+//     "/api/v1/master/menus/and/actions/",
+//     {}
+//   );
+
+//   if (response.data.responseCode !== "201") {
+//     throw new Error(
+//       response.data.message || "Failed to fetch menus and actions"
+//     );
+//   }
+
+//   // Process the data to remove duplicates and add selected property
+//   const processedData = response.data.data.map((menu) => {
+//     // Remove duplicate actions based on actionId
+//     const uniqueActions = menu.actions.filter(
+//       (action, index, self) =>
+//         index === self.findIndex((a) => a.actionId === action.actionId)
+//     );
+
+//     return {
+//       ...menu,
+//       actions: uniqueActions.map((action) => ({
+//         ...action,
+//         selected: action.selected || false,
+//       })),
+//     };
+//   });
+
+//   return processedData;
+// };
+
+// // API function to create a new role
+// export const createRole = async (roleData) => {
+//   const response = await axiosInstance.post("/api/v1/role/save", roleData, {
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+
+//   if (response.data.responseCode !== "201") {
+//     throw new Error(response.data.message || "Failed to create role");
+//   }
+
+//   return response.data;
+// };
