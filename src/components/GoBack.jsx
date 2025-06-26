@@ -6,7 +6,7 @@ const GoBack = () => {
   }
   return (
     <Button
-      className="text-white bg-black dark:text-white dark:bg-white"
+      className="text-white bg-black dark:text-black dark:bg-white"
       onPress={goBack}>
       Back
     </Button>

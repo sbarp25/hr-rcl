@@ -178,7 +178,7 @@ const SelfWorkFromHome = () => {
             </div>
 
             {/**Table Section */}
-            <div className="bg-white rounded-lg p-2">
+            <div className="bg-white dark:bg-black rounded-lg p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className="shadow-md rounded-lg overflow-y-auto text-left">
@@ -313,7 +313,7 @@ const SelfWorkFromHome = () => {
                         key={WFH.id || WFH.workFromHomeId}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                           onClick={() => toggleExpandedRow(WFH.id)}>
                           <div className="font-medium">
                             {WFH.fullName || "N/A"}
@@ -369,17 +369,15 @@ const SelfWorkFromHome = () => {
               {/**Pagination Section - Responsive for all screens */}
               {workFromHome && workFromHome.length > 0 && (
                 <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                  <div className="text-sm font-medium text-gray-600  flex items-center">
+                  <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
                     <span className="mr-1">Showing:</span>
-                    <span className="font-bold text-gray-800 mx-1">
+                    <span className="font-bold  mx-1">
                       {totalRecords < WFHDataPerPage
                         ? totalRecords
                         : WFHDataPerPage}
                     </span>
                     <span className="mr-1">of</span>
-                    <span className="font-bold text-gray-800">
-                      {totalRecords}
-                    </span>
+                    <span className="font-bold ">{totalRecords}</span>
                   </div>
 
                   <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

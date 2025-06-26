@@ -225,7 +225,7 @@ const Settings = () => {
           </div>
 
           {/* Profile Settings Card */}
-          <div className="bg-white shadow-xl rounded-3xl p-8 border border-gray-200">
+          <div className="bg-white dark:bg-black  shadow-xl rounded-3xl p-8 border border-gray-200">
             {" "}
             <h2 className="text-2xl font-bold text-center mb-8">
               Profile Settings

@@ -155,7 +155,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="px-1 bg-white rounded-xl">
+      <div className="px-1 bg-white dark:bg-black rounded-xl">
         <div className="max-h-[90vh] mt-4 rounded-3xl max-w-[100%]">
           <Table
             bordered
@@ -218,16 +218,16 @@ const Page = () => {
         </div>
 
         <div className="flex justify-between items-center mt-4">
-          <div className="text-sm font-medium text-gray-600  flex items-center">
+          <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
             <span className="mr-1">Showing:</span>
-            <span className="font-bold text-gray-800 mx-1">
+            <span className="font-bold  mx-1">
               {totalRecords < ekyeDashboardDataPerPage
                 ? totalRecords
                 : ekyeDashboardDataPerPage}
               {/* {ekyeDashboardDataPerPage} */}
             </span>
             <span className="mr-1">of</span>
-            <span className="font-bold text-gray-800">{totalRecords}</span>
+            <span className="font-bold ">{totalRecords}</span>
           </div>
           <Pagination
             showControls

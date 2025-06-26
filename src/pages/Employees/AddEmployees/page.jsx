@@ -19,6 +19,7 @@ import {
   useFetchUnPaginatedPosition,
   useFetchUnPaginatedRoles,
 } from "../../../hooks/useAuth.js";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 
 const AddEmployeeForm = () => {
   const {
@@ -125,13 +126,13 @@ const AddEmployeeForm = () => {
                 <GoBack />
               </div>
             </div>
-            <div className="page-title flex items-center -pl-2">
+            <div className="page-title dark:text-white flex items-center -pl-2">
               <IoIosPeople />
               Add Employee
             </div>
             <div></div>
           </div>
-          <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
+          <div className=" mx-auto bg-white dark:bg-black shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="w-full space-y-8">
@@ -277,12 +278,17 @@ const AddEmployeeForm = () => {
                   />
                 </div>
               </div>
-              <button
+              <ButtonComponent
+                className="flex gap-2 items-center w-fit bg-bgprimary dark:bg-white dark:text-black text-white py-2 px-4 rounded-2xl"
+                type="Submit"
+                content={"Add Employee"}
+              />
+              {/* <button
                 type="submit"
                 className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
                 <img src={Submit} alt="Submit" className="h-4 w-4" />
                 Add Employee
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

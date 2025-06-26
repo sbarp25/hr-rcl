@@ -229,7 +229,7 @@ const Employees = () => {
               </div>
               <Button
                 isDisabled={!hasemployeecreateaccess}
-                className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4 w-full sm:w-auto"
+                className="flex gap-2 items-center rounded-2xl bg-black dark:bg-white dark:text-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4 w-full sm:w-auto"
                 onPress={handleRedirect}>
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
@@ -239,7 +239,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Large screens */}
-        <div className="hidden xl:block bg-white rounded-lg p-2  overflow-y-auto">
+        <div className="hidden xl:block bg-white dark:bg-black rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader>
               <TableColumn>S.N</TableColumn>
@@ -311,7 +311,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Medium screens */}
-        <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2  overflow-y-auto">
+        <div className="hidden lg:block xl:hidden bg-white dark:bg-black rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader className="bg-gray-50">
               <TableColumn>Name</TableColumn>
@@ -391,9 +391,9 @@ const Employees = () => {
               {filteredEmployees.map((employee) => (
                 <div
                   key={employee.rclId}
-                  className="border rounded-lg overflow-hidden shadow-sm bg-white">
+                  className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
                   <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                     onClick={() => toggleExpandedRow(employee.rclId)}>
                     <div>
                       <div className="font-medium">{employee.fullName}</div>
@@ -486,17 +486,19 @@ const Employees = () => {
 
         {/* Pagination - Responsive */}
         {!isLoading && filteredEmployees && filteredEmployees.length > 0 && (
-          <div className="bg-white rounded-lg p-4">
+          <div className="bg-white dark:bg-black rounded-lg p-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="text-sm font-medium text-gray-600 flex items-center order-2 sm:order-1">
+              <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center order-2 sm:order-1">
                 <span className="mr-1">Showing:</span>
-                <span className="font-bold text-gray-800 mx-1">
+                <span className="font-bold text-gray-800 dark:text-white mx-1">
                   {totalRecords < employeeDataPerPage
                     ? totalRecords
                     : employeeDataPerPage}
                 </span>
                 <span className="mr-1">of</span>
-                <span className="font-bold text-gray-800">{totalRecords}</span>
+                <span className="font-bold text-gray-800 dark:text-white">
+                  {totalRecords}
+                </span>
               </div>
 
               <div className="order-1 sm:order-2">

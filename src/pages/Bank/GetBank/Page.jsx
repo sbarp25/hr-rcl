@@ -76,11 +76,11 @@ const GetBankDetails = () => {
         <Loader />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-          <div className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 p-6">
+          <div className="bg-white dark:bg-black  shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-2 border-gray-300">
               Bank Details
             </h2>
-            <ul className="space-y-4 text-sm text-gray-700">
+            <ul className="space-y-4 text-sm text-gray-700 dark:text-white">
               <li>
                 <div className="flex items-center gap-3 font-medium mb-1">
                   <CiCreditCard2 className="text-xl" />

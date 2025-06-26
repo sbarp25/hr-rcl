@@ -2,16 +2,51 @@ import axios from "axios";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "sonner";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { getIpAddress } from "../utils/getIpAddress";
+import platform from "platform";
 import { useNavigate } from "react-router-dom";
 
 const navigate = useNavigate;
+
+let globalVisitorId = null;
+
+const initializeFingerprint = async () => {
+  try {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    globalVisitorId = result.visitorId;
+  } catch (error) {
+    console.error("Failed to generate fingerprint:", error);
+  }
+};
+
+// Initialize immediately
+initializeFingerprint();
+
+const getHeadersWithVisitorId = (additionalHeaders = {}) => {
+  return {
+    "Content-Type": "application/json",
+    "X-Device-Name": `${platform.os.family}`,
+    ...(globalVisitorId && { "X-Browser-Fingerprint": globalVisitorId }),
+    ...additionalHeaders,
+  };
+};
 /**Login screen */
 export const loginUser = async (formData) => {
+  const ipAddress = await getIpAddress();
   const LoginData = {
     data: {
       email: formData.email,
       password: formData.password,
+      recaptchaToken: formData.recaptchaToken, // reCAPTCHA token from formData
+      action: "login",
+      deviceInfo: {
+        ipAddress: ipAddress,
+        browserFingerprint: globalVisitorId,
+        userAgent: `${platform.ua}`,
+        deviceName: `${platform.os.family}`,
+      },
     },
   };
 
@@ -19,9 +54,7 @@ export const loginUser = async (formData) => {
     `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login`,
     LoginData,
     {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getHeadersWithVisitorId(),
     }
   );
 
@@ -33,6 +66,27 @@ export const loginUser = async (formData) => {
     throw new Error(errorMessage || "Log In Failed");
   }
 };
+
+/**OTP verification */
+export const OTPVerification = async (formData, sessionToken) => {
+  const OTPData = {
+    data: {
+      sessionToken: sessionToken,
+      otpCode: formData.MFAOTP,
+    },
+  };
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/mfa/verify`,
+    OTPData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};
+
 /**Logout screen */
 export const logoutUser = async () => {
   const accessToken = localStorage.getItem("accessToken");

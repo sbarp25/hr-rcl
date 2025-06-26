@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 import {
@@ -156,7 +155,7 @@ const AddDepartment = () => {
             <div className="page-title -pl-2">Add Department</div>
             <div></div>
           </div>
-          <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+          <div className="bg-white dark:bg-black  p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
               {/* Department Title */}
               <div>
@@ -236,7 +235,7 @@ const AddDepartment = () => {
               </div>
               <ButtonComponent
                 type="submit"
-                className="bg-black text-white"
+                className="bg-black text-white dark:bg-white dark:text-black"
                 content={isLoading ? "Adding..." : "Add Department"}
                 disabled={isLoading}
               />

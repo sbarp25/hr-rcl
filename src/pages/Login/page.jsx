@@ -1,26 +1,39 @@
 import Logo from "../../assets/Images/Logo.png";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { Spinner } from "@heroui/react";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
-import { loginUser } from "../../api/auth";
+import { useEffect, useState } from "react";
+import { Modal, ModalContent, Spinner, useDisclosure } from "@heroui/react";
 import ButtonComponent from "../../components/ui/ButtonComp";
 import InputComponent from "../../components/ui/InputComponent";
 import LocationComponent from "../../components/LocationComponent";
-import { useLogin } from "../../hooks/useAuth";
+import { useLogin, useOTPVerification } from "../../hooks/useAuth";
+import OTPInputComponent from "../../components/ui/OTPInputComponent";
 const Login = () => {
-  const navigate = useNavigate();
-  const loginMutation = useLogin();
+  const [sessionToken, setSessionToken] = useState("");
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+  const loginMutation = useLogin({ onOpen, setSessionToken });
   const { handleSubmit, control } = useForm();
 
+  const {
+    handleSubmit: handleOTPSubmit,
+    control: oTPcontrol,
+    reset: oTPreset,
+  } = useForm();
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/") {
       localStorage.clear();
     }
   }, []);
+
+  const closeModal = () => {
+    oTPreset();
+    onClose();
+  };
+
+  const verifyOTPMutation = useOTPVerification({ onOpenChange, sessionToken });
+  const handleSubmitOTP = (data) => {
+    verifyOTPMutation.mutate(data);
+  };
   return (
     <>
       <LocationComponent />
@@ -40,7 +53,7 @@ const Login = () => {
           </div>
           <div className="px-16 pt-64 bg-white dark:bg-gray-800 rounded-2xl md:rounded-r-3xl md:rounded-l-none transition-colors duration-300">
             <form
-              onSubmit={handleSubmit(loginMutation.mutateAsync)}
+              onSubmit={handleSubmit(loginMutation.mutate)}
               className="flex flex-col space-y-4 gap-6 w-full">
               <p className="text-2xl sm:text-xl font-bold text-center text-gray-900 dark:text-white transition-colors duration-300">
                 Log in
@@ -96,6 +109,57 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}>
+        <ModalContent>
+          {(onclose) => (
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Multi-Factor Authentication
+              </h2>
+              <p className="text-gray-600 mb-6 text-center">
+                Please Enter the OTP sent to your mail
+              </p>
+              <form
+                onSubmit={handleOTPSubmit(handleSubmitOTP)}
+                className="space-y-4">
+                <OTPInputComponent
+                  control={oTPcontrol}
+                  name="MFAOTP"
+                  label="OTP"
+                  length="6"
+                  type="password"
+                />
+                <div className="flex gap-3">
+                  <ButtonComponent
+                    type="button"
+                    onClick={closeModal}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg"
+                    content="Cancel"
+                  />
+                  <ButtonComponent
+                    type="submit"
+                    className="flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg disabled:opacity-50"
+                    disabled={verifyOTPMutation.isPending}
+                    content={
+                      <>
+                        <span>Verify</span>
+                        {verifyOTPMutation.isPending && (
+                          <Spinner size="sm" color="white" className="ml-2" />
+                        )}
+                      </>
+                    }
+                  />
+                </div>
+              </form>
+            </div>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

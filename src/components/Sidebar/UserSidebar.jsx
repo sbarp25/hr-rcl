@@ -77,16 +77,16 @@ const UserSidebar = () => {
       to: "/Bank",
       view: seeBank,
     },
-    {
-      icon: CiBank,
-      label: "Salary",
-      view: true,
-      children: [
-        { label: "Salary Details", to: "/Salary", view: true },
-        { label: "Salary Breakdown", to: "/SalaryEdit", view: true },
-        { label: "Advance", to: "/AdvanceSalary", view: true },
-      ],
-    },
+    // {
+    //   icon: CiBank,
+    //   label: "Salary",
+    //   view: true,
+    //   children: [
+    //     { label: "Salary Details", to: "/Salary", view: true },
+    //     { label: "Salary Breakdown", to: "/SalaryEdit", view: true },
+    //     { label: "Advance", to: "/AdvanceSalary", view: true },
+    //   ],
+    // },
   ];
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);

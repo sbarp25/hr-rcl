@@ -221,20 +221,18 @@ const TotalPage = () => {
                     />
                   </div>
                   <Button
-                    className="flex bg-black text-white w-full sm:w-auto"
+                    className="flex bg-black text-white dark:bg-white dark:text-black w-full sm:w-auto"
                     onPress={navigateAdd}>
                     <div className="flex justify-center items-center gap-2">
-                      <IoIosAddCircleOutline className="text-white text-xl" />
-                      <span className="text-white font-normal">
-                        Add Position
-                      </span>
+                      <IoIosAddCircleOutline className=" text-xl" />
+                      <span className=" font-normal">Add Position</span>
                     </div>
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg  p-2">
+            <div className="bg-white dark:bg-black rounded-lg  p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className="rounded-lg  text-left">
@@ -375,7 +373,7 @@ const TotalPage = () => {
                       key={position.id}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                         onClick={() => toggleExpandedRow(position.id)}>
                         <div className="font-medium">
                           {position.positionName}
@@ -395,7 +393,7 @@ const TotalPage = () => {
                         } p-3 space-y-2 text-sm`}>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
-                          <div className="bg-gray-50 p-2 rounded">
+                          <div className="bg-gray-50 dark:bg-slate-600 p-2 rounded">
                             {position.description}
                           </div>
                         </div>
@@ -446,18 +444,16 @@ const TotalPage = () => {
 
               {/* Pagination - Responsive for all screens */}
               {positionData && positionData.length > 0 && (
-                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
-                  <div className="text-sm font-medium text-gray-600 flex items-center">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white dark:bg-black pb-4">
+                  <div className="text-sm font-medium text-gray-800 dark:text-white flex items-center">
                     <span className="mr-1">Showing:</span>
-                    <span className="font-bold text-gray-800 mx-1">
+                    <span className="font-bold  mx-1">
                       {totalRecords < positionPerPage
                         ? totalRecords
                         : positionPerPage}
                     </span>
                     <span className="mr-1">of</span>
-                    <span className="font-bold text-gray-800">
-                      {totalRecords}
-                    </span>
+                    <span className="font-bold ">{totalRecords}</span>
                   </div>
 
                   <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

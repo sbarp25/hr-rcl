@@ -167,18 +167,18 @@ const Roles = () => {
                     />
                   </div>
                   <Button
-                    className="flex bg-black text-white w-full sm:w-auto"
+                    className="flex bg-black text-white dark:bg-white dark:text-black w-full sm:w-auto"
                     onPress={navigateAdd}>
                     <div className="flex justify-center items-center gap-2">
-                      <IoIosAddCircleOutline className="text-white text-xl" />
-                      <span className="text-white font-normal">Add Role</span>
+                      <IoIosAddCircleOutline className=" text-xl" />
+                      <span className="font-normal">Add Role</span>
                     </div>
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg overflow-y-auto p-2">
+            <div className="bg-white dark:bg-black rounded-lg overflow-y-auto p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className="rounded-lg  text-left">
@@ -258,14 +258,11 @@ const Roles = () => {
                       {roleData?.map((role) => (
                         <TableRow
                           key={role.roleId}
-                          className="hover:bg-gray-50">
+                          className="hover:bg-gray-50 dark:hover:bg-slate-500">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">
                                 {role.roleName}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                ID: {role.roleId}
                               </span>
                             </div>
                           </TableCell>
@@ -315,7 +312,7 @@ const Roles = () => {
                       key={role.roleId}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 bg-slate-500"
                         onClick={() => toggleExpandedRow(role.roleId)}>
                         <div className="font-medium">{role.roleName}</div>
                         <div className="flex items-center gap-2">
@@ -333,7 +330,7 @@ const Roles = () => {
                         } p-3 space-y-2 text-sm`}>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
-                          <div className="bg-gray-50 p-2 rounded">
+                          <div className="bg-gray-50 dark:bg-slate-500 p-2 rounded">
                             {role.roleDescription}
                           </div>
                         </div>
@@ -382,18 +379,16 @@ const Roles = () => {
 
               {/* Pagination - Responsive for all screens */}
               {roleData && roleData.length > 0 && (
-                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
-                  <div className="text-sm font-medium text-gray-600 flex items-center">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white dark:bg-black pb-4">
+                  <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
                     <span className="mr-1">Showing:</span>
-                    <span className="font-bold text-gray-800 mx-1">
+                    <span className="font-bold mx-1">
                       {totalRecords < rolesPerPage
                         ? totalRecords
                         : rolesPerPage}
                     </span>
                     <span className="mr-1">of</span>
-                    <span className="font-bold text-gray-800">
-                      {totalRecords}
-                    </span>
+                    <span className="font-bold ">{totalRecords}</span>
                   </div>
 
                   <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

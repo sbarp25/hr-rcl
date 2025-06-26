@@ -20,6 +20,7 @@ import {
   lateCheckInReject,
   loginUser,
   logoutUser,
+  OTPVerification,
   resetPassword,
 } from "../api/auth";
 import { toast } from "sonner";
@@ -44,7 +45,7 @@ export const useLogout = () => {
   });
 };
 /**Login */
-export const useLogin = () => {
+export const useLogin = ({ onOpen, setSessionToken }) => {
   const navigate = useNavigate();
 
   return useMutation({
@@ -77,10 +78,74 @@ export const useLogin = () => {
       }
     },
     onError: (error) => {
+      if (error.response?.data?.error?.errorCode === 422) {
+        // Store session token from response for MFA
+        const sessionToken = error.response?.data?.sessionToken || "";
+        setSessionToken(sessionToken);
+        onOpen(); // Open MFA modal
+        return;
+      }
+
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
         error.message ||
         "Login failed. Try again.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**OTP verification */
+export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: (formData) => OTPVerification(formData, sessionToken),
+    onSuccess: (data) => {
+      toast.success("MFA verification successful!");
+      onOpenChange(false);
+      // Extract data from the nested response structure
+      const responseData = data?.data?.data?.data;
+      const accessToken = responseData?.accessToken;
+      const refreshToken = responseData?.refreshToken;
+      const fullName = responseData?.fullName;
+      const email = responseData?.email;
+      const ekeyStep = responseData?.ekeyStep;
+      const menu = responseData?.menuActionsAndPermissions;
+      const checkinStatus = responseData?.isCheckedInToday;
+      const isCurrentlyStudying = responseData?.isCurrentlyStudying;
+
+      // Store all values in localStorage (handle null/undefined values)
+      localStorage.setItem("isCurrentlyStudying", isCurrentlyStudying ?? false);
+      localStorage.setItem("CheckinStatus", checkinStatus ?? false);
+      localStorage.setItem("ekeyStep", ekeyStep ?? "");
+      localStorage.setItem("accessToken", accessToken ?? "");
+      localStorage.setItem("refreshToken", refreshToken ?? "");
+      localStorage.setItem("fullName", fullName ?? "");
+      localStorage.setItem("email", email ?? "");
+      LocalStorageUtil.setItem("menu", menu ?? []);
+
+      // Debug logs to check the data structure
+      console.log("Response data:", responseData);
+      console.log("ekyeStatus:", responseData?.ekyeStatus);
+
+      // Check response code and ekyeStatus for navigation
+      if (data?.data?.responseCode === "200") {
+        const ekyeStatus = responseData?.ekyeStatus;
+        if (ekyeStatus === "NOT_REQUIRED" || ekyeStatus === "COMPLETED") {
+          navigate("/dashboard");
+        } else {
+          navigate("/EKYE");
+        }
+      } else {
+        console.log("Response code is not 200, it is:", data?.responseCode);
+        toast.error("Something went wrong");
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "MFA verification failed. Try again.";
       toast.error(errorMessage);
     },
   });

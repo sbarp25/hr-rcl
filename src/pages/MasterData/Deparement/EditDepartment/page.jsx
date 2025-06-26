@@ -8,7 +8,6 @@ import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { toast } from "sonner";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
 import {
@@ -24,7 +23,6 @@ const EditDepartment = () => {
   const longid = parseInt(id);
   const navigate = useNavigate();
   const {
-    register,
     control,
     handleSubmit,
     reset,
@@ -189,7 +187,7 @@ const EditDepartment = () => {
             <div className="page-title -pl-2">Edit Department</div>
             <div></div>
           </div>
-          <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
               {/* Department Title */}
               <div>
@@ -268,7 +266,7 @@ const EditDepartment = () => {
               </div>
               <ButtonComponent
                 type="submit"
-                className="bg-black text-white"
+                className="bg-black text-white dark:bg-white dark:text-black"
                 content={isLoading ? "Updating..." : "Update"}
                 disabled={isLoading}
               />
