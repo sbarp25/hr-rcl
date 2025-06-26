@@ -236,7 +236,7 @@ const AttendanceRequest = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg p-2">
+          <div className="bg-white dark:bg-black rounded-lg p-2">
             {/* Large screens - Full table */}
             <div className="hidden lg:block">
               <div className="shadow-md rounded-lg  text-left">
@@ -373,7 +373,7 @@ const AttendanceRequest = () => {
                     {lateCheckinData.map((late) => (
                       <TableRow
                         key={late.lateCheckInId}
-                        className="hover:bg-gray-50">
+                        className="hover:bg-gray-50 dark:hover:bg-slate-500">
                         <TableCell>
                           <div className="flex flex-col">
                             <span>{late.fullName}</span>
@@ -448,7 +448,7 @@ const AttendanceRequest = () => {
                     key={late.lateCheckInId}
                     className="border rounded-lg overflow-hidden shadow-sm">
                     <div
-                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-blac"
                       onClick={() => toggleExpandedRow(late.lateCheckInId)}>
                       <div className="font-medium">{late.fullName}</div>
                       <div className="flex items-center gap-2">
@@ -500,7 +500,7 @@ const AttendanceRequest = () => {
                       </div>
                       <div className="col-span-2 mt-2">
                         <div className="font-medium">Justification:</div>
-                        <div className="mt-1 p-2 bg-gray-50 rounded">
+                        <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
                           {late.lateReason}
                         </div>
                       </div>
@@ -599,7 +599,7 @@ const AttendanceRequest = () => {
                         <p>Late Check-In Status</p>
                       </h3>
                       {selectedData && (
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                        <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
                           {/**Personal details */}
                           <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
                             <div className="flex  items-center">
@@ -652,7 +652,7 @@ const AttendanceRequest = () => {
                             <span className="font-semibold text-gray-700 mb-2">
                               Justification:
                             </span>
-                            <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
+                            <p className="text-sm p-3 h-full bg-gray-50 dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
                               {selectedData?.lateReason ||
                                 "No justification provided"}
                             </p>
@@ -662,7 +662,7 @@ const AttendanceRequest = () => {
                     </div>
 
                     <div className="flex gap-2 justify-end mt-4">
-                      <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 shadow-sm">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm text-gray-700">
                             Team Lead:
@@ -696,7 +696,7 @@ const AttendanceRequest = () => {
                         </div>
                       </div>
                       <Button
-                        className="bg-black text-white"
+                        className="bg-black dark:bg-white dark:text-black text-white"
                         onPress={() => onApprove()}>
                         Approve
                       </Button>
@@ -730,7 +730,7 @@ const AttendanceRequest = () => {
                         </p>
                       </h3>
                       {selectedData && (
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                        <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
                           {/**Personal details */}
                           <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
                             <div className="flex  items-center">
@@ -783,7 +783,7 @@ const AttendanceRequest = () => {
                             <span className="font-semibold text-gray-700 mb-2">
                               Justification:
                             </span>
-                            <p className="text-sm p-3 h-full bg-gray-50 rounded-md border border-gray-100 min-h-[60px]">
+                            <p className="text-sm p-3 h-full bg-gray-50  dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
                               {selectedData?.lateReason ||
                                 "No justification provided"}
                             </p>
@@ -791,7 +791,9 @@ const AttendanceRequest = () => {
                         </div>
                       )}
                       <div className="flex gap-2 justify-end mt-4">
-                        <Button className="bg-black text-white" type="submit">
+                        <Button
+                          className="bg-black dark:bg-white dark:text-black text-white"
+                          type="submit">
                           Reject
                         </Button>
                         <Button onPress={onClose}>Cancel</Button>

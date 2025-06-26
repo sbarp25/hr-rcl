@@ -69,16 +69,16 @@ const Page = () => {
         <TemporaryAdmin />
 
         {/* Welcome Banner */}
-        <div className="flex justify-center bg-white items-center rounded-md w-full shadow-sm">
+        <div className="flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm">
           <p className="font-light text-lg leading-10">
             Welcome, {username || "User"}
           </p>
         </div>
 
         {/* Weekly Attendance Report */}
-        <div className="flex flex-col bg-white rounded-lg w-full p-1 shadow-sm ">
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm ">
           <div className="flex flex-col justify-center items-center">
-            <h1 className="page-title mt-2 text-xl font-bold">
+            <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
               Weekly Attendance Report
             </h1>
             <div className="w-full ">

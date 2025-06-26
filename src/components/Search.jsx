@@ -79,7 +79,7 @@ const Search = ({
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="bg-white rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
+        <div className="bg-white dark:bg-black rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
           <Select
             aria-label="Search by field"
             size="sm"

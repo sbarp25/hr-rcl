@@ -4,11 +4,11 @@ import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 
 const Personal = ({ employeeData }) => {
   return (
-    <div className="bg-gray-50 h-[75vh] pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
+    <div className="bg-gray-50 dark:bg-black h-[75vh] pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
       <div className="rounded-xl space-y-4 sm:space-y-6 pt-4 sm:pt-6">
         {/**Basic Information */}
-        <div className="bg-white rounded-xl mb-4 mx-2 sm:mx-4 p-3 sm:p-5">
-          <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-xl">
+        <div className="bg-white dark:bg-black rounded-xl mb-4 mx-2 sm:mx-4 p-3 sm:p-5">
+          <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white dark:bg-black text-base sm:text-lg pr-2 sm:pr-4 rounded-xl">
             <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
               <span className="relative">
                 Personal Information Details
@@ -96,8 +96,8 @@ const Personal = ({ employeeData }) => {
         {/**Guardians && Emergency Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/**Guardians Information */}
-          <div className="bg-white rounded-2xl pb-2 mx-2 sm:ml-4 lg:ml-4 p-3 sm:p-5">
-            <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
+          <div className="bg-white dark:bg-black rounded-2xl pb-2 mx-2 sm:ml-4 lg:ml-4 p-3 sm:p-5">
+            <div className="flex items-center gap-2 sm:gap-4 justify-between bg-white dark:bg-black text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
               <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
                 <span className="relative">
                   Guardian Details
@@ -138,8 +138,8 @@ const Personal = ({ employeeData }) => {
           </div>
 
           {/**Emergency Information */}
-          <div className="bg-white rounded-2xl pb-2 mx-2 sm:mr-4 lg:mr-4 p-3 sm:p-5">
-            <div className="flex items-center justify-between bg-white text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
+          <div className="bg-white dark:bg-black rounded-2xl pb-2 mx-2 sm:mr-4 lg:mr-4 p-3 sm:p-5">
+            <div className="flex items-center justify-between bg-white dark:bg-black text-base sm:text-lg pr-2 sm:pr-4 rounded-2xl">
               <h1 className="text-lg sm:text-xl font-semibold flex mb-4 sm:mb-6">
                 <span className="relative">
                   Emergency Details

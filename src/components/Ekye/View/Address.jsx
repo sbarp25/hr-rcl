@@ -10,9 +10,9 @@ const EkyeAdreess = ({ employeeData }) => {
   const temporaryAddress =
     addresses.find((item) => item?.addressType === "TEMPORARY") || {};
   return (
-    <div className="bg-gray-50  h-[75vh] overflow-auto  rounded-lg  px-4 py-10 border border-gray-300">
+    <div className="bg-gray-50 dark:bg-black  h-[75vh] overflow-auto  rounded-lg  px-4 py-10 border border-gray-300">
       <div className="flex flex-col items-center justify-center rounded-md space-y-8 ">
-        <div className="bg-white text-lg w-full p-6 rounded-xl mx-5 ">
+        <div className="bg-white dark:bg-black text-lg w-full p-6 rounded-xl mx-5 ">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
@@ -61,7 +61,7 @@ const EkyeAdreess = ({ employeeData }) => {
             <Divider />
           </Form>
         </div>
-        <div className="bg-white  text-lg w-full p-6 rounded-xl ">
+        <div className="bg-white dark:bg-black  text-lg w-full p-6 rounded-xl ">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">

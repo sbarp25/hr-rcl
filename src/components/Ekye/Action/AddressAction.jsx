@@ -11,16 +11,16 @@ const AddressAction = ({ employeeData }) => {
     addresses.find((item) => item.addressType === "TEMPORARY") || {};
 
   return (
-    <div className="relative flex flex-col bg-white mt-16 border border-black rounded-b-lg shadow-lg px-8 py-4">
+    <div className="relative flex flex-col bg-white dark:bg-black mt-16 border border-black dark:border-white rounded-b-lg shadow-lg px-8 py-4">
       {/* Header Section */}
-      <div className="absolute bg-black w-auto rounded-t-2xl -top-12 -left-0.5 px-6 py-2">
+      <div className="absolute bg-black dark:bg-slate-600 w-auto rounded-t-2xl -top-12 -left-0.5 px-6 py-2">
         <h1 className="text-2xl font-semibold text-white">Address Details</h1>
       </div>
 
       {/* Address Form */}
       <Form className="grid grid-cols-1 gap-12">
         {/* Permanent Address Section */}
-        <div className="bg-white text-lg px-6 rounded-lg ">
+        <div className="bg-white dark:bg-black text-lg px-6 rounded-lg ">
           <h1 className="relative text-xl font-semibold flex items-center mb-6 pb-2">
             <span className="relative">
               Permanent Address Details

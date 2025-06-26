@@ -85,7 +85,7 @@ const RejectComp = ({ employeeData }) => {
     <div>
       {isLoading && <Loader />}
       <Button
-        className="bg-white text-red-500 border border-red-500"
+        className="bg-white  text-red-500 border border-red-500"
         onPress={onOpen}>
         <RxCross1 />
         Reject
