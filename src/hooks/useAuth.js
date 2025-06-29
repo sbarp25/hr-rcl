@@ -15,6 +15,7 @@ import {
   fetchUnPaginatedDepartment,
   fetchUnPaginatedPosition,
   fetchUnPaginatedRoles,
+  getSiteKey,
   lateCheckInAPI,
   lateCheckInApprove,
   lateCheckInReject,
@@ -22,10 +23,11 @@ import {
   logoutUser,
   OTPVerification,
   resetPassword,
+  updateEmployees,
 } from "../api/auth";
 import { toast } from "sonner";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
-
+import { useState, useEffect } from "react";
 /**Logout  */
 export const useLogout = () => {
   const navigate = useNavigate();
@@ -362,6 +364,35 @@ export const useEmployeeCreate = () => {
     },
   });
 };
+/**Update Employee */
+export const useEditEmployee = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: updateEmployees,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Employee has been updated successfully."
+        );
+        queryClient.invalidateQueries({ queryKey: ["employees"] });
+        navigate("/Employees");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
 
 /**Fetch Paginated Department */
 export const useFetchDepartment = (currentPage, departmentPerPage) => {
@@ -437,4 +468,45 @@ export const useDeleteRoles = () => {
       queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
     },
   });
+};
+
+export const useRecaptcha = () => {
+  const [siteKey, setSiteKey] = useState("");
+  const [enabled, setEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSiteKey = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await getSiteKey();
+
+        // getSiteKey should return the full response data, not just the site key
+        if (response && response.siteKey) {
+          setSiteKey(response.siteKey);
+          setEnabled(response.enabled);
+          console.log("reCAPTCHA configuration loaded:", {
+            siteKey: response.siteKey,
+            enabled: response.enabled,
+          });
+        } else {
+          throw new Error("Site key not found in response");
+        }
+      } catch (err) {
+        console.error("Failed to fetch reCAPTCHA site key:", err);
+        setError("Failed to load reCAPTCHA configuration");
+        setSiteKey("");
+        setEnabled(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSiteKey();
+  }, []);
+
+  return { siteKey, enabled, loading, error };
 };

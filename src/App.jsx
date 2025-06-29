@@ -56,6 +56,9 @@ import AutoCheckout from "./pages/Attendance/AutoCheckout/TeamLeadView/page.jsx"
 import SelfAutoCheckout from "./pages/Attendance/AutoCheckout/SelfView/page.jsx";
 import ViewEmployeeDetails from "./pages/Employees/ViewEmployees/page.jsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import ALlTrustedDevices from "./pages/AllDevices/page.jsx";
+import Security from "./pages/Security/page.jsx";
+import MFA from "./pages/Security/MFA/page.jsx";
 
 // import HandBook from "./pages/HandBook/page.jsx";
 const queryClient = new QueryClient();
@@ -85,8 +88,12 @@ function App() {
     "/forget-password",
   ];
   const userRoutes = [
+    "/trustedDevicess",
+    "/MFA",
+    "/changePassword",
     "/settings",
     "/settings/ViewEKYE",
+    "/security",
     "/settings/Change",
     "/Salary",
     "/SalaryEdit",
@@ -133,12 +140,18 @@ function App() {
               <Route element={<PrivateRoutes />}>
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
-                <Route path="/settings/Change" element={<ChangePassword />} />
+                <Route path="/MFA" element={<MFA />} />
+                <Route path="/security" element={<Security />} />
+                <Route path="/changePassword" element={<ChangePassword />} />
                 <Route path="/Salary" element={<SalaryDetails />} />
                 <Route path="/salaryEdit" element={<SalaryEdit />} />
                 <Route path="/AdvanceSalary" element={<AdvanceSalary />} />
                 <Route path="/Bank" element={<GetBankDetails />} />
                 <Route path="/Bank/AddBank" element={<Bank />} />
+                <Route
+                  path="/trustedDevicess"
+                  element={<ALlTrustedDevices />}
+                />
               </Route>
             </Routes>
           </UserLayout>

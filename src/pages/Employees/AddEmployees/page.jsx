@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import { Input, Checkbox } from "@heroui/react";
 import { IoIosPeople } from "react-icons/io";
-import Submit from "../../../assets/svgs/Submit.svg";
 
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";

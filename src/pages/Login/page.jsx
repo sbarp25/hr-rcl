@@ -5,25 +5,47 @@ import { Modal, ModalContent, Spinner, useDisclosure } from "@heroui/react";
 import ButtonComponent from "../../components/ui/ButtonComp";
 import InputComponent from "../../components/ui/InputComponent";
 import LocationComponent from "../../components/LocationComponent";
-import { useLogin, useOTPVerification } from "../../hooks/useAuth";
+import {
+  useLogin,
+  useOTPVerification,
+  useRecaptcha,
+} from "../../hooks/useAuth";
 import OTPInputComponent from "../../components/ui/OTPInputComponent";
+import Recaptcha from "./Component/Recapta";
+import { toast } from "sonner";
+
 const Login = () => {
   const [sessionToken, setSessionToken] = useState("");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
+  const [capta, setCapta] = useState(null);
   const loginMutation = useLogin({ onOpen, setSessionToken });
   const { handleSubmit, control } = useForm();
+
+  const {
+    siteKey,
+    enabled: recaptchaEnabled,
+    loading: recaptchaLoading,
+    error: recaptchaError,
+  } = useRecaptcha();
 
   const {
     handleSubmit: handleOTPSubmit,
     control: oTPcontrol,
     reset: oTPreset,
   } = useForm();
+
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/") {
       localStorage.clear();
     }
   }, []);
+
+  // Set capta to "disabled" when reCAPTCHA is disabled
+  useEffect(() => {
+    if (!recaptchaLoading && !recaptchaEnabled) {
+      setCapta("disabled");
+    }
+  }, [recaptchaLoading, recaptchaEnabled]);
 
   const closeModal = () => {
     oTPreset();
@@ -34,15 +56,17 @@ const Login = () => {
   const handleSubmitOTP = (data) => {
     verifyOTPMutation.mutate(data);
   };
+
+  const handleRecaptchaError = () => {
+    setCapta(null);
+  };
+
   return (
     <>
       <LocationComponent />
-      {/* {isLoading && <Loader message="Logging in, please wait..." />} */}
       <div className="pt-10 bg-gray-200 dark:bg-gray-900 h-screen transition-colors duration-300">
         <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
-          {/* <div className="grid grid-cols-2 shadow-2xl shadow-gray-400 h-screen"> */}
           <div className="hidden md:block bg-bgprimary dark:bg-gray-800 rounded-l-3xl transition-colors duration-300">
-            {/* <div className="bg-bgprimary"> */}
             <div className="mt-64 flex flex-col gap-y-16 items-center justify-center">
               <img src={Logo} alt="logo" className="w-96" />
               <p className="text-2xl leading-10 text-white dark:text-gray-100 text-center font-normal transition-colors duration-300">
@@ -58,6 +82,7 @@ const Login = () => {
               <p className="text-2xl sm:text-xl font-bold text-center text-gray-900 dark:text-white transition-colors duration-300">
                 Log in
               </p>
+
               <InputComponent
                 name="email"
                 control={control}
@@ -71,6 +96,7 @@ const Login = () => {
                   },
                 }}
               />
+
               <InputComponent
                 name="password"
                 control={control}
@@ -85,11 +111,42 @@ const Login = () => {
                   },
                 }}
               />
+
+              {/* reCAPTCHA Section - only show if enabled */}
+              {recaptchaEnabled && (
+                <div className="flex justify-center py-4">
+                  {recaptchaLoading && (
+                    <div className="flex items-center gap-2">
+                      <Spinner size="sm" />
+                      <span className="text-gray-600 dark:text-gray-300">
+                        Loading reCAPTCHA...
+                      </span>
+                    </div>
+                  )}
+
+                  {recaptchaError && (
+                    <div className="text-red-500 text-center">
+                      {recaptchaError}
+                    </div>
+                  )}
+
+                  {siteKey && !recaptchaLoading && !recaptchaError && (
+                    <Recaptcha
+                      setCapta={setCapta}
+                      onError={handleRecaptchaError}
+                    />
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center justify-between w-full">
                 <ButtonComponent
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl py-6 shadow-lg transition-all duration-300"
-                  disabled={loginMutation.isPending}
+                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={
+                    loginMutation.isPending ||
+                    (recaptchaEnabled && (!capta || recaptchaLoading))
+                  }
                   content={
                     <>
                       <span className="text-xl font-bold">Log In</span>
@@ -100,6 +157,7 @@ const Login = () => {
                   }
                 />
               </div>
+
               <a
                 href="/fgtPwd"
                 className="text-xl text-black dark:text-gray-300 hover:text-gray-700 dark:hover:text-white font-medium text-center transition-colors duration-300">
@@ -110,6 +168,7 @@ const Login = () => {
         </div>
       </div>
 
+      {/* OTP Modal */}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -134,6 +193,7 @@ const Login = () => {
                   length="6"
                   type="password"
                 />
+
                 <div className="flex gap-3">
                   <ButtonComponent
                     type="button"
@@ -141,15 +201,16 @@ const Login = () => {
                     className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg"
                     content="Cancel"
                   />
+
                   <ButtonComponent
                     type="submit"
-                    className="flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg disabled:opacity-50"
+                    className="flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={verifyOTPMutation.isPending}
                     content={
                       <>
                         <span>Verify</span>
-                        {verifyOTPMutation.isPending && (
-                          <Spinner size="sm" color="white" className="ml-2" />
+                        {verifyOTPMutation?.isPending && (
+                          <Spinner size="sm" color="danger" className="ml-2" />
                         )}
                       </>
                     }

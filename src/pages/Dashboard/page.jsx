@@ -66,7 +66,7 @@ const Page = () => {
             />
           )}
         </div>
-        <TemporaryAdmin />
+        {/* <TemporaryAdmin /> */}
 
         {/* Welcome Banner */}
         <div className="flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm">

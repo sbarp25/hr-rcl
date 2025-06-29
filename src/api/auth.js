@@ -253,6 +253,19 @@ export const createEmployees = async (newEmployee) => {
   );
   return response;
 };
+
+export const updateEmployees = async (updateEmployee) => {
+  const response = await axiosInstance.post(
+    "/api/v1/auth/update-user",
+    updateEmployee,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};
 /**Fetch Employees */
 export const fetchEmployees = async (currentPage, employeeDataPerPage) => {
   const response = await axiosInstance.post("/api/v1/users/list", {
@@ -361,50 +374,77 @@ export const deleteRole = async (roleId) => {
   }
 };
 
-// // API function to fetch menus and actions
-// export const fetchMenusAndActions = async () => {
-//   const response = await axiosInstance.post(
-//     "/api/v1/master/menus/and/actions/",
-//     {}
-//   );
-
-//   if (response.data.responseCode !== "201") {
-//     throw new Error(
-//       response.data.message || "Failed to fetch menus and actions"
+// export const getSiteKey = async () => {
+//   try {
+//     const response = await axios.get(
+//       `${import.meta.env.VITE_API_BASE_URL}/api/site-key`
 //     );
+
+//     if (response?.data?.responseCode === "200") {
+//       return response?.data?.data?.siteKey;
+//     } else {
+//       throw new Error(
+//         `Invalid response: ${response?.data?.responseCode || "Unknown error"}`
+//       );
+//     }
+//   } catch (error) {
+//     console.error("Error fetching site key:", error);
+//     throw error; // Re-throw to let the calling function handle it
 //   }
-
-//   // Process the data to remove duplicates and add selected property
-//   const processedData = response.data.data.map((menu) => {
-//     // Remove duplicate actions based on actionId
-//     const uniqueActions = menu.actions.filter(
-//       (action, index, self) =>
-//         index === self.findIndex((a) => a.actionId === action.actionId)
-//     );
-
-//     return {
-//       ...menu,
-//       actions: uniqueActions.map((action) => ({
-//         ...action,
-//         selected: action.selected || false,
-//       })),
-//     };
-//   });
-
-//   return processedData;
 // };
 
-// // API function to create a new role
-// export const createRole = async (roleData) => {
-//   const response = await axiosInstance.post("/api/v1/role/save", roleData, {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-
-//   if (response.data.responseCode !== "201") {
-//     throw new Error(response.data.message || "Failed to create role");
-//   }
-
+// export const verifyRecaptcha = async (request) => {
+//   const ipAddress = await getIpAddress();
+//   const params = new URLSearchParams(request);
+//   const response = await axios.post(
+//     `${import.meta.env.VITE_API_BASE_URL}/api/verify-recaptcha`,
+//     params,
+//     {
+//       headers: {
+//         "X-Forwarded-For": ipAddress,
+//         "X-Real-IP": ipAddress,
+//         "Content-Type": "application/x-www-form-urlencoded",
+//       },
+//     }
+//   );
 //   return response.data;
 // };
+export const getSiteKey = async () => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_BASE_URL}/api/site-key`
+    );
+
+    if (response?.data?.responseCode === "200") {
+      // Return the entire data object including both siteKey and enabled
+      return {
+        siteKey: response.data.data.siteKey,
+        enabled: response.data.data.enabled,
+      };
+    } else {
+      throw new Error(
+        `Invalid response: ${response?.data?.responseCode || "Unknown error"}`
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching site key:", error);
+    throw error;
+  }
+};
+
+export const verifyRecaptcha = async (request) => {
+  const ipAddress = await getIpAddress();
+  const params = new URLSearchParams(request);
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/api/verify-recaptcha`,
+    params,
+    {
+      headers: {
+        "X-Forwarded-For": ipAddress,
+        "X-Real-IP": ipAddress,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+  return response.data;
+};

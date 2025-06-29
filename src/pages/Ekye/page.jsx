@@ -13,6 +13,7 @@ import FormStepper from "../../components/FormStepIndicator.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 import Loader from "../../components/Loader/Loader.jsx";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
@@ -146,7 +147,8 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="min-h-screen overflow-y-auto bg-gray-200 p-4">
+      <div className="min-h-screen overflow-y-auto bg-gray-200 dark:bg-black p-4">
+        <ThemeSwitcher />
         {/* <a href="/">GO home</a> */}
         {/* Header */}
         <div className="page-title flex flex-col sm:flex-row justify-center items-center gap-2 text-center sm:text-left mb-4">
@@ -159,7 +161,7 @@ const Ekye = () => {
 
         {/* Form Container */}
         <ValidationComponent>
-          <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
             {step === 0 && !isLoading && (
               <PersonalDetails
                 handleNext={handleNext}

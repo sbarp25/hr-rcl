@@ -27,6 +27,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import Loader from "../Loader/Loader.jsx";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -68,7 +69,7 @@ const UserSidebar = () => {
     {
       icon: IoShieldCheckmark,
       label: "Security",
-      to: "/settings/Change",
+      to: "/security",
       view: seeSecurity,
     },
     {
@@ -168,7 +169,7 @@ const UserSidebar = () => {
               </Link>
             )}
           </div>
-
+          <ThemeSwitcher />
           {/* Navigation items */}
           <div className="flex-grow">
             {navbarElements.map((service, index) => {
