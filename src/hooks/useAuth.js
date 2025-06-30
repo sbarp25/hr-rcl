@@ -5,16 +5,26 @@ import {
   checkInAPI,
   checkOutAPI,
   createEmployees,
+  deleteDevice,
   deleteEmployees,
+  deleteOneDecice,
   deleteRole,
+  fetchApprovedLeave,
+  fetchApprovedWorkFromHome,
+  fetchBank,
   fetchDepartment,
+  fetchEkye,
+  fetchEmployeeDetails,
   fetchEmployees,
   fetchlateCheckin,
   fetchPosition,
+  fetchrcl,
   fetchrole,
+  fetchTrustedDevices,
   fetchUnPaginatedDepartment,
   fetchUnPaginatedPosition,
   fetchUnPaginatedRoles,
+  fetchWeeklyAttendanceReport,
   getSiteKey,
   lateCheckInAPI,
   lateCheckInApprove,
@@ -125,10 +135,6 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
       localStorage.setItem("fullName", fullName ?? "");
       localStorage.setItem("email", email ?? "");
       LocalStorageUtil.setItem("menu", menu ?? []);
-
-      // Debug logs to check the data structure
-      console.log("Response data:", responseData);
-      console.log("ekyeStatus:", responseData?.ekyeStatus);
 
       // Check response code and ekyeStatus for navigation
       if (data?.data?.responseCode === "200") {
@@ -411,7 +417,7 @@ export const useFetchUnPaginatedDepartment = () => {
     queryKey: ["fetchUnPaginatedDepartment"],
     queryFn: () => fetchUnPaginatedDepartment(),
     onError: (error) => {
-      console.error("Error fetching Department");
+      console.error("Error fetching Department", error);
     },
   });
 };
@@ -421,7 +427,7 @@ export const useFetchUnPaginatedPosition = () => {
     queryKey: ["fetchUnpaginatedPosition"],
     queryFn: () => fetchUnPaginatedPosition(),
     onError: (error) => {
-      console.error("Error fetching Position");
+      console.error("Error fetching Position", error);
     },
   });
 };
@@ -431,7 +437,7 @@ export const useFetchUnPaginatedRoles = () => {
     queryKey: ["fetchUnpaginatedRoles"],
     queryFn: () => fetchUnPaginatedRoles(),
     onError: (error) => {
-      console.error("Error fetching Roles");
+      console.error("Error fetching Roles", error);
     },
   });
 };
@@ -509,4 +515,116 @@ export const useRecaptcha = () => {
   }, []);
 
   return { siteKey, enabled, loading, error };
+};
+
+/*Fetch Trusted Devices*/
+export const useFetchTrustedDevices = () => {
+  return useQuery({
+    queryKey: ["FetchTrustedDevices"],
+    queryFn: () => fetchTrustedDevices(),
+    onError: (error) => {
+      toast.error("Error Fetching Trusted Devices", error);
+    },
+  });
+};
+
+/**Delete All Trusted Devices */
+export const useDeleteAllDevices = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteDevice,
+    onSuccess: (data) => {
+      toast.success(data?.message || "Devices deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["FetchTrustedDevices"] });
+    },
+  });
+};
+
+/**Delete One Trusted Devices */
+export const useDeleteOneDevice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteOneDecice,
+    onSuccess: (data) => {
+      toast.success(data?.message || "Device deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["FetchTrustedDevices"] });
+    },
+  });
+};
+
+/**Fetch Banks */
+export const useFetchBank = () => {
+  return useQuery({
+    queryKey: ["FetchBank"],
+    queryFn: () => fetchBank(),
+    onError: (error) => {
+      toast.error("Error fetching Banks", error);
+    },
+  });
+};
+/**Fetch Weekely Report */
+export const useWeeklyAttendanceReport = () => {
+  return useQuery({
+    queryKey: ["FetchWeekelyAttendacneReport"],
+    queryFn: () => fetchWeeklyAttendanceReport(),
+    onError: (error) => {
+      toast.error("Error fetching Weekely Attendance Report", error);
+    },
+  });
+};
+
+/**Fetch Approved Work From Home */
+export const useApprovedWorkFromHome = () => {
+  return useQuery({
+    queryKey: ["FetchApprovedWorkFromHome"],
+    queryFn: () => fetchApprovedWorkFromHome(),
+    onError: (error) => {
+      toast.error("Error fetching approved work from home", error);
+    },
+  });
+};
+/**Fetch Approved Leave */
+export const useApprovedLeave = () => {
+  return useQuery({
+    queryKey: ["FetchApprovedLeave"],
+    queryFn: () => fetchApprovedLeave(),
+    onError: (error) => {
+      toast.error("Error fetching approved leave", error);
+    },
+  });
+};
+
+/**Fetch EKYE */
+export const useFetchEKYE = (currentPage, ekyeDashboardDataPerPage) => {
+  return useQuery({
+    queryKey: ["fetchEKYE", currentPage, ekyeDashboardDataPerPage],
+    queryFn: () => fetchEkye(currentPage, ekyeDashboardDataPerPage),
+    enabled: !!(currentPage && ekyeDashboardDataPerPage),
+    onError: (error) => {
+      console.error("Error Fetching EKYE:", error);
+    },
+  });
+};
+
+/**Fetch Employee details  */
+export const useEmployeeDetails = (rclId) => {
+  return useQuery({
+    queryKey: ["fetchEmployeeDetails", rclId],
+    queryFn: () => fetchEmployeeDetails(rclId),
+    onError: (error) => {
+      console.error("Error Fetching employee details", error);
+    },
+  });
+};
+
+/**Fetch Employee RCL ID */
+export const useEmployeeRCL = () => {
+  return useQuery({
+    queryKey: ["fetchRCL"],
+    queryFn: () => fetchrcl(),
+    onError: (error) => {
+      console.error("Error Fetching employee details", error);
+    },
+  });
 };

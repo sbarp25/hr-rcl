@@ -50,6 +50,7 @@ const ResetForGetPassword = () => {
   {
     /**TO Check if the data is valid or not if it is not valid it will redirect to the login page else it will show the reset password form*/
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {

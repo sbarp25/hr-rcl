@@ -11,43 +11,79 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "sonner";
 import { GrView } from "react-icons/gr";
 import { FaEdit } from "react-icons/fa";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import {
-  hasCreateAccess,
-  hasDeleteAccess,
   hasReadAccess,
   hasUpdateAccess,
   hasViewSingleAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useFetchEKYE } from "../../../hooks/useAuth.js";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
-
   const navigate = useNavigate();
+
+  // State management
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [filters, setFilters] = useState({ department: "", position: "" });
-
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [eKyeData, setEkyeData] = useState([]);
   const [ekyeDashboardDataPerPage, setEkyeDashboardDataPerPage] = useState(10);
-
-  const paginatedEkye = eKyeData;
+  const [filters, setFilters] = useState({ department: "", position: "" });
+  const [searchData, setSearchData] = useState(null); // For storing search results
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
+  // Permission checks
+  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
+  const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
+  const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+
+  // Fetch data using React Query
+  const {
+    data: apiData,
+    isLoading: isEKYELoading,
+    error: ekyeError,
+    refetch: ekyeRefetch,
+  } = useFetchEKYE(currentPage, ekyeDashboardDataPerPage);
+
+  // Use search data if available, otherwise use API data
+  const currentData = searchData || apiData;
+  const paginatedEkye = currentData?.datalist || [];
+  const totalPages = currentData?.totalPages || 1;
+  const totalRecords = currentData?.totalRecords || 0;
+
+  // Access control
+  useEffect(() => {
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [hasaccess, navigate]);
+
+  // Reset to first page when page size changes
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [ekyeDashboardDataPerPage]);
+
+  // Clear search data when pagination changes (if using API data)
+  useEffect(() => {
+    if (searchData) {
+      setSearchData(null); // Clear search results when page changes
+    }
+  }, [currentPage]);
+
   const handlePageChange = (page) => {
-    setEkyeData([]);
     setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newSize) => {
+    setEkyeDashboardDataPerPage(newSize);
+    setCurrentPage(1); // Reset to first page
+    setSearchData(null); // Clear search data
   };
 
   const handleChange = (action, rclId) => {
@@ -56,14 +92,14 @@ const Page = () => {
         if (hasViewAccess) {
           navigate(`/View/${rclId}`);
         } else {
-          ("Access denied");
+          console.log("Access denied for view");
         }
         break;
       case "action":
         if (hasActionAccess) {
           navigate(`/EkyeAction/${rclId}`);
         } else {
-          ("Access denied");
+          console.log("Access denied for action");
         }
         break;
       default:
@@ -71,70 +107,44 @@ const Page = () => {
     }
   };
 
-  const fetchEkye = async () => {
-    setEkyeData([]);
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/admin/completed_ekye_users",
-        {
-          pageIndex: currentPage,
-          pageSize: ekyeDashboardDataPerPage,
-        }
-      );
-      if (response.data.responseCode === "200") {
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-        setEkyeData(response?.data?.datalist || []);
-      } else {
-        toast.error(response?.data?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEkye();
-  }, [currentPage, ekyeDashboardDataPerPage]);
-
   const handleApplySearch = (result) => {
-    if (result.data) {
+    if (result?.data) {
       // Search component returned filtered data
-      setEkyeData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setSearchData(result);
+      setCurrentPage(1); // Reset to first page for search results
     } else {
-      fetchEkye();
+      // Clear search and refetch original data
+      setSearchData(null);
+      ekyeRefetch();
     }
   };
-  // const hasaccess = true;
-  const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
 
-  const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
-  const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
+    setSearchData(null); // Clear search when applying filters
+    // You might want to refetch with filters here
+    ekyeRefetch();
+  };
 
-  // const hasUpdateAccess = hasUpdateAccess(MENU_NAMES.EKYE);
-  // const hasCreateAccess = hasCreateAccess(MENU_NAMES.EKYE);
-  // const hasDeleteAccess = hasDeleteAccess(MENU_NAMES.EKYE);
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [hasaccess, navigate]);
+  // Calculate display values for pagination info
+  const startRecord = (currentPage - 1) * ekyeDashboardDataPerPage + 1;
+  const endRecord = Math.min(
+    currentPage * ekyeDashboardDataPerPage,
+    totalRecords
+  );
+  const displayedRecords =
+    totalRecords > 0 ? `${startRecord}-${endRecord}` : "0";
+
   return (
     <div className="px-4 md:px-8 max-h-[85vh] overflow-y-auto space-y-4">
+      {/* Header Section */}
       <div className="flex justify-between items-center px-8">
-        <div className="flex flex-col  space-y-10">
+        <div className="flex flex-col space-y-10">
           <BreadcrumbsComponent items={breadcrumbItems} />
           <h1 className="page-title">EKYE</h1>
         </div>
-        <div className="flex flex-col space-y-4"></div>
+
         <div className="flex items-center space-x-4">
           <Search
             onApplySearch={handleApplySearch}
@@ -149,19 +159,20 @@ const Page = () => {
             placeholder="Search employees..."
           />
           <Filter
-            onApplyFilters={setFilters}
+            onApplyFilters={handleApplyFilters}
             url="/api/v1/admin/completed_ekye_users"
           />
         </div>
       </div>
 
+      {/* Table Section */}
       <div className="px-1 bg-white dark:bg-black rounded-xl">
         <div className="max-h-[90vh] mt-4 rounded-3xl max-w-[100%]">
           <Table
             bordered
             aria-label="List of Employees who have Completed EKYE"
             className="">
-            <TableHeader className="">
+            <TableHeader>
               <TableColumn>S.N</TableColumn>
               <TableColumn>RCL-ID</TableColumn>
               <TableColumn>Name</TableColumn>
@@ -170,76 +181,107 @@ const Page = () => {
               <TableColumn>Position</TableColumn>
               <TableColumn>Action</TableColumn>
             </TableHeader>
+
             <TableBody
-              items={isLoading ? [] : paginatedEkye}
-              isLoading={isLoading}
+              items={paginatedEkye}
+              isLoading={isEKYELoading}
               loadingContent={<SkeletonLoader />}>
-              {paginatedEkye.map((data, index) => (
-                <TableRow
-                  key={data.rclId}
-                  className="h-16 justify-center items-center border-b-2 border-gray-300">
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{data.rclId}</TableCell>
-                  <TableCell>{data.fullName}</TableCell>
-                  <TableCell>{data.email}</TableCell>
-                  <TableCell>{data.departmentName}</TableCell>
-                  <TableCell>{data.positionName}</TableCell>
-                  <TableCell>
-                    <div className="flex justify-start gap-4">
-                      <GrView
-                        className={`${
-                          hasViewAccess
-                            ? "text-green-500 cursor-pointer hover:text-green-700"
-                            : ""
-                        }`}
-                        title="View"
-                        onClick={() => handleChange("view", data.rclId)}
-                      />
-                      <FaEdit
-                        className={`${
-                          hasActionAccess
-                            ? "text-yellow-500 cursor-pointer hover:text-yellow-700"
-                            : ""
-                        }`}
-                        title="Edit"
-                        onClick={() => handleChange("action", data.rclId)}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {paginatedEkye?.map((data, index) => {
+                const serialNumber =
+                  (currentPage - 1) * ekyeDashboardDataPerPage + index + 1;
+
+                return (
+                  <TableRow
+                    key={data.rclId || index}
+                    className="h-16 justify-center items-center border-b-2 border-gray-300">
+                    <TableCell>{serialNumber}</TableCell>
+                    <TableCell>{data.rclId || "N/A"}</TableCell>
+                    <TableCell>{data.fullName || "N/A"}</TableCell>
+                    <TableCell>{data.email || "N/A"}</TableCell>
+                    <TableCell>
+                      {/* Handle invalid department data */}
+                      {data.departmentName &&
+                      !data.departmentName.includes("color=") &&
+                      !data.departmentName.match(/^\d{4}-\d{2}-\d{2}$/)
+                        ? data.departmentName
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {/* Handle cases where positionName might be an email */}
+                      {data.positionName && !data.positionName.includes("@")
+                        ? data.positionName
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-start gap-4">
+                        <GrView
+                          className={`${
+                            hasViewAccess
+                              ? "text-green-500 cursor-pointer hover:text-green-700"
+                              : "text-gray-400 cursor-not-allowed"
+                          }`}
+                          title={
+                            hasViewAccess ? "View" : "No permission to view"
+                          }
+                          onClick={() =>
+                            hasViewAccess && handleChange("view", data.rclId)
+                          }
+                        />
+                        <FaEdit
+                          className={`${
+                            hasActionAccess
+                              ? "text-yellow-500 cursor-pointer hover:text-yellow-700"
+                              : "text-gray-400 cursor-not-allowed"
+                          }`}
+                          title={
+                            hasActionAccess ? "Edit" : "No permission to edit"
+                          }
+                          onClick={() =>
+                            hasActionAccess &&
+                            handleChange("action", data.rclId)
+                          }
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
-          {!isLoading && (!paginatedEkye || paginatedEkye.length === 0) && (
+
+          {/* No Data Message */}
+          {!isEKYELoading && (!paginatedEkye || paginatedEkye.length === 0) && (
             <div className="p-8 text-center text-gray-500">
-              No Data available
+              {ekyeError
+                ? "Error loading data. Please try again."
+                : "No Data available"}
             </div>
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4">
+        {/* Pagination Section */}
+        <div className="flex justify-between items-center mt-4 px-2 py-4">
           <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
             <span className="mr-1">Showing:</span>
-            <span className="font-bold  mx-1">
-              {totalRecords < ekyeDashboardDataPerPage
-                ? totalRecords
-                : ekyeDashboardDataPerPage}
-              {/* {ekyeDashboardDataPerPage} */}
-            </span>
+            <span className="font-bold mx-1">{displayedRecords}</span>
             <span className="mr-1">of</span>
-            <span className="font-bold ">{totalRecords}</span>
+            <span className="font-bold">{totalRecords}</span>
           </div>
+
           <Pagination
             showControls
             total={totalPages}
             page={currentPage}
             onChange={handlePageChange}
+            isDisabled={isEKYELoading}
           />
+
           <div className="flex justify-center items-center">
-            <span className="text-xs mr-2">Lines Per Page: </span>
+            <span className="text-xs mr-2">Lines Per Page:</span>
             <DropDownComp
               items={dropdownItems}
-              onSelect={setEkyeDashboardDataPerPage}
+              selectedValue={ekyeDashboardDataPerPage}
+              onSelect={handlePageSizeChange}
             />
           </div>
         </div>

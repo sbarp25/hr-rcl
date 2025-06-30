@@ -1,6 +1,5 @@
-import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useApprovedLeave } from "../../hooks/useAuth.js";
 
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
@@ -36,41 +35,15 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
 };
 const Leave = () => {
   const [isToday, setIsToday] = useState(true);
-  const [todayLeave, setTodayLeave] = useState([]);
-  const [upComingLeave, setUpComingLeave] = useState([]);
   const [leaveList, setLeaveList] = useState([]);
 
   const handleToggleChange = () => {
     setIsToday(!isToday);
   };
 
-  const fetchTodayLeave = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `api/leave/approved_today_and_upcoming`
-      );
-      if (response?.data?.responseCode === "200") {
-        const todayData = response?.data?.data?.today || [];
-        const upcomingData = response?.data?.data?.upcoming || [];
-
-        setTodayLeave(todayData);
-        setUpComingLeave(upcomingData);
-        setLeaveList(isToday ? todayData : upcomingData);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        // toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
-      toast.error(errorMessage || "Something Went Wrong");
-    }
-  };
-
-  useEffect(() => {
-    fetchTodayLeave();
-  }, []);
+  const { data: approvedLeaveData } = useApprovedLeave();
+  const todayLeave = approvedLeaveData?.data?.today;
+  const upComingLeave = approvedLeaveData?.data.upcoming;
 
   useEffect(() => {
     if (isToday) {

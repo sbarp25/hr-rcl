@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Modal,
@@ -13,45 +13,20 @@ import PersonalAction from "./Action/PersonalAction";
 import AddressAction from "./Action/AddressAction";
 import DocumentAction from "./Action/DocumentAction";
 import EducationAction from "./Action/EducationAction";
-import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "sonner";
+import { useEmployeeDetails } from "../../hooks/useAuth";
 
 const EkyeAction = () => {
   const { rclId } = useParams();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const navigate = useNavigate(); // Hook for navigation
-  const [employeeData, setEmployeeData] = useState();
+  const navigate = useNavigate();
 
-  // Automatically open the modal when the page loads
   useEffect(() => {
     onOpen();
   }, [onOpen]);
 
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
-          // `/api/v1/admin/singleCompleteEkyeUser/rclId/RCL-250471009100003`
-        );
-        if (response.data.responseCode === "200") {
-          const data = response?.data?.data;
-          setEmployeeData(data);
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    };
-    fetchEmployeeData();
-  }, []);
+  const { data } = useEmployeeDetails(rclId);
+
+  const employeeData = data?.data || [];
 
   return (
     <>

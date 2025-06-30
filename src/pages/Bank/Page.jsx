@@ -7,6 +7,7 @@ import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import { useFetchBank } from "../../hooks/useAuth.js";
 const Bank = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, reset } = useForm({
@@ -20,27 +21,20 @@ const Bank = () => {
   });
   const navigate = useNavigate();
 
-  const fetchBankDetails = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(`/api/v1/banking/getById`);
-      if (response.data.responseCode === "200") {
-        const bankData = response.data.data;
-        reset({
-          accountNumber: bankData?.accountNumber || "",
-          accountName: bankData?.accountName || "",
-        });
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: BankData, isLoading: isBankLoading } = useFetchBank();
+  const bankData = BankData?.data || {};
+
   useEffect(() => {
-    fetchBankDetails();
-  }, []);
+    if (bankData?.accountNumber || bankData?.accountName) {
+      reset({
+        branchName: "Kumaripati",
+        bankName: "Sanima Bank",
+        accountNumber: bankData?.accountNumber || "",
+        accountName: bankData?.accountName || "",
+        accountType: "Platinum PayRoll Saving",
+      });
+    }
+  }, [bankData?.accountNumber, bankData?.accountName, reset]);
 
   const onSubmit = async (data) => {
     if (AddBank) {
@@ -93,7 +87,6 @@ const Bank = () => {
   };
 
   /**To check Employee see status */
-
   const seeAddBank = true;
 
   const AddBank = true;

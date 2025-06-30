@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "sonner";
+import { useState } from "react";
 import Loader from "../../components/Loader/Loader";
 import { CiMonitor } from "react-icons/ci";
 import { FiSmartphone } from "react-icons/fi";
@@ -15,40 +13,25 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import GoBack from "../../components/GoBack";
+import {
+  useDeleteAllDevices,
+  useDeleteOneDevice,
+  useFetchTrustedDevices,
+} from "../../hooks/useAuth";
 
 const AllTrustedDevices = () => {
-  const [trustedDevices, setTrustedDevices] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedDevice, setSelectedDevice] = useState();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const fetchAllDevices = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get("/api/v1/auth/trusted-devices");
+  const {
+    data: TrustedDeviceData,
+    isLoading: TrustedDeviceisLoading,
+    refetch: TrustedDevicesrefetch,
+  } = useFetchTrustedDevices();
+  const trustedDevices = TrustedDeviceData?.datalist || [];
 
-      if (response?.data?.responseCode === "200") {
-        setTrustedDevices(response?.data?.datalist);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went Wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAllDevices();
-  }, []);
-
+  const deleteAllDeviceMutation = useDeleteAllDevices();
+  const deleteOneDeviceMutation = useDeleteOneDevice();
   const getDeviceIcon = (deviceName) => {
     const name = deviceName.toLowerCase();
     if (
@@ -91,59 +74,27 @@ const AllTrustedDevices = () => {
     return formatDate(dateString);
   };
 
-  if (loading) {
-    return <Loader />;
-  }
   const handleDelete = (deviceId) => {
     setSelectedDevice(deviceId);
     onOpen();
   };
+
   const deleteDevice = async () => {
-    setLoading(true);
     const selecteddeviceId = parseInt(selectedDevice);
-    try {
-      const response = await axiosInstance.delete(
-        `/api/v1/auth/trusted-devices/${selecteddeviceId}`
-      );
-      if (response?.data?.responseCode === "204") {
-        toast.success(response?.data?.message);
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      onClose();
-      fetchAllDevices();
-    }
+    deleteOneDeviceMutation.mutate(selecteddeviceId);
+    TrustedDevicesrefetch();
+    onClose();
   };
 
   const deleteAllDevice = async () => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.delete(
-        `/api/v1/auth/trusted-devices/all`
-      );
-      if (response?.data?.responseCode === "204") {
-        toast.success(response?.data?.message);
-      } else {
-        toast.error(response?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-      fetchAllDevices();
-    }
+    deleteAllDeviceMutation.mutate();
+    TrustedDevicesrefetch();
+    onClose();
   };
 
+  if (TrustedDeviceisLoading) {
+    <Loader />;
+  }
   return (
     <>
       <div className="min-h-screen bg-gray-50 dark:bg-black p-6">
@@ -167,7 +118,7 @@ const AllTrustedDevices = () => {
           </div>
           {/* Devices Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trustedDevices.map((device) => (
+            {trustedDevices?.map((device) => (
               <div
                 key={device.id}
                 className="bg-white dark:bg-black rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">

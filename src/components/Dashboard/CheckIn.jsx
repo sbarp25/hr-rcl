@@ -1,8 +1,6 @@
-import { useState } from "react";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 import { getIpAddress } from "../../utils/getIpAddress.js";
 import { toast } from "sonner";
-import axiosInstance from "../../lib/axios-Instance.js";
 import { MdRadioButtonChecked } from "react-icons/md";
 import {
   Button,
@@ -14,8 +12,6 @@ import {
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../ui/TextAreaComp.jsx";
 import Loader from "../Loader/Loader.jsx";
-import { useMutation } from "@tanstack/react-query";
-import { checkInAPI, checkOutAPI, lateCheckInAPI } from "../../api/auth.js";
 import {
   useCheckin,
   useCheckOut,
@@ -23,7 +19,6 @@ import {
 } from "../../hooks/useAuth.js";
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
-  // const [isloading, setIsloading] = useState(false);
   const { control, handleSubmit, reset } = useForm();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {

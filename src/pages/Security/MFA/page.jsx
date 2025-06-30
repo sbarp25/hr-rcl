@@ -29,7 +29,7 @@ const MFA = () => {
 
     try {
       const response = await axiosInstance.put(
-        "/api/v1/auth/update/mfa",
+        "/api/v1/auth/mfa/settings/update",
         payload
       );
 
@@ -48,6 +48,29 @@ const MFA = () => {
       toast.error(errorMessage);
     }
   };
+
+  const fetchMFAsetting = async () => {
+    try {
+      const response = await axiosInstance.get("/api/v1/auth/mfa/settings");
+      if (response?.data?.responseCode === "200") {
+        setMfaEnabled(response?.data?.data?.mfaEnabled);
+      } else {
+        console.log("error before here");
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went Wrong";
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    }
+  };
+  useEffect(() => {
+    fetchMFAsetting();
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto p-6">

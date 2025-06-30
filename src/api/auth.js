@@ -1,13 +1,9 @@
 import axios from "axios";
 import axiosInstance from "../lib/axios-Instance";
 import { toast } from "sonner";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { getIpAddress } from "../utils/getIpAddress";
 import platform from "platform";
-import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate;
 
 let globalVisitorId = null;
 
@@ -254,6 +250,7 @@ export const createEmployees = async (newEmployee) => {
   return response;
 };
 
+/**Update Employees */
 export const updateEmployees = async (updateEmployee) => {
   const response = await axiosInstance.post(
     "/api/v1/auth/update-user",
@@ -351,6 +348,7 @@ export const fetchPosition = async (currentPage, positionPerPage) => {
   }
 };
 
+/**Fetch Roles */
 export const fetchrole = async (currentPage, rolesPerPage) => {
   const response = await axiosInstance.post("/api/v1/role/get/all", {
     pageIndex: currentPage,
@@ -364,6 +362,7 @@ export const fetchrole = async (currentPage, rolesPerPage) => {
   }
 };
 
+/**Delete Role */
 export const deleteRole = async (roleId) => {
   const response = await axiosInstance.delete(`/api/v1/role/delete/${roleId}`);
   if (response.data.responseCode === "204") {
@@ -374,41 +373,7 @@ export const deleteRole = async (roleId) => {
   }
 };
 
-// export const getSiteKey = async () => {
-//   try {
-//     const response = await axios.get(
-//       `${import.meta.env.VITE_API_BASE_URL}/api/site-key`
-//     );
-
-//     if (response?.data?.responseCode === "200") {
-//       return response?.data?.data?.siteKey;
-//     } else {
-//       throw new Error(
-//         `Invalid response: ${response?.data?.responseCode || "Unknown error"}`
-//       );
-//     }
-//   } catch (error) {
-//     console.error("Error fetching site key:", error);
-//     throw error; // Re-throw to let the calling function handle it
-//   }
-// };
-
-// export const verifyRecaptcha = async (request) => {
-//   const ipAddress = await getIpAddress();
-//   const params = new URLSearchParams(request);
-//   const response = await axios.post(
-//     `${import.meta.env.VITE_API_BASE_URL}/api/verify-recaptcha`,
-//     params,
-//     {
-//       headers: {
-//         "X-Forwarded-For": ipAddress,
-//         "X-Real-IP": ipAddress,
-//         "Content-Type": "application/x-www-form-urlencoded",
-//       },
-//     }
-//   );
-//   return response.data;
-// };
+/**Get Site Key */
 export const getSiteKey = async () => {
   try {
     const response = await axios.get(
@@ -432,6 +397,7 @@ export const getSiteKey = async () => {
   }
 };
 
+/**Verify Recapta */
 export const verifyRecaptcha = async (request) => {
   const ipAddress = await getIpAddress();
   const params = new URLSearchParams(request);
@@ -447,4 +413,133 @@ export const verifyRecaptcha = async (request) => {
     }
   );
   return response.data;
+};
+
+/**Fetch Trusted Devices */
+export const fetchTrustedDevices = async () => {
+  const response = await axiosInstance.get(`/api/v1/auth/trusted-devices`);
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
+
+/**Delete All trusted Devices */
+export const deleteDevice = async () => {
+  const response = await axiosInstance.delete(
+    `/api/v1/auth/trusted-devices/all`
+  );
+  return response.data;
+};
+
+/**Device One Trusted Device */
+export const deleteOneDecice = async (deviceId) => {
+  const response = await axiosInstance.delete(
+    `/api/v1/auth/trusted-devices/${deviceId}`
+  );
+  return response.data;
+};
+
+/**Get Bank */
+export const fetchBank = async () => {
+  const response = await axiosInstance.get(`/api/v1/banking/getById`);
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(response?.data?.message || "Failed to fetch Banks");
+  }
+};
+/**Fetch Weekely Attendance Report */
+export const fetchWeeklyAttendanceReport = async () => {
+  const response = await axiosInstance.get(
+    "/api/attendance/weekly_attendances"
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch Weekely attendance"
+    );
+  }
+};
+
+/**Fetch Approved Work from home */
+export const fetchApprovedWorkFromHome = async () => {
+  const response = await axiosInstance.get(
+    `/api/work_from_home/approved_today_and_upcoming`
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch approved work from home"
+    );
+  }
+};
+
+/**Fetch Approved Leave */
+export const fetchApprovedLeave = async () => {
+  const response = await axiosInstance.get(
+    `api/leave/approved_today_and_upcoming`
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch approved work from home"
+    );
+  }
+};
+
+/**Fetch EKYE */
+export const fetchEkye = async (currentPage, ekyeDashboardDataPerPage) => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/v1/admin/completed_ekye_users",
+      {
+        pageIndex: currentPage,
+        pageSize: ekyeDashboardDataPerPage,
+      }
+    );
+
+    if (response?.data?.responseCode === "200") {
+      return response.data;
+    } else {
+      toast.error(response?.data?.message || "Failed to fetch EKYE data");
+      throw new Error(response?.data?.message || "Failed to fetch EKYE");
+    }
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went wrong while fetching EKYE data";
+    toast.error(errorMessage);
+    throw error;
+  }
+};
+
+/**fetch Employee Data */
+export const fetchEmployeeDetails = async (rclId) => {
+  const response = await axiosInstance.get(
+    `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch fetch employee details"
+    );
+  }
+};
+
+/**Fetch RCL-ID */
+export const fetchrcl = async () => {
+  const response = await axiosInstance.get("/api/v1/auth/ekye/details");
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(response?.data?.message || "Failed to fetch RCL Id");
+  }
 };

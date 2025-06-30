@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../lib/axios-Instance.js";
-import { toast } from "sonner";
+import { useApprovedWorkFromHome } from "../../hooks/useAuth.js";
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
     <div className="w-60 flex items-center justify-center">
@@ -37,41 +36,15 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
 
 const WorkFromHome = () => {
   const [isToday, setIsToday] = useState(true);
-  const [todayWFH, setTodayWFH] = useState([]);
-  const [upComingWFH, setUpComingWFH] = useState([]);
   const [wfhList, setWFHList] = useState([]);
 
   const handleToggleChange = () => {
     setIsToday(!isToday);
   };
 
-  const fetchWFH = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/api/work_from_home/approved_today_and_upcoming`
-      );
-      if (response?.data?.responseCode === "200") {
-        const todayData = response?.data?.data?.today || [];
-        const upcomingData = response?.data?.data?.upcoming || [];
-
-        setTodayWFH(todayData);
-        setUpComingWFH(upcomingData);
-        setWFHList(isToday ? todayData : upcomingData);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        // toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
-      toast.error(errorMessage || "Something Went Wrong");
-    }
-  };
-
-  useEffect(() => {
-    fetchWFH();
-  }, []);
+  const { data: workFromHomeData } = useApprovedWorkFromHome();
+  const todayWFH = workFromHomeData?.data?.today;
+  const upComingWFH = workFromHomeData?.data?.upcoming;
 
   useEffect(() => {
     if (isToday) {
