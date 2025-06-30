@@ -25,7 +25,6 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
 import Loader from "../../../components/Loader/Loader.jsx";
@@ -36,72 +35,28 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-
+import { useEmployeeDelete, useFetchRoles } from "../../../hooks/useAuth.js";
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
-  const [roleData, setRoleData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [rolesPerPage, setRolesPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [originalRolesData, setOriginalRolesData] = useState([]);
+
   const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const navigate = useNavigate();
 
-  const handlePageChange = (page) => {
-    setRoleData([]);
-    setCurrentPage(page);
-  };
+  const breadcrumbItems = [
+    { label: "MasterData", href: "" },
+    { label: "Roles", href: "/master-data/Roles" },
+  ];
 
-  /**Start of Get API for Getting the Roles */
-  const fetchRoles = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/role/get/all", {
-        pageIndex: currentPage,
-        pageSize: rolesPerPage,
-      });
-      if (response.data.responseCode === "200") {
-        setOriginalRolesData(response?.data?.datalist || []); // Store original data
-        setRoleData(response?.data?.datalist || []); // Initially set filtered data to original data
-        setTotalPages(
-          response.data.totalPages ||
-            Math.ceil(response.data.datalist.length / rolesPerPage)
-        );
-        setTotalRecords(
-          response.data.totalRecords || response.data.datalist.length
-        );
-      } else {
-        toast.error(response?.data?.message || "Failed to fetch roles.");
-      }
-    } catch (error) {
-      toast.error("Error fetching roles.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRoles();
-  }, [currentPage, rolesPerPage]);
-
-  // Enhanced filter handler to match Department implementation
-  const handleApplyFilters = (result) => {
-    if (result.data) {
-      setRoleData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      setRoleData(originalRolesData);
-    }
-  };
-
-  /**To check create status */
+  /**Permission Checking */
   const hasRoleAddAccess = hasCreateAccess(MENU_NAMES.ROLES);
   /**To read the Data */
   // const hasaccess = true;
@@ -117,7 +72,40 @@ const Roles = () => {
     }
   }, [hasaccess, navigate]);
 
-  /**Start Of handleActions*/
+  const { data, isLoading, refetch } = useFetchRoles();
+  const roleData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, rolesPerPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setFilteredData(null);
+    setFilteredPagination(null);
+  };
+  const handleApplySearch = (result) => {
+    if (result.data) {
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
+    } else {
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
+    }
+  };
+
+  const toggleExpandedRow = (id) => {
+    setExpandedRow(expandedRow === id ? null : id);
+  };
+
   const handleAction = async (action, role) => {
     switch (action) {
       // Start Of Edit Operation
@@ -143,64 +131,12 @@ const Roles = () => {
         console.log("Unknown action");
     }
   };
-
-  const onDelete = async () => {
-    setIsDeleteLoading(true);
-    try {
-      if (hasRoleDeleteAccess) {
-        const response = await axiosInstance.delete(
-          `/api/v1/role/delete/${roleId}`
-        );
-        if (response.data.responseCode === "204") {
-          toast.success(response.data.message || "Role deleted successfully!");
-          fetchRoles();
-          onClose();
-
-          // Refresh the data after deletion
-          const updatedPage =
-            roleData.length === 1 && currentPage > 1
-              ? currentPage - 1
-              : currentPage;
-
-          setCurrentPage(updatedPage);
-        } else {
-          toast.error(response.data.message || "Failed to delete the role.");
-        }
-      } else {
-        toast.error("Access denied");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error deleting role.");
-    } finally {
-      setIsDeleteLoading(false);
-    }
-  };
-
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Roles", href: "/master-data/Roles" },
-  ];
-
+  const onDelete = useEmployeeDelete();
   const navigateAdd = () => {
     if (hasRoleAddAccess) {
       navigate("/master-data/Roles/add");
     } else {
       toast.error("You don't have Create Access");
-    }
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
-
-  const handleApplySearch = (result) => {
-    if (result.data) {
-      // Search component returned filtered data
-      setRoleData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      fetchRoles();
     }
   };
 
@@ -229,31 +165,20 @@ const Roles = () => {
                       searchFields={["roleName", "roleDescription"]}
                       placeholder="Search Roles..."
                     />
-                    {/* <Filter
-                      onApplyFilters={handleApplyFilters}
-                      url="/api/v1/role/get/all"
-                      fieldNames={{
-                        departmentField: "id",
-                        fromDateField: "createdAt",
-                        toDateField: "toDate",
-                        positionField: "id",
-                      }}
-                      className="w-full sm:w-auto"
-                    /> */}
                   </div>
                   <Button
-                    className="flex bg-black text-white w-full sm:w-auto"
+                    className="flex bg-black text-white dark:bg-white dark:text-black w-full sm:w-auto"
                     onPress={navigateAdd}>
                     <div className="flex justify-center items-center gap-2">
-                      <IoIosAddCircleOutline className="text-white text-xl" />
-                      <span className="text-white font-normal">Add Role</span>
+                      <IoIosAddCircleOutline className=" text-xl" />
+                      <span className="font-normal">Add Role</span>
                     </div>
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg overflow-y-auto p-2">
+            <div className="bg-white dark:bg-black rounded-lg overflow-y-auto p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className="rounded-lg  text-left">
@@ -268,17 +193,17 @@ const Roles = () => {
                       items={isLoading ? [] : roleData}
                       isLoading={isLoading}
                       loadingContent={<SkeletonLoader />}>
-                      {roleData.map((role, index) => (
+                      {roleData?.map((role, index) => (
                         <TableRow
                           key={role.roleId}
                           className="h-14 justify-center items-center border-b-2 border-gray-300">
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
-                            {role.roleName.length < 7 ? (
-                              role.roleName
+                            {role?.roleName?.length < 7 ? (
+                              role?.roleName
                             ) : (
                               <Tooltip content={role.roleName}>
-                                {truncateText(role.roleName, 15)}
+                                {truncateText(role?.roleName, 15)}
                               </Tooltip>
                             )}
                           </TableCell>
@@ -330,17 +255,14 @@ const Roles = () => {
                       <TableColumn>Actions</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {roleData.map((role, index) => (
+                      {roleData?.map((role) => (
                         <TableRow
                           key={role.roleId}
-                          className="hover:bg-gray-50">
+                          className="hover:bg-gray-50 dark:hover:bg-slate-500">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">
                                 {role.roleName}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                ID: {role.roleId}
                               </span>
                             </div>
                           </TableCell>
@@ -385,12 +307,12 @@ const Roles = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden">
                 <div className="space-y-4">
-                  {roleData.map((role) => (
+                  {roleData?.map((role) => (
                     <div
                       key={role.roleId}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 bg-slate-500"
                         onClick={() => toggleExpandedRow(role.roleId)}>
                         <div className="font-medium">{role.roleName}</div>
                         <div className="flex items-center gap-2">
@@ -408,7 +330,7 @@ const Roles = () => {
                         } p-3 space-y-2 text-sm`}>
                         <div className="grid grid-cols-1 gap-2">
                           <div className="font-medium">Description:</div>
-                          <div className="bg-gray-50 p-2 rounded">
+                          <div className="bg-gray-50 dark:bg-slate-500 p-2 rounded">
                             {role.roleDescription}
                           </div>
                         </div>
@@ -457,18 +379,16 @@ const Roles = () => {
 
               {/* Pagination - Responsive for all screens */}
               {roleData && roleData.length > 0 && (
-                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
-                  <div className="text-sm font-medium text-gray-600 flex items-center">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white dark:bg-black pb-4">
+                  <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
                     <span className="mr-1">Showing:</span>
-                    <span className="font-bold text-gray-800 mx-1">
+                    <span className="font-bold mx-1">
                       {totalRecords < rolesPerPage
                         ? totalRecords
                         : rolesPerPage}
                     </span>
                     <span className="mr-1">of</span>
-                    <span className="font-bold text-gray-800">
-                      {totalRecords}
-                    </span>
+                    <span className="font-bold ">{totalRecords}</span>
                   </div>
 
                   <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

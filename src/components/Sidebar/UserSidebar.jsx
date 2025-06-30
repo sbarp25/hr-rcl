@@ -27,6 +27,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import Loader from "../Loader/Loader.jsx";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -68,7 +69,7 @@ const UserSidebar = () => {
     {
       icon: IoShieldCheckmark,
       label: "Security",
-      to: "/settings/Change",
+      to: "/security",
       view: seeSecurity,
     },
     {
@@ -77,16 +78,16 @@ const UserSidebar = () => {
       to: "/Bank",
       view: seeBank,
     },
-    {
-      icon: CiBank,
-      label: "Salary",
-      view: true,
-      children: [
-        { label: "Salary Details", to: "/Salary", view: true },
-        { label: "Salary Breakdown", to: "/SalaryEdit", view: true },
-        { label: "Advance", to: "/AdvanceSalary", view: true },
-      ],
-    },
+    // {
+    //   icon: CiBank,
+    //   label: "Salary",
+    //   view: true,
+    //   children: [
+    //     { label: "Salary Details", to: "/Salary", view: true },
+    //     { label: "Salary Breakdown", to: "/SalaryEdit", view: true },
+    //     { label: "Advance", to: "/AdvanceSalary", view: true },
+    //   ],
+    // },
   ];
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
@@ -168,7 +169,7 @@ const UserSidebar = () => {
               </Link>
             )}
           </div>
-
+          <ThemeSwitcher />
           {/* Navigation items */}
           <div className="flex-grow">
             {navbarElements.map((service, index) => {

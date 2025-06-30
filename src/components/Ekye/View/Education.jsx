@@ -58,8 +58,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
+        <div className="bg-white dark:bg-black text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">

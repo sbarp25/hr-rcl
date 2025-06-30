@@ -10,6 +10,7 @@ import EkyeAddress from "../../../components/Ekye/View/Address";
 import UserEducation from "../../../components/Ekye/View/UserEducation";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../../components/Loader/Loader";
+import { useEmployeeDetails, useEmployeeRCL } from "../../../hooks/useAuth";
 
 const tabData = [
   {
@@ -53,8 +54,8 @@ const Tabs = ({ activeTab, changeTab }) => {
           }}
           className={`cursor-pointer py-2 px-4 lg:px-8 text-center min-w-fit lg:w-40 font-semibold rounded-t-2xl border transition-all duration-300 whitespace-nowrap ${
             activeTab.name === tab.name
-              ? "bg-gray-50 border border-gray-300"
-              : "hover:border-gray-300 hover:bg-gray-100"
+              ? "bg-gray-50 dark:bg-black border border-gray-300"
+              : "hover:border-gray-300 hover:bg-gray-100 dark:bg-slate-500"
           }`}>
           <span className="text-sm lg:text-base">{tab.name}</span>
         </li>
@@ -67,7 +68,7 @@ const Tabs = ({ activeTab, changeTab }) => {
     <div className="md:hidden relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-black border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 ">
         <span className="font-medium text-gray-900">{activeTab.name}</span>
         <svg
           className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
@@ -86,7 +87,7 @@ const Tabs = ({ activeTab, changeTab }) => {
       </button>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-black border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
           {tabData?.map((tab) => (
             <button
               key={tab.name}
@@ -161,61 +162,17 @@ const Content = ({ activeTab, employeeData }) => {
 };
 
 const ViewEKYE = () => {
-  const [employeeData, setEmployeeData] = useState(null);
   const [activeTab, setActiveTab] = useState(tabData[0]);
-  const [rclId, setRclId] = useState();
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchrcl = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.get(`/api/v1/auth/ekye/details`);
-      if (response.data.responseCode === "200") {
-        const data = response?.data?.data?.rclId;
-        setRclId(data);
-      } else {
-        toast.error(response?.data?.Message);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch RCL ID");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: RCLIdData } = useEmployeeRCL();
 
-  const fetchEmployeeData = async () => {
-    if (!rclId) return;
+  const rclId = RCLIdData?.data?.rclId;
+  console.log(rclId);
 
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.get(
-        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
-      );
-      if (response.data.responseCode === "200") {
-        const data = response?.data?.data;
-        setEmployeeData(data);
-      } else {
-        toast.error(response?.data?.Message);
-      }
-    } catch (error) {
-      toast.error("Failed to fetch employee data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: EmployeeEKYEData, isLoading } = useEmployeeDetails(rclId);
 
-  // First fetch the rclId
-  useEffect(() => {
-    fetchrcl();
-  }, []);
-
-  // Then fetch employee data once rclId is available
-  useEffect(() => {
-    if (rclId) {
-      fetchEmployeeData();
-    }
-  }, [rclId]);
+  const employeeData = EmployeeEKYEData?.data;
 
   /**To check Employee see status */
   const seeEKYEAccess = true;
@@ -225,6 +182,10 @@ const ViewEKYE = () => {
       navigate("/dashboard");
     }
   }, []);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -241,14 +202,8 @@ const ViewEKYE = () => {
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
       {/* Content area */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[400px]">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <Loader />
-          </div>
-        ) : (
-          <Content activeTab={activeTab} employeeData={employeeData} />
-        )}
+      <div className="bg-white dark:bg-black rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 min-h-[400px]">
+        <Content activeTab={activeTab} employeeData={employeeData} />
       </div>
     </div>
   );

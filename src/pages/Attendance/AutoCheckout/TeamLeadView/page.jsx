@@ -17,10 +17,10 @@ import {
 } from "@heroui/table";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
 import { FaChevronDown } from "react-icons/fa6";
-import axiosInstance from "../../../../lib/axios-Instance";
 import { Pagination } from "@heroui/pagination";
 import DropDownComp from "../../../../components/ui/Dropdown";
 import { autoCheckout } from "../../../../api/auth";
+import { useAutoCheckout } from "../../../../hooks/useAuth";
 
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,28 +43,12 @@ const AutoCheckout = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery({
-    queryKey: [
-      "autoCheckout",
-      currentPage,
-      autoCheckOutDataPerPage,
-      searchFilters,
-      activeFilters,
-    ],
-    queryFn: async () => {
-      if (searchFilters) {
-        return searchFilters;
-      }
-      if (activeFilters) {
-        return activeFilters;
-      }
-      return autoCheckout(currentPage, autoCheckOutDataPerPage);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to fetch auto checkout data");
-    },
-    keepPreviousData: true,
-  });
+  } = useAutoCheckout(
+    currentPage,
+    autoCheckOutDataPerPage,
+    searchFilters,
+    activeFilters
+  );
 
   // Permission check
   // const hasaccess = true;
@@ -133,7 +117,7 @@ const AutoCheckout = () => {
             <span className="page-title">Auto Checkout</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 dark:bg-black">
               <Search
                 onApplySearch={handleApplySearch}
                 url="/api/auto-checkout/records"
@@ -162,7 +146,7 @@ const AutoCheckout = () => {
       </div>
 
       {/* Auto Checkout Table - Large screens */}
-      <div className="hidden xl:block bg-white rounded-lg p-2 pb-4 overflow-y-auto">
+      <div className="hidden xl:block bg-white dark:bg-black rounded-lg p-2 pb-4 overflow-y-auto">
         <Table bordered aria-label="List of Employees">
           <TableHeader>
             <TableColumn>S.N</TableColumn>
@@ -197,9 +181,9 @@ const AutoCheckout = () => {
       </div>
 
       {/* Auto Checkout - Medium screens */}
-      <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2 pb-4 overflow-y-auto">
+      <div className="hidden lg:block xl:hidden bg-white dark:bg-black rounded-lg p-2 pb-4 overflow-y-auto">
         <Table bordered aria-label="List of Employees">
-          <TableHeader className="bg-gray-50">
+          <TableHeader className="bg-gray-50 dark:bg-black">
             <TableColumn>Name</TableColumn>
             <TableColumn>Attendance Date</TableColumn>
             <TableColumn>Department</TableColumn>
@@ -209,7 +193,9 @@ const AutoCheckout = () => {
             isLoading={isLoading}
             loadingContent={<SkeletonLoader />}>
             {displayData?.map((employee, index) => (
-              <TableRow key={employee.rclId} className="hover:bg-gray-50">
+              <TableRow
+                key={employee.rclId}
+                className="hover:bg-gray-50 dark:hover:bg-slate-400">
                 <TableCell>
                   <div>
                     <div className="font-medium">{employee.fullName}</div>
@@ -242,9 +228,9 @@ const AutoCheckout = () => {
             {displayData?.map((employee, index) => (
               <div
                 key={employee.rclId}
-                className="border rounded-lg overflow-hidden shadow-sm bg-white">
+                className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
                 <div
-                  className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                  className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-black"
                   onClick={() => toggleExpandedRow(employee.rclId)}>
                   <div>
                     <div className="font-medium">{employee.fullName}</div>
@@ -283,7 +269,7 @@ const AutoCheckout = () => {
             ))}
 
             {displayData.length === 0 && (
-              <div className="p-8 text-center text-gray-500 bg-white rounded-lg">
+              <div className="p-8 text-center text-gray-500 bg-white  dark:bg-black rounded-lg">
                 No Data available
               </div>
             )}

@@ -14,7 +14,7 @@ const ButtonComponent = ({
       onPress={onPress}
       color={color}
       variant={variant}
-      className={className}
+      className={`bg-black text-white dark:bg-white dark:text-black ${className}`}
       disabled={disabled}
       type={type}>
       {content}

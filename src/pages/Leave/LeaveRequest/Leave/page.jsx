@@ -300,7 +300,7 @@ const SelfLeaveStatus = () => {
         </div>
 
         {/**Table Section */}
-        <div className="bg-white rounded-lg p-2">
+        <div className="bg-white dark:bg-black rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
             <div className="shadow-md rounded-lg   text-left">

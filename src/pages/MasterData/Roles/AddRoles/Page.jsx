@@ -253,12 +253,14 @@ const AddRoles = () => {
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center mb-6">
             <GoBack />
-            <h1 className="text-2xl font-bold text-gray-800">Add Roles</h1>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+              Add Roles
+            </h1>
             <div></div>
           </div>
           {/* <Button onPress={fetchMenusAndActions}>Reload</Button> */}
 
-          <div className="bg-white max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
+          <div className="bg-white dark:bg-black max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
             <form
               onSubmit={handleSubmit(handleAddRole)}
               className="p-6 grid grid-cols-1 gap-6 ">
@@ -302,7 +304,7 @@ const AddRoles = () => {
               {/* Menus and Actions Section */}
               <div className="mt-6">
                 <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
-                  <h3 className="text-lg font-medium text-gray-800 ">
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-white">
                     Permissions
                   </h3>
                   <div>
@@ -329,9 +331,9 @@ const AddRoles = () => {
                       <div
                         key={`menu-${menu.menuId}-${menuIndex}`}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-slate-500 p-4 rounded-t-lg border-b border-gray-200">
                           <div>
-                            <h4 className="text-md font-semibold text-gray-800">
+                            <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                               {menu.menuDescription}
                             </h4>
                             {/* <p className="text-sm text-gray-600 mt-1">
@@ -362,7 +364,7 @@ const AddRoles = () => {
                             {menu.actions.map((action, actionIndex) => (
                               <div
                                 key={`action-${action.actionId}-${menuIndex}-${actionIndex}`}
-                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-slate-400 rounded-md">
                                 <Checkbox
                                   size="sm"
                                   color="primary"
@@ -375,11 +377,11 @@ const AddRoles = () => {
                                     )
                                   }
                                 />
-                                <div className="flex flex-col">
-                                  <span className="text-sm text-gray-700">
+                                <div className="flex flex-col text-gray-700 dark:text-white">
+                                  <span className="text-sm ">
                                     {action.actionName}
                                   </span>
-                                  <span className="text-sm text-gray-700">
+                                  <span className="text-sm ">
                                     {action.actionDescription}
                                   </span>
                                 </div>

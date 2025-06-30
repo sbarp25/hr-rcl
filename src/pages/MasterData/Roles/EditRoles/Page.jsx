@@ -230,7 +230,7 @@ const EditRole = () => {
             <div></div>
           </div>
 
-          <div className="bg-white max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
+          <div className="bg-whitedark:bg-black max-h[80vh] overflow-y-auto rounded-xl shadow-md border border-gray-200 flex-grow">
             <form
               onSubmit={handleSubmit(handleUpdateRole)}
               className="p-6 grid grid-cols-1 gap-6 ">
@@ -274,7 +274,7 @@ const EditRole = () => {
               {/* Menus and Actions Section */}
               <div className="mt-6">
                 <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
-                  <h3 className="text-lg font-medium text-gray-800 ">
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-white">
                     Permissions
                   </h3>
                   <div>
@@ -301,7 +301,7 @@ const EditRole = () => {
                       <div
                         key={menu.menuId}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-slate-500 p-4 rounded-t-lg border-b border-gray-200">
                           <div>
                             <h4 className="text-md font-semibold text-gray-800">
                               {menu.menuName}
@@ -334,7 +334,7 @@ const EditRole = () => {
                             {menu.actions.map((action, actionIndex) => (
                               <div
                                 key={action.actionId}
-                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded-md">
+                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-slate-500 rounded-md">
                                 <Checkbox
                                   size="sm"
                                   color="primary"
@@ -347,7 +347,7 @@ const EditRole = () => {
                                     )
                                   }
                                 />
-                                <span className="text-sm text-gray-700">
+                                <span className="text-sm text-gray-700 dark:text-white">
                                   {action.actionName}
                                 </span>
                               </div>

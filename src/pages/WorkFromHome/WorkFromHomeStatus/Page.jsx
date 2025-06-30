@@ -289,7 +289,7 @@ const WorkFromHomeStatus = () => {
           </div>
 
           {/**Table Section */}
-          <div className="bg-white rounded-lg p-2">
+          <div className="bg-white dark:bg-black rounded-lg p-2">
             {/* Large screens - Full table */}
             <div className="hidden lg:block">
               <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
@@ -318,7 +318,7 @@ const WorkFromHomeStatus = () => {
                         className="h-14 border-b-2 border-gray-300">
                         <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                         <TableCell>
-                          {item?.userFullName.length < 7 ? (
+                          {item?.userFullName?.length < 7 ? (
                             item?.userFullName
                           ) : (
                             <Tooltip content={item?.userFullName}>
@@ -328,7 +328,7 @@ const WorkFromHomeStatus = () => {
                         </TableCell>
 
                         <TableCell>
-                          {item?.departmentName.length < 7 ? (
+                          {item?.departmentName?.length < 7 ? (
                             item?.departmentName
                           ) : (
                             <Tooltip content={item?.departmentName}>
@@ -467,7 +467,7 @@ const WorkFromHomeStatus = () => {
                     key={WFH.rclId}
                     className="border rounded-lg overflow-hidden shadow-sm">
                     <div
-                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                       onClick={() => toggleExpandedRow(WFH.rclId)}>
                       <div className="font-medium">{WFH.fullName || "N/A"}</div>
                       <div className="flex items-center gap-2">

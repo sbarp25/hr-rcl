@@ -7,7 +7,7 @@ import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
 import { useNavigate, useParams } from "react-router-dom";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import { useEmployeeDetails } from "../../../../hooks/useAuth.js";
 
 const tabData = [
   {
@@ -62,29 +62,13 @@ const Content = ({ activeTab, employeeData }) => {
 };
 
 const Page = () => {
-  const [employeeData, setEmployeeData] = useState(null);
   const [activeTab, setActiveTab] = useState(tabData[0]);
   const { rclId } = useParams();
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
-        );
-        if (response.data.responseCode === "200") {
-          setEmployeeData(response.data.data);
-        } else {
-          toast.error(response?.data?.Message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    };
-    fetchEmployeeData();
-  }, []);
+
+  const { data } = useEmployeeDetails(rclId);
+
+  const employeeData = data?.data || [];
+
   const breadcrumbItems = [
     { label: "Admin EKYE", href: "/AdminEkye" },
     { label: activeTab.name, href: "" },

@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import axiosInstance from "../../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
-import {
-  DatePicker,
-  Input,
-  Select,
-  SelectItem,
-  Checkbox,
-  Switch,
-} from "@heroui/react";
+import { Input, Checkbox } from "@heroui/react";
 import { IoIosPeople } from "react-icons/io";
-import Submit from "../../../assets/svgs/Submit.svg";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+
 import { getLocalTimeZone } from "@internationalized/date";
 import GoBack from "../../../components/GoBack";
 import DatepickerComponent from "../../../components/ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 import Loader from "../../../components/Loader/Loader.jsx";
 import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import {
+  useEmployeeCreate,
+  useFetchUnPaginatedDepartment,
+  useFetchUnPaginatedPosition,
+  useFetchUnPaginatedRoles,
+} from "../../../hooks/useAuth.js";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
+
 const AddEmployeeForm = () => {
   const {
     register,
@@ -42,93 +39,26 @@ const AddEmployeeForm = () => {
     mode: "onChange",
   });
 
-  const [departmentsData, setDepartmentsData] = useState([]);
-  const [positionData, setPositionData] = useState([]);
-  const [roleData, setRoleData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { mutate: createEmployee, isPending } = useEmployeeCreate();
 
-  const breadcrumbItems = [
-    { label: "Employees", href: "/Employees" },
-    { label: "Add Employees", href: "/AddEmployees" },
-  ];
+  //Fetch Department
+  const { data: department, isLoading: departmentIsLaoding } =
+    useFetchUnPaginatedDepartment();
+  const departmentsData = department?.datalist;
 
-  //FetchDepartment
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/v1/departments/get/all",
-          {}
-        );
-        if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.datalist);
-        } else {
-          toast.error(response?.data?.data?.message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDepartments();
-  }, []);
   //Fetch Position
-  useEffect(() => {
-    const fetchPositions = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/positions/get/all");
-        if (response.data.responseCode === "200") {
-          setPositionData(response?.data?.datalist);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const { data: position, isLoading: positionIsLoading } =
+    useFetchUnPaginatedPosition();
+  const positionData = position?.datalist;
 
-    fetchPositions();
-  }, []);
   //Fetch Role
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/role/get/all", {});
-        if (response.data.responseCode === "200") {
-          setRoleData(response?.data?.datalist);
-        } else {
-          toast.error(response?.data?.message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRoles();
-  }, []);
+  const { data: roles, isLoading: rolesIsLoading } = useFetchUnPaginatedRoles();
+  const roleData = roles?.datalist;
 
   const onSubmit = async (data) => {
     if (hasaccess) {
-      setIsLoading(true);
+      // setIsLoading(true);
       const sanitizeddepartmentId = data.department.replace(/[^0-9]/g, "");
       const sanitizedpositionId = data.position.replace(/[^0-9]/g, "");
       const sanitizedroleId = data.roles.replace(/[^0-9]/g, "");
@@ -152,38 +82,11 @@ const AddEmployeeForm = () => {
           isAssociateTeamLead: data.isAssociateteamLead,
         },
       };
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        const response = await axiosInstance.post(
-          "/api/v1/auth/register",
-          newEmployee,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response.data.responseCode === "200") {
+      createEmployee(newEmployee, {
+        onSuccess: () => {
           reset();
-          navigate("/Employees");
-          toast.success(response?.data?.message);
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      toast.error("Currently You dont have access to this setting.");
+        },
+      });
     }
   };
 
@@ -210,7 +113,7 @@ const AddEmployeeForm = () => {
   }));
   return (
     <>
-      {isLoading ? (
+      {positionIsLoading ? (
         <Loader />
       ) : (
         <div className="container space-y-4">
@@ -218,16 +121,15 @@ const AddEmployeeForm = () => {
             <div className="flex flex-col space-y-8 ">
               <div className="text-sm">
                 <GoBack />
-                {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
               </div>
             </div>
-            <div className="page-title flex items-center -pl-2">
+            <div className="page-title dark:text-white flex items-center -pl-2">
               <IoIosPeople />
               Add Employee
             </div>
             <div></div>
           </div>
-          <div className=" mx-auto bg-white shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
+          <div className=" mx-auto bg-white dark:bg-black shadow-md rounded-xl px-8 py-6 max-h-[90vh] overflow-auto ">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="w-full space-y-8">
@@ -267,9 +169,6 @@ const AddEmployeeForm = () => {
                       isInvalid={!!errors.phone}
                       errorMessage={errors.phone?.message}
                     />
-                    {/* {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone.message}</p>
-                )} */}
                   </div>
                   <div className="mb-4">
                     <Input
@@ -306,36 +205,7 @@ const AddEmployeeForm = () => {
                       rules={{ required: "This field is required" }}
                     />
                   </div>
-                  {/* <div>
-                    <Controller
-                      name="department"
-                      control={control}
-                      rules={{ required: "Department is required" }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          variant="bordered"
-                          label="Department"
-                          isInvalid={!!errors.department}
-                          className={`rounded-xl `}
-                          selectedKeys={field.value ? [field.value] : []}
-                          onSelectionChange={(keys) =>
-                            field.onChange(Array.from(keys)[0])
-                          }>
-                          {departmentsData?.map((dept) => (
-                            <SelectItem key={dept.id} textValue={dept.name}>
-                              {dept.name}
-                            </SelectItem>
-                          ))}
-                        </Select>
-                      )}
-                    />
-                    {errors.department && (
-                      <p className="text-danger text-sm">
-                        {errors.department.message}
-                      </p>
-                    )}
-                  </div> */}
+
                   {/**Select Position */}
                   <div>
                     <ReusableAutocomplete
@@ -346,38 +216,6 @@ const AddEmployeeForm = () => {
                       rules={{ required: "This field is required" }}
                     />
                   </div>
-                  {/* <div>
-                    <Controller
-                      name="position"
-                      control={control}
-                      rules={{ required: "Position is required" }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          variant="bordered"
-                          label="Position"
-                          isInvalid={!!errors.position}
-                          className={`rounded-xl `}
-                          selectedKeys={field.value ? [field.value] : []}
-                          onSelectionChange={(keys) =>
-                            field.onChange(Array.from(keys)[0])
-                          }>
-                          {positionData.map((pos) => (
-                            <SelectItem
-                              key={pos.id}
-                              textValue={pos.positionName}>
-                              {pos.positionName}
-                            </SelectItem>
-                          ))}
-                        </Select>
-                      )}
-                    />
-                    {errors.position && (
-                      <p className="text-danger text-sm">
-                        {errors.position.message}
-                      </p>
-                    )}
-                  </div> */}
 
                   {/**Select Role  */}
                   <div>
@@ -389,38 +227,6 @@ const AddEmployeeForm = () => {
                       rules={{ required: "This field is required" }}
                     />
                   </div>
-                  {/* <div>
-                    <Controller
-                      name="roles"
-                      control={control}
-                      rules={{ required: "Role is required" }}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          variant="bordered"
-                          label="roles"
-                          isInvalid={!!errors.roles}
-                          className={`rounded-xl`}
-                          selectedKeys={field.value ? [field.value] : []}
-                          onSelectionChange={(keys) =>
-                            field.onChange(Array.from(keys)[0])
-                          }>
-                          {roleData.map((role) => (
-                            <SelectItem
-                              key={role.roleId}
-                              textValue={role.roleName}>
-                              {role.roleName}
-                            </SelectItem>
-                          ))}
-                        </Select>
-                      )}
-                    />
-                    {errors.roles && (
-                      <p className="text-danger text-sm">
-                        {errors.roles.message}
-                      </p>
-                    )}
-                  </div> */}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                   <div className="mb-4">
@@ -440,7 +246,6 @@ const AddEmployeeForm = () => {
                     />
                   </div>
                   <div className="mb-4">
-                    {/* <DatePicker {...register("HireDate",{required:"Hire Date is required"})}  isInvalid={!!errors.HireDate} errorMessage={errors.HireDate?.message} label="Hire Date" variant="bordered" /> */}
                     <div>
                       <DatepickerComponent
                         name="fromDate"
@@ -470,12 +275,17 @@ const AddEmployeeForm = () => {
                   />
                 </div>
               </div>
-              <button
+              <ButtonComponent
+                className="flex gap-2 items-center w-fit bg-bgprimary dark:bg-white dark:text-black text-white py-2 px-4 rounded-2xl"
+                type="Submit"
+                content={"Add Employee"}
+              />
+              {/* <button
                 type="submit"
                 className="flex gap-2 items-center w-fit bg-bgprimary text-white py-2 px-4 rounded-2xl">
                 <img src={Submit} alt="Submit" className="h-4 w-4" />
                 Add Employee
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

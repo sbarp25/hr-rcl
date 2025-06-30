@@ -1,56 +1,36 @@
 import Attendancereport from "../../components/Dashboard/Attendancereport.jsx";
-import { Input } from "@heroui/input";
-
 import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";
 import Leave from "../../components/Dashboard/Leave.jsx";
 import CheckIn from "../../components/Dashboard/CheckIn.jsx";
-import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
-import { Button } from "@heroui/react";
 import TemporaryAdmin from "../../components/TemporaryAdmin.jsx";
+import { useWeeklyAttendanceReport } from "../../hooks/useAuth.js";
 
 const Page = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
   const [checkedInStatus, setCheckedInStatus] = useState(false);
-  const [totalDelayTime, setTotalDelayTime] = useState("");
-  const [totalEarlyTime, setTotalEarlyTime] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
   const username = localStorage.getItem("fullName");
 
-  const getWeeklyAttendanceReport = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "/api/attendance/weekly_attendances"
-      );
-      if (response?.data?.responseCode === "200") {
-        setAttendanceData(response?.data?.data?.weeklyAttendanceReport);
-        setTotalDelayTime(response?.data?.data?.totalDelayTime);
-        setTotalEarlyTime(response?.data?.data?.totalEarlyTime);
-        setCheckedInStatus(response?.data?.data?.isCheckedIn);
-      } else {
-        toast.error(
-          response?.data?.message || "Failed to retrieve attendance data"
-        );
-      }
-    } catch (error) {
-      const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
-      toast.error(errorMessage || "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    data: WeekelyattendaceData,
+    isLoading,
+    refetch,
+  } = useWeeklyAttendanceReport();
+
+  const attendanceData = WeekelyattendaceData?.data?.weeklyAttendanceReport;
+  const totalDelayTime = WeekelyattendaceData?.data?.totalDelayTime;
+  const totalEarlyTime = WeekelyattendaceData?.data?.totalEarlyTime;
+
+  useEffect(() => {
+    setCheckedInStatus(WeekelyattendaceData?.data?.isCheckedIn);
+  }, [WeekelyattendaceData?.data?.isCheckedIn]);
+
   // Status change handler to refresh data
   const handleStatusChange = (newStatus) => {
     setCheckedInStatus(newStatus);
-    getWeeklyAttendanceReport();
+    refetch();
   };
 
-  useEffect(() => {
-    getWeeklyAttendanceReport();
-  }, [checkedInStatus]);
   const email = localStorage.getItem("email");
 
   return (
@@ -69,16 +49,16 @@ const Page = () => {
         <TemporaryAdmin />
 
         {/* Welcome Banner */}
-        <div className="flex justify-center bg-white items-center rounded-md w-full shadow-sm">
+        <div className="flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm">
           <p className="font-light text-lg leading-10">
             Welcome, {username || "User"}
           </p>
         </div>
 
         {/* Weekly Attendance Report */}
-        <div className="flex flex-col bg-white rounded-lg w-full p-1 shadow-sm ">
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm ">
           <div className="flex flex-col justify-center items-center">
-            <h1 className="page-title mt-2 text-xl font-bold">
+            <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
               Weekly Attendance Report
             </h1>
             <div className="w-full ">

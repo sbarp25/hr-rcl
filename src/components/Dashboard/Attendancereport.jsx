@@ -36,7 +36,7 @@ const AttendanceReport = ({ attendanceData }) => {
             wrapper: "min-h-[200px]",
             table: "min-w-full",
           }}>
-          <TableHeader className="bg-gray-50">
+          <TableHeader className="bg-gray-50 dark:bg-black">
             <TableColumn>S.N</TableColumn>
             <TableColumn>Day</TableColumn>
             <TableColumn>Is Delayed</TableColumn>
@@ -51,7 +51,9 @@ const AttendanceReport = ({ attendanceData }) => {
           </TableHeader>
           <TableBody emptyContent="No attendance data available">
             {attendanceData?.map((data) => (
-              <TableRow key={data.SN} className="hover:bg-gray-50">
+              <TableRow
+                key={data.SN}
+                className="hover:bg-gray-50 dark:hover:bg-slate-500">
                 <TableCell>{data.SN || "N/A"}</TableCell>
                 <TableCell>{data.Day || "N/A"}</TableCell>
                 <TableCell>{data.isDelay ? "Yes" : "No"}</TableCell>

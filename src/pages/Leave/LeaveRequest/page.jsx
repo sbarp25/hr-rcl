@@ -118,7 +118,9 @@ const LeaveRequest = () => {
           navigate("/dashboard");
           toast.success(response?.data?.message);
         } else {
-          const errorMessage = response?.data?.error || "Something went wrong";
+          const errorMessage =
+            response?.data?.error?.errorList[0]?.errorMessage ||
+            "Something went wrong";
           toast.error(errorMessage);
         }
       } catch (error) {
@@ -157,7 +159,7 @@ const LeaveRequest = () => {
         <div className="w-8"></div>
       </div>
 
-      <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
+      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-8 p-2 sm:p-4">

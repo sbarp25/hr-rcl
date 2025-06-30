@@ -1,16 +1,15 @@
-import axiosInstance from "../../lib/axios-Instance.js";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useApprovedLeave } from "../../hooks/useAuth.js";
 
 const CustomToggleButton = ({ isSelected, onChange }) => {
   return (
     <div className="w-60 flex items-center justify-center">
       <div
         onClick={onChange}
-        className="relative flex items-center p-1  w-full h-12 bg-gray-200 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
+        className="relative flex items-center p-1  w-full h-12 bg-gray-200 dark:bg-slate-700  rounded-full cursor-pointer transition-all duration-300 shadow-inner">
         {/* Sliding toggle */}
         <div
-          className={`absolute h-10 w-1/2 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+          className={`absolute h-10 w-1/2 bg-white dark:bg-slate-500 rounded-full shadow-md transform transition-transform duration-300 ${
             isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-3"
           }`}
         />
@@ -18,18 +17,14 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
         <div className="flex w-full z-10 text-sm font-medium">
           <div className="w-1/2 text-center py-2">
             <span
-              className={`transition-colors duration-300 ${
-                isSelected ? "text-gray-900" : "text-gray-400"
-              }`}>
+              className={`transition-colors duration-300 text-black dark:text-gray-300`}>
               Today <br />
               Leave
             </span>
           </div>
           <div className="w-1/2 text-center py-2 ">
             <span
-              className={`transition-colors duration-300 ${
-                !isSelected ? "text-gray-900" : "text-gray-400"
-              }`}>
+              className={`transition-colors duration-300 text-black dark:text-gray-400`}>
               Upcoming Leave
             </span>
           </div>
@@ -40,41 +35,15 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
 };
 const Leave = () => {
   const [isToday, setIsToday] = useState(true);
-  const [todayLeave, setTodayLeave] = useState([]);
-  const [upComingLeave, setUpComingLeave] = useState([]);
   const [leaveList, setLeaveList] = useState([]);
 
   const handleToggleChange = () => {
     setIsToday(!isToday);
   };
 
-  const fetchTodayLeave = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `api/leave/approved_today_and_upcoming`
-      );
-      if (response?.data?.responseCode === "200") {
-        const todayData = response?.data?.data?.today || [];
-        const upcomingData = response?.data?.data?.upcoming || [];
-
-        setTodayLeave(todayData);
-        setUpComingLeave(upcomingData);
-        setLeaveList(isToday ? todayData : upcomingData);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        // toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage = error?.data?.error?.errorList?.[0]?.errorMessage;
-      toast.error(errorMessage || "Something Went Wrong");
-    }
-  };
-
-  useEffect(() => {
-    fetchTodayLeave();
-  }, []);
+  const { data: approvedLeaveData } = useApprovedLeave();
+  const todayLeave = approvedLeaveData?.data?.today;
+  const upComingLeave = approvedLeaveData?.data.upcoming;
 
   useEffect(() => {
     if (isToday) {
@@ -90,7 +59,7 @@ const Leave = () => {
   };
   return (
     <>
-      <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
+      <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100 ">
         <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
           <p className="text-xl font-bold">Leave</p>
           <div>
@@ -107,10 +76,10 @@ const Leave = () => {
                 {leaveList.map((data, index) => (
                   <div
                     key={index}
-                    className="bg-white rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+                    className="bg-white dark:bg-black rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 border border-green-600 text-green-600">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-400 border border-green-600 text-green-600">
                           {data?.fullName?.charAt(0) || "?"}
                         </div>
                       </div>
@@ -146,7 +115,7 @@ const Leave = () => {
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow-md p-8 text-center text-gray-500">
+              <div className="bg-white dark:bg-black rounded-lg shadow-md p-8 text-center text-gray-500 dark:text-white">
                 No Data available
               </div>
             )}

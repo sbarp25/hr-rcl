@@ -9,6 +9,7 @@ import InputComponent from "../../../components/ui/InputComponent.jsx";
 import Loader from "../../../components/Loader/Loader.jsx";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "../../../api/auth";
+import { useForgetPassword } from "../../../hooks/useAuth.js";
 
 const ResetForGetPassword = () => {
   const [error, setError] = useState(null);
@@ -40,37 +41,7 @@ const ResetForGetPassword = () => {
     }
   }, []);
 
-  const mutation = useMutation({
-    mutationFn: resetPassword,
-    onSuccess: (data) => {
-      toast.success(data.message);
-      localStorage.setItem("accessToken", data.data.accessToken);
-      localStorage.setItem("refreshToken", data.data.refreshToken);
-      localStorage.setItem("fullName", data.data.fullName);
-      localStorage.setItem("email", data.data.email);
-
-      if (
-        data.data.ekyeStatus === "NOT_REQUIRED" ||
-        data.data.ekyeStatus === "COMPLETED"
-      ) {
-        navigate("/dashboard");
-      } else {
-        navigate("/EKYE");
-      }
-    },
-    onError: (error) => {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        error.message ||
-        "Something went wrong";
-      toast.error(errorMessage);
-      navigate("/login");
-    },
-    onSettled: () => {
-      setIsLoading(false);
-      localStorage.removeItem("resetpasswordData");
-    },
-  });
+  const mutation = useForgetPassword();
   const onSubmit = async (data) => {
     setIsLoading(true);
     mutation.mutate({ newPassword: data.password });
@@ -79,6 +50,7 @@ const ResetForGetPassword = () => {
   {
     /**TO Check if the data is valid or not if it is not valid it will redirect to the login page else it will show the reset password form*/
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {

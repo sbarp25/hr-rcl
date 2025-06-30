@@ -38,63 +38,51 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useFetchDepartment } from "../../../hooks/useAuth.js";
 const Department = () => {
-  const [departmentsData, setDepartmentsData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState(null);
+  const [filteredPagination, setFilteredPagination] = useState(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [departmentPerPage, setDepartmentPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [expandedRow, setExpandedRow] = useState(null);
+
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const accessToken = localStorage.getItem("accessToken");
+
   const [departmentId, setDepartmentId] = useState(null);
   const navigate = useNavigate();
-  const [originalDepartmentsData, setOriginalDepartmentsData] = useState([]);
+
+  const { data, isLoading, refetch } = useFetchDepartment(
+    currentPage,
+    departmentPerPage
+  );
+
+  const departmentsData = filteredData || data?.datalist || [];
+  const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  const totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, departmentPerPage]);
 
   const handleApplyFilters = (result) => {
     if (result.data) {
-      setDepartmentsData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      setDepartmentsData(originalDepartmentsData);
-    }
-  };
-
-  // Fetch departments data
-  const fetchDepartments = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/v1/departments/list", {
-        pageIndex: currentPage,
-        pageSize: departmentPerPage,
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
       });
-      if (response.data.responseCode === "200") {
-        setOriginalDepartmentsData(response?.data?.datalist || []); // Store original data
-        setDepartmentsData(response?.data?.datalist || []); // Initially set filtered data to original data
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response?.data?.data?.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } else {
+      refetch();
     }
   };
-  useEffect(() => {
-    fetchDepartments();
-  }, [currentPage, departmentPerPage]);
 
   const handlePageChange = (page) => {
-    setDepartmentsData([]);
+    setFilteredData(null);
+    setFilteredPagination(null);
     setCurrentPage(page);
   };
 
@@ -130,7 +118,6 @@ const Department = () => {
           `/api/v1/departments/delete/${departmentId}`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
               "Content-Type": "application/json",
             },
           }
@@ -211,9 +198,9 @@ const Department = () => {
                 <BreadcrumbsComponent items={breadcrumbItems} />
               </div>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div className="flex items-center page-title -pl-2">
+                <div className="flex items-center dark:text-white page-title -pl-2">
                   <BiData className="text-2xl" />
-                  <span className="page-title">Department</span>
+                  <span className="page-title ">Department</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-y-2 sm:gap-x-4 w-full sm:w-auto">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
@@ -241,20 +228,18 @@ const Department = () => {
                     />
                   </div>
                   <Button
-                    className="flex bg-black text-white w-full sm:w-auto"
+                    className="flex bg-black text-white dark:bg-white dark:text-black w-full sm:w-auto"
                     onPress={gotoAdd}>
                     <div className="flex justify-center items-center gap-2">
-                      <IoIosAddCircleOutline className="text-white text-xl" />
-                      <span className="text-white font-normal">
-                        Add Department
-                      </span>
+                      <IoIosAddCircleOutline className=" text-xl" />
+                      <span className="font-normal">Add Department</span>
                     </div>
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg  overflow-y-auto space-y-4 p-2">
+            <div className="bg-white dark:bg-black rounded-lg  overflow-y-auto space-y-4 p-2">
               {/* Large screens - Full table */}
               <div className="hidden lg:block">
                 <div className=" rounded-lg   text-left">
@@ -415,7 +400,7 @@ const Department = () => {
                         key={department.id}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                           onClick={() => toggleExpandedRow(department.id)}>
                           <div className="font-medium">{department.name}</div>
                           <div className="flex items-center gap-2">
@@ -435,7 +420,7 @@ const Department = () => {
                           } p-3 space-y-2 text-sm`}>
                           <div className="grid grid-cols-1 gap-2">
                             <div className="font-medium">Description:</div>
-                            <div className="bg-gray-50 p-2 rounded">
+                            <div className="bg-gray-50 dark:bg-slate-600 p-2 rounded">
                               {department.description}
                             </div>
                           </div>
@@ -496,18 +481,16 @@ const Department = () => {
 
               {/* Pagination - Responsive for all screens */}
               {departmentsData && departmentsData.length > 0 && (
-                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white pb-4">
-                  <div className="text-sm font-medium text-gray-600 flex items-center">
+                <div className="mt-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10 bg-white dark:bg-black pb-4">
+                  <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center">
                     <span className="mr-1">Showing:</span>
-                    <span className="font-bold text-gray-800 mx-1">
+                    <span className="font-bold  mx-1">
                       {totalRecords < departmentPerPage
                         ? totalRecords
                         : departmentPerPage}
                     </span>
                     <span className="mr-1">of</span>
-                    <span className="font-bold text-gray-800">
-                      {totalRecords}
-                    </span>
+                    <span className="font-bold">{totalRecords}</span>
                   </div>
 
                   <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

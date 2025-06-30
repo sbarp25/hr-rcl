@@ -9,7 +9,6 @@ import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../Loader/Loader.jsx";
 import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
@@ -66,16 +65,16 @@ const EducationAction = ({ employeeData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="relative flex flex-col bg-white mt-16 border border-black rounded-b-md shadow-lg p-8">
+      <div className="relative flex flex-col bg-white dark:bg-black mt-16 border border-black dark:border-white rounded-b-md shadow-lg p-8">
         {/* Header Section */}
-        <div className="absolute bg-black w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
+        <div className="absolute bg-black dark:bg-slate-700 w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
           <h1 className="text-2xl font-semibold text-white">
             Education Details
           </h1>
         </div>
 
         {/* Single Form Section */}
-        <div className="bg-white text-lg w-[45vw] rounded-lg px-6 mt-2 mx-1">
+        <div className="bg-white dark:bg-black text-lg w-[45vw] rounded-lg px-6 mt-2 mx-1">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
               Education Details

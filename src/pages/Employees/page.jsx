@@ -42,42 +42,25 @@ import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteEmployees, fetchEmployees } from "../../api/auth.js";
+import { useEmployeeDelete, useEmployeefetch } from "../../hooks/useAuth.js";
 
 const Employees = () => {
-  const [, setIsLoading] = useState(false);
-  const [isDeleteLoading, setDeleteIsLoading] = useState(false);
-  const [employeesData, setEmployeesData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [filteredPagination, setFilteredPagination] = useState(null);
+
   const [expandedRow, setExpandedRow] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
-
   const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
-  const [originalEmployeeData, setOriginalEmployeeData] = useState([]);
-  const navigate = useNavigate();
   const [deletingId, setDeletingId] = useState(null);
+
+  const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const breadcrumbItems = [{ label: "Employees", href: "/Employees" }];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  // Toggle expanded row for mobile view
-  const toggleExpandedRow = (rclId) => {
-    setExpandedRow(expandedRow === rclId ? null : rclId);
-  };
-
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["employees", currentPage, employeeDataPerPage],
-    queryFn: () => fetchEmployees(currentPage, employeeDataPerPage),
-    onError: (error) => {
-      console.error("Employee fetch error:", error);
-    },
-  });
-
-  /**To check create status */
-  const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
-
-  /**To read the Data */
+  /**Permission Checking */
   // const hasaccess = true;
   const hasaccess = hasReadAccess(MENU_NAMES.EMPLOYEES);
   /**To check edit status */
@@ -86,11 +69,36 @@ const Employees = () => {
   const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
   const hasSingle = hasViewone(MENU_NAMES.EMPLOYEES);
 
+  // Toggle expanded row for mobile view
+  const toggleExpandedRow = (rclId) => {
+    setExpandedRow(expandedRow === rclId ? null : rclId);
+  };
+
+  const { data, isLoading, error, refetch } = useEmployeefetch(
+    currentPage,
+    employeeDataPerPage
+  );
+
+  // Filtered employees
+  const employees = filteredData || data?.datalist || [];
+  let totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
+  let totalRecords =
+    filteredPagination?.totalRecords || data?.totalRecords || 0;
+  const filteredEmployees = employees.filter((employee) => employee.isActive);
+
+  /**To check create status */
+  const hasemployeecreateaccess = hasCreateAccess(MENU_NAMES.EMPLOYEES);
+
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
   }, []);
+
+  useEffect(() => {
+    setFilteredData(null);
+    setFilteredPagination(null);
+  }, [currentPage, employeeDataPerPage]);
 
   const handleRedirect = () => {
     if (hasemployeecreateaccess) {
@@ -100,19 +108,16 @@ const Employees = () => {
     }
   };
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteEmployees,
-    onSuccess: () => {
-      toast.success(data.message || "Employee deleted successfully");
-      refetch();
-      onClose();
-    },
-  });
+  const deleteMutation = useEmployeeDelete();
 
   const onDelete = () => {
-    if (hasEmployeeDeleteAccess && deletingId) {
-      deleteMutation.mutate(deletingId);
-    }
+    try {
+      if (hasEmployeeDeleteAccess && deletingId) {
+        deleteMutation.mutate(deletingId);
+        refetch();
+        onClose();
+      }
+    } catch (error) {}
   };
   const handleAction = async (action, employeeId) => {
     switch (action) {
@@ -149,40 +154,42 @@ const Employees = () => {
   };
 
   const handlePageChange = (page) => {
-    setEmployeesData([]);
     setCurrentPage(page);
+    setEmployeeDataPerPage(null);
+    setFilteredData(null);
   };
 
   const handleApplyFilters = (result) => {
     if (result.data) {
-      setEmployeesData(result.data);
-      // if (result.totalPages) setTotalPages(result.totalPages);
-      // if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
     } else {
+      setFilteredData(null);
+      setFilteredPagination(null);
       refetch();
     }
   };
 
   const handleApplySearch = (result) => {
     if (result.data) {
-      setEmployeesData(result.data);
-      // if (result.totalPages) setTotalPages(result.totalPages);
-      // if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords,
+      });
     } else {
-      fetchEmployees();
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
     }
   };
 
-  // Filtered employees
-  const employees =
-    employeesData.length > 0 ? employeesData : data?.datalist || [];
-  let totalPages = data?.totalPages || 0;
-  let totalRecords = data?.totalRecords || 0;
-  const filteredEmployees = employees.filter((employee) => employee.isActive);
-
   return (
     <div className="max-h-[90vh] overflow-y-auto">
-      {isDeleteLoading && <Loader />}
+      {/* {isDeleteLoading && <Loader />} */}
       <div className="px-4 md:px-8 space-y-4 ">
         {/* Breadcrumbs and Header */}
         <div className="flex flex-col space-y-4">
@@ -222,7 +229,7 @@ const Employees = () => {
               </div>
               <Button
                 isDisabled={!hasemployeecreateaccess}
-                className="flex gap-2 items-center rounded-2xl bg-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4 w-full sm:w-auto"
+                className="flex gap-2 items-center rounded-2xl bg-black dark:bg-white dark:text-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4 w-full sm:w-auto"
                 onPress={handleRedirect}>
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
@@ -232,7 +239,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Large screens */}
-        <div className="hidden xl:block bg-white rounded-lg p-2  overflow-y-auto">
+        <div className="hidden xl:block bg-white dark:bg-black rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader>
               <TableColumn>S.N</TableColumn>
@@ -304,7 +311,7 @@ const Employees = () => {
         </div>
 
         {/* Employee Table - Medium screens */}
-        <div className="hidden lg:block xl:hidden bg-white rounded-lg p-2  overflow-y-auto">
+        <div className="hidden lg:block xl:hidden bg-white dark:bg-black rounded-lg p-2  overflow-y-auto">
           <Table bordered aria-label="List of Employees">
             <TableHeader className="bg-gray-50">
               <TableColumn>Name</TableColumn>
@@ -384,9 +391,9 @@ const Employees = () => {
               {filteredEmployees.map((employee) => (
                 <div
                   key={employee.rclId}
-                  className="border rounded-lg overflow-hidden shadow-sm bg-white">
+                  className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
                   <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                     onClick={() => toggleExpandedRow(employee.rclId)}>
                     <div>
                       <div className="font-medium">{employee.fullName}</div>
@@ -479,17 +486,19 @@ const Employees = () => {
 
         {/* Pagination - Responsive */}
         {!isLoading && filteredEmployees && filteredEmployees.length > 0 && (
-          <div className="bg-white rounded-lg p-4">
+          <div className="bg-white dark:bg-black rounded-lg p-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="text-sm font-medium text-gray-600 flex items-center order-2 sm:order-1">
+              <div className="text-sm font-medium text-gray-600 dark:text-white flex items-center order-2 sm:order-1">
                 <span className="mr-1">Showing:</span>
-                <span className="font-bold text-gray-800 mx-1">
+                <span className="font-bold text-gray-800 dark:text-white mx-1">
                   {totalRecords < employeeDataPerPage
                     ? totalRecords
                     : employeeDataPerPage}
                 </span>
                 <span className="mr-1">of</span>
-                <span className="font-bold text-gray-800">{totalRecords}</span>
+                <span className="font-bold text-gray-800 dark:text-white">
+                  {totalRecords}
+                </span>
               </div>
 
               <div className="order-1 sm:order-2">
