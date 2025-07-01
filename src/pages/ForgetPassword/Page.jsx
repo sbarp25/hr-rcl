@@ -6,44 +6,21 @@ import ButtonComponent from "../../components/ui/ButtonComp.jsx";
 import axios from "axios";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useForgetPasswordEmail } from "../../hooks/useAuth.js";
 
 const ForgetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit } = useForm();
+  const { mutate: SubmitEmail } = useForgetPasswordEmail();
 
   const onSubmit = async (data) => {
-    try {
-      setIsLoading(true);
-      const resetData = {
-        data: {
-          email: data.email,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/forget-password`,
-        resetData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
-      } else if (response?.data?.error?.errorList?.[0]?.errorCode === 200) {
-        toast.success(response?.data?.error?.errorList?.[0]?.errorMessage);
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    }
+    setIsLoading(true);
+    const resetData = {
+      data: {
+        email: data.email,
+      },
+    };
+    SubmitEmail(resetData);
   };
 
   return (

@@ -21,6 +21,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useLeaveRequest } from "../../../hooks/useAuth.js";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -37,6 +38,7 @@ const LeaveRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isToDateDisabled, setIsToDateDisabled] = useState(false);
   const navigate = useNavigate();
+  const { mutate: leaveRequestData } = useLeaveRequest();
 
   const breadcrumbItems = [
     { label: "Leave", href: "" },
@@ -93,44 +95,9 @@ const LeaveRequest = () => {
         requestDate: formatDate(today),
       },
     };
+
     if (hasLeaveRequestaccess) {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication token is missing.");
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await axiosInstance.post(
-          "/api/leave/apply_leave",
-          applyleave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response?.data?.responseCode === "200") {
-          reset();
-          navigate("/dashboard");
-          toast.success(response?.data?.message);
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
+      leaveRequestData(applyleave);
     } else {
       toast.error("Currently You dont have access to this setting.");
     }

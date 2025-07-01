@@ -543,3 +543,61 @@ export const fetchrcl = async () => {
     throw new Error(response?.data?.message || "Failed to fetch RCL Id");
   }
 };
+
+export const forgetPasswordEmail = async (resetData) => {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/forget-password`,
+    resetData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};
+
+/**Fetch Leave by role */
+export const fetchleave = async (currentPage, leaveDataPerPage) => {
+  const response = await axiosInstance.post(
+    `/api/v1/leave_management/by-role`,
+    {
+      pageIndex: currentPage,
+      pageSize: leaveDataPerPage,
+    }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
+
+/**Fetch Leave list */
+export const fetchListLeave = async (currentPage, leaveDataPerPage) => {
+  const response = await axiosInstance.post(`/api/v1/leave_management/list`, {
+    pageIndex: currentPage,
+    pageSize: leaveDataPerPage,
+  });
+  if (response?.data?.responseCode === "200") {
+    return response;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
+
+/**Apply Leave */
+export const leaveRequest = async (applyleave) => {
+  const response = await axiosInstance.post(
+    "/api/leave/apply_leave",
+    applyleave,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};

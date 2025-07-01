@@ -17,6 +17,8 @@ import {
   fetchEmployeeDetails,
   fetchEmployees,
   fetchlateCheckin,
+  fetchleave,
+  fetchListLeave,
   fetchPosition,
   fetchrcl,
   fetchrole,
@@ -25,10 +27,12 @@ import {
   fetchUnPaginatedPosition,
   fetchUnPaginatedRoles,
   fetchWeeklyAttendanceReport,
+  forgetPasswordEmail,
   getSiteKey,
   lateCheckInAPI,
   lateCheckInApprove,
   lateCheckInReject,
+  leaveRequest,
   loginUser,
   logoutUser,
   OTPVerification,
@@ -625,6 +629,86 @@ export const useEmployeeRCL = () => {
     queryFn: () => fetchrcl(),
     onError: (error) => {
       console.error("Error Fetching employee details", error);
+    },
+  });
+};
+
+/**Forget Password email send */
+export const useForgetPasswordEmail = () => {
+  return useMutation({
+    mutationFn: forgetPasswordEmail,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Reset Link has been sent successfully"
+        );
+        // navigate("/");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Leave by role */
+export const useLeaveByRole = (currentPage, leaveDataPerPage) => {
+  return useQuery({
+    queryKey: ["FetchLeaveByRole", currentPage, leaveDataPerPage],
+    queryFn: () => fetchleave(currentPage, leaveDataPerPage),
+    onError: (error) => {
+      console.error("Unable to fetch:", error);
+    },
+  });
+};
+
+/**Fetch Leave By List */
+export const useLeaveByList = (currentPage, leaveDataPerPage) => {
+  return useQuery({
+    queryKey: ["fetchLevelByList", currentPage, leaveDataPerPage],
+    queryFn: () => fetchListLeave(currentPage, leaveDataPerPage),
+    onError: (error) => {
+      console.error("Unable to fetch:", error);
+    },
+  });
+};
+
+/**Apply Leave */
+export const useLeaveRequest = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: leaveRequest,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Leave Requested Successfully"
+        );
+        navigate("/Leave/Request");
+        // queryClient.invalidateQueries({ queryKey: ["employees"] });
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
     },
   });
 };

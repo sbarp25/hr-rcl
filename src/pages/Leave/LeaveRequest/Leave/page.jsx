@@ -40,6 +40,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import { useLeaveByRole } from "../../../../hooks/useAuth.js";
 
 const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,6 +64,7 @@ const SelfLeaveStatus = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const navigate = useNavigate();
   const { reset, control, handleSubmit } = useForm();
+  const { data: dataLeaveByRole } = useLeaveByRole();
 
   const handlePageChange = (page) => {
     setLeaveData([]);
@@ -106,6 +108,7 @@ const SelfLeaveStatus = () => {
 
   useEffect(() => {
     fetchLeave();
+    console.log("The data", dataLeaveByRole?.data?.datalist);
   }, [currentPage, leaveDataPerPage]);
 
   // const hasaccess = true;
@@ -409,7 +412,7 @@ const SelfLeaveStatus = () => {
                         <div
                           className={`${getStatusClass(
                             item?.leaveStatus
-                          )} text-center py-1 px-2 rounded-md w-fit`}>
+                          )} text-center py-1 px-2 rounded-2xl* w-fit`}>
                           {item?.leaveStatus || "N/A"}
                         </div>
                       </TableCell>
