@@ -23,6 +23,7 @@ import {
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { useFetchEKYE } from "../../../hooks/useAuth.js";
+import { toast } from "sonner";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
@@ -51,7 +52,9 @@ const Page = () => {
 
   // Use search data if available, otherwise use API data
   const currentData = searchData || apiData;
-  const paginatedEkye = currentData?.datalist || [];
+
+  // Handle different data structures: try both 'data' and 'datalist' properties
+  const paginatedEkye = currentData?.data || currentData?.datalist || [];
   const totalPages = currentData?.totalPages || 1;
   const totalRecords = currentData?.totalRecords || 0;
 
@@ -67,14 +70,14 @@ const Page = () => {
     if (currentPage !== 1) {
       setCurrentPage(1);
     }
-  }, [ekyeDashboardDataPerPage]);
+  }, [ekyeDashboardDataPerPage, currentPage]);
 
-  // Clear search data when pagination changes (if using API data)
-  useEffect(() => {
-    if (searchData) {
-      setSearchData(null); // Clear search results when page changes
-    }
-  }, [currentPage]);
+  // REMOVED: The problematic useEffect that was clearing search data
+  // useEffect(() => {
+  //   if (searchData) {
+  //     setSearchData(null); // This was clearing search results when page changes
+  //   }
+  // }, [currentPage, searchData]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -83,7 +86,7 @@ const Page = () => {
   const handlePageSizeChange = (newSize) => {
     setEkyeDashboardDataPerPage(newSize);
     setCurrentPage(1); // Reset to first page
-    setSearchData(null); // Clear search data
+    setSearchData(null); // Clear search data when changing page size
   };
 
   const handleChange = (action, rclId) => {
@@ -92,14 +95,14 @@ const Page = () => {
         if (hasViewAccess) {
           navigate(`/View/${rclId}`);
         } else {
-          console.log("Access denied for view");
+          toast.error("Access denied for view");
         }
         break;
       case "action":
         if (hasActionAccess) {
           navigate(`/EkyeAction/${rclId}`);
         } else {
-          console.log("Access denied for action");
+          toast.error("Access denied for action");
         }
         break;
       default:
@@ -109,22 +112,27 @@ const Page = () => {
 
   const handleApplySearch = (result) => {
     if (result?.data) {
-      // Search component returned filtered data
       setSearchData(result);
-      setCurrentPage(1); // Reset to first page for search results
+      setCurrentPage(1);
+    } else if (result?.datalist) {
+      setSearchData(result);
+      setCurrentPage(1);
     } else {
-      // Clear search and refetch original data
       setSearchData(null);
       ekyeRefetch();
     }
   };
 
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-    setSearchData(null); // Clear search when applying filters
-    // You might want to refetch with filters here
-    ekyeRefetch();
+  const handleApplyFilters = (result) => {
+    if (result?.data || result?.datalist) {
+      setSearchData(result);
+      setCurrentPage(1);
+    } else {
+      setFilters(result);
+      setCurrentPage(1);
+      setSearchData(null); // Clear search when applying filters
+      ekyeRefetch();
+    }
   };
 
   // Calculate display values for pagination info

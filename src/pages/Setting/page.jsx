@@ -15,7 +15,6 @@ import {
 } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import getInitials from "../../utils/getInitials";
 import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
@@ -39,7 +38,7 @@ const Settings = () => {
   const [imageURL, setImageURL] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const breadcrumbItems = [{ label: "Setting", href: "/settings" }];
   const navigate = useNavigate();
 
@@ -160,7 +159,7 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      toast.error("Failed to fetch RCL ID");
+      toast.error("Failed to fetch RCL ID", error);
     } finally {
       setIsLoading(false);
     }
@@ -178,7 +177,7 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      toast.error("Failed to fetch employee data");
+      toast.error("Failed to fetch employee data", error);
     } finally {
       setIsLoading(false);
     }
@@ -199,7 +198,6 @@ const Settings = () => {
   const seeProfile = true;
 
   const editProfile = true;
-  const deleteProfile = true;
 
   useEffect(() => {
     if (!seeProfile) {

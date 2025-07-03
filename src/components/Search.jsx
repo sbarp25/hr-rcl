@@ -28,7 +28,7 @@ const Search = ({
       pageIndex: 1,
       pageSize: 10,
       searchCriteria: {
-        [selectedField]: searchValue.trim(),
+        // [selectedField]: searchValue.trim(),
         searchItem: searchValue.trim(),
       },
     };

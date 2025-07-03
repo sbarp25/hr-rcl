@@ -6,6 +6,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useSalary } from "../../../hooks/useAuth.js";
 
 const SalaryEdit = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +24,8 @@ const SalaryEdit = () => {
     { label: "Employees", href: "/Employees" },
     { label: "Edit Salary Details", href: "/notice" },
   ];
+
+  const { data } = useSalary();
   useEffect(() => {
     const fetchDepartments = async () => {
       setIsLoading(true);
@@ -40,6 +43,7 @@ const SalaryEdit = () => {
       }
     };
 
+    console.log(data);
     fetchDepartments();
   }, []);
   const hasaccess = true;

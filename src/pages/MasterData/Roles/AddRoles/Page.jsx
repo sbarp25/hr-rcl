@@ -14,6 +14,7 @@ import {
   hasCreateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import { useCreateRoles } from "../../../../hooks/useAuth.js";
 
 const AddRoles = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ const AddRoles = () => {
 
   const { control, handleSubmit, reset, setValue } = useForm();
 
+  const createRoleMutation = useCreateRoles();
   // Get all selected action IDs from the menus
   const getSelectedActions = () => {
     return menusAndActions
@@ -154,42 +156,41 @@ const AddRoles = () => {
       };
 
       try {
-        setIsLoading(true);
-        const response = await axiosInstance.post(
-          "/api/v1/role/save",
-          newRole,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        await createRoleMutation.mutateAsync(newRole);
+        // setIsLoading(true);
+        // const response = await axiosInstance.post(
+        //   "/api/v1/role/save",
+        //   newRole,
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // );
 
-        if (response.data.responseCode === "201") {
-          toast.success(response.data.message || "Role created successfully");
-          reset();
-          navigate("/master-data/Roles");
+        // if (response.data.responseCode === "201") {
+        //   toast.success(response.data.message || "Role created successfully");
+        //   reset();
+        //   navigate("/master-data/Roles");
 
-          // Reset all selections
-          setMenusAndActions((prevMenus) =>
-            prevMenus.map((menu) => ({
-              ...menu,
-              actions: menu.actions.map((action) => ({
-                ...action,
-                selected: false,
-              })),
-            }))
-          );
-        } else {
-          toast.error(response.data.message || "Failed to create role");
-        }
+        //   // Reset all selections
+        //   setMenusAndActions((prevMenus) =>
+        //     prevMenus.map((menu) => ({
+        //       ...menu,
+        //       actions: menu.actions.map((action) => ({
+        //         ...action,
+        //         selected: false,
+        //       })),
+        //     }))
+        //   );
+        // } else {
+        //   toast.error(response.data.message || "Failed to create role");
+        // }
       } catch (error) {
         const errorMessage =
           error.response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
       }
     } else {
       toast.error("Currently You dont have access to this setting.");

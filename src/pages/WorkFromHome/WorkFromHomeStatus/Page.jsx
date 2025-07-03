@@ -40,12 +40,14 @@ const WorkFromHomeStatus = () => {
   const [selectedWorkFromHome, setSelectedWorkFromHome] = useState(null);
   const [workFromHome, setWorkFromHome] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [WFHDataPerPage, setWFHDataPerPage] = useState(10);
-  const [originalWorkFromHomeData, setOriginalLeaveData] = useState([]);
+  const [originalWorkFromHomeData, setOriginalWorkFromHomeData] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [isSearched, setIsSearched] = useState(false);
+
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
     isOpen: isRejectOpen,
@@ -61,21 +63,57 @@ const WorkFromHomeStatus = () => {
     { label: "WFH Status", href: "/WFH/Status" },
   ];
 
+  // Fixed handleApplyFilters function
   const handleApplyFilters = (result) => {
-    if (result.data) {
+    if (result && result.data && result.data.length >= 0) {
       // Filter component returned filtered data
       setWorkFromHome(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setIsFiltered(true);
+
+      // Update pagination info if provided
+      if (result.totalPages !== undefined) setTotalPages(result.totalPages);
+      if (result.totalRecords !== undefined)
+        setTotalRecords(result.totalRecords);
     } else {
-      // Reset case - restore original data
-      setWorkFromHome(originalWorkFromHomeData);
+      // Reset case - restore original data or refetch
+      setIsFiltered(false);
+      if (originalWorkFromHomeData.length > 0) {
+        setWorkFromHome(originalWorkFromHomeData);
+        // Reset pagination to original values
+        fetchWorkFromHome();
+      } else {
+        fetchWorkFromHome();
+      }
+    }
+  };
+
+  // Fixed handleApplySearch function
+  const handleApplySearch = (result) => {
+    if (result && result.data && result.data.length >= 0) {
+      // Search component returned filtered data
+      setWorkFromHome(result.data);
+      setIsSearched(true);
+
+      // Update pagination info if provided
+      if (result.totalPages !== undefined) setTotalPages(result.totalPages);
+      if (result.totalRecords !== undefined)
+        setTotalRecords(result.totalRecords);
+    } else {
+      // Reset case - restore original data or refetch
+      setIsSearched(false);
+      if (originalWorkFromHomeData.length > 0) {
+        setWorkFromHome(originalWorkFromHomeData);
+        // Reset pagination to original values
+        fetchWorkFromHome();
+      } else {
+        fetchWorkFromHome();
+      }
     }
   };
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const displayData = workFromHome.length > 0 && workFromHome;
+  const displayData = workFromHome.length > 0 ? workFromHome : [];
 
   const handleAction = (action, data) => {
     setSelectedWorkFromHome(data);
@@ -200,8 +238,8 @@ const WorkFromHomeStatus = () => {
   };
 
   const handlePageChange = (page) => {
-    setWorkFromHome([]);
     setCurrentPage(page);
+    // Don't clear the array immediately, let the useEffect handle it
   };
 
   const fetchWorkFromHome = async () => {
@@ -211,48 +249,46 @@ const WorkFromHomeStatus = () => {
         pageIndex: currentPage,
         pageSize: WFHDataPerPage,
       });
-      // const response = await axiosInstance.get(`/api/work_from_home/requests`);
+
       if (response.data.responseCode === "200") {
-        setWorkFromHome(response.data.datalist);
-        setOriginalLeaveData(response.data.datalist);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
+        setWorkFromHome(response.data.datalist || []);
+        setOriginalWorkFromHomeData(response.data.datalist || []);
+        setTotalPages(response.data.totalPages || 1);
+        setTotalRecords(response.data.totalRecords || 0);
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message || "Failed to fetch data");
+        setWorkFromHome([]);
+        setOriginalWorkFromHomeData([]);
       }
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
       toast.error(errorMessage);
+      setWorkFromHome([]);
+      setOriginalWorkFromHomeData([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchWorkFromHome();
+    // Only fetch if not currently filtered or searched
+    if (!isFiltered && !isSearched) {
+      fetchWorkFromHome();
+    }
   }, [currentPage, WFHDataPerPage]);
 
   const hasWorkFromHomeReviewAccess = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
   const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
+
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
-  const handleApplySearch = (result) => {
-    if (result.data) {
-      // Search component returned filtered data
-      setOriginalLeaveData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
-    } else {
-      fetchWorkFromHome();
-    }
-  };
+
   return (
     <div>
-      {" "}
       <>
         <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
           {/**Page Section */}
@@ -260,7 +296,7 @@ const WorkFromHomeStatus = () => {
             <div className="text-sm">
               <BreadcrumbsComponent items={breadcrumbItems} />
             </div>
-            <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
+            <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center gap-2">
               <div className="flex items-center page-title -pl-2">
                 <h1 className="page-title">Applied WFH</h1>
               </div>
@@ -277,11 +313,15 @@ const WorkFromHomeStatus = () => {
                       "workFromHomeEndDate",
                     ]}
                     placeholder="Search Employee..."
+                    pageSize={WFHDataPerPage}
+                    currentPage={currentPage}
                   />
                   <Filter
                     onApplyFilters={handleApplyFilters}
                     url="/api/v1/work_from_home/list"
                     className="w-full sm:w-auto"
+                    pageSize={WFHDataPerPage}
+                    currentPage={currentPage}
                   />
                 </div>
               </div>
@@ -295,26 +335,25 @@ const WorkFromHomeStatus = () => {
               <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
                 <Table
                   bordered
-                  aria-label="Table of Leave"
+                  aria-label="Table of WFH"
                   className="max-h-[75vh]">
                   <TableHeader>
                     <TableColumn>S.N</TableColumn>
                     <TableColumn>Full Name</TableColumn>
                     <TableColumn>Department</TableColumn>
-                    <TableColumn>Request Date</TableColumn>{" "}
-                    <TableColumn>WRH Start Date</TableColumn>
-                    <TableColumn>WRH End Date</TableColumn>
+                    <TableColumn>Request Date</TableColumn>
+                    <TableColumn>WFH Start Date</TableColumn>
+                    <TableColumn>WFH End Date</TableColumn>
                     <TableColumn>Status</TableColumn>
                     <TableColumn>Action</TableColumn>
                   </TableHeader>
                   <TableBody
-                    items={isLoading ? [] : workFromHome}
+                    items={displayData}
                     isLoading={isLoading}
-                    // loadingState={isLoading}
                     loadingContent={<SkeletonLoader />}>
                     {(item) => (
                       <TableRow
-                        key={item.rclId}
+                        key={item.rclId || Math.random()}
                         className="h-14 border-b-2 border-gray-300">
                         <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                         <TableCell>
@@ -326,7 +365,6 @@ const WorkFromHomeStatus = () => {
                             </Tooltip>
                           )}
                         </TableCell>
-
                         <TableCell>
                           {item?.departmentName?.length < 7 ? (
                             item?.departmentName
@@ -337,7 +375,6 @@ const WorkFromHomeStatus = () => {
                           )}
                         </TableCell>
                         <TableCell>{item?.requestDate || "N/A"}</TableCell>
-
                         <TableCell>
                           {item?.workFromHomeStartDate || "N/A"}
                         </TableCell>
@@ -345,7 +382,6 @@ const WorkFromHomeStatus = () => {
                           {item?.workFromHomeEndDate || "N/A"}
                         </TableCell>
                         <TableCell>
-                          {" "}
                           <div
                             className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
                               item?.approvalStatus
@@ -356,17 +392,11 @@ const WorkFromHomeStatus = () => {
                               ? "Approved"
                               : item?.approvalStatus === "REJECTED"
                               ? "Rejected"
-                              : "N/A"}{" "}
+                              : "N/A"}
                           </div>
                         </TableCell>
-
                         <TableCell>
                           <div className="flex gap-2">
-                            {/* <button
-                              className="text-blue-600 hover:text-blue-800"
-                              onClick={() => handleAction("view", item)}>
-                              <FaRegEye size={18} />
-                            </button> */}
                             {item?.approvalStatus === "PENDING" &&
                               hasWorkFromHomeReviewAccess && (
                                 <>
@@ -394,7 +424,7 @@ const WorkFromHomeStatus = () => {
             {/* Medium screens - Simplified table */}
             <div className="hidden md:block lg:hidden">
               <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
-                <Table bordered aria-label="Table of Leave">
+                <Table bordered aria-label="Table of WFH">
                   <TableHeader>
                     <TableColumn>Full Name</TableColumn>
                     <TableColumn>Start Date</TableColumn>
@@ -403,14 +433,14 @@ const WorkFromHomeStatus = () => {
                     <TableColumn>Action</TableColumn>
                   </TableHeader>
                   <TableBody
-                    items={isLoading ? [] : workFromHome}
+                    items={displayData}
                     isLoading={isLoading}
                     loadingContent={<SkeletonLoader />}>
                     {(item) => (
                       <TableRow
-                        key={Math.random()}
+                        key={item.rclId || Math.random()}
                         className="hover:bg-gray-50">
-                        <TableCell>{item?.fullName}</TableCell>
+                        <TableCell>{item?.userFullName}</TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span>{item?.workFromHomeStartDate || "N/A"}</span>
@@ -420,19 +450,13 @@ const WorkFromHomeStatus = () => {
                           <span>{item?.workFromHomeEndDate || "N/A"}</span>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base ${getStatusClass(
-                                item?.approvalStatus
-                              )}`}>
-                              {item?.teamLeaderName?.charAt(0) || "?"}
-                            </div>
-                            <div className="text-sm truncate max-w-20">
-                              {item?.teamLeaderName || "N/A"}
-                            </div>
+                          <div
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
+                              item?.approvalStatus
+                            )}`}>
+                            {item?.approvalStatus || "N/A"}
                           </div>
                         </TableCell>
-
                         <TableCell>
                           <div className="flex gap-2">
                             {item?.approvalStatus === "PENDING" &&
@@ -462,14 +486,16 @@ const WorkFromHomeStatus = () => {
             {/* Small screens - Card-like view */}
             <div className="block md:hidden overflow-y-auto">
               <div className="space-y-4">
-                {workFromHome.map((WFH) => (
+                {displayData.map((WFH) => (
                   <div
-                    key={WFH.rclId}
+                    key={WFH.rclId || Math.random()}
                     className="border rounded-lg overflow-hidden shadow-sm">
                     <div
                       className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                       onClick={() => toggleExpandedRow(WFH.rclId)}>
-                      <div className="font-medium">{WFH.fullName || "N/A"}</div>
+                      <div className="font-medium">
+                        {WFH.userFullName || "N/A"}
+                      </div>
                       <div className="flex items-center gap-2">
                         <div
                           className={`${getStatusClass(
@@ -502,8 +528,8 @@ const WorkFromHomeStatus = () => {
                         <div>{WFH?.workFromHomeEndDate || "N/A"}</div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Team Leader:</div>
-                        <div>{WFH?.teamLeaderName || "N/A"}</div>
+                        <div className="font-medium">Department:</div>
+                        <div>{WFH?.departmentName || "N/A"}</div>
                       </div>
                       <div className="flex justify-end gap-2 mt-4">
                         {WFH?.approvalStatus === "PENDING" &&
@@ -539,7 +565,7 @@ const WorkFromHomeStatus = () => {
             {/**Pagination Section - Responsive for all screens */}
             {workFromHome && workFromHome.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="text-sm font-medium text-gray-600  flex items-center">
+                <div className="text-sm font-medium text-gray-600 flex items-center">
                   <span className="mr-1">Showing:</span>
                   <span className="font-bold text-gray-800 mx-1">
                     {totalRecords < WFHDataPerPage
@@ -597,7 +623,7 @@ const WorkFromHomeStatus = () => {
                         </div>
                         <div>
                           <span className="font-medium mr-1">Employee:</span>
-                          <span>{selectedWorkFromHome?.fullName}</span>
+                          <span>{selectedWorkFromHome?.userFullName}</span>
                         </div>
                         <div>
                           <span className="font-medium mr-1">Start Date:</span>
@@ -667,7 +693,7 @@ const WorkFromHomeStatus = () => {
                         </div>
                         <div>
                           <span className="font-medium mr-1">Employee:</span>
-                          <span>{selectedWorkFromHome?.fullName}</span>
+                          <span>{selectedWorkFromHome?.userFullName}</span>
                         </div>
                         <div>
                           <span className="font-medium mr-1">Start Date:</span>
@@ -687,20 +713,6 @@ const WorkFromHomeStatus = () => {
                           </span>
                           <span>{selectedWorkFromHome?.requestDate}</span>
                         </div>
-                        {selectedWorkFromHome?.leaveType && (
-                          <div>
-                            <span className="font-medium mr-1">
-                              Leave Type:
-                            </span>
-                            <span>{selectedWorkFromHome?.leaveType}</span>
-                          </div>
-                        )}
-                        {selectedWorkFromHome?.isHalfDay && (
-                          <div>
-                            <span className="font-medium mr-1">Half Day:</span>
-                            <span>{selectedWorkFromHome?.isHalfDay}</span>
-                          </div>
-                        )}
                         <div className="col-span-1 md:col-span-2 lg:col-span-3">
                           <span className="font-medium mr-1">
                             Reason/Email:

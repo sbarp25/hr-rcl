@@ -36,7 +36,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-import { useFetchPosition } from "../../../hooks/useAuth.js";
+import { useDeletePosition, useFetchPosition } from "../../../hooks/useAuth.js";
 const TotalPage = () => {
   const [positionId, setPositionId] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
@@ -47,7 +47,7 @@ const TotalPage = () => {
   const [positionPerPage, setPositionPerPage] = useState(10);
   const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
+  const { mutate: deletePosition } = useDeletePosition();
   const navigate = useNavigate();
 
   const breadcrumbItems = [
@@ -107,28 +107,14 @@ const TotalPage = () => {
     setIsDeleteLoading(true);
     try {
       if (hasPositionDeleteAccess) {
-        const response = await axiosInstance.delete(
-          `api/v1/positions/delete/${positionId}`
-        );
-        if (response.data.responseCode === "204") {
-          toast.success(
-            response.data.message || "Position deleted successfully!"
-          );
-          refetch();
-          onClose();
-
-          // Refresh the data after deletion
-          const updatedPage =
-            positionData.length === 1 && currentPage > 1
-              ? currentPage - 1
-              : currentPage;
-
-          setCurrentPage(updatedPage);
-        } else {
-          toast.error(
-            response.data.message || "Failed to delete the position."
-          );
-        }
+        deletePosition(positionId, {
+          onSuccess: () => {
+            onClose();
+          },
+          onSettled: () => {
+            setIsDeleteLoading(false);
+          },
+        });
       } else {
         toast.error("Access denied");
       }
@@ -138,6 +124,7 @@ const TotalPage = () => {
       setIsDeleteLoading(false);
     }
   };
+
   const handlePageChange = (page) => {
     //To change the page as well as to reset the data
     setCurrentPage(page);

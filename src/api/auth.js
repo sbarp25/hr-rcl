@@ -186,7 +186,8 @@ export const lateCheckInAPI = async (requestData) => {
 // fetch Late checkin's
 export const fetchlateCheckin = async (currentPage, lateCheckInDataPerPage) => {
   const response = await axiosInstance.post(
-    "/api/v1/attendance/late-check-in/role-based-reviews",
+    // "/api/v1/attendance/late-check-in/late-attendance/by-role",
+    "/api/v1/attendance/late-check-in/late-attendance/list",
     { pageIndex: currentPage, pageSize: lateCheckInDataPerPage }
   );
   if (response?.data?.responseCode === "200") {
@@ -360,16 +361,17 @@ export const fetchDepartmentId = async (longid) => {
 
 /**EdIt Department */
 export const EditDepartment = async (updatedDepartment, longid) => {
+  const id = parseInt(longid);
   const response = await axiosInstance.put(
-    (`/api/v1/departments/update/${longid}`,
+    `/api/v1/departments/update/${id}`,
     updatedDepartment,
     {
       headers: {
         "Content-Type": "application/json",
       },
-    })
+    }
   );
-  return response?.data?.data;
+  return response?.data;
 };
 
 /**Fetch unpaginated Position */
@@ -382,17 +384,33 @@ export const fetchUnPaginatedPosition = async () => {
     throw new Error(response?.data?.message || "Failed to fetch Position");
   }
 };
-/**Fetch unpaginated Roles */
-export const fetchUnPaginatedRoles = async () => {
-  const response = await axiosInstance.post("/api/v1/role/get/all", {});
-  if (response?.data?.responseCode === "200") {
-    return response.data;
-  } else {
-    toast.error(response?.data?.message);
-    throw new Error(response?.data?.message || "Failed to fetch Roles");
-  }
+/**Create Position*/
+export const createPosition = async (newPosition) => {
+  const response = await axiosInstance.post(
+    "/api/v1/positions/save",
+    newPosition,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
 };
 
+/**Edit Position */
+export const editPosition = async ({ updatePosition, id }) => {
+  const response = await axiosInstance.put(
+    `/api/v1/positions/update/${id}`,
+    updatePosition,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
+};
 /**Fetch Position */
 export const fetchPosition = async (currentPage, positionPerPage) => {
   const response = await axiosInstance.post("/api/v1/positions/list", {
@@ -405,6 +423,25 @@ export const fetchPosition = async (currentPage, positionPerPage) => {
     toast.error(response?.data?.message);
     throw new Error(response?.data?.message || "Failed to fetch Position");
   }
+};
+
+/**Delete Position */
+export const deletePosition = async (positionId) => {
+  const response = await axiosInstance.delete(
+    `api/v1/positions/delete/${positionId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
+};
+
+/**Fetch Position By Id */
+export const fetchPositionById = async (id) => {
+  const response = await axiosInstance.get(`/api/v1/positions/get/${id}`);
+  return response?.data;
 };
 
 /**Fetch Roles */
@@ -420,7 +457,16 @@ export const fetchrole = async (currentPage, rolesPerPage) => {
     throw new Error(response?.data?.message || "Failed to fetch Roles");
   }
 };
-
+/**Fetch unpaginated Roles */
+export const fetchUnPaginatedRoles = async () => {
+  const response = await axiosInstance.post("/api/v1/role/get/all", {});
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
 /**Delete Role */
 export const deleteRole = async (roleId) => {
   const response = await axiosInstance.delete(`/api/v1/role/delete/${roleId}`);
@@ -430,6 +476,16 @@ export const deleteRole = async (roleId) => {
     toast.error(response?.data?.message);
     throw new Error(response?.data?.message || "Failed to delete Role");
   }
+};
+
+/**Create Role */
+export const createRole = async (newRole) => {
+  const response = await axiosInstance.post("/api/v1/role/save", newRole, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response?.data;
 };
 
 /**Get Site Key */
@@ -693,5 +749,13 @@ export const leaveById = async (id) => {
     return response.data;
   } else {
     throw new Error(response?.data?.message || "Failed to fetch Leave");
+  }
+};
+
+/**Salary Calculation */
+export const salaryCalculation = async () => {
+  const response = await axiosInstance.get("/api/salary/calculate");
+  if (response?.data?.responseCode === "200") {
+    return response?.data?.data;
   }
 };

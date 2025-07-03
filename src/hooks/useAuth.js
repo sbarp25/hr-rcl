@@ -6,12 +6,16 @@ import {
   checkOutAPI,
   createDepartment,
   createEmployees,
+  createPosition,
+  createRole,
   deleteDepartment,
   deleteDevice,
   deleteEmployees,
   deleteOneDecice,
+  deletePosition,
   deleteRole,
   EditDepartment,
+  editPosition,
   fetchApprovedLeave,
   fetchApprovedWorkFromHome,
   fetchBank,
@@ -24,6 +28,7 @@ import {
   fetchleave,
   fetchListLeave,
   fetchPosition,
+  fetchPositionById,
   fetchrcl,
   fetchrole,
   fetchTeamLead,
@@ -43,6 +48,7 @@ import {
   logoutUser,
   OTPVerification,
   resetPassword,
+  salaryCalculation,
   updateEmployees,
 } from "../api/auth";
 import { toast } from "sonner";
@@ -491,22 +497,23 @@ export const useIndivisualDepartment = (longid) => {
 };
 
 /**Edit Department */
-export const useEditDepartment = (updatedDepartment, longid) => {
+export const useEditDepartment = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: EditDepartment(updatedDepartment, longid),
+    mutationFn: ({ updatedDepartment, longid }) =>
+      EditDepartment(updatedDepartment, longid),
     onSuccess: (response) => {
-      if (response?.data?.responseCode === "200") {
+      if (response?.responseCode === "200") {
         toast.success(
-          response?.data?.message || "Department has been updated successfully."
+          response?.message || "Department has been updated successfully."
         );
         queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
-        navigate("master-data/Department");
+        navigate("/master-data/Department"); // Fixed navigation path
       } else {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          response?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
       }
@@ -531,6 +538,103 @@ export const useFetchUnPaginatedDepartment = () => {
     },
   });
 };
+
+/**Create Position */
+export const useCreatePosition = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createPosition,
+    onSuccess: (response) => {
+      if (response?.responseCode === "201") {
+        toast.success(
+          response?.data?.message || "Position Created Successfully"
+        );
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+        navigate("/master-data/Position");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Position By Id */
+export const usePositionById = (id) => {
+  return useQuery({
+    queryKey: ["FetchPositionById", id],
+    queryFn: () => fetchPositionById(id),
+  });
+};
+
+/**Edit Position */
+export const useEditPosition = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: ({ updatePosition, id }) =>
+      editPosition({ updatePosition, id }),
+    onSuccess: (response) => {
+      if (response?.responseCode === "200") {
+        toast.success(
+          response?.message || "Position has been updated successfully."
+        );
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+        navigate("/master-data/Position"); // Fixed navigation path
+      } else {
+        const errorMessage =
+          response?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Delete Position */
+export const useDeletePosition = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deletePosition,
+    onSuccess: (data) => {
+      if (data?.responseCode === "204") {
+        toast.success(data.message || "Department deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
 /**Fetch unpaginated position */
 export const useFetchUnPaginatedPosition = () => {
   return useQuery({
@@ -538,16 +642,6 @@ export const useFetchUnPaginatedPosition = () => {
     queryFn: () => fetchUnPaginatedPosition(),
     onError: (error) => {
       console.error("Error fetching Position", error);
-    },
-  });
-};
-/**Fetch unpaginated Roles */
-export const useFetchUnPaginatedRoles = () => {
-  return useQuery({
-    queryKey: ["fetchUnpaginatedRoles"],
-    queryFn: () => fetchUnPaginatedRoles(),
-    onError: (error) => {
-      console.error("Error fetching Roles", error);
     },
   });
 };
@@ -574,6 +668,40 @@ export const useFetchRoles = (currentPage, rolesPerPage) => {
   });
 };
 
+/**Create Roles */
+export const useCreateRoles = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createRole,
+    onSuccess: (response) => {
+      if (response?.responseCode === "201") {
+        toast.success(response?.message || "Roles Created Successfully");
+        queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
+        navigate("/master-data/Roles");
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch unpaginated Roles */
+export const useFetchUnPaginatedRoles = () => {
+  return useQuery({
+    queryKey: ["fetchUnpaginatedRoles"],
+    queryFn: () => fetchUnPaginatedRoles(),
+    onError: (error) => {
+      console.error("Error fetching Roles", error);
+    },
+  });
+};
 /**Use Role Delete */
 export const useDeleteRoles = () => {
   const queryClient = useQueryClient();
@@ -825,6 +953,20 @@ export const useLeaveById = (id) => {
   return useQuery({
     queryKey: ["LeaveUser", id],
     queryFn: () => leaveById(id),
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Salary Details */
+export const useSalary = () => {
+  return useQuery({
+    querKey: ["SalaryDetails"],
+    queryFn: () => salaryCalculation,
     onError: (error) => {
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||

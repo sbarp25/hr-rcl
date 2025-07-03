@@ -3,7 +3,6 @@ import { Controller, useForm } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
-import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -15,6 +14,7 @@ import {
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
 import {
+  useEditDepartment,
   useFetchTeamLead,
   useIndivisualDepartment,
 } from "../../../../hooks/useAuth.js";
@@ -61,15 +61,8 @@ const EditDepartment = () => {
     if (screenWidth >= 768) return 4; // md
     return 4; // default for smaller screens
   };
-  const {
-    data: teamLead,
-    isLoading,
-    error: teamLeadError,
-  } = useFetchTeamLead();
+  const { data: teamLead, isLoading } = useFetchTeamLead();
 
-  {
-    /**To fetch Department Data */
-  }
   const { data } = useIndivisualDepartment(longid);
 
   useEffect(() => {
@@ -83,42 +76,7 @@ const EditDepartment = () => {
     }
   }, [data, reset]);
 
-  // const fetchDepartmentById = async () => {
-  //   try {
-  //     // const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
-  //     const response = await axiosInstance.post(
-  //       `/api/v1/departments/get/${longid}`,
-  //       {
-  //         id: parseFloat(id),
-  //       }
-  //     );
-  //     if (response.data.responseCode === "200") {
-  //       const data = response.data.data;
-  //       reset({
-  //         title: data?.name,
-  //         description: data?.description,
-  //         Associateteamlead: data?.associateTeamLeadId,
-  //         teamlead: data?.teamLeadId,
-  //       });
-  //     } else {
-  //       toast.error(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-  //       "Something went wrong. Try again.";
-  //     toast.error(errorMessage);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchDepartmentById();
-  // }, []);
-
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Department", href: "/master-data/Department" },
-  ];
-
+  const editDepartmentMutation = useEditDepartment();
   const onSubmit = async (data) => {
     if (hasaccess) {
       const updatedDepartment = {
@@ -130,22 +88,7 @@ const EditDepartment = () => {
         },
       };
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        const response = await axiosInstance.put(
-          `/api/v1/departments/update/${longid}`,
-          updatedDepartment,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          navigate("/master-data/Department");
-          toast.success(response?.data?.message);
-          reset();
-        }
+        editDepartmentMutation.mutate({ updatedDepartment, longid });
       } catch (error) {
         const errorMessage =
           error.response?.data?.error || "Something went wrong";

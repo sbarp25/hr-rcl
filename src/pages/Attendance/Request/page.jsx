@@ -207,7 +207,7 @@ const AttendanceRequest = () => {
                 <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                   <Search
                     onApplySearch={handleApplySearch}
-                    url="/api/v1/attendance/late-check-in/role-based-reviews"
+                    url="/api/v1/attendance/late-check-in/late-attendance/by-role"
                     searchFields={[
                       "rclId",
                       "departmentName",
@@ -255,12 +255,12 @@ const AttendanceRequest = () => {
                   </TableHeader>
                   <TableBody>
                     {lateCheckinData
-                      .filter(
-                        (lateCHeckin) => lateCHeckin.status !== "APPROVED"
+                      ?.filter(
+                        (lateCHeckin) => lateCHeckin?.status !== "APPROVED"
                       )
                       .map((late, index) => (
                         <TableRow
-                          key={late.lateCheckInId}
+                          key={late?.lateCheckInId}
                           className="h-14 border-b-2 border-gray-300">
                           <TableCell>
                             {(currentPage - 1) * lateCheckInDataPerPage +
@@ -268,73 +268,73 @@ const AttendanceRequest = () => {
                               1}
                           </TableCell>
                           <TableCell>
-                            {late.rclId.length < 7 ? (
-                              late.rclId
+                            {late?.rclId?.length < 7 ? (
+                              late?.rclId
                             ) : (
-                              <Tooltip content={late.rclId}>
-                                {truncateText(late.rclId, 7)}
+                              <Tooltip content={late?.rclId}>
+                                {truncateText(late?.rclId, 7)}
                               </Tooltip>
                             )}
                           </TableCell>
                           <TableCell>
-                            {late.departmentName.length < 7 ? (
-                              late.departmentName
+                            {late?.departmentName?.length < 7 ? (
+                              late?.departmentName
                             ) : (
-                              <Tooltip content={late.departmentName}>
-                                {truncateText(late.departmentName, 7) || "N/A"}
+                              <Tooltip content={late?.departmentName}>
+                                {truncateText(late?.departmentName, 7) || "N/A"}
                               </Tooltip>
                             )}
                           </TableCell>
                           <TableCell>
-                            {late.email.length < 7 ? (
-                              late.email
+                            {late?.email?.length < 7 ? (
+                              late?.email
                             ) : (
-                              <Tooltip content={late.email}>
-                                {truncateText(late.email, 7)}
+                              <Tooltip content={late?.email}>
+                                {truncateText(late?.email, 7)}
                               </Tooltip>
                             )}
                           </TableCell>
-                          <TableCell>{late.attendanceDate}</TableCell>
-                          <TableCell>{late.expectedCheckInTime}</TableCell>
+                          <TableCell>{late?.attendanceDate}</TableCell>
+                          <TableCell>{late?.expectedCheckInTime}</TableCell>
 
                           <TableCell>
                             <div
                               className={`px-3 py-1.5 text-xs font-medium rounded-full text-center inline-flex items-center justify-center shadow-sm ${
-                                late.isPending === true
+                                late?.isPending === true
                                   ? "bg-green-100 border border-green-600 text-green-600"
-                                  : late.isPending === false
+                                  : late?.isPending === false
                                   ? "bg-red-100 border border-red-600 text-red-600"
                                   : "bg-yellow-100 border border-yellow-500 text-yellow-500"
                               } text-center p-2 w-fit`}>
-                              {late.isApproved === true ? (
+                              {late?.isApproved === true ? (
                                 <span>Approved</span>
-                              ) : late.isApproved === true ? (
+                              ) : late?.isApproved === true ? (
                                 <span>Rejected</span>
                               ) : (
                                 <span>Pending</span>
                               )}
                             </div>
-                            {/* {late.status} */}
+                            {/* {late?.status} */}
                           </TableCell>
                           <TableCell>
-                            {late.checkInTime.length < 5 ? (
-                              late.checkInTime
+                            {late?.checkInTime?.length < 5 ? (
+                              late?.checkInTime
                             ) : (
-                              <Tooltip content={late.checkInTime}>
-                                {truncateText(late.checkInTime, 7)}
+                              <Tooltip content={late?.checkInTime}>
+                                {truncateText(late?.checkInTime, 7)}
                               </Tooltip>
                             )}
                           </TableCell>
                           <TableCell>
                             {" "}
-                            {late.lateReason.length < 5 ? (
-                              late.lateReason
+                            {late?.lateReason?.length < 5 ? (
+                              late?.lateReason
                             ) : (
-                              <Tooltip content={late.lateReason}>
-                                {truncateText(late.lateReason, 7)}
+                              <Tooltip content={late?.lateReason}>
+                                {truncateText(late?.lateReason, 7)}
                               </Tooltip>
                             )}
-                            {/* {late.lateReason} */}
+                            {/* {late?.lateReason} */}
                           </TableCell>
                           <TableCell>
                             <div className="flex justify-between items-center">
@@ -370,43 +370,43 @@ const AttendanceRequest = () => {
                     <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    {lateCheckinData.map((late) => (
+                    {lateCheckinData?.map((late) => (
                       <TableRow
-                        key={late.lateCheckInId}
+                        key={late?.lateCheckInId}
                         className="hover:bg-gray-50 dark:hover:bg-slate-500">
                         <TableCell>
                           <div className="flex flex-col">
-                            <span>{late.fullName}</span>
+                            <span>{late?.fullName}</span>
                             <span className="text-xs text-gray-500">
-                              {late.rclId}
+                              {late?.rclId}
                             </span>
                           </div>
                         </TableCell>
                         <TableCell>
-                          {late.departmentName.length < 7 ? (
-                            late.departmentName
+                          {late?.departmentName.length < 7 ? (
+                            late?.departmentName
                           ) : (
-                            <Tooltip content={late.departmentName}>
-                              {truncateText(late.departmentName, 7)}
+                            <Tooltip content={late?.departmentName}>
+                              {truncateText(late?.departmentName, 7)}
                             </Tooltip>
                           )}
                         </TableCell>
-                        <TableCell>{late.attendanceDate}</TableCell>
+                        <TableCell>{late?.attendanceDate}</TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span>Expected: {late.expectedCheckInTime}</span>
-                            <span>Actual: {late.checkInTime}</span>
+                            <span>Expected: {late?.expectedCheckInTime}</span>
+                            <span>Actual: {late?.checkInTime}</span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div
                             className="max-w-[150px] truncate"
-                            title={late.lateReason}>
-                            {late.lateReason}
+                            title={late?.lateReason}>
+                            {late?.lateReason}
                           </div>
                         </TableCell>
                         <TableCell>
-                          {late.status === "Pending" && (
+                          {late?.status === "Pending" && (
                             <div className="flex justify-center gap-4">
                               <FaCheck
                                 className={`${
@@ -416,7 +416,7 @@ const AttendanceRequest = () => {
                                 }`}
                                 title="Edit"
                                 onClick={() =>
-                                  handleAction("Approve", late.lateCheckInId)
+                                  handleAction("Approve", late?.lateCheckInId)
                                 }
                               />
                               <MdDelete
@@ -427,7 +427,7 @@ const AttendanceRequest = () => {
                                 }`}
                                 title="Delete"
                                 onClick={() =>
-                                  handleAction("Reject", late.lateCheckInId)
+                                  handleAction("Reject", late?.lateCheckInId)
                                 }
                               />
                             </div>
@@ -445,20 +445,20 @@ const AttendanceRequest = () => {
               <div className="space-y-4 overflow-y-auto">
                 {lateCheckinData.map((late) => (
                   <div
-                    key={late.lateCheckInId}
+                    key={late?.lateCheckInId}
                     className="border rounded-lg overflow-hidden shadow-sm">
                     <div
                       className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-blac"
-                      onClick={() => toggleExpandedRow(late.lateCheckInId)}>
-                      <div className="font-medium">{late.fullName}</div>
+                      onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
+                      <div className="font-medium">{late?.fullName}</div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">
-                          {late.attendanceDate}
+                          {late?.attendanceDate}
                         </span>
                         <FaChevronDown
                           size={16}
                           className={`transition-transform ${
-                            expandedRow === late.lateCheckInId
+                            expandedRow === late?.lateCheckInId
                               ? "rotate-180"
                               : ""
                           }`}
@@ -467,44 +467,44 @@ const AttendanceRequest = () => {
                     </div>
                     <div
                       className={`${
-                        expandedRow === late.lateCheckInId ? "block" : "hidden"
+                        expandedRow === late?.lateCheckInId ? "block" : "hidden"
                       } p-3 space-y-2 text-sm`}>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">RCL-ID:</div>
-                        <div>{late.rclId}</div>
+                        <div>{late?.rclId}</div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Email:</div>
-                        <div className="truncate">{late.email}</div>
+                        <div className="truncate">{late?.email}</div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Department:</div>
                         <div className="truncate">
-                          {late.departmentName.length < 7 ? (
-                            late.departmentName
+                          {late?.departmentName.length < 7 ? (
+                            late?.departmentName
                           ) : (
-                            <Tooltip content={late.departmentName}>
-                              {truncateText(late.departmentName, 7)}
+                            <Tooltip content={late?.departmentName}>
+                              {truncateText(late?.departmentName, 7)}
                             </Tooltip>
                           )}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Expected Time:</div>
-                        <div>{late.expectedCheckInTime}</div>
+                        <div>{late?.expectedCheckInTime}</div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Actual Time:</div>
-                        <div>{late.checkInTime}</div>
+                        <div>{late?.checkInTime}</div>
                       </div>
                       <div className="col-span-2 mt-2">
                         <div className="font-medium">Justification:</div>
                         <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
-                          {late.lateReason}
+                          {late?.lateReason}
                         </div>
                       </div>
-                      {late.status === "Pending" && (
+                      {late?.status === "Pending" && (
                         <div className="flex justify-end gap-4 mt-2">
                           <Button
                             size="sm"
@@ -516,7 +516,7 @@ const AttendanceRequest = () => {
                             }`}
                             onPress={() =>
                               hasAttendanceEditAccess &&
-                              handleAction("Approve", late.lateCheckInId)
+                              handleAction("Approve", late?.lateCheckInId)
                             }
                             disabled={!hasAttendanceEditAccess}>
                             Approve
@@ -531,7 +531,7 @@ const AttendanceRequest = () => {
                             }`}
                             onPress={() =>
                               hasAttendanceEditAccess &&
-                              handleAction("Reject", late.lateCheckInId)
+                              handleAction("Reject", late?.lateCheckInId)
                             }
                             disabled={!hasAttendanceEditAccess}>
                             Reject

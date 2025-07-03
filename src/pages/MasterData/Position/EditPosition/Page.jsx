@@ -3,21 +3,18 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
-import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import { useEditPosition, usePositionById } from "../../../../hooks/useAuth.js";
 
 const EditPosition = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const { id } = useParams();
   const navigate = useNavigate();
   const {
@@ -56,40 +53,21 @@ const EditPosition = () => {
     if (screenWidth >= 1280) return 8; // xl
     if (screenWidth >= 1024) return 6; // lg
     if (screenWidth >= 768) return 4; // md
-    return 4; // default for smaller screens
+    return 4;
   };
 
-  const fetchPositionData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(`/api/v1/positions/get/${id}`);
-      if (response.data.responseCode === "200") {
-        const data = response.data.data;
-        reset({
-          title: data?.positionName,
-          description: data?.description,
-        });
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data } = usePositionById(id);
+
   useEffect(() => {
-    fetchPositionData();
-  }, []);
+    if (data) {
+      reset({
+        title: data?.data?.positionName,
+        description: data?.data?.description,
+      });
+    }
+  }, [data, reset]);
 
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "MasterData", href: "" },
-    { label: "Position", href: "/master-data/Position" },
-  ];
+  const editPositionMutation = useEditPosition();
   const onSubmit = async (data) => {
     if (hasaccess) {
       const updatePosition = {
@@ -98,30 +76,12 @@ const EditPosition = () => {
           description: data.description,
         },
       };
-      setIsLoading(true);
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        const response = await axiosInstance.put(
-          `/api/v1/positions/update/${id}`,
-          updatePosition,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          navigate("/master-data/Position");
-          toast.success(response?.data?.message);
-          reset();
-        }
+        await editPositionMutation.mutateAsync({ updatePosition, id });
       } catch (error) {
         const errorMessage =
           error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
       }
     } else {
       toast.error("Currently You dont have access to this setting.");
@@ -136,6 +96,7 @@ const EditPosition = () => {
     }
   }, [hasaccess, navigate]);
 
+  const isLoading = editPositionMutation.isPending;
   return (
     <>
       {isLoading ? (

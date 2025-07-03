@@ -1,4 +1,4 @@
-import { Switch } from "@heroui/react";
+import { Checkbox, Switch } from "@heroui/react";
 import { useTheme } from "@heroui/use-theme";
 
 export const MoonIcon = (props) => {
@@ -41,6 +41,12 @@ export const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
   return (
+    // <div>
+    //   {/* The current theme is: {theme} */}
+    //   <button onClick={() => setTheme("light")}>Light Mode</button>
+    //   <button onClick={() => setTheme("dark")}>Dark Mode</button>
+    // </div>
+
     <Switch
       color="default"
       isSelected={isDark}
