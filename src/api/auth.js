@@ -312,6 +312,65 @@ export const fetchUnPaginatedDepartment = async () => {
     throw new Error(response?.data?.message || "Failed to fetch Departments");
   }
 };
+/**Delete Department */
+export const deleteDepartment = async (departmentId) => {
+  const response = await axiosInstance.delete(
+    `/api/v1/departments/delete/${departmentId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+/**Create Department */
+export const createDepartment = async (AddDepartment) => {
+  const response = await axiosInstance.post(
+    "/api/v1/departments/register",
+    AddDepartment,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+/**Fetch Team Lead */
+export const fetchTeamLead = async () => {
+  const response = await axiosInstance.get(
+    "/api/v1/departments/get_all_users_name_id"
+  );
+  return response.data;
+};
+
+/**Fetch Indivisual Department Data */
+export const fetchDepartmentId = async (longid) => {
+  const response = await axiosInstance.post(
+    `/api/v1/departments/get/${longid}`,
+    {
+      id: parseFloat(longid),
+    }
+  );
+  return response?.data?.data;
+};
+
+/**EdIt Department */
+export const EditDepartment = async (updatedDepartment, longid) => {
+  const response = await axiosInstance.put(
+    (`/api/v1/departments/update/${longid}`,
+    updatedDepartment,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  );
+  return response?.data?.data;
+};
 
 /**Fetch unpaginated Position */
 export const fetchUnPaginatedPosition = async () => {
@@ -581,9 +640,8 @@ export const fetchListLeave = async (currentPage, leaveDataPerPage) => {
     pageSize: leaveDataPerPage,
   });
   if (response?.data?.responseCode === "200") {
-    return response;
+    return response.data;
   } else {
-    toast.error(response?.data?.message);
     throw new Error(response?.data?.message || "Failed to fetch Roles");
   }
 };
@@ -600,4 +658,40 @@ export const leaveRequest = async (applyleave) => {
     }
   );
   return response;
+};
+
+/**Update Leave */
+export const updateLeaveStatus = async (leaveData) => {
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    throw new Error("Authentication is missing.");
+  }
+
+  const response = await axiosInstance.put("/api/leave/status", leaveData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (response?.data?.responseCode !== "200") {
+    throw new Error(
+      response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong"
+    );
+  }
+
+  return response.data;
+};
+
+/**Leave by Id */
+export const leaveById = async (id) => {
+  const response = await axiosInstance.post("/api/leave/leaveId", {
+    data: { rclId: id },
+  });
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    throw new Error(response?.data?.message || "Failed to fetch Leave");
+  }
 };

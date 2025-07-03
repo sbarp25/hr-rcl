@@ -4,15 +4,19 @@ import {
   autoCheckout,
   checkInAPI,
   checkOutAPI,
+  createDepartment,
   createEmployees,
+  deleteDepartment,
   deleteDevice,
   deleteEmployees,
   deleteOneDecice,
   deleteRole,
+  EditDepartment,
   fetchApprovedLeave,
   fetchApprovedWorkFromHome,
   fetchBank,
   fetchDepartment,
+  fetchDepartmentId,
   fetchEkye,
   fetchEmployeeDetails,
   fetchEmployees,
@@ -22,6 +26,7 @@ import {
   fetchPosition,
   fetchrcl,
   fetchrole,
+  fetchTeamLead,
   fetchTrustedDevices,
   fetchUnPaginatedDepartment,
   fetchUnPaginatedPosition,
@@ -32,6 +37,7 @@ import {
   lateCheckInAPI,
   lateCheckInApprove,
   lateCheckInReject,
+  leaveById,
   leaveRequest,
   loginUser,
   logoutUser,
@@ -414,6 +420,106 @@ export const useFetchDepartment = (currentPage, departmentPerPage) => {
     },
   });
 };
+/**Delete Department */
+export const useDeleteDepartment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteDepartment,
+    onSuccess: (data) => {
+      if (data.responseCode === "204") {
+        toast.success(data.message || "Department deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+      } else {
+        toast.error(data.message || "Failed to delete department");
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Create Department */
+export const useCreateDepartment = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createDepartment,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "201 ") {
+        toast.success(
+          response?.data?.message || "Department Created Successfully"
+        );
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+        navigate("/master-data/Department");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Team Lead */
+export const useFetchTeamLead = () => {
+  return useQuery({
+    queryKey: ["FetchTeamLead"],
+    queryFn: fetchTeamLead,
+  });
+};
+
+/**Fetch Indivisual Department */
+export const useIndivisualDepartment = (longid) => {
+  return useQuery({
+    queryKey: ["FetchIndivisualDepartment", longid],
+    queryFn: () => fetchDepartmentId(longid),
+  });
+};
+
+/**Edit Department */
+export const useEditDepartment = (updatedDepartment, longid) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: EditDepartment(updatedDepartment, longid),
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Department has been updated successfully."
+        );
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+        navigate("master-data/Department");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
 
 /**Fetch unpaginated department */
 export const useFetchUnPaginatedDepartment = () => {
@@ -671,13 +777,14 @@ export const useLeaveByRole = (currentPage, leaveDataPerPage) => {
   });
 };
 
-/**Fetch Leave By List */
 export const useLeaveByList = (currentPage, leaveDataPerPage) => {
   return useQuery({
-    queryKey: ["fetchLevelByList", currentPage, leaveDataPerPage],
+    queryKey: ["leaveList", currentPage, leaveDataPerPage],
     queryFn: () => fetchListLeave(currentPage, leaveDataPerPage),
+    enabled: !!(currentPage && leaveDataPerPage),
     onError: (error) => {
-      console.error("Unable to fetch:", error);
+      console.error("Failed to fetch leave data:", error);
+      toast.error(error.message || "Failed to fetch leave data");
     },
   });
 };
@@ -708,6 +815,20 @@ export const useLeaveRequest = () => {
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
         error.response?.data?.error ||
         "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Leave By Id */
+export const useLeaveById = (id) => {
+  return useQuery({
+    queryKey: ["LeaveUser", id],
+    queryFn: () => leaveById(id),
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
   });

@@ -38,7 +38,10 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-import { useFetchDepartment } from "../../../hooks/useAuth.js";
+import {
+  useDeleteDepartment,
+  useFetchDepartment,
+} from "../../../hooks/useAuth.js";
 const Department = () => {
   const [filteredData, setFilteredData] = useState(null);
   const [filteredPagination, setFilteredPagination] = useState(null);
@@ -57,7 +60,7 @@ const Department = () => {
     currentPage,
     departmentPerPage
   );
-
+  const { mutate: deleteMutation } = useDeleteDepartment();
   const departmentsData = filteredData || data?.datalist || [];
   const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
   const totalRecords =
@@ -114,21 +117,14 @@ const Department = () => {
     setIsDeleteLoading(true);
     try {
       if (hasDepartmentDeleteAccess) {
-        const response = await axiosInstance.delete(
-          `/api/v1/departments/delete/${departmentId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.data.responseCode === "204") {
-          onClose();
-          toast.success(response.data.message);
-        } else {
-          toast.error(response.data.message);
-        }
+        deleteMutation(departmentId, {
+          onSuccess: () => {
+            onClose();
+          },
+          onSettled: () => {
+            setIsDeleteLoading(false);
+          },
+        });
       } else {
         toast.error("Access denied");
       }
@@ -177,12 +173,16 @@ const Department = () => {
   };
   const handleApplySearch = (result) => {
     if (result.data) {
-      // Search component returned filtered data
-      setDepartmentsData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setFilteredPagination({
+        totalPages: result.totalPages || 1,
+        totalRecords: result.totalRecords || 0,
+      });
+      setCurrentPage(1);
     } else {
-      fetchDepartments();
+      setFilteredData(null);
+      setFilteredPagination(null);
+      refetch();
     }
   };
   return (
