@@ -177,7 +177,10 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
           navigate("/EKYE");
         }
       } else {
-        toast.error("Something went wrong");
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     },
     onError: (error) => {
