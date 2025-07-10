@@ -475,15 +475,13 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: createDepartment,
     onSuccess: (response) => {
-      if (response?.data?.responseCode === "201") {
-        toast.success(
-          response?.data?.message || "Department Created Successfully"
-        );
+      if (response?.responseCode === "201") {
+        toast.success(response?.message || "Department Created Successfully");
         queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
         navigate("/master-data/Department");
       } else {
         const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          response?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
       }
