@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import axiosInstance from "../lib/axios-Instance";
 import { Button, Select, SelectItem, Checkbox } from "@heroui/react";
 import ValidationComponent from "./ValidationComponent";
 
 import { useForm, Controller } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
 import Loader from "./Loader/Loader.jsx";
+import {
+  useAddressDetails,
+  useDistrictsByProvince,
+  useProvinces,
+  useSaveAddressDetails,
+} from "../hooks/useAuth.js";
 
 const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [permanentDistrictName, setPermanentDistrictName] = useState("");
   const [temporaryDistrictName, setTemporaryDistrictName] = useState("");
   const [permanentProvinceName, setPermanentProvinceName] = useState("");
   const [temporaryProvinceName, setTemporaryProvinceName] = useState("");
+  const [selectedProvinceId, setSelectedProvinceId] = useState(null);
 
   const {
     control,
@@ -52,143 +53,125 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const watchedPermanent = watch("permanent");
   const watchedSameAsPermanent = watch("sameAsPermanent");
 
-  // Fetch Province Data
+  // React Query hooks
+  const {
+    data: provincesData,
+    isLoading: provincesLoading,
+    error: provincesError,
+  } = useProvinces();
+
+  const {
+    data: districtsData,
+    isLoading: districtsLoading,
+    error: districtsError,
+  } = useDistrictsByProvince(selectedProvinceId);
+
+  const {
+    data: addressData,
+    isLoading: addressLoading,
+    error: addressError,
+  } = useAddressDetails();
+
+  const saveAddressMutation = useSaveAddressDetails();
+
+  const provinces = provincesData?.datalist || [];
+  const districts = districtsData?.datalist || [];
+
+  // Set up address data when it loads
   useEffect(() => {
-    const fetchProvinces = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/v1/province/get/all");
-        if (response.data.responseCode === "200") {
-          setProvinces(response.data.datalist);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
+    if (addressData?.datalist) {
+      const dataList = addressData.datalist;
+
+      const permanentAddress = dataList.find(
+        (item) => item.addressType === "PERMANENT"
+      ) || {
+        provinceId: "",
+        provinceName: "",
+        districtId: "",
+        districtName: "",
+        municipality: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
+      };
+
+      const temporaryAddress = dataList.find(
+        (item) => item.addressType === "TEMPORARY"
+      ) || {
+        provinceId: "",
+        provinceName: "",
+        districtId: "",
+        districtName: "",
+        municipality: "",
+        wardNumber: "",
+        pinCode: "",
+        tole: "",
+      };
+
+      // Store district and province names
+      setPermanentDistrictName(permanentAddress.districtName || "");
+      setTemporaryDistrictName(temporaryAddress.districtName || "");
+      setPermanentProvinceName(permanentAddress.provinceName || "");
+      setTemporaryProvinceName(temporaryAddress.provinceName || "");
+
+      // Set values in the form
+      setValue("permanent.provinceId", permanentAddress.provinceId || "");
+      setValue("permanent.districtId", permanentAddress.districtId || "");
+      setValue("permanent.municipality", permanentAddress.municipality || "");
+      setValue("permanent.wardNumber", permanentAddress.wardNumber || "");
+      setValue("permanent.pinCode", permanentAddress.pinCode || "");
+      setValue("permanent.tole", permanentAddress.tole || "");
+
+      setValue("temporary.provinceId", temporaryAddress.provinceId || "");
+      setValue("temporary.districtId", temporaryAddress.districtId || "");
+      setValue("temporary.municipality", temporaryAddress.municipality || "");
+      setValue("temporary.wardNumber", temporaryAddress.wardNumber || "");
+      setValue("temporary.pinCode", temporaryAddress.pinCode || "");
+      setValue("temporary.tole", temporaryAddress.tole || "");
+
+      const isSameAsPermanent = dataList.some(
+        (item) => item.addressType === "TEMPORARY" && item.isSameAsPermanent
+      );
+
+      setValue("sameAsPermanent", isSameAsPermanent);
+      setSameAsPermanent(isSameAsPermanent);
+
+      // Set province ID for districts query
+      if (permanentAddress.provinceId) {
+        setSelectedProvinceId(permanentAddress.provinceId);
       }
-    };
 
-    fetchProvinces();
-  }, []);
+      // Update parent state
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          permanent: {
+            provinceId: permanentAddress.provinceId || "",
+            provinceName: permanentAddress.provinceName || "",
+            districtId: permanentAddress.districtId || "",
+            districtName: permanentAddress.districtName || "",
+            municipality: permanentAddress.municipality || "",
+            wardNumber: permanentAddress.wardNumber || "",
+            pinCode: permanentAddress.pinCode || "",
+            tole: permanentAddress.tole || "",
+          },
+          temporary: {
+            provinceId: temporaryAddress.provinceId || "",
+            provinceName: temporaryAddress.provinceName || "",
+            districtId: temporaryAddress.districtId || "",
+            districtName: temporaryAddress.districtName || "",
+            municipality: temporaryAddress.municipality || "",
+            wardNumber: temporaryAddress.wardNumber || "",
+            pinCode: temporaryAddress.pinCode || "",
+            tole: temporaryAddress.tole || "",
+          },
+          sameAsPermanent: isSameAsPermanent,
+        },
+      }));
 
-  // Get Address Data
-  useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const fetchAddressDetails = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/v1/address/getById", {
-          headers: { Authorization: `Bearer ${authToken}` },
-        });
-        if (response.data.responseCode === "200") {
-          const dataList = response.data.datalist || [];
-
-          const permanentAddress = dataList.find(
-            (item) => item.addressType === "PERMANENT"
-          ) || {
-            provinceId: "",
-            provinceName: "",
-            districtId: "",
-            districtName: "",
-            municipality: "",
-            wardNumber: "",
-            pinCode: "",
-            tole: "",
-          };
-
-          const temporaryAddress = dataList.find(
-            (item) => item.addressType === "TEMPORARY"
-          ) || {
-            provinceId: "",
-            provinceName: "",
-            districtId: "",
-            districtName: "",
-            municipality: "",
-            wardNumber: "",
-            pinCode: "",
-            tole: "",
-          };
-
-          // Store district and province names
-          setPermanentDistrictName(permanentAddress.districtName || "");
-          setTemporaryDistrictName(temporaryAddress.districtName || "");
-          setPermanentProvinceName(permanentAddress.provinceName || "");
-          setTemporaryProvinceName(temporaryAddress.provinceName || "");
-
-          // Set values in the form
-          setValue("permanent.provinceId", permanentAddress.provinceId || "");
-          setValue("permanent.districtId", permanentAddress.districtId || "");
-          setValue(
-            "permanent.municipality",
-            permanentAddress.municipality || ""
-          );
-          setValue("permanent.wardNumber", permanentAddress.wardNumber || "");
-          setValue("permanent.pinCode", permanentAddress.pinCode || "");
-          setValue("permanent.tole", permanentAddress.tole || "");
-
-          setValue("temporary.provinceId", temporaryAddress.provinceId || "");
-          setValue("temporary.districtId", temporaryAddress.districtId || "");
-          setValue(
-            "temporary.municipality",
-            temporaryAddress.municipality || ""
-          );
-          setValue("temporary.wardNumber", temporaryAddress.wardNumber || "");
-          setValue("temporary.pinCode", temporaryAddress.pinCode || "");
-          setValue("temporary.tole", temporaryAddress.tole || "");
-
-          const isSameAsPermanent = dataList.some(
-            (item) => item.addressType === "TEMPORARY" && item.isSameAsPermanent
-          );
-
-          setValue("sameAsPermanent", isSameAsPermanent);
-          setSameAsPermanent(isSameAsPermanent);
-
-          // If we have data from the API, fetch the districts for the saved province
-          if (permanentAddress.provinceId) {
-            fetchDistrictsByProvince(permanentAddress.provinceId);
-          }
-
-          // Also update the parent state to keep it in sync
-          setFormData((prev) => ({
-            ...prev,
-            address: {
-              permanent: {
-                provinceId: permanentAddress.provinceId || "",
-                provinceName: permanentAddress.provinceName || "",
-                districtId: permanentAddress.districtId || "",
-                districtName: permanentAddress.districtName || "",
-                municipality: permanentAddress.municipality || "",
-                wardNumber: permanentAddress.wardNumber || "",
-                pinCode: permanentAddress.pinCode || "",
-                tole: permanentAddress.tole || "",
-              },
-              temporary: {
-                provinceId: temporaryAddress.provinceId || "",
-                provinceName: temporaryAddress.provinceName || "",
-                districtId: temporaryAddress.districtId || "",
-                districtName: temporaryAddress.districtName || "",
-                municipality: temporaryAddress.municipality || "",
-                wardNumber: temporaryAddress.wardNumber || "",
-                pinCode: temporaryAddress.pinCode || "",
-                tole: temporaryAddress.tole || "",
-              },
-              sameAsPermanent: isSameAsPermanent,
-            },
-          }));
-
-          // Mark data as loaded and clear any existing errors
-          setDataLoaded(true);
-          clearErrors();
-        }
-      } catch (error) {
-        console.error("Error fetching address details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAddressDetails();
-  }, [setValue, setFormData, clearErrors]);
+      clearErrors();
+    }
+  }, [addressData, setValue, setFormData, clearErrors]);
 
   // Sync form data changes to parent component
   useEffect(() => {
@@ -223,7 +206,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     temporaryDistrictName,
     permanentProvinceName,
     temporaryProvinceName,
-    setValue,
   ]);
 
   // Handle Same As Permanent checkbox
@@ -248,33 +230,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     permanentDistrictName,
     permanentProvinceName,
   ]);
-
-  const fetchDistrictsByProvince = async (provinceId) => {
-    if (!provinceId) return;
-
-    setIsLoading(true);
-    try {
-      // Clear existing districts before fetching new ones
-      setDistricts([]);
-
-      const sanitizedProvinceId = String(provinceId).replace(/[^0-9]/g, "");
-      const response = await axiosInstance.get(
-        `/api/v1/district/districts/${sanitizedProvinceId}`
-      );
-      if (response.data.responseCode === "200") {
-        setDistricts(response.data.datalist);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Update district name when district ID changes
   const updateDistrictName = (districtId, type) => {
@@ -309,13 +264,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   };
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-
     try {
       // Helper function to safely sanitize IDs
       const sanitizeId = (id) => {
         if (!id) return "";
-        // Convert to string first if it's not already a string
         const idString = String(id);
         return idString.replace(/[^0-9]/g, "");
       };
@@ -341,7 +293,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         ? sanitizeId(data.temporary.districtId)
         : sanitizeId(formData.address?.temporary?.districtId) || "";
 
-      const newData = {
+      const addressPayload = {
         data: [
           {
             provinceId: permanentProvinceId,
@@ -373,30 +325,11 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         ],
       };
 
-      const response = await axiosInstance.post(
-        "/api/v1/address/save",
-        newData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
-        handleNext();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
+      await saveAddressMutation.mutateAsync(addressPayload);
+      handleNext();
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+      // Error handling is done in the mutation hook
+      console.error("Submit error:", error);
     }
   };
 
@@ -410,7 +343,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     return {
       validate: (value) => {
         // Skip validation if we already have data from API
-        if (dataLoaded && existingValue) return true;
+        if (addressData?.datalist && existingValue) return true;
         // Otherwise require the field
         return (
           !!value ||
@@ -431,7 +364,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     return {
       validate: (value) => {
         // Skip validation if we already have data from API
-        if (dataLoaded && existingValue) return true;
+        if (addressData?.datalist && existingValue) return true;
         // Otherwise require the field
         return (
           !!value ||
@@ -442,40 +375,13 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       },
     };
   };
-  useEffect(() => {
-    if (watchedSameAsPermanent) {
-      // Copy all permanent address values to temporary fields
-      setValue("temporary.provinceId", watch("permanent.provinceId") || "");
-      setValue("temporary.districtId", watch("permanent.districtId") || "");
-      setValue("temporary.municipality", watch("permanent.municipality") || "");
-      setValue("temporary.wardNumber", watch("permanent.wardNumber") || "");
-      setValue("temporary.pinCode", watch("permanent.pinCode") || "");
-      setValue("temporary.tole", watch("permanent.tole") || "");
 
-      // Update display names
-      setTemporaryDistrictName(permanentDistrictName);
-      setTemporaryProvinceName(permanentProvinceName);
-
-      // Clear any temporary field errors when using same as permanent
-      if (errors.temporary) {
-        clearErrors("temporary");
-      }
-    }
-  }, [
-    watch,
-    watchedSameAsPermanent,
-    watch("permanent.provinceId"),
-    watch("permanent.districtId"),
-    watch("permanent.municipality"),
-    watch("permanent.wardNumber"),
-    watch("permanent.pinCode"),
-    watch("permanent.tole"),
-    permanentDistrictName,
-    permanentProvinceName,
-    setValue,
-    clearErrors,
-    errors.temporary,
-  ]);
+  // Loading state
+  const isLoading =
+    provincesLoading ||
+    districtsLoading ||
+    addressLoading ||
+    saveAddressMutation.isPending;
   return (
     <>
       {isLoading && <Loader message="Loading please wait" />}

@@ -1,35 +1,9 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../../lib/axios-Instance";
 import Loader from "../Loader/Loader";
 import { FaDiamond } from "react-icons/fa6";
-import { toast } from "sonner";
+import { useFetchUpComingHoliday } from "../../hooks/useAuth";
 
 const UpComingHoliday = () => {
-  const [upComingHoliday, setUpComingHoliday] = useState([]);
-  const [isloading, setIsLoading] = useState(false);
-
-  const UpComingHoliday = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "api/v1/holiday/upComingHoliday"
-      );
-
-      if (response.data.responseCode === "200") {
-        setUpComingHoliday(response.data.datalist);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    UpComingHoliday();
-  }, []);
+  const { data: upComingHoliday, isLoading } = useFetchUpComingHoliday();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -38,10 +12,11 @@ const UpComingHoliday = () => {
       day: "numeric",
     });
   };
-  const events = upComingHoliday?.filter((item) => item.event_name);
+  const events =
+    upComingHoliday?.datalist?.filter((item) => item.event_name) || [];
   return (
     <>
-      {isloading ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <>

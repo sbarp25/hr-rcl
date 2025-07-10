@@ -1,16 +1,18 @@
 import { Button } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import axiosInstance from "../lib/axios-Instance";
-import { toast } from "sonner";
 import InputComponent from "./ui/InputComponent.jsx";
-import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
+import { FaUser, FaPhone } from "react-icons/fa";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "./ui/SearableDropdown";
 import Loader from "./Loader/Loader.jsx";
+import {
+  usePersonalDetails,
+  useSavePersonalDetails,
+} from "../hooks/useAuth.js";
 
 const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  // Form options
   const genderOptions = [
     { key: "Male", label: "Male" },
     { key: "Female", label: "Female" },
@@ -35,12 +37,9 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
     { key: "Brother", label: "Brother" },
     { key: "Sister", label: "Sister" },
   ];
-  const {
-    control,
-    handleSubmit,
-    reset,
-    // formState: { errors },
-  } = useForm({
+
+  // Form setup
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       email: "",
       dob: "",
@@ -57,8 +56,20 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
     mode: "onChange",
   });
 
+  // React Query hooks
+  const {
+    data: personalDetailsData,
+    isLoading: isLoadingDetails,
+    error: fetchError,
+  } = usePersonalDetails();
+
+  const savePersonalDetailsMutation = useSavePersonalDetails(() => {
+    reset();
+    handleNext();
+  });
+
+  // Handle form submission
   const onSubmit = async (data) => {
-    // const marriedstatus = Boolean(data.married);
     const formattedData = {
       data: {
         email: data.email,
@@ -74,75 +85,33 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
         guardianNumber: data.guardianPhone,
       },
     };
-    setDateOfBirth(formatDate(data.dob));
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/personal/save",
-        formattedData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (response?.data?.responseCode === "201") {
-        reset();
-        toast.success(response?.data?.message);
-        handleNext();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    setDateOfBirth(formatDate(data.dob));
+    savePersonalDetailsMutation.mutate(formattedData);
   };
 
+  // Reset form with fetched data
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const fetchPersonalDetails = async () => {
-      try {
-        const response = await axiosInstance.get("/api/v1/personal/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+    if (personalDetailsData?.responseCode === "200") {
+      const data = personalDetailsData.data;
+      reset({
+        email: data.email || "",
+        dob: data.dateOfBirthAd || "",
+        gender: data.gender || "",
+        married: data.married ? true : false,
+        bloodType: data.bloodGroup || "",
+        emergencyNumber: data.emergencyNumber || "",
+        emergencyName: data.emergencyName || "",
+        emergencyRelation: data.emergencyType || "",
+        guardianName: data.guardianName || "",
+        guardianRelation: data.guardianType || "",
+        guardianPhone: data.guardianNumber || "",
+      });
+    }
+  }, [personalDetailsData, reset]);
 
-        if (response?.data?.responseCode === "200") {
-          const data = response.data.data;
-          reset({
-            email: data.email || "",
-            dob: data.dateOfBirthAd || "",
-            gender: data.gender || "",
-            married: data.married ? true : false,
-            bloodType: data.bloodGroup || "",
-            emergencyNumber: data.emergencyNumber || "",
-            emergencyName: data.emergencyName || "",
-            emergencyRelation: data.emergencyType || "",
-            guardianName: data.guardianName || "",
-            guardianRelation: data.guardianType || "",
-            guardianPhone: data.guardianNumber || "",
-          });
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    };
-
-    fetchPersonalDetails();
-  }, [reset]);
+  // Loading state
+  const isLoading = isLoadingDetails || savePersonalDetailsMutation.isLoading;
 
   return (
     <>
@@ -366,8 +335,11 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
             </Button>
             <Button
               type="submit"
+              isDisabled={savePersonalDetailsMutation.isLoading}
               className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
-              Submit
+              {savePersonalDetailsMutation.isLoading
+                ? "Submitting..."
+                : "Submit"}
             </Button>
           </div>
         </form>

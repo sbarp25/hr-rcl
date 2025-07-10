@@ -19,18 +19,11 @@ const Recaptcha = ({ setCapta, onError }) => {
 
   const handleRecaptchaChange = useCallback(
     async (token) => {
-      console.log(
-        "reCAPTCHA onChange triggered with token:",
-        token ? "present" : "null"
-      );
-
       if (!token && isVerifiedRef.current) {
-        console.log("Token expired but already verified. Skipping reset.");
         return;
       }
 
       if (!token) {
-        console.log("Token is null and not verified, resetting states.");
         setRecaptchaToken(null);
         setCapta(null);
         setVerificationResult(null);
@@ -38,11 +31,9 @@ const Recaptcha = ({ setCapta, onError }) => {
       }
 
       if (isVerifiedRef.current) {
-        console.log("Already verified. Skipping re-verification.");
         return;
       }
 
-      console.log("New reCAPTCHA token received, starting verification");
       setRecaptchaToken(token);
       setVerificationResult(null);
 
@@ -55,12 +46,10 @@ const Recaptcha = ({ setCapta, onError }) => {
             userIp: ipAddress,
           });
 
-          console.log("Verification response:", response);
           const isSuccess =
             response.responseCode === "200" && response.data?.success;
 
           if (isSuccess) {
-            console.log("Verification successful");
             setCapta(token);
             setVerifiedToken(token);
             setVerificationResult(response);
@@ -68,7 +57,6 @@ const Recaptcha = ({ setCapta, onError }) => {
             isVerifiedRef.current = true;
             toast.success("reCAPTCHA verification successful!");
           } else {
-            console.log("Verification failed:", response.message);
             recaptchaRef.current?.reset();
             setCapta(null);
             setRecaptchaToken(null);
@@ -80,7 +68,6 @@ const Recaptcha = ({ setCapta, onError }) => {
             onError?.();
           }
         } catch (error) {
-          console.error("Verification error:", error);
           recaptchaRef.current?.reset();
           setCapta(null);
           setRecaptchaToken(null);
@@ -104,21 +91,18 @@ const Recaptcha = ({ setCapta, onError }) => {
   );
 
   const handleExpired = useCallback(() => {
-    console.log("reCAPTCHA expired.");
     if (isVerifiedRef.current) {
       console.log("Already verified. Keeping previous verified state.");
       setCapta(verifiedToken);
       return;
     }
 
-    console.log("Token expired and not verified. Resetting state.");
     setRecaptchaToken(null);
     setCapta(null);
     setVerificationResult(null);
   }, [verifiedToken, setCapta]);
 
   const handleError = useCallback(() => {
-    console.log("reCAPTCHA error occurred");
     if (isVerifiedRef.current) {
       console.log("Already verified. Ignoring error.");
       return;
@@ -137,7 +121,6 @@ const Recaptcha = ({ setCapta, onError }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("Manual reset triggered");
     recaptchaRef.current?.reset();
     setCapta(null);
     setRecaptchaToken(null);

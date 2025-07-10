@@ -203,7 +203,7 @@ const Settings = () => {
     if (!seeProfile) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [navigate, seeProfile]);
 
   useEffect(() => {
     if (!auth) {
@@ -313,7 +313,6 @@ const Settings = () => {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        // size="4xl"
         isDismissable={true}
         isKeyboardDismissDisabled={false}>
         <ModalContent>

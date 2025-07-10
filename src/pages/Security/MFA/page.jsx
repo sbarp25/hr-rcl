@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
 import { Button, Switch } from "@heroui/react";
-import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "sonner";
-import { GoDotFill } from "react-icons/go";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { useNavigate } from "react-router-dom";
+
 import Loader from "../../../components/Loader/Loader.jsx";
 import GoBack from "../../../components/GoBack.jsx";
 import { IoShieldCheckmark, IoInformationCircle } from "react-icons/io5";
+import {
+  useFetchingMFASetting,
+  useSaveMFAsetting,
+} from "../../../hooks/useAuth.js";
 
 const MFA = () => {
   const {
@@ -21,57 +21,34 @@ const MFA = () => {
 
   const [mfaEnabled, setMfaEnabled] = useState(false);
 
-  const updateMfaSettings = async (formData) => {
+  const { mutate: updateMfaSettings, isPending: isTwoFactorPenging } =
+    useSaveMFAsetting();
+
+  const handleSubmit = (formData) => {
     const payload = {
       mfaEnabled,
       currentPassword: formData.currentPassword,
     };
 
-    try {
-      const response = await axiosInstance.put(
-        "/api/v1/auth/mfa/settings/update",
-        payload
-      );
-
-      if (response.data.responseCode === "200") {
+    updateMfaSettings(payload, {
+      onSuccess: () => {
         resetTwoFactor();
-        toast.success(
-          response.data.message || "MFA settings updated successfully"
-        );
-      } else {
-        toast.error(response.data.message || "Failed to update MFA settings");
-      }
-    } catch (error) {
-      console.error("Error updating MFA settings:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to update MFA settings";
-      toast.error(errorMessage);
-    }
+      },
+    });
   };
 
-  const fetchMFAsetting = async () => {
-    try {
-      const response = await axiosInstance.get("/api/v1/auth/mfa/settings");
-      if (response?.data?.responseCode === "200") {
-        setMfaEnabled(response?.data?.data?.mfaEnabled);
-      } else {
-        console.log("error before here");
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went Wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    }
-  };
+  const { data } = useFetchingMFASetting();
+
   useEffect(() => {
-    fetchMFAsetting();
-  }, []);
+    if (data) {
+      setMfaEnabled(data?.mfaEnabled);
+    }
+  }, [data]);
 
+  const loading = isTwoFactorPenging || isTwoFactorSubmitting;
+  if (loading) {
+    <Loader />;
+  }
   return (
     <div className="max-w-4xl mx-auto p-6">
       <GoBack />
@@ -114,7 +91,7 @@ const MFA = () => {
         {/* Form Section */}
         <div className="p-8">
           <form
-            onSubmit={handletwoFactorSubmit(updateMfaSettings)}
+            onSubmit={handletwoFactorSubmit(handleSubmit)}
             className="space-y-6">
             {/* MFA Toggle */}
             <div className="p-6 bg-gray-50 dark:bg-gray-750 rounded-xl border border-gray-200 dark:border-gray-600">
