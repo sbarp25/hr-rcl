@@ -12,7 +12,6 @@ import {
 } from "../../hooks/useAuth";
 import OTPInputComponent from "../../components/ui/OTPInputComponent";
 import Recaptcha from "./Component/Recapta";
-import { toast } from "sonner";
 
 const Login = () => {
   const [sessionToken, setSessionToken] = useState("");

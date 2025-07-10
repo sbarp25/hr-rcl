@@ -107,11 +107,6 @@ const Filter = ({
       label: department?.name,
     }));
 
-  useEffect(() => {
-    console.log(departmentsData);
-    console.log(positionData);
-  }, []);
-
   const positionItems = positionData
     ?.filter((p) => !p?.isDeleted)
     ?.map((position) => ({

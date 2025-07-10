@@ -72,13 +72,6 @@ const Page = () => {
     }
   }, [ekyeDashboardDataPerPage, currentPage]);
 
-  // REMOVED: The problematic useEffect that was clearing search data
-  // useEffect(() => {
-  //   if (searchData) {
-  //     setSearchData(null); // This was clearing search results when page changes
-  //   }
-  // }, [currentPage, searchData]);
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };

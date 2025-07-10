@@ -205,7 +205,6 @@ const EducationalDetails = ({
             startYear = edu.startYear ? formatDate(edu.startYear) : "";
             endYear = edu.endYear ? formatDate(edu.endYear) : "";
           } catch (error) {
-            console.error("Error formatting dates:", error);
             startYear = edu.startYear || "";
             endYear = edu.endYear || "";
           }
@@ -470,7 +469,6 @@ const EducationalDetails = ({
         } education`
       );
     } catch (error) {
-      console.error("Date validation error:", error);
       // If there's any error in date conversion, skip validation
       return true;
     }
@@ -697,7 +695,6 @@ const EducationalDetails = ({
                           "End date cannot be before start date"
                         );
                       } catch (error) {
-                        console.error("Date validation error:", error);
                         return true; // Skip validation if there's an error
                       }
                     },

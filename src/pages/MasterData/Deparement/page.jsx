@@ -265,8 +265,8 @@ const Department = () => {
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{department.name}</TableCell>
                             <TableCell>
-                              {department.description.length < 15 ? (
-                                department.description
+                              {department?.description?.length < 15 ? (
+                                department?.description
                               ) : (
                                 <Tooltip content={department.description}>
                                   {truncateText(department.description, 15)}
@@ -338,8 +338,8 @@ const Department = () => {
                               </div>
                             </TableCell>
                             <TableCell>
-                              {department.description.length < 15 ? (
-                                department.description
+                              {department?.description?.length < 15 ? (
+                                department?.description
                               ) : (
                                 <Tooltip content={department.description}>
                                   {truncateText(department.description, 15)}

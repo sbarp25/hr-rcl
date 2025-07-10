@@ -177,7 +177,6 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
           navigate("/EKYE");
         }
       } else {
-        console.log("Response code is not 200, it is:", data?.responseCode);
         toast.error("Something went wrong");
       }
     },
@@ -935,7 +934,6 @@ export const useLeaveByList = (currentPage, leaveDataPerPage) => {
 
 /**Apply Leave */
 export const useLeaveRequest = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
