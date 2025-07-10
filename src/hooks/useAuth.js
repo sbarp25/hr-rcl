@@ -475,7 +475,7 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: createDepartment,
     onSuccess: (response) => {
-      if (response?.data?.responseCode === "201 ") {
+      if (response?.data?.responseCode === "201") {
         toast.success(
           response?.data?.message || "Department Created Successfully"
         );
