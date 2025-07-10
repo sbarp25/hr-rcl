@@ -9,6 +9,10 @@ import { useForm, Controller } from "react-hook-form";
 import DatepickerComponent from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
 import Loader from "./Loader/Loader.jsx";
+import {
+  useDocumentDetails,
+  useSaveDocumentDetails,
+} from "../hooks/useAuth.js";
 
 const DocumentDetails = ({
   formData,
@@ -17,7 +21,6 @@ const DocumentDetails = ({
   setFormData,
   dateOfBirth,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
   const [photoPAN, setPhotoPAN] = useState(false);
@@ -26,13 +29,16 @@ const DocumentDetails = ({
   const [citizenshipBackModalOpen, setCitizenshipBackModalOpen] =
     useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
+
   // Add new state to store the URLs
   const [documentUrls, setDocumentUrls] = useState({
     panCardDocumentUrl: null,
     citizenshipFrontDocumentUrl: null,
     citizenshipBackDocumentUrl: null,
   });
+
   const MAX_FILE_SIZE = 1024 * 1024;
+
   const { control, handleSubmit, setValue, formState } = useForm({
     defaultValues: {
       panNumber: formData?.documents?.panNumber || "",
@@ -49,80 +55,69 @@ const DocumentDetails = ({
     },
     mode: "onChange",
   });
-  const authToken = localStorage.getItem("authToken");
-  const fetchDocumentDetails = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get("/api/v1/document/getById", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+
+  // React Query hooks
+  const { data: documentDetailsData, isLoading: isLoadingDocuments } =
+    useDocumentDetails();
+  const { mutate: saveDocuments, isLoading: isSavingDocuments } =
+    useSaveDocumentDetails();
+
+  // Handle successful data fetch
+  useEffect(() => {
+    if (documentDetailsData?.data) {
+      const data = documentDetailsData.data;
+
+      // Set form values
+      setValue("panNumber", data.panNumber || "");
+      setValue("panIssuePlace", data.panIssuePlace || "");
+      setValue("panIssueDate", data.panIssueDate || "");
+      setValue("panCardDocumentFile", data.panCardDocumentUrl || null);
+      setValue("citizenshipNumber", data.citizenshipNumber || "");
+      setValue(
+        "isIssuedPlaceDistrict",
+        data.citizenshipIssuedPlaceDistrict || ""
+      );
+      setValue("issuedDate", data.citizenshipIssueDate || "");
+      setValue(
+        "citizenshipFrontDocumentFile",
+        data.citizenshipFrontDocumentUrl || null
+      );
+      setValue(
+        "citizenshipBackDocumentFile",
+        data.citizenshipBackDocumentUrl || null
+      );
+
+      // Store document URLs in state
+      setDocumentUrls({
+        panCardDocumentUrl: data.panCardDocumentUrl || null,
+        citizenshipFrontDocumentUrl: data.citizenshipFrontDocumentUrl || null,
+        citizenshipBackDocumentUrl: data.citizenshipBackDocumentUrl || null,
       });
 
-      if (response.data.responseCode === "200") {
-        const data = response.data.data;
+      // Update formData state to maintain compatibility
+      setFormData((prev) => ({
+        ...prev,
+        documents: {
+          panNumber: data.panNumber || "",
+          panIssuePlace: data.panIssuePlace || "",
+          citizenshipNumber: data.citizenshipNumber || "",
+          panIssueDate: data.panIssueDate || "",
+          issuedDate: data.citizenshipIssueDate || "",
+          isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
+          panCardDocumentFile: data.panCardDocumentUrl || null,
+          citizenshipFrontDocumentFile:
+            data.citizenshipFrontDocumentUrl || null,
+          citizenshipBackDocumentFile: data.citizenshipBackDocumentUrl || null,
+        },
+      }));
 
-        // Set form values
-        setValue("panNumber", data.panNumber || "");
-        setValue("panIssuePlace", data.panIssuePlace || "");
-        setValue("panIssueDate", data.panIssueDate || "");
-        setValue("panCardDocumentFile", data.panCardDocumentUrl || null);
-        setValue("citizenshipNumber", data.citizenshipNumber || "");
-        setValue(
-          "isIssuedPlaceDistrict",
-          data.citizenshipIssuedPlaceDistrict || ""
-        );
-        setValue("issuedDate", data.citizenshipIssueDate || "");
-        setValue(
-          "citizenshipFrontDocumentFile",
-          data.citizenshipFrontDocumentUrl || null
-        );
-        setValue(
-          "citizenshipBackDocumentFile",
-          data.citizenshipBackDocumentUrl || null
-        );
-
-        // Store document URLs in state
-        setDocumentUrls({
-          panCardDocumentUrl: data.panCardDocumentUrl || null,
-          citizenshipFrontDocumentUrl: data.citizenshipFrontDocumentUrl || null,
-          citizenshipBackDocumentUrl: data.citizenshipBackDocumentUrl || null,
-        });
-
-        // Update formData state to maintain compatibility
-        setFormData((prev) => ({
-          ...prev,
-          documents: {
-            panNumber: data.panNumber || "",
-            panIssuePlace: data.panIssuePlace || "",
-            citizenshipNumber: data.citizenshipNumber || "",
-            panIssueDate: data.panIssueDate || "",
-            issuedDate: data.citizenshipIssueDate || "",
-            isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
-            panCardDocumentFile: data.panCardDocumentUrl || null,
-            citizenshipFrontDocumentFile:
-              data.citizenshipFrontDocumentUrl || null,
-            citizenshipBackDocumentFile:
-              data.citizenshipBackDocumentUrl || null,
-          },
-        }));
-
-        setCitizenshipFront(true);
-        setCitizenshipBack(true);
-        setPhotoPAN(true);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      setCitizenshipFront(true);
+      setCitizenshipBack(true);
+      setPhotoPAN(true);
     }
-  };
-  useEffect(() => {
-    fetchDocumentDetails();
-  }, [setValue, setFormData]);
+  }, [documentDetailsData, setValue, setFormData]);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
     const formDataToSubmit = new FormData();
 
     // Append form data
@@ -153,19 +148,9 @@ const DocumentDetails = ({
       );
     }
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/document/save",
-        formDataToSubmit,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+    saveDocuments(formDataToSubmit, {
+      onSuccess: (response) => {
+        toast.success(response.message);
 
         // Update formData to maintain state consistency
         setFormData((prev) => ({
@@ -176,20 +161,8 @@ const DocumentDetails = ({
         }));
 
         handleNext();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+      },
+    });
   };
 
   const validateFile = (file, existingUrl) => {
@@ -211,6 +184,7 @@ const DocumentDetails = ({
 
     return true;
   };
+
   // Function to render the document link
   const renderDocumentLink = (url, label, isOpen, onOpenChange) => {
     if (!url) return null;
@@ -220,7 +194,7 @@ const DocumentDetails = ({
         <FaRegEye className="text-green-500 mr-2" />
         <p
           onClick={() => onOpenChange(true)}
-          className="text-green-500 hover:text-green-700 text-sm">
+          className="text-green-500 hover:text-green-700 text-sm cursor-pointer">
           View {label}
         </p>
         <Modal
@@ -233,7 +207,7 @@ const DocumentDetails = ({
               <>
                 <ModalBody>
                   <div className="h-full w-full">
-                    <img src={url} />
+                    <img src={url} alt={label} />
                   </div>
                 </ModalBody>
               </>
@@ -244,6 +218,7 @@ const DocumentDetails = ({
     );
   };
 
+  const isLoading = isLoadingDocuments || isSavingDocuments;
   return (
     <>
       {isLoading && <Loader />}

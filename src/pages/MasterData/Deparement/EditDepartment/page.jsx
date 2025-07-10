@@ -3,7 +3,6 @@ import { Controller, useForm } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
-import axiosInstance from "../../../../lib/axios-Instance";
 import GoBack from "../../../../components/GoBack";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -14,11 +13,13 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import {
+  useEditDepartment,
+  useFetchTeamLead,
+  useIndivisualDepartment,
+} from "../../../../hooks/useAuth.js";
 
 const EditDepartment = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [teamLead, setTeamLead] = useState([]);
-
   const { id } = useParams();
   const longid = parseInt(id);
   const navigate = useNavigate();
@@ -60,68 +61,22 @@ const EditDepartment = () => {
     if (screenWidth >= 768) return 4; // md
     return 4; // default for smaller screens
   };
-  const fetchTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "/api/v1/departments/get_all_users_name_id"
-      );
-      if (response.data.responseCode === "200") {
-        setTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong. Try again.";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: teamLead, isLoading } = useFetchTeamLead();
 
-  {
-    /**To fetch Department Data */
-  }
-  const fetchDepartmentById = async () => {
-    setIsLoading(true);
-    try {
-      // const response = await axiosInstance.get(`/api/v1/departments/get/${id}`);
-      const response = await axiosInstance.post(
-        `/api/v1/departments/get/${longid}`,
-        {
-          id: parseFloat(id),
-        }
-      );
-      if (response.data.responseCode === "200") {
-        const data = response.data.data;
-        reset({
-          title: data?.name,
-          description: data?.description,
-          Associateteamlead: data?.associateTeamLeadId,
-          teamlead: data?.teamLeadId,
-        });
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong. Try again.";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data } = useIndivisualDepartment(longid);
+
   useEffect(() => {
-    fetchTeamLead();
-    fetchDepartmentById();
-  }, []);
+    if (data) {
+      reset({
+        title: data?.name,
+        description: data?.description,
+        Associateteamlead: data?.associateTeamLeadId,
+        teamlead: data?.teamLeadId,
+      });
+    }
+  }, [data, reset]);
 
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Department", href: "/master-data/Department" },
-  ];
-
+  const editDepartmentMutation = useEditDepartment();
   const onSubmit = async (data) => {
     if (hasaccess) {
       const updatedDepartment = {
@@ -132,36 +87,18 @@ const EditDepartment = () => {
           teamLeadId: parseFloat(data.teamlead),
         },
       };
-      setIsLoading(true);
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        const response = await axiosInstance.put(
-          `/api/v1/departments/update/${longid}`,
-          updatedDepartment,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          navigate("/master-data/Department");
-          toast.success(response?.data?.message);
-          reset();
-        }
+        editDepartmentMutation.mutate({ updatedDepartment, longid });
       } catch (error) {
         const errorMessage =
           error.response?.data?.error || "Something went wrong";
         toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
       }
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
   };
-  const teamLeadid = teamLead.map((item) => ({
+  const teamLeadid = teamLead?.datalist?.map((item) => ({
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
   }));

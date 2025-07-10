@@ -1,32 +1,31 @@
 import { useEffect, useState } from "react";
-import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import { useForm } from "react-hook-form";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import { Textarea } from "@heroui/react";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
-import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import {
   hasCreateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import { useCreatePosition } from "../../../../hooks/useAuth.js";
 
 const AddPosition = () => {
+  const createPositionMutation = useCreatePosition();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm();
-  const [isLoading, setIsloading] = useState(false);
+
   const onSubmit = async (data) => {
     if (hasaccess) {
-      setIsloading(true);
       const newPosition = {
         data: {
           positionName: data.title,
@@ -35,28 +34,13 @@ const AddPosition = () => {
       };
 
       try {
-        const response = await axiosInstance.post(
-          "/api/v1/positions/save",
-          newPosition,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (response.data.responseCode === "201") {
-          toast.success("Position added successfully!");
-          navigate("/master-data/Position");
-        } else {
-          toast.error(response.data.message);
-        }
+        await createPositionMutation.mutateAsync(newPosition);
+        reset();
       } catch (error) {
         const errorMessage =
           error.response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
         toast.error(errorMessage);
-      } finally {
-        setIsloading(false);
       }
     } else {
       toast.error("Currently You dont have access to this setting.");
@@ -69,10 +53,6 @@ const AddPosition = () => {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
-  const breadcrumbItems = [
-    { label: "MasterData", href: "" },
-    { label: "Position", href: "/master-data/Position" },
-  ];
 
   /**To check The screen width */
   useEffect(() => {
@@ -98,13 +78,13 @@ const AddPosition = () => {
     return 4; // default for smaller screens
   };
 
+  const isLoading = createPositionMutation.isPending;
   return (
     <>
       {isLoading ? (
         <Loader />
       ) : (
         <div className="px-4 flex flex-col space-y-4">
-          {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
           <div className="flex justify-between">
             <GoBack />
             <div className="page-title -pl-2">Add Position</div>

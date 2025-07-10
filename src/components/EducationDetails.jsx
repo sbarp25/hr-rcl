@@ -20,6 +20,11 @@ import { Controller } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
 import { FaEye } from "react-icons/fa";
+import Loader from "../components/Loader/Loader.jsx";
+import {
+  useEducationDetails,
+  useSubmitEducationDetails,
+} from "../hooks/useAuth.js";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
@@ -35,7 +40,6 @@ const EducationalDetails = ({
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const [educationalDocument, setEducationalDocument] = useState(false);
   const [numberOfItems, setNumberOfItems] = useState(1);
@@ -51,6 +55,17 @@ const EducationalDetails = ({
     watch,
     formState: { errors },
   } = useForm({ mode: "onChange" });
+
+  // Custom hooks
+  const {
+    data: educationData,
+    isLoading: isLoadingEducation,
+    error: educationError,
+  } = useEducationDetails();
+
+  const submitMutation = useSubmitEducationDetails((data) => {
+    navigate("/dashboard");
+  });
 
   // Watch all status fields to check for IN_PROGRESS
   const statusValues = degrees.map((_, index) => watch(`status_${index}`));
@@ -130,152 +145,129 @@ const EducationalDetails = ({
     }
   }, [selectedDegree, setFormData]);
 
+  // Process education data when it's loaded
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    if (educationData) {
+      const data = educationData.datalist || [];
 
-    const fetchEducationDetails = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/v1/education/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+      // Check if user is currently studying
+      if (educationData.data?.expectedCheckingTime) {
+        setIsCurrentlyStudying(true);
+        setValue("isCurrentlyStudying", true);
 
-        if (response.data.responseCode === "200") {
-          const data = response.data.datalist || [];
+        // Parse the time from string if needed
+        const timeParts = educationData.data.expectedCheckingTime.split(":");
+        if (timeParts.length >= 3) {
+          const timeObj = new Time(
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1]),
+            parseInt(timeParts[2])
+          );
+          setValue("expectedCheckingTime", timeObj);
+        }
+      }
 
-          // Check if user is currently studying
-          if (response.data.data?.expectedCheckingTime) {
-            setIsCurrentlyStudying(true);
-            setValue("isCurrentlyStudying", true);
+      // Create an empty education array based on degrees
+      const initialEducation = degrees.map(() => ({}));
 
-            // Parse the time from string if needed
-            const timeParts =
-              response.data.data.expectedCheckingTime.split(":");
-            if (timeParts.length >= 3) {
-              const timeObj = new Time(
-                parseInt(timeParts[0]),
-                parseInt(timeParts[1]),
-                parseInt(timeParts[2])
-              );
-              setValue("expectedCheckingTime", timeObj);
-            }
-          }
+      // Group data by degree and get the most recent entry for each degree
+      const degreeMap = {};
 
-          // Create an empty education array based on degrees
-          const initialEducation = degrees.map(() => ({}));
+      data.forEach((edu) => {
+        const degree = edu.degree;
 
-          // Group data by degree and get the most recent entry for each degree
-          const degreeMap = {};
-
-          data.forEach((edu) => {
-            const degree = edu.degree;
-
-            // The API returns exact degree names, so we don't need normalization
-            if (degrees.includes(degree)) {
-              // If we haven't seen this degree before, or if this entry is more recent
-              if (
-                !degreeMap[degree] ||
-                new Date(edu.startYear) > new Date(degreeMap[degree].startYear)
-              ) {
-                degreeMap[degree] = edu;
-              }
-            } else {
-              console.warn(`Degree "${degree}" not found in degrees array`);
-            }
-          });
-
-          // Map each degree to its corresponding position
-          let hasInProgressItem = false;
-          let inProgressIndex = -1;
-
-          Object.entries(degreeMap).forEach(([degree, edu]) => {
-            const degreeIndex = degrees.indexOf(degree);
-
-            if (degreeIndex !== -1) {
-              // Parse dates - handle different date formats
-              let startYear, endYear;
-
-              try {
-                startYear = edu.startYear ? formatDate(edu.startYear) : "";
-                endYear = edu.endYear ? formatDate(edu.endYear) : "";
-              } catch (error) {
-                console.error("Error formatting dates:", error);
-                startYear = edu.startYear || "";
-                endYear = edu.endYear || "";
-              }
-
-              initialEducation[degreeIndex] = {
-                degree: edu.degree || "",
-                institution: edu.institution || "",
-                faculty: edu.faculty || "",
-                startYear: startYear,
-                endYear: endYear,
-                status: edu.status || "",
-                file: edu.documentUrl || "",
-                files: [],
-              };
-
-              // Check if any education is in progress
-              if (edu.status === "IN_PROGRESS") {
-                hasInProgressItem = true;
-                inProgressIndex = degreeIndex;
-              }
-            }
-          });
-
-          // Set IN_PROGRESS flags
-          setHasInProgressDegree(hasInProgressItem);
-          setInProgressDegreeIndex(inProgressIndex);
-
-          setFormData((prev) => ({
-            ...prev,
-            education: initialEducation,
-          }));
-
-          // Update selected degree if we have education data
-          if (Object.keys(degreeMap).length > 0) {
-            let highestDegreeIndex = Object.keys(degreeMap).reduce(
-              (highest, degree) => {
-                const index = degrees.indexOf(degree);
-                return index > highest ? index : highest;
-              },
-              0
-            );
-
-            // If there's an IN_PROGRESS degree, limit to that level
-            if (hasInProgressItem && highestDegreeIndex > inProgressIndex) {
-              highestDegreeIndex = inProgressIndex;
-            }
-
-            setSelectedDegree(degrees[highestDegreeIndex]);
-            setNumberOfItems(highestDegreeIndex + 1);
+        // The API returns exact degree names, so we don't need normalization
+        if (degrees.includes(degree)) {
+          // If we haven't seen this degree before, or if this entry is more recent
+          if (
+            !degreeMap[degree] ||
+            new Date(edu.startYear) > new Date(degreeMap[degree].startYear)
+          ) {
+            degreeMap[degree] = edu;
           }
         } else {
-          // Initialize with empty education array if no data returned
-          setFormData((prev) => ({
-            ...prev,
-            education: degrees.map(() => ({})),
-          }));
+          console.warn(`Degree "${degree}" not found in degrees array`);
         }
-        setEducationalDocument(true);
-      } catch (error) {
-        console.error("Error fetching education details:", error);
-        // Initialize with empty education array on error
-        setFormData((prev) => ({
-          ...prev,
-          education: degrees.map(() => ({})),
-        }));
-      } finally {
-        setIsLoading(false);
+      });
+
+      // Map each degree to its corresponding position
+      let hasInProgressItem = false;
+      let inProgressIndex = -1;
+
+      Object.entries(degreeMap).forEach(([degree, edu]) => {
+        const degreeIndex = degrees.indexOf(degree);
+
+        if (degreeIndex !== -1) {
+          // Parse dates - handle different date formats
+          let startYear, endYear;
+
+          try {
+            startYear = edu.startYear ? formatDate(edu.startYear) : "";
+            endYear = edu.endYear ? formatDate(edu.endYear) : "";
+          } catch (error) {
+            startYear = edu.startYear || "";
+            endYear = edu.endYear || "";
+          }
+
+          initialEducation[degreeIndex] = {
+            degree: edu.degree || "",
+            institution: edu.institution || "",
+            faculty: edu.faculty || "",
+            startYear: startYear,
+            endYear: endYear,
+            status: edu.status || "",
+            file: edu.documentUrl || "",
+            files: [],
+          };
+
+          // Check if any education is in progress
+          if (edu.status === "IN_PROGRESS") {
+            hasInProgressItem = true;
+            inProgressIndex = degreeIndex;
+          }
+        }
+      });
+
+      // Set IN_PROGRESS flags
+      setHasInProgressDegree(hasInProgressItem);
+      setInProgressDegreeIndex(inProgressIndex);
+
+      setFormData((prev) => ({
+        ...prev,
+        education: initialEducation,
+      }));
+
+      // Update selected degree if we have education data
+      if (Object.keys(degreeMap).length > 0) {
+        let highestDegreeIndex = Object.keys(degreeMap).reduce(
+          (highest, degree) => {
+            const index = degrees.indexOf(degree);
+            return index > highest ? index : highest;
+          },
+          0
+        );
+
+        // If there's an IN_PROGRESS degree, limit to that level
+        if (hasInProgressItem && highestDegreeIndex > inProgressIndex) {
+          highestDegreeIndex = inProgressIndex;
+        }
+
+        setSelectedDegree(degrees[highestDegreeIndex]);
+        setNumberOfItems(highestDegreeIndex + 1);
       }
-    };
 
-    fetchEducationDetails();
-  }, [setFormData, setValue]);
+      setEducationalDocument(true);
+    } else if (educationData === null || educationError) {
+      // Initialize with empty education array if no data returned or error
+      setFormData((prev) => ({
+        ...prev,
+        education: degrees.map(() => ({})),
+      }));
+      setEducationalDocument(true);
+    }
+  }, [educationData, educationError, setFormData, setValue]);
 
-  // Set form values when education data is loaded - Fixed this section
+  // Set form values when education data is loaded
   useEffect(() => {
     if (formData?.education && Array.isArray(formData.education)) {
       formData.education.forEach((edu, index) => {
@@ -359,8 +351,6 @@ const EducationalDetails = ({
   };
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-
     const formDataToSend = new FormData();
     const educationData = degrees.slice(0, numberOfItems).map((deg, index) => ({
       level: deg,
@@ -401,33 +391,7 @@ const EducationalDetails = ({
       formDataToSend.append("expectedCheckingTime", formattedTime);
     }
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/education/save",
-        formDataToSend,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      if (response.data.responseCode === "201") {
-        toast.success(response.data.message);
-        navigate("/dashboard");
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Submit error:", error); // Debug log
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    submitMutation.mutate(formDataToSend);
   };
 
   // Ensure formData has an education property and it's an array
@@ -505,7 +469,6 @@ const EducationalDetails = ({
         } education`
       );
     } catch (error) {
-      console.error("Date validation error:", error);
       // If there's any error in date conversion, skip validation
       return true;
     }
@@ -559,6 +522,9 @@ const EducationalDetails = ({
     });
   };
 
+  if (isLoadingEducation) {
+    return <Loader />;
+  }
   return (
     <div className="space-y-4 py-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -729,7 +695,6 @@ const EducationalDetails = ({
                           "End date cannot be before start date"
                         );
                       } catch (error) {
-                        console.error("Date validation error:", error);
                         return true; // Skip validation if there's an error
                       }
                     },
@@ -969,8 +934,8 @@ const EducationalDetails = ({
         <button
           onClick={handleSubmit(onSubmit)}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
+          disabled={isLoadingEducation}>
+          {isLoadingEducation ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

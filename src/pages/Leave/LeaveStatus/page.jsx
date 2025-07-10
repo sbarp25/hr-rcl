@@ -17,13 +17,11 @@ import {
 } from "@heroui/react";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { FaCheckCircle, FaRegEye, FaChevronDown } from "react-icons/fa";
+import { FaCheckCircle, FaRegEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
@@ -32,16 +30,19 @@ import Filter from "../../../components/Filter";
 import truncateText from "../../../utils/truncateText";
 import {
   hasApproveAccess,
-  hasCreateAccess,
-  hasDeleteAccess,
   hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { useLeaveByRole } from "../../../hooks/useAuth.js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateLeaveStatus } from "../../../api/auth.js";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRow, setExpandedRow] = useState(null);
+  const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const {
@@ -51,24 +52,53 @@ const LeaveStatus = () => {
     onClose: onRejectClose,
   } = useDisclosure();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [leaveData, setLeaveData] = useState([]);
-  const [selectedLeave, setSelectedLeave] = useState(null);
-  const [originalLeaveData, setOriginalLeaveData] = useState([]);
-
-  const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
   const navigate = useNavigate();
   const { reset, control, handleSubmit } = useForm();
 
-  const handlePageChange = (page) => {
-    setLeaveData([]);
-    setCurrentPage(page);
-  };
+  const queryClient = useQueryClient();
 
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
+  // React Query for fetching leave data
+  const {
+    data: leaveResponse,
+    isLoading,
+    refetch: fetchLeave,
+    isFetching,
+  } = useLeaveByRole(currentPage, leaveDataPerPage);
+
+  // Extract data from response
+  const originalLeaveData = leaveResponse?.data?.datalist || [];
+  const leaveData = isFiltered ? filteredData : originalLeaveData;
+  const totalPages = Math.max(leaveResponse?.data?.totalPages || 1, 1);
+  const totalRecords = leaveResponse?.data?.totalRecords || 0;
+
+  // Mutation for approving leave
+  const approveMutation = useMutation({
+    mutationFn: updateLeaveStatus,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries(["leaveList"]);
+      onClose();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong");
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: updateLeaveStatus,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries(["leaveList"]);
+      onRejectClose();
+      reset();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong");
+    },
+  });
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const breadcrumbItems = [
@@ -78,40 +108,8 @@ const LeaveStatus = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const fetchLeave = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        `/api/v1/leave_management/by-role`,
-        { pageIndex: currentPage, pageSize: leaveDataPerPage }
-      );
-      if (response.data.responseCode === "200") {
-        setLeaveData(response.data.datalist);
-        setOriginalLeaveData(response.data.datalist);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLeave();
-  }, [currentPage, leaveDataPerPage]);
-
-  const hasaccess = true;
-  // const hasLeaveUpdateAccess = true;
-  // const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
   const hasLeaveUpdateAccess = hasApproveAccess(MENU_NAMES.LEAVESTATUS);
-  const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVESTATUS);
-  const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVESTATUS);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -120,13 +118,11 @@ const LeaveStatus = () => {
   }, [hasaccess, navigate]);
   const handleApplyFilters = (result) => {
     if (result.data) {
-      // Filter component returned filtered data
-      setLeaveData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setIsFiltered(true);
     } else {
-      // Reset case - restore original data
-      setLeaveData(originalLeaveData);
+      setFilteredData([]);
+      setIsFiltered(false);
     }
   };
 
@@ -148,108 +144,44 @@ const LeaveStatus = () => {
   };
 
   const onApprove = async () => {
-    if (hasLeaveUpdateAccess) {
-      if (!selectedLeave) return;
-
-      setIsLoading(true);
-      const updateLeave = {
-        data: {
-          leaveId: selectedLeave.leaveId,
-          leaveStatus: "APPROVED",
-        },
-      };
-
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication is missing.");
-          return;
-        }
-        const response = await axiosInstance.put(
-          "/api/leave/status",
-          updateLeave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          toast.success(response?.data?.message);
-          fetchLeave();
-          onClose();
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
+    if (!hasLeaveUpdateAccess) {
       toast.error("Currently You dont have access to this setting.");
+      return;
     }
+
+    if (!selectedLeave) return;
+
+    const updateLeave = {
+      data: {
+        leaveId: selectedLeave.leaveId,
+        leaveStatus: "APPROVED",
+      },
+    };
+
+    approveMutation.mutate(updateLeave);
   };
 
   const onReject = async (formData) => {
-    if (hasLeaveUpdateAccess) {
-      if (!selectedLeave) return;
-
-      setIsLoading(true);
-      const RejectLeave = {
-        data: {
-          leaveId: selectedLeave.leaveId,
-          leaveStatus: "REJECTED",
-          remark: formData.reason,
-        },
-      };
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication is missing.");
-          return;
-        }
-        const response = await axiosInstance.put(
-          "/api/leave/status",
-          RejectLeave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          toast.success(response?.data?.message);
-          fetchLeave();
-          onRejectClose();
-          reset();
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
+    if (!hasLeaveUpdateAccess) {
       toast.error("Currently You dont have access to this setting.");
+      return;
     }
+
+    if (!selectedLeave) return;
+
+    const rejectLeave = {
+      data: {
+        leaveId: selectedLeave.leaveId,
+        leaveStatus: "REJECTED",
+        remark: formData.reason,
+      },
+    };
+
+    rejectMutation.mutate(rejectLeave);
   };
 
   // Use API data if available
-  const displayData = leaveData.length > 0 && leaveData;
+  const displayData = (leaveData.length > 0 && leaveData) || [];
 
   const getStatusClass = (status) => {
     if (status === "APPROVED")
@@ -261,14 +193,19 @@ const LeaveStatus = () => {
 
   const handleApplySearch = (result) => {
     if (result.data) {
-      // Search component returned filtered data
-      setLeaveData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setIsFiltered(true);
     } else {
-      fetchLeave();
+      setFilteredData([]);
+      setIsFiltered(false);
     }
   };
+  const showLoading =
+    isLoading ||
+    isFetching ||
+    approveMutation.isPending ||
+    rejectMutation.isPending;
+
   return (
     <>
       <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -328,8 +265,8 @@ const LeaveStatus = () => {
                   <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
-                  items={isLoading ? [] : leaveData}
-                  isLoading={isLoading}
+                  items={showLoading ? [] : leaveData}
+                  isLoading={showLoading}
                   loadingContent={<SkeletonLoader />}>
                   {(item) => (
                     <TableRow
@@ -433,8 +370,8 @@ const LeaveStatus = () => {
                   <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody
-                  items={isLoading ? [] : leaveData}
-                  isLoading={isLoading}
+                  items={showLoading ? [] : leaveData}
+                  isLoading={showLoading}
                   loadingContent={<SkeletonLoader />}>
                   {(item) => (
                     <TableRow key={item.rclId} className="hover:bg-gray-50">
@@ -575,7 +512,7 @@ const LeaveStatus = () => {
             </div>
           </div>
 
-          {!isLoading && (!leaveData || leaveData.length === 0) && (
+          {!showLoading && (!leaveData || leaveData.length === 0) && (
             <div className="p-8 text-center text-gray-500">
               No Data available
             </div>
@@ -583,35 +520,35 @@ const LeaveStatus = () => {
 
           {/**Pagination Section - Responsive for all screens */}
           {leaveData && leaveData.length > 0 && (
-          <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
-              <span className="mr-1">Showing:</span>
-              <span className="font-bold  mx-1">
-                {totalRecords < leaveDataPerPage
-                  ? totalRecords
-                  : leaveDataPerPage}
-              </span>
-              <span className="mr-1">of</span>
-              <span className="font-bold ">{totalRecords}</span>
-            </div>
+            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
+                <span className="mr-1">Showing:</span>
+                <span className="font-bold  mx-1">
+                  {totalRecords < leaveDataPerPage
+                    ? totalRecords
+                    : leaveDataPerPage}
+                </span>
+                <span className="mr-1">of</span>
+                <span className="font-bold ">{totalRecords}</span>
+              </div>
 
-            <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
-              <Pagination
-                showControls
-                total={totalPages}
-                page={currentPage}
-                onChange={handlePageChange}
-                size="sm"
-              />
+              <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+                <Pagination
+                  showControls
+                  total={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  size="sm"
+                />
+              </div>
+              <div className="flex justify-center items-center order-3">
+                <span className="text-xs mr-2">Lines Per Page:</span>
+                <DropDownComp
+                  items={dropdownItems}
+                  onSelect={setLeaveDataPerPage}
+                />
+              </div>
             </div>
-            <div className="flex justify-center items-center order-3">
-              <span className="text-xs mr-2">Lines Per Page:</span>
-              <DropDownComp
-                items={dropdownItems}
-                onSelect={setLeaveDataPerPage}
-              />
-            </div>
-          </div>
           )}
         </div>
       </div>

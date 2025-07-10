@@ -34,7 +34,7 @@ import {
 } from "../../utils/permissionUtils.js";
 import truncateText from "../../utils/truncateText.js";
 import { useLogout } from "../../hooks/useAuth.js";
-
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
   const navigate = useNavigate();
@@ -253,8 +253,9 @@ const MobileNavigation = () => {
         <DrawerContent>
           {() => (
             <>
-              <DrawerHeader className="flex flex-col gap-1">
+              <DrawerHeader className="flex justify-between mr-8 gap-1">
                 RCL HRIMS
+                <ThemeSwitcher />
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">

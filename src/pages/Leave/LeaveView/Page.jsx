@@ -1,57 +1,26 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import GoBack from "../../../components/GoBack";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
 import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils";
+import { useLeaveById } from "../../../hooks/useAuth";
+import Loader from "../../../components/Loader/Loader";
 const LeaveView = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
-
-  /**To check Employee see status */
   const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
 
-  const fetchLeaveById = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/leave/leaveId", {
-        data: { rclId: id },
-      });
-      if (response.data.responseCode === "200") {
-        setLeaveByIdData(response.data.datalist[0]);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchLeaveById();
-  }, [id]);
+  const { data: leaveByIdData, isLoading } = useLeaveById(id);
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
-  }, [navigate]);
+  }, [navigate, hasaccess]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-pulse text-lg">Loading leave details...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   // Format status for display

@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import axiosInstance from "../lib/axios-Instance";
 import {
   Button,
   Drawer,
@@ -13,6 +12,11 @@ import { BsFilter } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import ReusableAutocomplete from "./ui/SearableDropdown.jsx";
+import {
+  useApplyFilters,
+  useFetchUnPaginatedDepartment,
+  useFetchUnPaginatedPosition,
+} from "../hooks/useAuth.js";
 
 const Filter = ({
   onApplyFilters,
@@ -24,7 +28,7 @@ const Filter = ({
     toDateField: "toDate",
   },
 }) => {
-  const { control, handleSubmit, reset, watch, setValue } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       FromDate: null,
       toDate: null,
@@ -33,70 +37,30 @@ const Filter = ({
     },
   });
 
-  const [departmentsData, setDepartmentsData] = useState([]);
-  const [positionData, setPositionData] = useState([]);
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
-  const [loadingPositions, setLoadingPositions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
   const fromDate = watch("FromDate");
 
-  /** Fetch Departments */
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoadingDepartments(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/v1/departments/get/all",
-          {}
-        );
-        if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.datalist);
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setLoadingDepartments(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
+  // Use React Query hooks
+  const {
+    data: departmentsResponse = {},
+    isLoading: loadingDepartments,
+    error: departmentsError,
+  } = useFetchUnPaginatedDepartment();
 
-  /** Fetch Positions */
-  useEffect(() => {
-    const fetchPositions = async () => {
-      setLoadingPositions(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/positions/get/all");
-        if (response.data.responseCode === "200") {
-          setPositionData(response?.data?.datalist);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setLoadingPositions(false);
-      }
-    };
-    fetchPositions();
-  }, []);
+  const departmentsData = departmentsResponse?.datalist || [];
+  const {
+    data: positionResponse = {},
+    isLoading: loadingPositions,
+    error: positionsError,
+  } = useFetchUnPaginatedPosition();
+  const positionData = positionResponse?.datalist || [];
+
+  const applyFiltersMutation = useApplyFilters((data) => {
+    onClose();
+    onApplyFilters(data);
+  });
 
   const onSubmit = async (formData) => {
-    setIsLoading(true);
-
     const requestBody = {
       pageIndex: 1,
       pageSize: 10,
@@ -127,32 +91,7 @@ const Filter = ({
       );
     }
 
-    try {
-      const response = await axiosInstance.post(`${url}`, requestBody, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.data.responseCode === "200") {
-        onClose();
-        onApplyFilters({
-          data: response.data.datalist,
-          totalPages: response.data.totalPages,
-          totalRecords: response.data.totalRecords,
-        });
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    applyFiltersMutation.mutate({ url, requestBody });
   };
 
   const resetFilters = () => {
@@ -161,7 +100,6 @@ const Filter = ({
     onClose();
   };
 
-  // Transform departments data for ReusableAutocomplete
   const departmentItems = departmentsData
     ?.filter((d) => !d?.isDeleted)
     ?.map((department) => ({
@@ -169,14 +107,12 @@ const Filter = ({
       label: department?.name,
     }));
 
-  // Transform positions data for ReusableAutocomplete
   const positionItems = positionData
     ?.filter((p) => !p?.isDeleted)
     ?.map((position) => ({
       key: position?.id,
       label: position?.positionName,
     }));
-
   return (
     <div className="bg-white rounded-xl">
       <Button onPress={onOpen} className="text-sm font-medium">
@@ -191,13 +127,13 @@ const Filter = ({
             <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-6">
               <div className="flex gap-4">
                 <DatepickerComponent
-                  disabled={isLoading}
+                  disabled={applyFiltersMutation.isLoading}
                   name="FromDate"
                   label="From Date (A.D)"
                   control={control}
                 />
                 <DatepickerComponent
-                  disabled={isLoading}
+                  disabled={applyFiltersMutation.isLoading}
                   name="toDate"
                   label="To Date (A.D)"
                   control={control}
@@ -217,7 +153,9 @@ const Filter = ({
                   control={control}
                   label={loadingDepartments ? "Loading..." : "Department"}
                   items={departmentItems}
-                  isDisabled={isLoading || loadingDepartments}
+                  isDisabled={
+                    applyFiltersMutation.isLoading || loadingDepartments
+                  }
                 />
               </div>
 
@@ -227,7 +165,9 @@ const Filter = ({
                   control={control}
                   label={loadingPositions ? "Loading..." : "Position"}
                   items={positionItems}
-                  isDisabled={isLoading || loadingPositions}
+                  isDisabled={
+                    applyFiltersMutation.isLoading || loadingPositions
+                  }
                 />
               </div>
 
@@ -235,7 +175,7 @@ const Filter = ({
                 <Button
                   type="submit"
                   className="bg-black dark:bg-slate-500 text-white dark:hover:bg-hoverbackground hover:bg-hoverbackground"
-                  isLoading={isLoading}>
+                  isLoading={applyFiltersMutation.isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
                 </Button>

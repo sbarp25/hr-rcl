@@ -1,39 +1,71 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
+  applyFilters,
   autoCheckout,
+  changeProfilePhoto,
   checkInAPI,
   checkOutAPI,
+  createDepartment,
   createEmployees,
+  createPosition,
+  createRole,
+  deleteDepartment,
   deleteDevice,
   deleteEmployees,
   deleteOneDecice,
+  deletePosition,
   deleteRole,
+  EditDepartment,
+  editPosition,
   fetchApprovedLeave,
   fetchApprovedWorkFromHome,
   fetchBank,
   fetchDepartment,
+  fetchDepartmentId,
   fetchEkye,
   fetchEmployeeDetails,
   fetchEmployees,
   fetchlateCheckin,
+  fetchleave,
+  fetchListLeave,
+  fetchMFAsetting,
   fetchPosition,
+  fetchPositionById,
   fetchrcl,
   fetchrole,
+  fetchTeamLead,
   fetchTrustedDevices,
   fetchUnPaginatedDepartment,
   fetchUnPaginatedPosition,
   fetchUnPaginatedRoles,
   fetchWeeklyAttendanceReport,
+  forgetPasswordEmail,
+  getAddressDetails,
+  getDistrictsByProvince,
+  getDocumentDetails,
+  getEducationDetails,
+  getPersonalDetails,
+  getProvinces,
   getSiteKey,
   lateCheckInAPI,
   lateCheckInApprove,
   lateCheckInReject,
+  leaveById,
+  leaveRequest,
   loginUser,
   logoutUser,
   OTPVerification,
+  rejectUser,
   resetPassword,
+  salaryCalculation,
+  saveAddressDetails,
+  saveDocumentDetails,
+  savePersonalDetails,
+  submitEducationDetails,
+  UpComingHoliday,
   updateEmployees,
+  updateMFASetting,
 } from "../api/auth";
 import { toast } from "sonner";
 import LocalStorageUtil from "../utils/LocalStorageUtil";
@@ -145,7 +177,6 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
           navigate("/EKYE");
         }
       } else {
-        console.log("Response code is not 200, it is:", data?.responseCode);
         toast.error("Something went wrong");
       }
     },
@@ -410,6 +441,107 @@ export const useFetchDepartment = (currentPage, departmentPerPage) => {
     },
   });
 };
+/**Delete Department */
+export const useDeleteDepartment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteDepartment,
+    onSuccess: (data) => {
+      if (data.responseCode === "204") {
+        toast.success(data.message || "Department deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+      } else {
+        toast.error(data.message || "Failed to delete department");
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Create Department */
+export const useCreateDepartment = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createDepartment,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "201 ") {
+        toast.success(
+          response?.data?.message || "Department Created Successfully"
+        );
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+        navigate("/master-data/Department");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Team Lead */
+export const useFetchTeamLead = () => {
+  return useQuery({
+    queryKey: ["FetchTeamLead"],
+    queryFn: fetchTeamLead,
+  });
+};
+
+/**Fetch Indivisual Department */
+export const useIndivisualDepartment = (longid) => {
+  return useQuery({
+    queryKey: ["FetchIndivisualDepartment", longid],
+    queryFn: () => fetchDepartmentId(longid),
+  });
+};
+
+/**Edit Department */
+export const useEditDepartment = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: ({ updatedDepartment, longid }) =>
+      EditDepartment(updatedDepartment, longid),
+    onSuccess: (response) => {
+      if (response?.responseCode === "200") {
+        toast.success(
+          response?.message || "Department has been updated successfully."
+        );
+        queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
+        navigate("/master-data/Department"); // Fixed navigation path
+      } else {
+        const errorMessage =
+          response?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
 
 /**Fetch unpaginated department */
 export const useFetchUnPaginatedDepartment = () => {
@@ -421,6 +553,103 @@ export const useFetchUnPaginatedDepartment = () => {
     },
   });
 };
+
+/**Create Position */
+export const useCreatePosition = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createPosition,
+    onSuccess: (response) => {
+      if (response?.responseCode === "201") {
+        toast.success(
+          response?.data?.message || "Position Created Successfully"
+        );
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+        navigate("/master-data/Position");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Position By Id */
+export const usePositionById = (id) => {
+  return useQuery({
+    queryKey: ["FetchPositionById", id],
+    queryFn: () => fetchPositionById(id),
+  });
+};
+
+/**Edit Position */
+export const useEditPosition = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: ({ updatePosition, id }) =>
+      editPosition({ updatePosition, id }),
+    onSuccess: (response) => {
+      if (response?.responseCode === "200") {
+        toast.success(
+          response?.message || "Position has been updated successfully."
+        );
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+        navigate("/master-data/Position"); // Fixed navigation path
+      } else {
+        const errorMessage =
+          response?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Delete Position */
+export const useDeletePosition = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deletePosition,
+    onSuccess: (data) => {
+      if (data?.responseCode === "204") {
+        toast.success(data.message || "Department deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
 /**Fetch unpaginated position */
 export const useFetchUnPaginatedPosition = () => {
   return useQuery({
@@ -428,16 +657,6 @@ export const useFetchUnPaginatedPosition = () => {
     queryFn: () => fetchUnPaginatedPosition(),
     onError: (error) => {
       console.error("Error fetching Position", error);
-    },
-  });
-};
-/**Fetch unpaginated Roles */
-export const useFetchUnPaginatedRoles = () => {
-  return useQuery({
-    queryKey: ["fetchUnpaginatedRoles"],
-    queryFn: () => fetchUnPaginatedRoles(),
-    onError: (error) => {
-      console.error("Error fetching Roles", error);
     },
   });
 };
@@ -464,6 +683,40 @@ export const useFetchRoles = (currentPage, rolesPerPage) => {
   });
 };
 
+/**Create Roles */
+export const useCreateRoles = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: createRole,
+    onSuccess: (response) => {
+      if (response?.responseCode === "201") {
+        toast.success(response?.message || "Roles Created Successfully");
+        queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
+        navigate("/master-data/Roles");
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch unpaginated Roles */
+export const useFetchUnPaginatedRoles = () => {
+  return useQuery({
+    queryKey: ["fetchUnpaginatedRoles"],
+    queryFn: () => fetchUnPaginatedRoles(),
+    onError: (error) => {
+      console.error("Error fetching Roles", error);
+    },
+  });
+};
 /**Use Role Delete */
 export const useDeleteRoles = () => {
   const queryClient = useQueryClient();
@@ -625,6 +878,392 @@ export const useEmployeeRCL = () => {
     queryFn: () => fetchrcl(),
     onError: (error) => {
       console.error("Error Fetching employee details", error);
+    },
+  });
+};
+
+/**Forget Password email send */
+export const useForgetPasswordEmail = () => {
+  return useMutation({
+    mutationFn: forgetPasswordEmail,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Reset Link has been sent successfully"
+        );
+        // navigate("/");
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Leave by role */
+export const useLeaveByRole = (currentPage, leaveDataPerPage) => {
+  return useQuery({
+    queryKey: ["FetchLeaveByRole", currentPage, leaveDataPerPage],
+    queryFn: () => fetchleave(currentPage, leaveDataPerPage),
+    onError: (error) => {
+      console.error("Unable to fetch:", error);
+    },
+  });
+};
+
+export const useLeaveByList = (currentPage, leaveDataPerPage) => {
+  return useQuery({
+    queryKey: ["leaveList", currentPage, leaveDataPerPage],
+    queryFn: () => fetchListLeave(currentPage, leaveDataPerPage),
+    enabled: !!(currentPage && leaveDataPerPage),
+    onError: (error) => {
+      console.error("Failed to fetch leave data:", error);
+      toast.error(error.message || "Failed to fetch leave data");
+    },
+  });
+};
+
+/**Apply Leave */
+export const useLeaveRequest = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: leaveRequest,
+    onSuccess: (response) => {
+      if (response?.data?.responseCode === "200") {
+        toast.success(
+          response?.data?.message || "Leave Requested Successfully"
+        );
+        navigate("/Leave/Request");
+        // queryClient.invalidateQueries({ queryKey: ["employees"] });
+      } else {
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Leave By Id */
+export const useLeaveById = (id) => {
+  return useQuery({
+    queryKey: ["LeaveUser", id],
+    queryFn: () => leaveById(id),
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Salary Details */
+export const useSalary = () => {
+  return useQuery({
+    querKey: ["SalaryDetails"],
+    queryFn: () => salaryCalculation,
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Get Personal Details */
+export const usePersonalDetails = () => {
+  return useQuery({
+    queryKey: ["PersonalDetails"],
+    queryFn: () => getPersonalDetails(),
+    onError: (error) => {
+      console.error("usePersonalDetails error:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
+    },
+    // Add these options for debugging
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**Save Personal Details */
+export const useSavePersonalDetails = (onSuccess) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData) => savePersonalDetails(formData),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["PersonalDetails"],
+      });
+      toast.success(data?.message || "Personal details saved successfully");
+      onSuccess?.();
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Fetch Province*/
+export const useProvinces = () => {
+  return useQuery({
+    queryKey: ["provinces"],
+    queryFn: getProvinces,
+    onError: (error) => {
+      console.error("useProvinces error:", error);
+      const errorMessage = error.message || "Failed to fetch provinces";
+      toast.error(errorMessage);
+    },
+    retry: 1,
+  });
+};
+
+/**Fetch District*/
+export const useDistrictsByProvince = (provinceId) => {
+  return useQuery({
+    queryKey: ["districts", provinceId],
+    queryFn: () => getDistrictsByProvince(provinceId),
+    enabled: !!provinceId, // Only run query when provinceId is available
+    onError: (error) => {
+      console.error("useDistrictsByProvince error:", error);
+      const errorMessage = error.message || "Failed to fetch districts";
+      toast.error(errorMessage);
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+/**Get Address Details */
+export const useAddressDetails = () => {
+  return useQuery({
+    queryKey: ["addressDetails"],
+    queryFn: getAddressDetails,
+    onError: (error) => {
+      console.error("useAddressDetails error:", error);
+      const errorMessage = error.message || "Failed to fetch address details";
+      toast.error(errorMessage);
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**Save Address Details */
+export const useSaveAddressDetails = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: saveAddressDetails,
+    onSuccess: (data) => {
+      toast.success(data.message || "Address details saved successfully");
+      // Invalidate and refetch address details
+      queryClient.invalidateQueries({ queryKey: ["addressDetails"] });
+    },
+    onError: (error) => {
+      console.error("useSaveAddressDetails error:", error);
+      const errorMessage = error.message || "Failed to save address details";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Get Documents Details */
+export const useDocumentDetails = () => {
+  return useQuery({
+    queryKey: ["documentDetails"],
+    queryFn: getDocumentDetails,
+    onError: (error) => {
+      console.error("useDocumentDetails error:", error);
+      const errorMessage = error.message || "Failed to fetch document details";
+      toast.error(errorMessage);
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**Save Document Details */
+export const useSaveDocumentDetails = () => {
+  return useMutation({
+    mutationFn: saveDocumentDetails,
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+/**Get Education Details */
+export const useEducationDetails = () => {
+  return useQuery({
+    queryKey: ["educationDetails"],
+    queryFn: getEducationDetails,
+    onError: (error) => {
+      console.error("useEducationDetails error:", error);
+      const errorMessage = error.message || "Failed to fetch education details";
+      toast.error(errorMessage);
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/**Save education details */
+export const useSubmitEducationDetails = (onSuccess) => {
+  return useMutation({
+    mutationFn: submitEducationDetails,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      if (onSuccess) {
+        onSuccess(data);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useApplyFilters = (onSuccess) => {
+  return useMutation({
+    mutationFn: applyFilters,
+    onSuccess: (data) => {
+      toast.success("Filters applied successfully");
+      if (onSuccess) {
+        onSuccess(data);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useRejectUser = (onSuccess) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: rejectUser,
+    onSuccess: (data) => {
+      if (data?.responseCode === "201") {
+        toast.success(data?.message);
+
+        // Invalidate relevant queries to refetch data
+        queryClient.invalidateQueries({ queryKey: ["employees"] });
+        queryClient.invalidateQueries({ queryKey: ["adminEkye"] });
+
+        // Navigate to admin page
+        navigate("/AdminEkye");
+
+        if (onSuccess) {
+          onSuccess(data);
+        }
+      } else {
+        const errorMessage =
+          data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+        toast.error(errorMessage);
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useFetchUpComingHoliday = () => {
+  return useQuery({
+    queryKey: ["fetchUpComingHoliday"],
+    queryFn: () => UpComingHoliday,
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useFetchingMFASetting = () => {
+  return useQuery({
+    queryKey: ["fetchMFASetting"],
+    queryFn: fetchMFAsetting,
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useSaveMFAsetting = () => {
+  return useMutation({
+    mutationFn: updateMFASetting,
+    onSuccess: (data) => {
+      toast.success(data.message || "MFA settings updated successfully");
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export const useChangeProfilePhoto = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: changeProfilePhoto,
+    onSuccess: (data) => {
+      toast.success(data.data.message || "MFA settings updated successfully");
+      navigate(0);
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong";
+      toast.error(errorMessage);
     },
   });
 };

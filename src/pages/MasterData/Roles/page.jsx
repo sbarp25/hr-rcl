@@ -36,6 +36,7 @@ import {
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { useEmployeeDelete, useFetchRoles } from "../../../hooks/useAuth.js";
+
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
@@ -73,6 +74,10 @@ const Roles = () => {
   }, [hasaccess, navigate]);
 
   const { data, isLoading, refetch } = useFetchRoles();
+
+  // Fix: Properly destructure the delete function from the hook
+  const { mutate: deleteRole, isLoading: isDeleting } = useEmployeeDelete();
+
   const roleData = filteredData || data?.datalist || [];
   const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
   const totalRecords =
@@ -88,6 +93,7 @@ const Roles = () => {
     setFilteredData(null);
     setFilteredPagination(null);
   };
+
   const handleApplySearch = (result) => {
     if (result.data) {
       setFilteredData(result.data);
@@ -131,7 +137,30 @@ const Roles = () => {
         console.log("Unknown action");
     }
   };
-  const onDelete = useEmployeeDelete();
+
+  // Fix: Create a proper delete handler function
+  const handleDelete = async () => {
+    if (roleId) {
+      try {
+        await deleteRole(roleId, {
+          onSuccess: () => {
+            toast.success("Role deleted successfully");
+            refetch(); // Refresh the data
+            onClose(); // Close the modal
+            setRoleId(null); // Clear the roleId
+          },
+          onError: (error) => {
+            toast.error("Failed to delete role");
+            console.error("Delete error:", error);
+          },
+        });
+      } catch (error) {
+        toast.error("Failed to delete role");
+        console.error("Delete error:", error);
+      }
+    }
+  };
+
   const navigateAdd = () => {
     if (hasRoleAddAccess) {
       navigate("/master-data/Roles/add");
@@ -142,7 +171,7 @@ const Roles = () => {
 
   return (
     <>
-      {isDeleteLoading ? (
+      {isDeleteLoading || isDeleting ? (
         <Loader />
       ) : (
         <>
@@ -422,10 +451,16 @@ const Roles = () => {
                   <ModalBody>
                     <p>Are you sure you want to delete this role?</p>
                     <div className="flex gap-2 justify-end mt-4">
-                      <Button color="danger" onPress={() => onDelete()}>
-                        Delete
+                      <Button
+                        color="danger"
+                        onPress={handleDelete}
+                        isLoading={isDeleting}
+                        disabled={isDeleting}>
+                        {isDeleting ? "Deleting..." : "Delete"}
                       </Button>
-                      <Button onPress={onClose}>Cancel</Button>
+                      <Button onPress={onClose} disabled={isDeleting}>
+                        Cancel
+                      </Button>
                     </div>
                   </ModalBody>
                 </>

@@ -1,10 +1,6 @@
 import {
   Accordion,
   AccordionItem,
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
   Pagination,
   Table,
   TableBody,
@@ -13,64 +9,45 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-  useDisclosure,
 } from "@heroui/react";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Filter from "../../../../components/Filter";
 import Search from "../../../../components/Search";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../../utils/truncateText";
-import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";
-import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
-import { toast } from "sonner";
-import axiosInstance from "../../../../lib/axios-Instance";
 import { useEffect, useState } from "react";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
-import { MdNavigateBefore } from "react-icons/md";
 import {
-  hasApproveAccess,
-  hasCreateAccess,
-  hasDeleteAccess,
   hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
+import { useLeaveByList } from "../../../../hooks/useAuth.js";
 
 const SelfLeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRow, setExpandedRow] = useState(null);
-
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isRejectOpen,
-    onOpen: onRejectOpen,
-    onOpenChange: onRejectOpenChange,
-    onClose: onRejectClose,
-  } = useDisclosure();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [leaveData, setLeaveData] = useState([]);
-  const [selectedLeave, setSelectedLeave] = useState(null);
-  const [originalLeaveData, setOriginalLeaveData] = useState([]);
-
   const [leaveDataPerPage, setLeaveDataPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const [filteredData, setFilteredData] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
+
   const navigate = useNavigate();
-  const { reset, control, handleSubmit } = useForm();
+
+  // React Query for fetching leave data
+  const {
+    data: leaveResponse,
+    isLoading,
+    refetch: fetchLeave,
+  } = useLeaveByList(currentPage, leaveDataPerPage);
+
+  // Extract data from response
+  const originalLeaveData = leaveResponse?.datalist || [];
+  const leaveData = isFiltered ? filteredData : originalLeaveData;
+  const totalPages = leaveResponse?.totalPages || 1;
+  const totalRecords = leaveResponse?.totalRecords || 0;
 
   const handlePageChange = (page) => {
-    setLeaveData([]);
     setCurrentPage(page);
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   const breadcrumbItems = [
@@ -80,156 +57,23 @@ const SelfLeaveStatus = () => {
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
-  const fetchLeave = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        `/api/v1/leave_management/list`,
-        { pageIndex: currentPage, pageSize: leaveDataPerPage }
-      );
-      if (response.data.responseCode === "200") {
-        setLeaveData(response.data.datalist);
-        setOriginalLeaveData(response.data.datalist);
-        setTotalPages(response.data.totalPages);
-        setTotalRecords(response.data.totalRecords);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLeave();
-  }, [currentPage, leaveDataPerPage]);
-
   // const hasaccess = true;
   // const hasLeaveUpdateAccess = true;
   const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeaveUpdateAccess = hasApproveAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeaveDeleteAccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeaveCreateAccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
 
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
     }
   }, [hasaccess, navigate]);
+
   const handleApplyFilters = (result) => {
     if (result.data) {
-      // Filter component returned filtered data
-      setLeaveData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setIsFiltered(true);
     } else {
-      // Reset case - restore original data
-      setLeaveData(originalLeaveData);
-    }
-  };
-
-  const onApprove = async () => {
-    if (hasLeaveUpdateAccess) {
-      if (!selectedLeave) return;
-
-      setIsLoading(true);
-      const updateLeave = {
-        data: {
-          leaveId: selectedLeave.leaveId,
-          leaveStatus: "APPROVED",
-        },
-      };
-
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication is missing.");
-          return;
-        }
-        const response = await axiosInstance.put(
-          "/api/leave/status",
-          updateLeave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          toast.success(response?.data?.message);
-          fetchLeave();
-          onClose();
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      toast.error("Currently You dont have access to this setting.");
-    }
-  };
-
-  const onReject = async (formData) => {
-    if (hasLeaveUpdateAccess) {
-      if (!selectedLeave) return;
-
-      setIsLoading(true);
-      const RejectLeave = {
-        data: {
-          leaveId: selectedLeave.leaveId,
-          leaveStatus: "REJECTED",
-          remark: formData.reason,
-        },
-      };
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication is missing.");
-          return;
-        }
-        const response = await axiosInstance.put(
-          "/api/leave/status",
-          RejectLeave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response?.data?.responseCode === "200") {
-          toast.success(response?.data?.message);
-          fetchLeave();
-          onRejectClose();
-          reset();
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      toast.error("Currently You dont have access to this setting.");
+      setFilteredData([]);
+      setIsFiltered(false);
     }
   };
 
@@ -249,12 +93,11 @@ const SelfLeaveStatus = () => {
 
   const handleApplySearch = (result) => {
     if (result.data) {
-      // Search component returned filtered data
-      setLeaveData(result.data);
-      if (result.totalPages) setTotalPages(result.totalPages);
-      if (result.totalRecords) setTotalRecords(result.totalRecords);
+      setFilteredData(result.data);
+      setIsFiltered(true);
     } else {
-      fetchLeave();
+      setFilteredData([]);
+      setIsFiltered(false);
     }
   };
   return (
@@ -491,16 +334,18 @@ const SelfLeaveStatus = () => {
           {/**Pagination Section - Responsive for all screens */}
           {leaveData && leaveData.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-              <div className="text-sm font-medium text-gray-600  flex items-center">
+              <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
                 <span className="mr-1">Showing:</span>
-                <span className="font-bold text-gray-800 mx-1">
+                <span className="font-bold text-gray-800  dark:text-white mx-1">
                   {totalRecords < leaveDataPerPage
                     ? totalRecords
                     : leaveDataPerPage}
                   {/* {leaveDataPerPage} */}
                 </span>
                 <span className="mr-1">of</span>
-                <span className="font-bold text-gray-800">{totalRecords}</span>
+                <span className="font-bold text-gray-800 dark:text-white">
+                  {totalRecords}
+                </span>
               </div>
 
               <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
@@ -523,125 +368,6 @@ const SelfLeaveStatus = () => {
           )}
         </div>
       </div>
-
-      {/* Approve Modal */}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size="4xl"
-        isDismissable={true}
-        isKeyboardDismissDisabled={false}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Leave Approval</h3>
-                  <p>Are you sure you want to approve this leave?</p>
-                  {selectedLeave && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
-                      <div className="flex ">
-                        <span className="font-medium">Team Lead:</span>
-                        <span>{selectedLeave?.teamleadName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">AssociateTeam Lead:</span>
-                        <span>{selectedLeave?.associateteamleadName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Leave Type:</span>
-                        <span>{selectedLeave?.leaveType}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Start Date:</span>
-                        <span>{selectedLeave?.leaveStartDate}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">End Date:</span>
-                        <span>{selectedLeave?.leaveEndDate}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-2 justify-end mt-4">
-                  <Button
-                    className="bg-black text-white"
-                    onPress={() => onApprove()}>
-                    Approve
-                  </Button>
-                  <Button onPress={onClose}>Cancel</Button>
-                </div>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
-      {/* Reject Modal */}
-      <Modal
-        isOpen={isRejectOpen}
-        onOpenChange={onRejectOpenChange}
-        isDismissable={true}
-        size="4xl"
-        isKeyboardDismissDisabled={false}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Leave Rejection</h3>
-                  <p>Are you sure you want to reject this leave?</p>
-                  {selectedLeave && (
-                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
-                      <div className="flex ">
-                        <span className="font-medium">Leave Type:</span>
-                        <span>{selectedLeave?.leaveType}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Start Date:</span>
-                        <span>{selectedLeave?.leaveStartDate}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">End Date:</span>
-                        <span>{selectedLeave?.leaveEndDate}</span>
-                      </div>
-                      <div className="flex ">
-                        {selectedLeave.isHalfDay && (
-                          <div>
-                            <span className="font-medium">Half Day</span>
-                            <span>{selectedLeave?.isHalfDay}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <form onSubmit={handleSubmit(onReject)}>
-                  <TextAreaComp
-                    name="reason"
-                    label="Rejection Reason"
-                    control={control}
-                    placeholder="Enter reason for rejection"
-                    rules={{
-                      required: "Reason is required",
-                      minLength: {
-                        value: 10,
-                        message: "Reason must be at least 10 characters long.",
-                      },
-                    }}
-                  />
-                  <div className="flex gap-2 justify-end mt-4">
-                    <Button className="text-white bg-black" type="submit">
-                      Reject
-                    </Button>
-                    <Button onPress={onClose}>Cancel</Button>
-                  </div>
-                </form>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </div>
   );
 };

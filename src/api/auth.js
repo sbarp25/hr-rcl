@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { getIpAddress } from "../utils/getIpAddress";
 import platform from "platform";
+import { useNavigate } from "react-router-dom";
 
 let globalVisitorId = null;
 
@@ -186,7 +187,8 @@ export const lateCheckInAPI = async (requestData) => {
 // fetch Late checkin's
 export const fetchlateCheckin = async (currentPage, lateCheckInDataPerPage) => {
   const response = await axiosInstance.post(
-    "/api/v1/attendance/late-check-in/role-based-reviews",
+    // "/api/v1/attendance/late-check-in/late-attendance/by-role",
+    "/api/v1/attendance/late-check-in/late-attendance/list",
     { pageIndex: currentPage, pageSize: lateCheckInDataPerPage }
   );
   if (response?.data?.responseCode === "200") {
@@ -312,6 +314,66 @@ export const fetchUnPaginatedDepartment = async () => {
     throw new Error(response?.data?.message || "Failed to fetch Departments");
   }
 };
+/**Delete Department */
+export const deleteDepartment = async (departmentId) => {
+  const response = await axiosInstance.delete(
+    `/api/v1/departments/delete/${departmentId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+/**Create Department */
+export const createDepartment = async (AddDepartment) => {
+  const response = await axiosInstance.post(
+    "/api/v1/departments/register",
+    AddDepartment,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+};
+
+/**Fetch Team Lead */
+export const fetchTeamLead = async () => {
+  const response = await axiosInstance.get(
+    "/api/v1/departments/get_all_users_name_id"
+  );
+  return response.data;
+};
+
+/**Fetch Indivisual Department Data */
+export const fetchDepartmentId = async (longid) => {
+  const response = await axiosInstance.post(
+    `/api/v1/departments/get/${longid}`,
+    {
+      id: parseFloat(longid),
+    }
+  );
+  return response?.data?.data;
+};
+
+/**EdIt Department */
+export const EditDepartment = async (updatedDepartment, longid) => {
+  const id = parseInt(longid);
+  const response = await axiosInstance.put(
+    `/api/v1/departments/update/${id}`,
+    updatedDepartment,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
+};
 
 /**Fetch unpaginated Position */
 export const fetchUnPaginatedPosition = async () => {
@@ -323,17 +385,33 @@ export const fetchUnPaginatedPosition = async () => {
     throw new Error(response?.data?.message || "Failed to fetch Position");
   }
 };
-/**Fetch unpaginated Roles */
-export const fetchUnPaginatedRoles = async () => {
-  const response = await axiosInstance.post("/api/v1/role/get/all", {});
-  if (response?.data?.responseCode === "200") {
-    return response.data;
-  } else {
-    toast.error(response?.data?.message);
-    throw new Error(response?.data?.message || "Failed to fetch Roles");
-  }
+/**Create Position*/
+export const createPosition = async (newPosition) => {
+  const response = await axiosInstance.post(
+    "/api/v1/positions/save",
+    newPosition,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
 };
 
+/**Edit Position */
+export const editPosition = async ({ updatePosition, id }) => {
+  const response = await axiosInstance.put(
+    `/api/v1/positions/update/${id}`,
+    updatePosition,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
+};
 /**Fetch Position */
 export const fetchPosition = async (currentPage, positionPerPage) => {
   const response = await axiosInstance.post("/api/v1/positions/list", {
@@ -346,6 +424,25 @@ export const fetchPosition = async (currentPage, positionPerPage) => {
     toast.error(response?.data?.message);
     throw new Error(response?.data?.message || "Failed to fetch Position");
   }
+};
+
+/**Delete Position */
+export const deletePosition = async (positionId) => {
+  const response = await axiosInstance.delete(
+    `api/v1/positions/delete/${positionId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response?.data;
+};
+
+/**Fetch Position By Id */
+export const fetchPositionById = async (id) => {
+  const response = await axiosInstance.get(`/api/v1/positions/get/${id}`);
+  return response?.data;
 };
 
 /**Fetch Roles */
@@ -361,7 +458,16 @@ export const fetchrole = async (currentPage, rolesPerPage) => {
     throw new Error(response?.data?.message || "Failed to fetch Roles");
   }
 };
-
+/**Fetch unpaginated Roles */
+export const fetchUnPaginatedRoles = async () => {
+  const response = await axiosInstance.post("/api/v1/role/get/all", {});
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
 /**Delete Role */
 export const deleteRole = async (roleId) => {
   const response = await axiosInstance.delete(`/api/v1/role/delete/${roleId}`);
@@ -371,6 +477,16 @@ export const deleteRole = async (roleId) => {
     toast.error(response?.data?.message);
     throw new Error(response?.data?.message || "Failed to delete Role");
   }
+};
+
+/**Create Role */
+export const createRole = async (newRole) => {
+  const response = await axiosInstance.post("/api/v1/role/save", newRole, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response?.data;
 };
 
 /**Get Site Key */
@@ -542,4 +658,451 @@ export const fetchrcl = async () => {
   } else {
     throw new Error(response?.data?.message || "Failed to fetch RCL Id");
   }
+};
+
+export const forgetPasswordEmail = async (resetData) => {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/forget-password`,
+    resetData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};
+
+/**Fetch Leave by role */
+export const fetchleave = async (currentPage, leaveDataPerPage) => {
+  const response = await axiosInstance.post(
+    `/api/v1/leave_management/by-role`,
+    {
+      pageIndex: currentPage,
+      pageSize: leaveDataPerPage,
+    }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response;
+  } else {
+    toast.error(response?.data?.message);
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
+
+/**Fetch Leave list */
+export const fetchListLeave = async (currentPage, leaveDataPerPage) => {
+  const response = await axiosInstance.post(`/api/v1/leave_management/list`, {
+    pageIndex: currentPage,
+    pageSize: leaveDataPerPage,
+  });
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    throw new Error(response?.data?.message || "Failed to fetch Roles");
+  }
+};
+
+/**Apply Leave */
+export const leaveRequest = async (applyleave) => {
+  const response = await axiosInstance.post(
+    "/api/leave/apply_leave",
+    applyleave,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response;
+};
+
+/**Update Leave */
+export const updateLeaveStatus = async (leaveData) => {
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    throw new Error("Authentication is missing.");
+  }
+
+  const response = await axiosInstance.put("/api/leave/status", leaveData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (response?.data?.responseCode !== "200") {
+    throw new Error(
+      response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong"
+    );
+  }
+
+  return response.data;
+};
+
+/**Leave by Id */
+export const leaveById = async (id) => {
+  const response = await axiosInstance.post("/api/leave/leaveId", {
+    data: { rclId: id },
+  });
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    throw new Error(response?.data?.message || "Failed to fetch Leave");
+  }
+};
+
+/**Salary Calculation */
+export const salaryCalculation = async () => {
+  const response = await axiosInstance.get("/api/salary/calculate");
+  if (response?.data?.responseCode === "200") {
+    return response?.data?.data;
+  }
+};
+
+/**fetch Personal Details */
+export const getPersonalDetails = async () => {
+  const authToken = localStorage.getItem("accessToken");
+
+  if (!authToken) {
+    throw new Error("Authentication is missing.");
+  }
+
+  try {
+    const response = await axiosInstance.get("/api/v1/personal/getById");
+
+    if (response?.data?.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(
+        response?.data?.message || "Failed to fetch personal details"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch personal details:", error);
+    throw error;
+  }
+};
+
+/**Save Personal Details */
+export const savePersonalDetails = async (formData) => {
+  const response = await axiosInstance.post("/api/v1/personal/save", formData, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response?.data?.responseCode !== "201") {
+    throw new Error(
+      response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong"
+    );
+  }
+
+  return response.data;
+};
+
+/**Get all provinces */
+export const getProvinces = async () => {
+  try {
+    const response = await axiosInstance.get("/api/v1/province/get/all");
+
+    if (response.data.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch provinces");
+    }
+  } catch (error) {
+    console.error("Failed to fetch provinces:", error);
+    throw error;
+  }
+};
+
+/**District on basis of province Id */
+export const getDistrictsByProvince = async (provinceId) => {
+  if (!provinceId) {
+    throw new Error("Province ID is required");
+  }
+
+  try {
+    const sanitizedProvinceId = String(provinceId).replace(/[^0-9]/g, "");
+    const response = await axiosInstance.get(
+      `/api/v1/district/districts/${sanitizedProvinceId}`
+    );
+
+    if (response.data.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch districts");
+    }
+  } catch (error) {
+    console.error("Failed to fetch districts:", error);
+    throw error;
+  }
+};
+
+/**Get Address Details */
+export const getAddressDetails = async () => {
+  const authToken = localStorage.getItem("accessToken");
+
+  if (!authToken) {
+    throw new Error("Authentication is missing.");
+  }
+
+  try {
+    const response = await axiosInstance.get("/api/v1/address/getById", {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+
+    if (response.data.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to fetch address details"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch address details:", error);
+    throw error;
+  }
+};
+
+/**Save Address Details */
+export const saveAddressDetails = async (addressData) => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/v1/address/save",
+      addressData,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (response?.data?.responseCode === "201") {
+      return response.data;
+    } else {
+      throw new Error(
+        response?.data?.error?.errorList?.[0]?.errorMessage ||
+          response?.data?.message ||
+          "Failed to save address details"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to save address details:", error);
+    const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.message ||
+      "Something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+/**Get Document Details */
+export const getDocumentDetails = async () => {
+  const authToken = localStorage.getItem("accessToken");
+
+  if (!authToken) {
+    throw new Error("Authentication is missing.");
+  }
+
+  try {
+    const response = await axiosInstance.get("/api/v1/document/getById", {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+
+    if (response.data.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to fetch document details"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch document details:", error);
+    throw error;
+  }
+};
+
+/**Save Document Details */
+export const saveDocumentDetails = async (formDataToSubmit) => {
+  const response = await axiosInstance.post(
+    "/api/v1/document/save",
+    formDataToSubmit,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  if (response.data.responseCode === "200") {
+    return response.data;
+  } else {
+    const errorMessage =
+      response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+/**Get Education Details */
+export const getEducationDetails = async () => {
+  const authToken = localStorage.getItem("accessToken");
+
+  if (!authToken) {
+    throw new Error("Authentication token is missing.");
+  }
+
+  try {
+    const response = await axiosInstance.get("/api/v1/education/getById", {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (response.data.responseCode === "200") {
+      return response.data;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to fetch education details"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch education details:", error);
+    throw error;
+  }
+};
+
+/**Save Education Details */
+export const submitEducationDetails = async (formDataToSend) => {
+  try {
+    const response = await axiosInstance.post(
+      "/api/v1/education/save",
+      formDataToSend,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    if (response.data.responseCode === "201") {
+      return response.data;
+    } else {
+      const errorMessage =
+        response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    console.error("Submit error:", error);
+    const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went wrong";
+    throw new Error(errorMessage);
+  }
+};
+
+/**Apply Filter */
+export const applyFilters = async ({ url, requestBody }) => {
+  const authToken = localStorage.getItem("accessToken");
+
+  if (!authToken) {
+    throw new Error("Authentication token is missing.");
+  }
+
+  try {
+    const response = await axiosInstance.post(url, requestBody, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (response.data.responseCode === "200") {
+      return {
+        data: response.data.datalist,
+        totalPages: response.data.totalPages,
+        totalRecords: response.data.totalRecords,
+      };
+    } else {
+      throw new Error(
+        response.data.error?.errorList?.[0]?.errorMessage ||
+          "Failed to apply filters"
+      );
+    }
+  } catch (error) {
+    console.error("Failed to apply filters:", error);
+    throw error;
+  }
+};
+
+/** Reject Users */
+export const rejectUser = async (rejectData) => {
+  const accessToken = localStorage.getItem("accessToken");
+  const response = await axiosInstance.post(
+    "/api/v1/rejected/users",
+    rejectData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+/**UpComing Holiday */
+export const UpComingHoliday = async () => {
+  const response = await axiosInstance.get("api/v1/holiday/upComingHoliday");
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    const errorMessage =
+      response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went Wrong";
+    toast.error(errorMessage);
+  }
+};
+
+/**Fetching MFA setting */
+export const fetchMFAsetting = async () => {
+  try {
+    const response = await axiosInstance.get("/api/v1/auth/mfa/settings");
+
+    if (response?.data?.responseCode === "200") {
+      return response?.data?.data;
+    } else {
+      throw new Error(
+        response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Failed to fetch MFA settings"
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+/**Update the MFA setting */
+export const updateMFASetting = async (payload) => {
+  const response = await axiosInstance.put(
+    "/api/v1/auth/mfa/settings/update",
+    payload
+  );
+
+  if (response?.data?.responseCode !== "200") {
+    throw new Error(response?.data?.message || "Failed to update MFA settings");
+  }
+
+  return response.data;
+};
+
+export const changeProfilePhoto = async (formData) => {
+  const response = await axiosInstance.post(
+    `${import.meta.env.VITE_API_BASE_URL}/api/v1/profilePicture/save`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return response;
 };
