@@ -338,6 +338,10 @@ export const createDepartment = async (AddDepartment) => {
       },
     }
   );
+
+  console.log("🔍 Raw axios response:", response);
+  console.log("🔍 Response.data:", response.data);
+
   return response.data;
 };
 
