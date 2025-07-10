@@ -203,6 +203,7 @@ export const useForgetPassword = () => {
       localStorage.setItem("refreshToken", data.data.refreshToken);
       localStorage.setItem("fullName", data.data.fullName);
       localStorage.setItem("email", data.data.email);
+      LocalStorageUtil.setItem("menu", data.data.menuActionsAndPermissions);
 
       if (
         data.data.ekyeStatus === "NOT_REQUIRED" ||
@@ -475,10 +476,6 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: createDepartment,
     onSuccess: (response) => {
-      console.log("🔍 Full response received:", response);
-      console.log("🔍 Response code:", response?.responseCode);
-      console.log("🔍 Response code type:", typeof response?.responseCode);
-
       if (response?.responseCode == "201") {
         toast.success(response?.message || "Department Created Successfully");
         queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });

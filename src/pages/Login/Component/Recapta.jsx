@@ -55,7 +55,6 @@ const Recaptcha = ({ setCapta, onError }) => {
             setVerificationResult(response);
             setIsVerified(true);
             isVerifiedRef.current = true;
-            toast.success("reCAPTCHA verification successful!");
           } else {
             recaptchaRef.current?.reset();
             setCapta(null);
