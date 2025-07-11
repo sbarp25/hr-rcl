@@ -36,6 +36,7 @@ import {
   useLateCheckInApprove,
   useLateCheckinReject,
 } from "../../../hooks/useAuth.js";
+import { toast } from "sonner";
 
 const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
@@ -159,7 +160,11 @@ const TeamLeadLateCheckin = () => {
       await approveMutation.mutateAsync(updateLeave);
       onClose();
     } catch (error) {
-      console.error("Approval failed:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     }
   };
 
@@ -178,7 +183,11 @@ const TeamLeadLateCheckin = () => {
       onRejectClose();
       reset();
     } catch (error) {
-      console.error("Rejection failed:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
+      toast.error(errorMessage);
     }
   };
   const toggleExpandedRow = (id) => {

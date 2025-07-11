@@ -168,7 +168,6 @@ const ViewEKYE = () => {
   const { data: RCLIdData } = useEmployeeRCL();
 
   const rclId = RCLIdData?.data?.rclId;
-  console.log(rclId);
 
   const { data: EmployeeEKYEData, isLoading } = useEmployeeDetails(rclId);
 

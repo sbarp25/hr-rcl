@@ -62,7 +62,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           setProvinces(response.data.datalist);
         }
       } catch (error) {
-        console.log(error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error;
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -181,7 +184,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           clearErrors();
         }
       } catch (error) {
-        console.error("Error fetching address details:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error;
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }

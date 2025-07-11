@@ -14,8 +14,11 @@ const initializeFingerprint = async () => {
     const result = await fp.get();
     globalVisitorId = result.visitorId;
   } catch (error) {
-    console.error("Failed to generate fingerprint:", error);
-  }
+    const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+    toast.error(errorMessage);
+    
 };
 
 // Initialize immediately
@@ -523,7 +526,10 @@ export const getSiteKey = async () => {
       );
     }
   } catch (error) {
-    console.error("Error fetching site key:", error);
+       const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+    toast.error(errorMessage);
     throw error;
   }
 };
@@ -795,8 +801,11 @@ export const getPersonalDetails = async () => {
       );
     }
   } catch (error) {
-    console.error("Failed to fetch personal details:", error);
-    throw error;
+        const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
+
   }
 };
 
@@ -829,8 +838,10 @@ export const getProvinces = async () => {
       throw new Error(response.data.message || "Failed to fetch provinces");
     }
   } catch (error) {
-    console.error("Failed to fetch provinces:", error);
-    throw error;
+       const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
   }
 };
 
@@ -852,8 +863,10 @@ export const getDistrictsByProvince = async (provinceId) => {
       throw new Error(response.data.message || "Failed to fetch districts");
     }
   } catch (error) {
-    console.error("Failed to fetch districts:", error);
-    throw error;
+      const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
   }
 };
 
@@ -878,8 +891,10 @@ export const getAddressDetails = async () => {
       );
     }
   } catch (error) {
-    console.error("Failed to fetch address details:", error);
-    throw error;
+      const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
   }
 };
 
@@ -904,7 +919,6 @@ export const saveAddressDetails = async (addressData) => {
       );
     }
   } catch (error) {
-    console.error("Failed to save address details:", error);
     const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.message ||
@@ -934,8 +948,10 @@ export const getDocumentDetails = async () => {
       );
     }
   } catch (error) {
-    console.error("Failed to fetch document details:", error);
-    throw error;
+      const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
   }
 };
 
@@ -984,8 +1000,10 @@ export const getEducationDetails = async () => {
       );
     }
   } catch (error) {
-    console.error("Failed to fetch education details:", error);
-    throw error;
+      const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      error.response?.data?.error;
+      throw new Error(errorMessage)
   }
 };
 
@@ -1008,8 +1026,7 @@ export const submitEducationDetails = async (formDataToSend) => {
         "Something went wrong";
       throw new Error(errorMessage);
     }
-  } catch (error) {
-    console.error("Submit error:", error);
+  } catch (error) {;
     const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       "Something went wrong";
@@ -1046,8 +1063,10 @@ export const applyFilters = async ({ url, requestBody }) => {
       );
     }
   } catch (error) {
-    console.error("Failed to apply filters:", error);
-    throw error;
+    const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
@@ -1094,8 +1113,10 @@ export const fetchMFAsetting = async () => {
       );
     }
   } catch (error) {
-    console.log(error);
-    throw error;
+    const errorMessage =
+      error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+      "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 

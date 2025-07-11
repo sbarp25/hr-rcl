@@ -91,7 +91,6 @@ const Recaptcha = ({ setCapta, onError }) => {
 
   const handleExpired = useCallback(() => {
     if (isVerifiedRef.current) {
-      console.log("Already verified. Keeping previous verified state.");
       setCapta(verifiedToken);
       return;
     }
@@ -103,7 +102,6 @@ const Recaptcha = ({ setCapta, onError }) => {
 
   const handleError = useCallback(() => {
     if (isVerifiedRef.current) {
-      console.log("Already verified. Ignoring error.");
       return;
     }
 
