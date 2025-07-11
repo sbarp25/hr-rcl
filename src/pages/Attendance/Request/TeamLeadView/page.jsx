@@ -19,24 +19,26 @@ import {
 } from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
-import Search from "../../../components/Search";
-import Filter from "../../../components/Filter";
+
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import Loader from "../../../components/Loader/Loader.jsx";
+
 import {
   hasApproveAccess,
   hasReadAccess,
+  hasUpdateAccess,
   MENU_NAMES,
-} from "../../../utils/permissionUtils.js";
+} from "../../../../utils/permissionUtils.js";
 import {
   useFetchTeamLateCheckin,
   useLateCheckInApprove,
   useLateCheckinReject,
-} from "../../../hooks/useAuth.js";
+} from "../../../../hooks/useAuth.js";
 import { toast } from "sonner";
+import Loader from "../../../../components/Loader/Loader.jsx";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
+import Search from "../../../../components/Search.jsx";
+import Filter from "../../../../components/Filter.jsx";
 
 const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
@@ -64,8 +66,8 @@ const TeamLeadLateCheckin = () => {
   ];
 
   /**Permission Check */
-  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
-  const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const hasAttendanceEditAccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
   // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

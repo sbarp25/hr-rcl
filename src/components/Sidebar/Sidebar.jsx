@@ -116,6 +116,9 @@ const Sidebar = () => {
   const seeLateCheckIn = permissionsLoaded
     ? hasReadAccess(MENU_NAMES.LATECHECKIN)
     : false;
+  const seeTeamLateCheckIn = permissionsLoaded
+    ? hasUpdateAccess(MENU_NAMES.LATECHECKIN)
+    : false;
   const seeHandbook = permissionsLoaded
     ? hasReadAccess(MENU_NAMES.HANDBOOK)
     : false;
@@ -156,6 +159,12 @@ const Sidebar = () => {
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
+        },
+        {
+          icon: LuMapPinCheckInside,
+          label: "Team Lead Late Checkin ",
+          to: "/attendance/teamLead",
+          view: seeTeamLateCheckIn,
         },
         {
           icon: IoIosPeople,

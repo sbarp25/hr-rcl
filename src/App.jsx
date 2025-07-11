@@ -59,6 +59,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import ALlTrustedDevices from "./pages/AllDevices/page.jsx";
 import Security from "./pages/Security/page.jsx";
 import MFA from "./pages/Security/MFA/page.jsx";
+import TeamLeadLateCheckin from "./pages/Attendance/Request/TeamLeadView/page.jsx";
 
 // import HandBook from "./pages/HandBook/page.jsx";
 const queryClient = new QueryClient();
@@ -169,6 +170,10 @@ function App() {
                 <Route
                   path="/selfAutoCheckOut"
                   element={<SelfAutoCheckout />}
+                />
+                <Route
+                  path="/attendance/teamLead"
+                  element={<TeamLeadLateCheckin />}
                 />
                 <Route
                   path="/Attendance/Request"
