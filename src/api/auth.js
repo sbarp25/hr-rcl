@@ -18,9 +18,8 @@ const initializeFingerprint = async () => {
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
     toast.error(errorMessage);
-    
+  }
 };
-
 // Initialize immediately
 initializeFingerprint();
 
@@ -526,7 +525,7 @@ export const getSiteKey = async () => {
       );
     }
   } catch (error) {
-       const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
     toast.error(errorMessage);
@@ -801,11 +800,10 @@ export const getPersonalDetails = async () => {
       );
     }
   } catch (error) {
-        const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
-
+    throw new Error(errorMessage);
   }
 };
 
@@ -838,10 +836,10 @@ export const getProvinces = async () => {
       throw new Error(response.data.message || "Failed to fetch provinces");
     }
   } catch (error) {
-       const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
+    throw new Error(errorMessage);
   }
 };
 
@@ -863,10 +861,10 @@ export const getDistrictsByProvince = async (provinceId) => {
       throw new Error(response.data.message || "Failed to fetch districts");
     }
   } catch (error) {
-      const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
+    throw new Error(errorMessage);
   }
 };
 
@@ -891,10 +889,10 @@ export const getAddressDetails = async () => {
       );
     }
   } catch (error) {
-      const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
+    throw new Error(errorMessage);
   }
 };
 
@@ -948,10 +946,10 @@ export const getDocumentDetails = async () => {
       );
     }
   } catch (error) {
-      const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
+    throw new Error(errorMessage);
   }
 };
 
@@ -1000,10 +998,10 @@ export const getEducationDetails = async () => {
       );
     }
   } catch (error) {
-      const errorMessage =
+    const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
-      throw new Error(errorMessage)
+    throw new Error(errorMessage);
   }
 };
 
@@ -1026,7 +1024,7 @@ export const submitEducationDetails = async (formDataToSend) => {
         "Something went wrong";
       throw new Error(errorMessage);
     }
-  } catch (error) {;
+  } catch (error) {
     const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       "Something went wrong";
