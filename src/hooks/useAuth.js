@@ -34,6 +34,7 @@ import {
   fetchPositionById,
   fetchrcl,
   fetchrole,
+  fetchTeamlateCheckin,
   fetchTeamLead,
   fetchTrustedDevices,
   fetchUnPaginatedDepartment,
@@ -269,6 +270,21 @@ export const useFetchLateCheckin = (currentPage, lateCheckInDataPerPage) => {
   return useQuery({
     queryKey: ["FetchLateChekin", currentPage, lateCheckInDataPerPage],
     queryFn: () => fetchlateCheckin(currentPage, lateCheckInDataPerPage),
+    onError: (error) => {
+      const errorMessage =
+        error?.message || "Failed to fetch late check-in data";
+      toast.error(errorMessage);
+    },
+  });
+};
+/**Fetch TeamLateCheckin */
+export const useFetchTeamLateCheckin = (
+  currentPage,
+  lateCheckInDataPerPage
+) => {
+  return useQuery({
+    queryKey: ["FetchLateChekin", currentPage, lateCheckInDataPerPage],
+    queryFn: () => fetchTeamlateCheckin(currentPage, lateCheckInDataPerPage),
     onError: (error) => {
       const errorMessage =
         error?.message || "Failed to fetch late check-in data";

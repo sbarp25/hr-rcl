@@ -197,6 +197,21 @@ export const fetchlateCheckin = async (currentPage, lateCheckInDataPerPage) => {
     toast.error(response?.data?.message);
   }
 };
+export const fetchTeamlateCheckin = async (
+  currentPage,
+  lateCheckInDataPerPage
+) => {
+  const response = await axiosInstance.post(
+    "/api/v1/attendance/late-check-in/late-attendance/by-role",
+    // "/api/v1/attendance/late-check-in/late-attendance/list",
+    { pageIndex: currentPage, pageSize: lateCheckInDataPerPage }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response.data;
+  } else {
+    toast.error(response?.data?.message);
+  }
+};
 
 //Late Check-In Approve
 export const lateCheckInApprove = async (updateLeave) => {
