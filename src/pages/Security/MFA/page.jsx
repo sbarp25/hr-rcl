@@ -47,8 +47,9 @@ const MFA = () => {
 
   const loading = isTwoFactorPenging || isTwoFactorSubmitting;
   if (loading) {
-    <Loader />;
+    return <Loader />; // Added return statement
   }
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <GoBack />
@@ -72,7 +73,7 @@ const MFA = () => {
         </div>
 
         {/* Info Banner */}
-        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-gray-750 rounded-xl border border-gray-200 dark:border-gray-600">
+        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
           <div className="flex items-start space-x-3">
             <IoInformationCircle className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -94,7 +95,7 @@ const MFA = () => {
             onSubmit={handletwoFactorSubmit(handleSubmit)}
             className="space-y-6">
             {/* MFA Toggle */}
-            <div className="p-6 bg-gray-50 dark:bg-gray-750 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

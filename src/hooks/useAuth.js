@@ -77,7 +77,6 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: (data) => {
-      toast.success(data?.message || "User Logout Successfully.");
       navigate("/login");
     },
     onError: (error) => {
@@ -146,7 +145,6 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
   return useMutation({
     mutationFn: (formData) => OTPVerification(formData, sessionToken),
     onSuccess: (data) => {
-      toast.success("MFA verification successful!");
       onOpenChange(false);
       // Extract data from the nested response structure
       const responseData = data?.data?.data?.data;
@@ -299,9 +297,17 @@ export const useLateCheckInApprove = () => {
   return useMutation({
     mutationFn: lateCheckInApprove,
     onSuccess: (data) => {
-      toast.success(
-        data?.data?.message || "Late check-in approved successfully"
-      );
+      if (data?.data?.responseCode === "200") {
+        toast.success(
+          data?.data?.message || "Late check-in approved successfully"
+        );
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
       // Invalidate and refetch late check-in data
       queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
     },
@@ -322,9 +328,17 @@ export const useLateCheckinReject = () => {
   return useMutation({
     mutationFn: lateCheckInReject,
     onSuccess: (data) => {
-      toast.success(
-        data?.data?.message || "Late check-in rejected successfully"
-      );
+      if (data?.data?.responseCode === "200") {
+        toast.success(
+          data?.data?.message || "Late check-in Rejected successfully"
+        );
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
       // Invalidate and refetch late check-in data
       queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
     },

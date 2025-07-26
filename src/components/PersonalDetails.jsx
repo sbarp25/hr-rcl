@@ -18,8 +18,8 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
     { key: "Female", label: "Female" },
   ];
   const maritalOptions = [
-    { key: false, label: "Unmarried" },
-    { key: true, label: "Married" },
+    { key: "false", label: "Unmarried" },
+    { key: "true", label: "Married" },
   ];
   const bloodGroupOptions = [
     { key: "O+", label: "O+" },
@@ -39,7 +39,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   ];
 
   // Form setup
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, setValue } = useForm({
     defaultValues: {
       email: "",
       dob: "",
@@ -94,11 +94,12 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   useEffect(() => {
     if (personalDetailsData?.responseCode === "200") {
       const data = personalDetailsData.data;
+      setValue("married", data.married);
       reset({
         email: data.email || "",
         dob: data.dateOfBirthAd || "",
         gender: data.gender || "",
-        married: data.married ? true : false,
+        married: data.married?.toString(),
         bloodType: data.bloodGroup || "",
         emergencyNumber: data.emergencyNumber || "",
         emergencyName: data.emergencyName || "",
@@ -111,7 +112,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   }, [personalDetailsData, reset]);
 
   // Loading state
-  const isLoading = isLoadingDetails || savePersonalDetailsMutation.isLoading;
+  const isLoading = isLoadingDetails || savePersonalDetailsMutation.isPending;
 
   return (
     <>

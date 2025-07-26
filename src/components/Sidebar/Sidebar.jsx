@@ -32,6 +32,7 @@ import {
 import truncateText from "../../utils/truncateText";
 import Loader from "../Loader/Loader.jsx";
 import {
+  hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
   hasViewSingleAccess,
@@ -117,7 +118,7 @@ const Sidebar = () => {
     ? hasReadAccess(MENU_NAMES.LATECHECKIN)
     : false;
   const seeTeamLateCheckIn = permissionsLoaded
-    ? hasUpdateAccess(MENU_NAMES.LATECHECKIN)
+    ? hasApproveAccess(MENU_NAMES.LATECHECKIN)
     : false;
   const seeHandbook = permissionsLoaded
     ? hasReadAccess(MENU_NAMES.HANDBOOK)

@@ -568,7 +568,7 @@ const LeaveStatus = () => {
                   <h3 className="text-lg font-medium">Leave Approval</h3>
                   <p>Are you sure you want to approve this leave?</p>
                   {selectedLeave && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
                       <div className="flex ">
                         <span className="font-medium">Full Name: &nbsp;</span>
                         <span>{selectedLeave?.fullName}</span>
@@ -633,7 +633,7 @@ const LeaveStatus = () => {
                   <h3 className="text-lg font-medium">Leave Rejection</h3>
                   <p>Are you sure you want to reject this leave?</p>
                   {selectedLeave && (
-                    <div className="bg-gray-50 p-3 rounded-md space-y-2">
+                    <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
                       <div className="flex ">
                         <span className="font-medium">Full Name: &nbsp;</span>
                         <span>{selectedLeave?.fullName}</span>

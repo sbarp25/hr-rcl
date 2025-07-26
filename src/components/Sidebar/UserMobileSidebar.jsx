@@ -28,6 +28,7 @@ import {
 } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 import { useLogout } from "../../hooks/useAuth.js";
+import { ThemeSwitcher } from "../ThemeSwitcher.jsx";
 const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -152,8 +153,9 @@ const UserMobileSidebar = () => {
         <DrawerContent>
           {() => (
             <>
-              <DrawerHeader className="flex flex-col gap-1">
+              <DrawerHeader className="flex justify-between mr-8 gap-1">
                 RCL HRIMS
+                <ThemeSwitcher />
               </DrawerHeader>
 
               <div className="flex items-center gap-4 ml-4">

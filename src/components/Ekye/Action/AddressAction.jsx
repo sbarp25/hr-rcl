@@ -61,7 +61,7 @@ const AddressAction = ({ employeeData }) => {
         </div>
 
         {/* Temporary Address Section */}
-        <div className="bg-white text-lg px-6 rounded-lg ">
+        <div className="bg-white dark:bg-black text-lg px-6 rounded-lg ">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
               Temporary Address Details

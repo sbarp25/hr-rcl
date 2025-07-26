@@ -59,7 +59,7 @@ const DocumentDetails = ({
   // React Query hooks
   const { data: documentDetailsData, isLoading: isLoadingDocuments } =
     useDocumentDetails();
-  const { mutate: saveDocuments, isLoading: isSavingDocuments } =
+  const { mutate: saveDocuments, isPending: isSavingDocuments } =
     useSaveDocumentDetails();
 
   // Handle successful data fetch

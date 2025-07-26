@@ -658,8 +658,9 @@ export const fetchEkye = async (currentPage, ekyeDashboardDataPerPage) => {
 
 /**fetch Employee Data */
 export const fetchEmployeeDetails = async (rclId) => {
-  const response = await axiosInstance.get(
-    `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+  const response = await axiosInstance.post(
+    `/api/v1/admin/complete-details/rclId`,
+    { data: { rclId: rclId } }
   );
   if (response?.data?.responseCode === "200") {
     return response?.data;

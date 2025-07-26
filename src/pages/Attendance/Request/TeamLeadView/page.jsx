@@ -67,7 +67,7 @@ const TeamLeadLateCheckin = () => {
 
   /**Permission Check */
   const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
-  const hasaccess = hasUpdateAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {

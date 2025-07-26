@@ -63,9 +63,9 @@ const Salary = ({ employeeData }) => {
         </h1>
 
         {/* Salary Breakdown Section */}
-        <div className="rounded-lg border-2 mt-2 pb-2 bg-white border-gray-300 shadow-sm">
+        <div className="rounded-lg border-2 mt-2 pb-2 bg-white   dark:bg-black  border-gray-300 shadow-sm">
           {/* Section Header */}
-          <div className="rounded-t-lg w-full border-b-2 bg-gray-50">
+          <div className="rounded-t-lg w-full border-b-2 bg-gray-50 dark:bg-black">
             <div className="p-3 sm:p-4 flex justify-center items-center">
               <p className="text-lg sm:text-2xl font-semibold text-gray-800">
                 Salary Breakdown
@@ -102,9 +102,9 @@ const Salary = ({ employeeData }) => {
         </div>
 
         {/* Payable Salary Section */}
-        <div className="border-2 rounded-lg mt-4 sm:mt-6 bg-white border-gray-300 shadow-sm">
+        <div className="border-2 rounded-lg mt-4 sm:mt-6 bg-white dark:bg-black border-gray-300 shadow-sm">
           {/* Section Header */}
-          <div className="rounded-t-lg w-full border-b border-gray-300 bg-gray-50">
+          <div className="rounded-t-lg w-full border-b border-gray-300 bg-gray-50 dark:bg-black">
             <div className="p-3 sm:p-4 flex justify-center items-center">
               <p className="text-lg sm:text-2xl font-semibold text-gray-800 text-center">
                 Payable Salary of {month}
@@ -167,7 +167,7 @@ const Salary = ({ employeeData }) => {
             />
 
             {/* Net Salary - Final Result */}
-            <div className="pt-3 sm:pt-4 border-t-2 border-gray-200 bg-gray-50 -mx-3 sm:-mx-4 px-3 sm:px-4 pb-2 rounded-b-lg">
+            <div className="pt-3 sm:pt-4 border-t-2 border-gray-200 bg-gray-50 dark:bg-black -mx-3 sm:-mx-4 px-3 sm:px-4 pb-2 rounded-b-lg">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div className="flex items-center gap-2 text-gray-800 font-bold">
                   <span className="text-base sm:text-lg">Net Salary</span>

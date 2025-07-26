@@ -30,6 +30,7 @@ import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import axios from "axios";
 import truncateText from "../../../utils/truncateText";
 import {
+  hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
   MENU_NAMES,
@@ -138,7 +139,7 @@ const WorkFromHomeStatus = () => {
     setIsLoading(true);
     const updateWFH = {
       data: {
-        workFromHomeId: selectedWorkFromHome.workFromHomeId,
+        workFromHomeId: selectedWorkFromHome.id,
         isApproved: true,
       },
     };
@@ -150,7 +151,7 @@ const WorkFromHomeStatus = () => {
         return;
       }
       const response = await axiosInstance.post(
-        "/api/work_from_home/review",
+        "/api/work_from_home/update_status",
         updateWFH,
         {
           headers: {
@@ -184,7 +185,7 @@ const WorkFromHomeStatus = () => {
     setIsLoading(true);
     const RejectLeave = {
       data: {
-        workFromHomeId: selectedWorkFromHome.workFromHomeId,
+        workFromHomeId: selectedWorkFromHome.id,
         isApproved: false,
         remark: formData.reason,
       },
@@ -196,7 +197,7 @@ const WorkFromHomeStatus = () => {
         return;
       }
       const response = await axiosInstance.post(
-        "/api/work_from_home/review",
+        "/api/work_from_home/update_status",
         RejectLeave,
         {
           headers: {
@@ -278,7 +279,7 @@ const WorkFromHomeStatus = () => {
     }
   }, [currentPage, WFHDataPerPage]);
 
-  const hasWorkFromHomeReviewAccess = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
+  const hasWorkFromHomeReviewAccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
   const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
 
   useEffect(() => {
@@ -616,7 +617,7 @@ const WorkFromHomeStatus = () => {
                     </h3>
                     <p>Are you sure you want to approve this WFH?</p>
                     {selectedWorkFromHome && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
                         <div>
                           <span className="font-medium mr-1">Request ID:</span>
                           <span>{selectedWorkFromHome?.rclId}</span>
@@ -686,7 +687,7 @@ const WorkFromHomeStatus = () => {
                       rejection:
                     </p>
                     {selectedWorkFromHome && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 p-3 rounded-md gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
                         <div>
                           <span className="font-medium mr-1">Request ID:</span>
                           <span>{selectedWorkFromHome?.rclId}</span>

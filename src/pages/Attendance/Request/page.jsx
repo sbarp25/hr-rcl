@@ -260,7 +260,6 @@ const AttendanceRequest = () => {
                     <TableColumn>Status</TableColumn>
                     <TableColumn>Actual checkInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
-                    <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {lateCheckinData
@@ -345,20 +344,6 @@ const AttendanceRequest = () => {
                             )}
                             {/* {late?.lateReason} */}
                           </TableCell>
-                          <TableCell>
-                            <div className="flex justify-between items-center">
-                              <div className="flex justify-center gap-4">
-                                <Button
-                                  className="bg-black text-white"
-                                  onPress={() => {
-                                    setSelectedData(late);
-                                    onOpen();
-                                  }}>
-                                  Action
-                                </Button>
-                              </div>
-                            </div>
-                          </TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -376,7 +361,6 @@ const AttendanceRequest = () => {
                     <TableColumn>Date</TableColumn>
                     <TableColumn>Check In</TableColumn>
                     <TableColumn>Reason</TableColumn>
-                    <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {lateCheckinData?.map((late) => (
@@ -413,34 +397,6 @@ const AttendanceRequest = () => {
                             title={late?.lateReason}>
                             {late?.lateReason}
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          {late?.status === "Pending" && (
-                            <div className="flex justify-center gap-4">
-                              <FaCheck
-                                className={`${
-                                  hasAttendanceEditAccess
-                                    ? "text-orange-500 hover:text-orange-700 cursor-pointer"
-                                    : ""
-                                }`}
-                                title="Edit"
-                                onClick={() =>
-                                  handleAction("Approve", late?.lateCheckInId)
-                                }
-                              />
-                              <MdDelete
-                                className={`${
-                                  hasAttendanceEditAccess
-                                    ? "text-red-500 cursor-pointer hover:text-red-700"
-                                    : ""
-                                }`}
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("Reject", late?.lateCheckInId)
-                                }
-                              />
-                            </div>
-                          )}
                         </TableCell>
                       </TableRow>
                     ))}

@@ -27,10 +27,10 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, [userDocument]);
 
   return (
-    <div className="flex flex-col max-h-[75vh] overflow-auto bg-gray-50 py-6 border border-gray-300 mx-auto rounded-md h-[75vh]">
+    <div className="flex flex-col max-h-[75vh] overflow-auto bg-gray-50 dark:bg-black py-6 border border-gray-300 mx-auto rounded-md h-[75vh]">
       <div className="flex flex-col px-8 space-y-8">
         {/* Citizenship Details */}
-        <div className="bg-white rounded-lg p-6">
+        <div className="bg-white dark:bg-black rounded-lg p-6">
           {/* Header Component */}
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-xl font-semibold flex">
@@ -119,7 +119,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
         </div>
 
         {/* PAN Details */}
-        <div className="bg-white rounded-lg p-6">
+        <div className="bg-white dark:bg-black rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-xl font-semibold flex">
               <span className="relative">

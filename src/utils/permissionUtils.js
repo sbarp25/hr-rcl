@@ -63,6 +63,8 @@ export const hasRejectAccess = (menuName) =>
 
 export const hasViewSingleAccess = (menuName) =>
   permissionManager.hasPermission(menuName, "VIEW_SIDEBAR");
+export const hasViewSingle = (menuName) =>
+  permissionManager.hasPermission(menuName, "VIEW_SIDEBAR");
 
 export const hasViewone = (menuName) =>
   permissionManager.hasPermission(menuName, "VIEW_ONE");

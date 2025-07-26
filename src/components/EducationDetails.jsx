@@ -522,7 +522,7 @@ const EducationalDetails = ({
     });
   };
 
-  if (isLoadingEducation) {
+  if (isLoadingEducation || submitMutation.isPending) {
     return <Loader />;
   }
   return (
