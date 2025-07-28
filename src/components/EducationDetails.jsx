@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Button,
   Checkbox,
@@ -10,15 +10,21 @@ import {
   Select,
   SelectItem,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
-import { TimeInput } from "@nextui-org/react";
+import { TimeInput } from "@heroui/react";
 import { getLocalTimeZone, Time } from "@internationalized/date";
 import { useForm } from "react-hook-form";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
 import { Controller } from "react-hook-form";
-import DatepickerComponent from "./DatepickerComponent";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
+import { FaEye } from "react-icons/fa";
+import Loader from "../components/Loader/Loader.jsx";
+import {
+  useEducationDetails,
+  useSubmitEducationDetails,
+} from "../hooks/useAuth.js";
 
 const MAX_FILE_SIZE = 1024 * 1024;
 
@@ -26,13 +32,19 @@ const degrees = ["SEE/SLC", "+2", "Bachelor's", "Master's", "PhD"];
 
 const statusOptions = ["COMPLETED", "IN_PROGRESS"];
 
-const EducationalDetails = ({ formData, setFormData, handleBack }) => {
+const EducationalDetails = ({
+  formData,
+  setFormData,
+  handleBack,
+  dateOfBirth,
+}) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedDegree, setSelectedDegree] = useState(degrees[0]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isCurrentlyStudying, setIsCurrentlyStudying] = useState(false);
   const [educationalDocument, setEducationalDocument] = useState(false);
   const [numberOfItems, setNumberOfItems] = useState(1);
+  const [hasInProgressDegree, setHasInProgressDegree] = useState(false);
+  const [inProgressDegreeIndex, setInProgressDegreeIndex] = useState(-1);
   const navigate = useNavigate();
 
   const {
@@ -42,14 +54,62 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     getValues,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
+
+  // Custom hooks
+  const {
+    data: educationData,
+    isLoading: isLoadingEducation,
+    error: educationError,
+  } = useEducationDetails();
+
+  const submitMutation = useSubmitEducationDetails((data) => {
+    navigate("/dashboard");
+  });
+
+  // Watch all status fields to check for IN_PROGRESS
+  const statusValues = degrees.map((_, index) => watch(`status_${index}`));
 
   // Watch the currently studying checkbox to conditionally require time input
   const watchIsCurrentlyStudying = watch("isCurrentlyStudying", false);
 
   const handleDegreeSelection = (selected) => {
+    // Check if there's an IN_PROGRESS degree and if the selected degree is higher
+    if (
+      hasInProgressDegree &&
+      degrees.indexOf(selected) > inProgressDegreeIndex
+    ) {
+      toast.error(
+        `You cannot add higher education levels while ${degrees[inProgressDegreeIndex]} is in progress`
+      );
+      return;
+    }
+
     setSelectedDegree(selected);
   };
+
+  // Check for IN_PROGRESS status whenever status values change
+  useEffect(() => {
+    let foundInProgress = false;
+    let progressIndex = -1;
+
+    statusValues.forEach((status, index) => {
+      if (status === "IN_PROGRESS") {
+        foundInProgress = true;
+        progressIndex = index;
+      }
+    });
+
+    setHasInProgressDegree(foundInProgress);
+    setInProgressDegreeIndex(progressIndex);
+
+    // If we have an IN_PROGRESS degree and the selected degree is higher,
+    // reset the selected degree to the IN_PROGRESS one
+    if (foundInProgress && degrees.indexOf(selectedDegree) > progressIndex) {
+      setSelectedDegree(degrees[progressIndex]);
+      setNumberOfItems(progressIndex + 1);
+    }
+  }, [statusValues, selectedDegree]);
 
   useEffect(() => {
     if (degrees.includes(selectedDegree)) {
@@ -85,111 +145,153 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     }
   }, [selectedDegree, setFormData]);
 
+  // Process education data when it's loaded
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    if (educationData) {
+      const data = educationData.datalist || [];
 
-    const fetchEducationDetails = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/v1/education/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+      // Check if user is currently studying
+      if (educationData.data?.expectedCheckingTime) {
+        setIsCurrentlyStudying(true);
+        setValue("isCurrentlyStudying", true);
 
-        if (response.data.responseCode === "200") {
-          const data = response.data.datalist || [];
+        // Parse the time from string if needed
+        const timeParts = educationData.data.expectedCheckingTime.split(":");
+        if (timeParts.length >= 3) {
+          const timeObj = new Time(
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1]),
+            parseInt(timeParts[2])
+          );
+          setValue("expectedCheckingTime", timeObj);
+        }
+      }
 
-          // Check if user is currently studying
-          if (response.data.data?.expectedCheckingTime) {
-            setIsCurrentlyStudying(true);
-            setValue("isCurrentlyStudying", true);
+      // Create an empty education array based on degrees
+      const initialEducation = degrees.map(() => ({}));
 
-            // Parse the time from string if needed
-            const timeParts =
-              response.data.data.expectedCheckingTime.split(":");
-            if (timeParts.length >= 3) {
-              const timeObj = new Time(
-                parseInt(timeParts[0]),
-                parseInt(timeParts[1]),
-                parseInt(timeParts[2])
-              );
-              setValue("expectedCheckingTime", timeObj);
-            }
-          }
+      // Group data by degree and get the most recent entry for each degree
+      const degreeMap = {};
 
-          // Create an empty education array based on degrees
-          const initialEducation = degrees.map(() => ({}));
+      data.forEach((edu) => {
+        const degree = edu.degree;
 
-          // Map each fetched education item to its corresponding degree position
-          data.forEach((edu) => {
-            const degreeIndex = degrees.indexOf(edu.degree);
-            const startyear = formatDate(edu.startYear);
-            const endyear = formatDate(edu.endYear);
-            if (degreeIndex !== -1) {
-              initialEducation[degreeIndex] = {
-                degree: edu.degree || "",
-                institution: edu.institution || "",
-                faculty: edu.faculty || "",
-                startYear: startyear,
-                endYear: endyear,
-                status: edu.status || "",
-                file: edu.documentUrl || "",
-                files: [],
-              };
-            }
-          });
-
-          setFormData((prev) => ({
-            ...prev,
-            education: initialEducation,
-          }));
-
-          // Update selected degree if we have education data
-          if (data.length > 0) {
-            const highestDegreeIndex = data.reduce((highest, edu) => {
-              const index = degrees.indexOf(edu.degree);
-              return index > highest ? index : highest;
-            }, 0);
-            setSelectedDegree(degrees[highestDegreeIndex]);
-            setNumberOfItems(highestDegreeIndex + 1);
+        // The API returns exact degree names, so we don't need normalization
+        if (degrees.includes(degree)) {
+          // If we haven't seen this degree before, or if this entry is more recent
+          if (
+            !degreeMap[degree] ||
+            new Date(edu.startYear) > new Date(degreeMap[degree].startYear)
+          ) {
+            degreeMap[degree] = edu;
           }
         } else {
-          // Initialize with empty education array if no data returned
-          setFormData((prev) => ({
-            ...prev,
-            education: degrees.map(() => ({})),
-          }));
+          console.warn(`Degree "${degree}" not found in degrees array`);
         }
-        setEducationalDocument(true);
-      } catch (error) {
-        console.error("Error fetching education details:", error);
-        // Initialize with empty education array on error
-        setFormData((prev) => ({
-          ...prev,
-          education: degrees.map(() => ({})),
-        }));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      });
 
-    fetchEducationDetails();
-  }, [setFormData, setValue]);
+      // Map each degree to its corresponding position
+      let hasInProgressItem = false;
+      let inProgressIndex = -1;
+
+      Object.entries(degreeMap).forEach(([degree, edu]) => {
+        const degreeIndex = degrees.indexOf(degree);
+
+        if (degreeIndex !== -1) {
+          // Parse dates - handle different date formats
+          let startYear, endYear;
+
+          try {
+            startYear = edu.startYear ? formatDate(edu.startYear) : "";
+            endYear = edu.endYear ? formatDate(edu.endYear) : "";
+          } catch (error) {
+            startYear = edu.startYear || "";
+            endYear = edu.endYear || "";
+          }
+
+          initialEducation[degreeIndex] = {
+            degree: edu.degree || "",
+            institution: edu.institution || "",
+            faculty: edu.faculty || "",
+            startYear: startYear,
+            endYear: endYear,
+            status: edu.status || "",
+            file: edu.documentUrl || "",
+            files: [],
+          };
+
+          // Check if any education is in progress
+          if (edu.status === "IN_PROGRESS") {
+            hasInProgressItem = true;
+            inProgressIndex = degreeIndex;
+          }
+        }
+      });
+
+      // Set IN_PROGRESS flags
+      setHasInProgressDegree(hasInProgressItem);
+      setInProgressDegreeIndex(inProgressIndex);
+
+      setFormData((prev) => ({
+        ...prev,
+        education: initialEducation,
+      }));
+
+      // Update selected degree if we have education data
+      if (Object.keys(degreeMap).length > 0) {
+        let highestDegreeIndex = Object.keys(degreeMap).reduce(
+          (highest, degree) => {
+            const index = degrees.indexOf(degree);
+            return index > highest ? index : highest;
+          },
+          0
+        );
+
+        // If there's an IN_PROGRESS degree, limit to that level
+        if (hasInProgressItem && highestDegreeIndex > inProgressIndex) {
+          highestDegreeIndex = inProgressIndex;
+        }
+
+        setSelectedDegree(degrees[highestDegreeIndex]);
+        setNumberOfItems(highestDegreeIndex + 1);
+      }
+
+      setEducationalDocument(true);
+    } else if (educationData === null || educationError) {
+      // Initialize with empty education array if no data returned or error
+      setFormData((prev) => ({
+        ...prev,
+        education: degrees.map(() => ({})),
+      }));
+      setEducationalDocument(true);
+    }
+  }, [educationData, educationError, setFormData, setValue]);
 
   // Set form values when education data is loaded
   useEffect(() => {
     if (formData?.education && Array.isArray(formData.education)) {
       formData.education.forEach((edu, index) => {
-        if (edu.institution) setValue(`institution_${index}`, edu.institution);
-        if (edu.faculty) setValue(`faculty_${index}`, edu.faculty);
-        if (edu.startYear) setValue(`startYear_${index}`, edu.startYear);
-        if (edu.endYear) setValue(`endYear_${index}`, edu.endYear);
-        if (edu.status) setValue(`status_${index}`, edu.status);
-        if (edu.file) setValue(`files_${index}`, "existing_file");
+        if (edu.institution) {
+          setValue(`institution_${index}`, edu.institution);
+        }
+        if (edu.faculty) {
+          setValue(`faculty_${index}`, edu.faculty);
+        }
+        if (edu.startYear) {
+          setValue(`startYear_${index}`, edu.startYear);
+        }
+        if (edu.endYear) {
+          setValue(`endYear_${index}`, edu.endYear);
+        }
+        if (edu.status) {
+          setValue(`status_${index}`, edu.status);
+        }
+        if (edu.file) {
+          setValue(`files_${index}`, "existing_file");
+        }
       });
     }
-  }, [formData.education, setValue]);
+  }, [formData?.education, setValue]);
 
   const validateFile = (file, existingUrl) => {
     // If we already have a file URL from the API, skip validation
@@ -232,7 +334,6 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           : degrees.map(() => ({}));
 
         // Update the element at index with new file info
-        // If there was an existing file URL, retain it but add the new files as well
         updatedEducation[index] = {
           ...updatedEducation[index],
           files,
@@ -250,13 +351,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
   };
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-
     const formDataToSend = new FormData();
     const educationData = degrees.slice(0, numberOfItems).map((deg, index) => ({
       level: deg,
       institution: data[`institution_${index}`],
-      faculty: data[`faculty_${index}`],
+      faculty: deg === "SEE/SLC" ? null : data[`faculty_${index}`],
       startYear: formatDate(data[`startYear_${index}`]),
       endYear: formatDate(data[`endYear_${index}`]),
       status: data[`status_${index}`],
@@ -288,38 +387,11 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
     formDataToSend.append("isCurrentlyStudying", data.isCurrentlyStudying);
     if (data.isCurrentlyStudying && data.expectedCheckingTime) {
       const timeValue = data.expectedCheckingTime;
-      const formattedTime = `${timeValue.hour}:${timeValue.minute}:${timeValue.second}`;
+      const formattedTime = `${timeValue.hour}:${timeValue.minute}:10`;
       formDataToSend.append("expectedCheckingTime", formattedTime);
     }
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/education/save",
-        formDataToSend,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      if (response.data.responseCode === "201") {
-        toast.success(response.data.message);
-        navigate("/dashboard");
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error(error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("An error occurred while saving educational details.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    submitMutation.mutate(formDataToSend);
   };
 
   // Ensure formData has an education property and it's an array
@@ -328,8 +400,131 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
       ? formData.education
       : degrees.map(() => ({}));
 
-  const formatDate = (date) =>
-    date ? date?.toDate(getLocalTimeZone()).toISOString().split("T")[0] : null;
+  const shouldShowFaculty = (degreeIndex) => {
+    const degree = degrees[degreeIndex];
+    return degree !== "SEE/SLC";
+  };
+
+  const validateStartDate = (value, index) => {
+    // Skip validation for the first education level (SEE/SLC) as it has no previous level
+    if (index === 0) return true;
+
+    // Get the end date of the previous level
+    const previousLevelEndDate = getValues(`endYear_${index - 1}`);
+
+    // If previous level's end date isn't available or status is IN_PROGRESS, skip validation
+    const previousLevelStatus = getValues(`status_${index - 1}`);
+    if (!previousLevelEndDate || previousLevelStatus === "IN_PROGRESS")
+      return true;
+
+    try {
+      // Convert dates to comparable format - handle different date formats
+      let previousEndDateObj;
+      let currentStartDateObj;
+
+      // Handle previousLevelEndDate conversion
+      if (typeof previousLevelEndDate?.toDate === "function") {
+        // If it has toDate method (likely from a date picker library)
+        previousEndDateObj = previousLevelEndDate.toDate(getLocalTimeZone());
+      } else if (previousLevelEndDate instanceof Date) {
+        // If it's already a Date object
+        previousEndDateObj = previousLevelEndDate;
+      } else if (typeof previousLevelEndDate === "string") {
+        // If it's a string, parse it
+        previousEndDateObj = new Date(previousLevelEndDate);
+      } else {
+        // If we can't determine the format, skip validation
+        return true;
+      }
+
+      // Handle current value conversion
+      if (typeof value?.toDate === "function") {
+        // If it has toDate method (likely from a date picker library)
+        currentStartDateObj = value.toDate(getLocalTimeZone());
+      } else if (value instanceof Date) {
+        // If it's already a Date object
+        currentStartDateObj = value;
+      } else if (typeof value === "string") {
+        // If it's a string, parse it
+        currentStartDateObj = new Date(value);
+      } else {
+        // If we can't determine the format, skip validation
+        return true;
+      }
+
+      // Check if dates are valid
+      if (
+        isNaN(previousEndDateObj.getTime()) ||
+        isNaN(currentStartDateObj.getTime())
+      ) {
+        // If either date is invalid, skip validation
+        return true;
+      }
+
+      // Check if current start date is after previous end date
+      return (
+        currentStartDateObj >= previousEndDateObj ||
+        `Start date must be after the end date of your ${
+          degrees[index - 1]
+        } education`
+      );
+    } catch (error) {
+      // If there's any error in date conversion, skip validation
+      return true;
+    }
+  };
+
+  // Handle status change
+  const handleStatusChange = (index, value) => {
+    // Update the status in the form
+    setValue(`status_${index}`, value);
+
+    // If the status is IN_PROGRESS, make sure we can't select higher degrees
+    if (value === "IN_PROGRESS") {
+      // If selected degree is higher than the IN_PROGRESS degree, reset it
+      if (degrees.indexOf(selectedDegree) > index) {
+        setSelectedDegree(degrees[index]);
+        setNumberOfItems(index + 1);
+      }
+
+      setHasInProgressDegree(true);
+      setInProgressDegreeIndex(index);
+    } else {
+      // If this was the IN_PROGRESS degree and now it's not, update the flags
+      if (index === inProgressDegreeIndex) {
+        // Check if any other degree is still IN_PROGRESS
+        const otherInProgressIndex = statusValues.findIndex(
+          (status, i) => i !== index && status === "IN_PROGRESS"
+        );
+
+        if (otherInProgressIndex === -1) {
+          setHasInProgressDegree(false);
+          setInProgressDegreeIndex(-1);
+        } else {
+          setInProgressDegreeIndex(otherInProgressIndex);
+        }
+      }
+    }
+
+    // Keep local formData in sync
+    setFormData((prev) => {
+      // Ensure education array exists
+      const updated = Array.isArray(prev.education)
+        ? [...prev.education]
+        : degrees.map(() => ({}));
+
+      // Ensure the element at index exists
+      updated[index] = {
+        ...updated[index],
+        status: value,
+      };
+      return { ...prev, education: updated };
+    });
+  };
+
+  if (isLoadingEducation || submitMutation.isPending) {
+    return <Loader />;
+  }
   return (
     <div className="space-y-4 py-4">
       <h2 className="text-2xl font-semibold text-gray-700">
@@ -344,13 +539,24 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
           className="w-full"
           label="Select A Level"
           selectedKeys={[selectedDegree]}
-          onChange={(e) => handleDegreeSelection(e.target.value)}>
-          {degrees.map((degree) => (
-            <SelectItem key={degree} value={degree}>
+          onChange={(e) => handleDegreeSelection(e.target.value)}
+          isDisabled={hasInProgressDegree}>
+          {degrees.map((degree, index) => (
+            <SelectItem
+              key={degree}
+              value={degree}
+              isDisabled={hasInProgressDegree && index > inProgressDegreeIndex}>
               {degree}
             </SelectItem>
           ))}
         </Select>
+
+        {hasInProgressDegree && (
+          <p className="text-sm text-danger mt-1">
+            You cannot add higher education levels while
+            {" " + degrees[inProgressDegreeIndex]} is in progress.
+          </p>
+        )}
       </div>
 
       {Array.from({ length: numberOfItems }).map((_, index) => (
@@ -380,57 +586,26 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
               />
             </div>
             {/**Faculty */}
-            <div>
-              <InputComponent
-                name={`faculty_${index}`}
-                control={control}
-                label="Faculty"
-                rules={{
-                  required: "Faculty is required",
-                  minLength: {
-                    value: 3,
-                    message: "Faculty  must be atleast 3 character long",
-                  },
-                }}
-                variant="bordered"
-                type="text"
-                inputClassName="w-full rounded-xl"
-                value={education[index]?.faculty || ""}
-              />
-            </div>
-            {/**Start Year */}
-            <div>
-              <DatepickerComponent
-                name={`startYear_${index}`}
-                label="Start Year(A.D)"
-                control={control}
-                rules={{ required: "Start year is required" }}
-              />
-            </div>
-            {/**End Year */}
-            <div>
-              <DatepickerComponent
-                name={`endYear_${index}`}
-                label="End Year (A.D)"
-                control={control}
-                rules={{
-                  required:
-                    education[index]?.status !== "IN_PROGRESS"
-                      ? "End year is required"
-                      : false,
-                  validate: (value) => {
-                    const startDate = getValues(`startYear_${index}`);
-                    if (!startDate || !value) return true;
-                    const startDateObj = startDate.toDate(getLocalTimeZone());
-                    const endDateObj = value.toDate(getLocalTimeZone());
-                    return (
-                      endDateObj >= startDateObj ||
-                      "End date cannot be before start date"
-                    );
-                  },
-                }}
-              />
-            </div>
+            {shouldShowFaculty(index) && (
+              <div>
+                <InputComponent
+                  name={`faculty_${index}`}
+                  control={control}
+                  label="Faculty"
+                  rules={{
+                    required: "Faculty is required",
+                    minLength: {
+                      value: 3,
+                      message: "Faculty must be atleast 3 character long",
+                    },
+                  }}
+                  variant="bordered"
+                  type="text"
+                  inputClassName="w-full rounded-xl"
+                  value={education[index]?.faculty || ""}
+                />
+              </div>
+            )}
             {/**Status */}
             <div>
               <div className="col-span-2">
@@ -446,21 +621,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value);
-
-                        // Keep local formData in sync
-                        setFormData((prev) => {
-                          // Ensure education array exists
-                          const updated = Array.isArray(prev.education)
-                            ? [...prev.education]
-                            : degrees.map(() => ({}));
-
-                          // Ensure the element at index exists
-                          updated[index] = {
-                            ...updated[index],
-                            status: value,
-                          };
-                          return { ...prev, education: updated };
-                        });
+                        handleStatusChange(index, value);
                       }}
                       className="w-full"
                       isInvalid={!!errors[`status_${index}`]}
@@ -475,9 +636,78 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 />
               </div>
             </div>
-            {/**Files */}
+            {/**Start Year */}
             <div>
-              <div className="col-span-2">
+              <DatepickerComponent
+                name={`startYear_${index}`}
+                label="Start Year(A.D)"
+                control={control}
+                rules={{
+                  required: "Start year is required",
+                  validate: (value) => {
+                    const futureCheck =
+                      new Date(value) <= new Date() ||
+                      "Start year cannot be in the future";
+
+                    const birthCheck = dateOfBirth
+                      ? new Date(value) >= new Date(dateOfBirth) ||
+                        "Start year cannot be before date of birth"
+                      : true;
+
+                    if (futureCheck !== true) return futureCheck;
+                    if (birthCheck !== true) return birthCheck;
+
+                    return validateStartDate(value, index);
+                  },
+                }}
+              />
+            </div>
+            {/**End Year */}
+            {education[index]?.status !== "IN_PROGRESS" ? (
+              <div>
+                <DatepickerComponent
+                  name={`endYear_${index}`}
+                  label="End Year (A.D)"
+                  control={control}
+                  rules={{
+                    required:
+                      education[index]?.status !== "IN_PROGRESS"
+                        ? "End year is required"
+                        : false,
+                    validate: (value) => {
+                      const startDate = getValues(`startYear_${index}`);
+                      if (!startDate || !value) return true;
+
+                      try {
+                        // Check if startDate has toDate method, if not it might already be a Date object
+                        const startDateObj =
+                          typeof startDate?.toDate === "function"
+                            ? startDate.toDate(getLocalTimeZone())
+                            : new Date(startDate);
+
+                        const endDateObj =
+                          typeof value?.toDate === "function"
+                            ? value.toDate(getLocalTimeZone())
+                            : new Date(value);
+
+                        return (
+                          endDateObj >= startDateObj ||
+                          "End date cannot be before start date"
+                        );
+                      } catch (error) {
+                        return true; // Skip validation if there's an error
+                      }
+                    },
+                  }}
+                />
+              </div>
+            ) : (
+              ""
+            )}
+
+            {/**Files */}
+            {education[index]?.status !== "IN_PROGRESS" ? (
+              <div className="">
                 <Controller
                   name={`files_${index}`}
                   control={control}
@@ -517,12 +747,12 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                             ? "border-danger"
                             : education[index]?.file ||
                               (value?.length > 0 && value !== "existing_file")
-                        } border-2 rounded-xl p-1 overflow-hidden `}>
+                            ? "border-gray-300"
+                            : "border-gray-300"
+                        } border-2 rounded-xl p-1 overflow-hidden`}>
                         {/* Left icon */}
                         <div className="pl-3 flex items-center">
-                          {education[index]?.file || (
-                            <CiImageOn className="text-3xl text-gray-400" />
-                          )}
+                          <CiImageOn className="text-3xl text-gray-400" />
                         </div>
 
                         {/* Text area (fake input) */}
@@ -535,7 +765,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                                 : "text-gray-500"
                             } truncate block`}>
                             {education[index]?.file
-                              ? "Document already uploaded"
+                              ? `Document uploaded (${degrees[index]} Certificate)` // Show friendly message instead of URL
                               : value?.length > 0 && value !== "existing_file"
                               ? value[0].name
                               : "Upload Education Certificate"}
@@ -590,23 +820,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                                 <div
                                   onClick={onOpen}
                                   className="flex items-center text-green-500 hover:text-green-700 text-sm cursor-pointer">
-                                  <svg
-                                    className="h-4 w-4 mr-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                  </svg>
+                                  <FaEye />
                                   View Certificate
                                 </div>
                               )}
@@ -638,7 +852,9 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   )}
                 />
               </div>
-            </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       ))}
@@ -690,7 +906,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                 return true;
               },
             }}
-            defaultValue={new Time(10, 0, 0)}
+            defaultValue={new Time(10, 10, 10)}
             render={({ field }) => (
               <div>
                 <TimeInput
@@ -700,7 +916,7 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
                   onChange={(time) => {
                     field.onChange(time);
                   }}
-                  minValue={new Time(10, 0, 0)}
+                  minValue={new Time(10, 10, 10)}
                   maxValue={new Time(18, 30, 0)}
                   isInvalid={!!errors.expectedCheckingTime}
                   errorMessage={errors.expectedCheckingTime?.message}
@@ -718,8 +934,8 @@ const EducationalDetails = ({ formData, setFormData, handleBack }) => {
         <button
           onClick={handleSubmit(onSubmit)}
           className="px-4 py-2 bg-green-500 text-white rounded"
-          disabled={isLoading}>
-          {isLoading ? "Submitting..." : "Submit"}
+          disabled={isLoadingEducation}>
+          {isLoadingEducation ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

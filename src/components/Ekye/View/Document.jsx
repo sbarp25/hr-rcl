@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Divider, Form } from "@nextui-org/react";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
-import UnderlineComponent from "../../UnderlineComponent";
+import { Divider, Form } from "@heroui/react";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import { FaRegEye } from "react-icons/fa6";
 
 const EkyeDocumentDetail = ({ employeeData }) => {
@@ -22,10 +22,10 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, [employeeData]);
 
   return (
-    <div className="flex flex-col  max-h-[75vh] overflow-auto bg-gray-50  py-6 border-solid mx-auto rounded-md h-[75vh] border border-gray-300">
+    <div className="flex flex-col  max-h-[75vh] overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md h-[75vh] border border-gray-300">
       <div className="flex flex-col mt-2 px-8 gap-6 ">
         {/**Citizenship details */}
-        <div className="bg-white text-lg p-6 rounded-lg">
+        <div className="bg-white dark:bg-black text-lg p-6 rounded-lg">
           {/**Header Component */}
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
@@ -117,7 +117,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
         </div>
 
         {/**Pan Details */}
-        <div className="bg-white text-lg  p-6  rounded-lg">
+        <div className="bg-white dark:bg-black text-lg  p-6  rounded-lg">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">

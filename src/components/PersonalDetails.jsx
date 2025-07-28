@@ -1,23 +1,25 @@
-import { Button } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { Button } from "@heroui/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
-import Loader from "./Loader";
-import InputComponent from "./InputComponent";
-import { FaUser, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
-import SelectComp from "./Select";
-import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import InputComponent from "./ui/InputComponent.jsx";
+import { FaUser, FaPhone } from "react-icons/fa";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
+import ReusableAutocomplete from "./ui/SearableDropdown";
+import Loader from "./Loader/Loader.jsx";
+import {
+  usePersonalDetails,
+  useSavePersonalDetails,
+} from "../hooks/useAuth.js";
 
-const PersonalDetails = ({ handleNext, handleBack }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
+  // Form options
   const genderOptions = [
     { key: "Male", label: "Male" },
     { key: "Female", label: "Female" },
   ];
   const maritalOptions = [
-    { key: false, label: "Unmarried" },
-    { key: true, label: "Married" },
+    { key: "false", label: "Unmarried" },
+    { key: "true", label: "Married" },
   ];
   const bloodGroupOptions = [
     { key: "O+", label: "O+" },
@@ -35,12 +37,9 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
     { key: "Brother", label: "Brother" },
     { key: "Sister", label: "Sister" },
   ];
-  const {
-    control,
-    handleSubmit,
-    reset,
-    // formState: { errors },
-  } = useForm({
+
+  // Form setup
+  const { control, handleSubmit, reset, setValue } = useForm({
     defaultValues: {
       email: "",
       dob: "",
@@ -54,16 +53,29 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
       guardianRelation: "",
       guardianPhone: "",
     },
+    mode: "onChange",
   });
 
+  // React Query hooks
+  const {
+    data: personalDetailsData,
+    isLoading: isLoadingDetails,
+    error: fetchError,
+  } = usePersonalDetails();
+
+  const savePersonalDetailsMutation = useSavePersonalDetails(() => {
+    reset();
+    handleNext();
+  });
+
+  // Handle form submission
   const onSubmit = async (data) => {
-    // const marriedstatus = Boolean(data.married);
     const formattedData = {
       data: {
         email: data.email,
         dateOfBirthAd: formatDate(data.dob),
         gender: data.gender,
-        married: Boolean(data.married),
+        married: data.married === "true",
         bloodGroup: data.bloodType,
         emergencyNumber: data.emergencyNumber,
         emergencyName: data.emergencyName,
@@ -73,74 +85,39 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
         guardianNumber: data.guardianPhone,
       },
     };
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/personal/save",
-        formattedData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (response?.data?.responseCode === "201") {
-        reset();
-        toast.success(response?.data?.message);
-        handleNext();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error adding Personal Data", error);
-      toast.error("Error adding personal Data");
-    } finally {
-      setIsLoading(false);
-    }
+    setDateOfBirth(formatDate(data.dob));
+    savePersonalDetailsMutation.mutate(formattedData);
   };
 
+  // Reset form with fetched data
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const fetchPersonalDetails = async () => {
-      try {
-        const response = await axiosInstance.get("/api/v1/personal/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+    if (personalDetailsData?.responseCode === "200") {
+      const data = personalDetailsData.data;
+      setValue("married", data.married);
+      reset({
+        email: data.email || "",
+        dob: data.dateOfBirthAd || "",
+        gender: data.gender || "",
+        married: data.married?.toString(),
+        bloodType: data.bloodGroup || "",
+        emergencyNumber: data.emergencyNumber || "",
+        emergencyName: data.emergencyName || "",
+        emergencyRelation: data.emergencyType || "",
+        guardianName: data.guardianName || "",
+        guardianRelation: data.guardianType || "",
+        guardianPhone: data.guardianNumber || "",
+      });
+    }
+  }, [personalDetailsData, reset]);
 
-        if (response?.data?.responseCode === "200") {
-          const data = response.data.data;
-          reset({
-            email: data.email || "",
-            dob: data.dateOfBirthAd || "",
-            gender: data.gender || "",
-            married: Boolean(data.married) || "",
-            bloodType: data.bloodGroup || "",
-            emergencyNumber: data.emergencyNumber || "",
-            emergencyName: data.emergencyName || "",
-            emergencyRelation: data.emergencyType || "",
-            guardianName: data.guardianName || "",
-            guardianRelation: data.guardianType || "",
-            guardianPhone: data.guardianNumber || "",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching personal details:", error);
-      }
-    };
-
-    fetchPersonalDetails();
-  }, [reset]);
+  // Loading state
+  const isLoading = isLoadingDetails || savePersonalDetailsMutation.isPending;
 
   return (
     <>
       {isLoading && <Loader message="Loading please wait" />}
-      <div className="space-y-8 bg-white rounded-2xl mx-auto">
+      <div className="space-y-8 rounded-2xl mx-auto">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-700 py-3">
@@ -186,40 +163,34 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
               />
 
               <div>
-                <SelectComp
-                  control={control}
+                <ReusableAutocomplete
                   name="bloodType"
-                  rules={{ required: "Blood Type is required" }}
+                  control={control}
                   label="Blood Group"
-                  data={bloodGroupOptions}
-                  valueKey="key"
-                  labelKey="label"
+                  items={bloodGroupOptions}
+                  rules={{ required: "Blood Type is required" }}
                 />
               </div>
 
               {/* Gender */}
               <div>
-                <SelectComp
-                  control={control}
+                <ReusableAutocomplete
                   name="gender"
-                  rules={{ required: "Gender is required" }}
+                  control={control}
                   label="Gender"
-                  data={genderOptions}
-                  valueKey="key"
-                  labelKey="label"
+                  items={genderOptions}
+                  rules={{ required: "Gender is required" }}
                 />
               </div>
 
               {/* Marital Status */}
               <div>
-                <SelectComp
+                <ReusableAutocomplete
                   name="married"
-                  label="Maritial Status"
                   control={control}
+                  label="Maritial Status"
+                  items={maritalOptions}
                   rules={{ required: "Maritial Status is required" }}
-                  data={maritalOptions}
-                  valueKey="key"
-                  labelKey="label"
                 />
               </div>
             </div>
@@ -241,6 +212,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   minLength: {
                     value: 3,
                     message: "Guardian Name must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
                   },
                 }}
                 label="Guardian Name"
@@ -270,14 +246,12 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
 
               {/* Guardian Relation */}
               <div>
-                <SelectComp
+                <ReusableAutocomplete
                   name="guardianRelation"
-                  label="Relation"
                   control={control}
+                  label="Relation"
+                  items={relationOptions}
                   rules={{ required: "Guardian Relation is required" }}
-                  data={relationOptions}
-                  valueKey="key"
-                  labelKey="label"
                 />
               </div>
             </div>
@@ -299,6 +273,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
                   minLength: {
                     value: 3,
                     message: "Emergency Name must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      "Name must not contain numbers or special characters",
                   },
                 }}
                 label="Emergency Name"
@@ -357,8 +336,11 @@ const PersonalDetails = ({ handleNext, handleBack }) => {
             </Button>
             <Button
               type="submit"
+              isDisabled={savePersonalDetailsMutation.isLoading}
               className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600">
-              Submit
+              {savePersonalDetailsMutation.isLoading
+                ? "Submitting..."
+                : "Submit"}
             </Button>
           </div>
         </form>

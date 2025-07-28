@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/BreadCrumbsComp";
-import InputComponent from "../../../components/InputComponent";
-import ButtonComponent from "../../../components/ButtonComp";
+import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
+import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import SelectComp from "../../../components/Select";
+
 import DatepickerComponent, {
   formatDate,
-} from "../../../components/DatepickerComponent";
-import TextAreaComp from "../../../components/TextAreaComp";
+} from "../../../components/ui/DatepickerComponent.jsx";
+import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
+import GoBack from "../../../components/GoBack";
+import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  hasDeleteAccess,
+  hasReadAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
+import { useLeaveRequest } from "../../../hooks/useAuth.js";
 const LeaveRequest = () => {
   const { control, reset, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -28,6 +38,7 @@ const LeaveRequest = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isToDateDisabled, setIsToDateDisabled] = useState(false);
   const navigate = useNavigate();
+  const { mutate: leaveRequestData } = useLeaveRequest();
 
   const breadcrumbItems = [
     { label: "Leave", href: "" },
@@ -84,64 +95,21 @@ const LeaveRequest = () => {
         requestDate: formatDate(today),
       },
     };
+
     if (hasLeaveRequestaccess) {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication token is missing.");
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await axiosInstance.post(
-          "/api/leave/apply_leave",
-          applyleave,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response?.data?.responseCode === "200") {
-          reset();
-          navigate("/dashboard");
-          toast.success(response?.data?.message);
-        } else {
-          const errorMessage = response?.data?.error || "Something went wrong";
-          console.log(errorMessage);
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        console.log(errorMessage);
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
+      leaveRequestData(applyleave);
     } else {
       toast.error("Currently You dont have access to this setting.");
     }
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   // const hasaccess = true;
   // const hasLeaveRequestaccess = true;
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 60)
-  );
-  const hasLeaveRequestaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 59)
-  );
-  const hasLeaveEditaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 61)
-  );
-  const hasLeavedeleteaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 62)
-  );
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
+
+  const hasLeaveRequestaccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeaveEditaccess = hasUpdateAccess(MENU_NAMES.LEAVEREQUEST);
+  const hasLeavedeleteaccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -150,14 +118,15 @@ const LeaveRequest = () => {
 
   return (
     <div className="px-2 sm:px-4 flex flex-col space-y-2 sm:space-y-4">
-      <div className="hidden md:block">
-        <BreadcrumbsComponent items={breadcrumbItems} />
-      </div>
-      <div>
-        <h1 className="text-xl sm:text-md font-semibold">Leave Request</h1>
+      <div className="flex items-center justify-between px-4 py-2">
+        <GoBack />
+        <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-center flex-1 mx-4">
+          <span className="">Leave Request</span>
+        </h1>
+        <div className="w-8"></div>
       </div>
 
-      <div className="bg-white p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
+      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-8 p-2 sm:p-4">
@@ -187,29 +156,21 @@ const LeaveRequest = () => {
           <div className="grid grid-cols-1 gap-y-4 sm:gap-y-6 md:grid-cols-2 md:gap-x-4 md:gap-y-8">
             {/* Leave Type */}
             <div>
-              <SelectComp
+              <ReusableAutocomplete
                 name="leaveType"
-                label="Leave Type"
                 control={control}
-                size="sm"
-                className="w-full"
+                label="Leave Type"
+                items={LeaveType}
                 rules={{ required: "Type of leave is required" }}
-                data={LeaveType}
-                valueKey="key"
-                labelKey="label"
               />
             </div>
             <div>
-              <SelectComp
+              <ReusableAutocomplete
                 name="leaveStatus"
-                label="Leave Category"
                 control={control}
-                size="sm"
-                className="w-full"
+                label="Leave Category"
+                items={leaveStatus}
                 rules={{ required: "Category of leave is required" }}
-                data={leaveStatus}
-                valueKey="key"
-                labelKey="label"
               />
             </div>
 

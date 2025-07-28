@@ -1,28 +1,39 @@
 import { useEffect, useState } from "react";
 import Logo from "../../assets/Images/Logo.png";
 import { MdDashboard } from "react-icons/md";
-import Loader from "../Loader";
+
 import { IoIosPeople } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import { BsArrowReturnRight } from "react-icons/bs";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
-import { IoShieldCheckmark } from "react-icons/io5";
+import { IoLogOutOutline, IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Tooltip,
+  useDisclosure,
+} from "@heroui/react";
+import Loader from "../Loader/Loader.jsx";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
@@ -31,23 +42,11 @@ const UserSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const seeDashboard = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
-  const seeEKYE = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 68)
-  );
-  const seeSecurity = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 72)
-  );
-  const seeBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
+  const seeProfile = true;
+  const seeDashboard = true;
+  const seeEKYE = true;
+  const seeSecurity = true;
+  const seeBank = true;
   const navbarElements = [
     {
       icon: MdDashboard,
@@ -70,7 +69,7 @@ const UserSidebar = () => {
     {
       icon: IoShieldCheckmark,
       label: "Security",
-      to: "/settings/Change",
+      to: "/security",
       view: seeSecurity,
     },
     {
@@ -79,6 +78,16 @@ const UserSidebar = () => {
       to: "/Bank",
       view: seeBank,
     },
+    // {
+    //   icon: CiBank,
+    //   label: "Salary",
+    //   view: true,
+    //   children: [
+    //     { label: "Salary Details", to: "/Salary", view: true },
+    //     { label: "Salary Breakdown", to: "/SalaryEdit", view: true },
+    //     { label: "Advance", to: "/AdvanceSalary", view: true },
+    //   ],
+    // },
   ];
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
@@ -108,8 +117,10 @@ const UserSidebar = () => {
       }
     } catch (error) {
       setIsLoading(true);
-      console.error("Error Logging out", error);
-      toast.error(error.response?.data?.message);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +139,7 @@ const UserSidebar = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +169,7 @@ const UserSidebar = () => {
               </Link>
             )}
           </div>
-
+          <ThemeSwitcher />
           {/* Navigation items */}
           <div className="flex-grow">
             {navbarElements.map((service, index) => {
@@ -214,22 +225,27 @@ const UserSidebar = () => {
           {/* Profile section */}
           <div className="p-4">
             <div className="flex items-center gap-4">
-              {imageURL ? (
-                <Avatar className="h-full w-full object-cover" src={imageURL} />
-              ) : (
-                <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                  {getInitials(username)}
-                </div>
-              )}
+              <Link to="/settings">
+                {imageURL ? (
+                  <Avatar
+                    className="h-full w-full object-cover"
+                    src={imageURL}
+                  />
+                ) : (
+                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
+                    {getInitials(username)}
+                  </div>
+                )}
+              </Link>
               {isSidebarExpanded && (
                 <div>
-                  <p className="text-xl" title={username}>
-                    {" "}
-                    {truncateText(username, 7)}
+                  <p className="text-xl">
+                    <Tooltip content={username}>
+                      {truncateText(username, 7)}
+                    </Tooltip>
                   </p>
                   <p className="text-sm" title={email}>
-                    {" "}
-                    {truncateText(email, 10)}
+                    <Tooltip content={email}>{truncateText(email, 10)}</Tooltip>
                   </p>
                 </div>
               )}
@@ -239,10 +255,12 @@ const UserSidebar = () => {
                     <GoGear className="text-2xl" />
                   </a>
                   <button className="">
-                    <CiLogout
-                      onClick={handleLogOut}
-                      className="text-2xl text-red-500  hover:scale-125"
-                    />
+                    <button className="">
+                      <IoLogOutOutline
+                        onClick={onOpen}
+                        className="text-2xl text-red-500  hover:scale-125"
+                      />
+                    </button>
                   </button>
                 </div>
               )}
@@ -250,6 +268,29 @@ const UserSidebar = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center">
+                <p>Are you sure you want to Log out ?</p>
+                <div className="flex gap-2 justify-end mt-4 ">
+                  <Button
+                    className="bg-black text-white"
+                    onPress={() => handleLogOut()}>
+                    Log Out
+                  </Button>
+                  <Button onPress={onClose}>Cancel</Button>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

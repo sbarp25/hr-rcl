@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Divider, Form } from "@nextui-org/react";
+import { Divider, Form } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
-import EkyeDetailsComponent from "../../EkyeDetailsComponent";
+import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 
-import UnderlineComponent from "../../UnderlineComponent";
+import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 
 const UserEducation = ({ employeeData }) => {
   const [educationDocuments, setEducationDocuments] = useState({});
@@ -20,8 +20,8 @@ const UserEducation = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
+        <div className="bg-white dark:bg-black text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">

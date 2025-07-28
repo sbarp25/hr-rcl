@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Select, SelectItem, Checkbox } from "@nextui-org/react";
+import { Button, Select, SelectItem, Checkbox } from "@heroui/react";
 import ValidationComponent from "./ValidationComponent";
-import Loader from "./Loader";
+
 import { useForm, Controller } from "react-hook-form";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
+import Loader from "./Loader/Loader.jsx";
 
 const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,13 +16,12 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [permanentDistrictName, setPermanentDistrictName] = useState("");
   const [temporaryDistrictName, setTemporaryDistrictName] = useState("");
-  // Add state variables for province names
   const [permanentProvinceName, setPermanentProvinceName] = useState("");
   const [temporaryProvinceName, setTemporaryProvinceName] = useState("");
 
   const {
     control,
-    handleSubmit: handleReactHookFormSubmit,
+    handleSubmit,
     setValue,
     formState: { errors },
     watch,
@@ -62,7 +62,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           setProvinces(response.data.datalist);
         }
       } catch (error) {
-        console.error("Failed to fetch Province Data.", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error;
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -181,7 +184,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           clearErrors();
         }
       } catch (error) {
-        console.error("Error fetching address details:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error;
+        toast.error(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -223,6 +229,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     temporaryDistrictName,
     permanentProvinceName,
     temporaryProvinceName,
+    setValue,
   ]);
 
   // Handle Same As Permanent checkbox
@@ -266,8 +273,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Failed to fetch District Data.", error);
-      toast.error("Failed to fetch District Data.");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -388,8 +397,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         toast.error(errorMessage);
       }
     } catch (error) {
-      console.error("Error saving address data:", error);
-      toast.error("Failed to save address data");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -437,7 +448,40 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       },
     };
   };
+  useEffect(() => {
+    if (watchedSameAsPermanent) {
+      // Copy all permanent address values to temporary fields
+      setValue("temporary.provinceId", watch("permanent.provinceId") || "");
+      setValue("temporary.districtId", watch("permanent.districtId") || "");
+      setValue("temporary.municipality", watch("permanent.municipality") || "");
+      setValue("temporary.wardNumber", watch("permanent.wardNumber") || "");
+      setValue("temporary.pinCode", watch("permanent.pinCode") || "");
+      setValue("temporary.tole", watch("permanent.tole") || "");
 
+      // Update display names
+      setTemporaryDistrictName(permanentDistrictName);
+      setTemporaryProvinceName(permanentProvinceName);
+
+      // Clear any temporary field errors when using same as permanent
+      if (errors.temporary) {
+        clearErrors("temporary");
+      }
+    }
+  }, [
+    watch,
+    watchedSameAsPermanent,
+    watch("permanent.provinceId"),
+    watch("permanent.districtId"),
+    watch("permanent.municipality"),
+    watch("permanent.wardNumber"),
+    watch("permanent.pinCode"),
+    watch("permanent.tole"),
+    permanentDistrictName,
+    permanentProvinceName,
+    setValue,
+    clearErrors,
+    errors.temporary,
+  ]);
   return (
     <>
       {isLoading && <Loader message="Loading please wait" />}
@@ -446,9 +490,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
           <h2 className="text-2xl font-semibold text-gray-700 py-3">
             Address Details
           </h2>
-          <form
-            className="w-full"
-            onSubmit={handleReactHookFormSubmit(onSubmit)}>
+          <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
             {/* Permanent Address */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-gray-600">
@@ -524,10 +566,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "permanent");
-                          console.log(
-                            "Selected permanent district ID:",
-                            selectedKey
-                          );
                         }}>
                         {districts.map((district) => (
                           <SelectItem key={district.id} value={district.id}>
@@ -566,7 +604,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     rules={{
                       required: "Permanent Ward Number is required",
                       pattern: {
-                        value: /^(?:[1-9]|[12][0-9]|3[0-2])$/,
+                        value: /^([1-9]|0[1-9]|[1-2][0-9]|3[0-2])$/,
                         message: "Ward Number must be between 1 and 32",
                       },
                     }}
@@ -586,9 +624,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "Permanent Pin Code is required",
                     pattern: {
-                      value: /^[1-9]\d{5}$/,
+                      value: /^\d{5}$/,
                       message:
-                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                        "Invalid pincode. Must be a 5-digit number starting with 1-9.",
                     },
                   }}
                   label="Pin Code"
@@ -660,9 +698,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                         className={`w-full rounded-xl`}
                         label="Select A Province"
                         placeholder={
-                          temporaryProvinceName ||
-                          formData.address?.temporary?.provinceName ||
-                          "Select Province"
+                          watchedSameAsPermanent
+                            ? permanentProvinceName
+                            : temporaryProvinceName || "Select Province"
                         }
                         selectedKeys={field.value ? [field.value] : []}
                         onSelectionChange={(keys) => {
@@ -720,10 +758,6 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                           const selectedKey = Array.from(keys)[0];
                           field.onChange(selectedKey);
                           updateDistrictName(selectedKey, "temporary");
-                          console.log(
-                            "Selected temporary district ID:",
-                            selectedKey
-                          );
                         }}
                         isDisabled={watchedSameAsPermanent}>
                         {districts.map((district) => (
@@ -789,9 +823,9 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       ? "Temporary Pin Code is required"
                       : false,
                     pattern: {
-                      value: /^[1-9]\d{5}$/,
+                      value: /^\d{5}$/,
                       message:
-                        "Invalid pincode. Must be a 6-digit number starting with 1-9.",
+                        "Invalid pincode. Must be a 5-digit number starting with 1-9.",
                     },
                   }}
                   label="Pin Code"

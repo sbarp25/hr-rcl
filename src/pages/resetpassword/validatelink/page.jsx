@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/Loader/Loader.jsx";
 import Logo from "../../../assets/Images/Logo.png";
-import { Button } from "@nextui-org/button";
-import InputComponent from "../../../components/InputComponent";
+import { Button } from "@heroui/button";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
 const ValidateLink = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(true);
@@ -88,7 +88,6 @@ const ValidateLink = () => {
         }
       }
     } catch (error) {
-      console.error("Error resetting password:", error);
       toast.error(error.response?.data?.message);
       navigate("/login");
     } finally {
@@ -133,7 +132,6 @@ const ValidateLink = () => {
       } catch (error) {
         setError("An error occurred. Please try again later.");
         toast.error(error.response?.data?.messages);
-        console.error("An error occurred:", error);
         navigate("/login");
       } finally {
         setIsLoading(false);
@@ -147,7 +145,6 @@ const ValidateLink = () => {
       {isLoading && (
         <Loader message="Please wait while the work is being done" />
       )}
-
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">

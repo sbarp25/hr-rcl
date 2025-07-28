@@ -7,93 +7,81 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ImCancelCircle } from "react-icons/im";
 import { RxCross1 } from "react-icons/rx";
-import { useState } from "react";
-import ButtonComponent from "./ButtonComp";
-import axiosInstance from "../lib/axios-Instance";
-import { toast } from "react-toastify";
-import { useNavigate, useParams } from "react-router-dom";
+import ButtonComponent from "./ui/ButtonComp.jsx";
+import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import Loader from "./Loader";
-import LocalStorageUtil from "../utils/LocalStorageUtil";
+import Loader from "./Loader/Loader.jsx";
+import { hasUpdateAccess, MENU_NAMES } from "../utils/permissionUtils.js";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRejectUser } from "../hooks/useAuth.js";
 
 const RejectComp = ({ employeeData }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
+  const queryClient = useQueryClient();
+  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
 
-  const menu = LocalStorageUtil.getItem("menu");
-  const hasApproveAccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 18)
-  );
+  // Using the custom hook
+  const rejectMutation = useRejectUser((data) => {
+    reset();
+    onOpenChange(false);
+
+    if (rclId) {
+      queryClient.invalidateQueries({ queryKey: ["employee", rclId] });
+    }
+  });
+
   const onReject = async (data) => {
-    if (hasApproveAccess) {
-      const rejectData = {
-        userId: rclId,
-        status: "REJECTED",
-        remark: data.reject,
-      };
+    if (!hasApproveAccess) {
+      toast.error("Access Denied");
+      return;
+    }
 
-      try {
-        setIsLoading(true);
-        const accessToken = localStorage.getItem("accessToken");
-        const response = await axiosInstance.post(
-          "/api/v1/rejected/users",
-          rejectData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+    const rejectData = {
+      userId: rclId,
+      status: "REJECTED",
+      remark: data.reject,
+    };
 
-        if (response?.data?.responseCode === "201") {
-          toast.success(response?.data?.message);
-          navigate("/AdminEkye");
-        } else {
-          const errorMessage =
-            response?.data?.error?.errorList?.[0]?.errorMessage ||
-            "Something went wrong";
-          toast.error(errorMessage);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      toast.reject("Access Denied");
+    rejectMutation.mutate(rejectData);
+  };
+
+  const handleModalClose = () => {
+    if (!rejectMutation.isPending) {
+      reset();
+      onOpenChange(false);
     }
   };
 
   return (
     <div>
-      {isLoading && <Loader />}
+      {rejectMutation.isPending && <Loader />}
       <Button
         className="bg-white text-red-500 border border-red-500"
-        onPress={onOpen}>
+        onPress={onOpen}
+        isDisabled={rejectMutation.isPending}>
         <RxCross1 />
         Reject
       </Button>
+
       <form onSubmit={handleSubmit(onReject)}>
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           size="lg"
-          isDismissable={true}
-          isKeyboardDismissDisabled={false}>
+          isDismissable={!rejectMutation.isPending}
+          isKeyboardDismissDisabled={rejectMutation.isPending}>
           <ModalContent>
             {(onClose) => (
               <>
@@ -109,6 +97,7 @@ const RejectComp = ({ employeeData }) => {
                     maxRows={10}
                     className={`${errors.reject ? "border-red-900" : ""}`}
                     variant="bordered"
+                    isDisabled={rejectMutation.isPending}
                     {...register("reject", {
                       required: "Reject reason is required",
                       maxLength: {
@@ -118,29 +107,38 @@ const RejectComp = ({ employeeData }) => {
                       },
                     })}
                   />
+                  {errors.reject && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.reject.message}
+                    </p>
+                  )}
                 </ModalBody>
 
                 <ModalFooter>
                   <ButtonComponent
-                    onPress={onClose}
+                    onPress={handleModalClose}
                     content={
-                      <div className="flex items-center justify-center gap-2 ">
+                      <div className="flex items-center justify-center gap-2">
                         <ImCancelCircle />
                         <span>Cancel</span>
                       </div>
                     }
                     color="warning"
-                    className="text-white "
+                    className="text-white"
+                    isDisabled={rejectMutation.isPending}
                   />
                   <ButtonComponent
                     onPress={handleSubmit(onReject)}
                     content={
-                      <div className="flex items-center justify-center gap-2 ">
+                      <div className="flex items-center justify-center gap-2">
                         <RxCross1 />
-                        <span>Reject</span>
+                        <span>
+                          {rejectMutation.isPending ? "Rejecting..." : "Reject"}
+                        </span>
                       </div>
                     }
-                    className={"bg-red-700 text-white"}
+                    className="bg-red-700 text-white"
+                    isDisabled={rejectMutation.isPending}
                   />
                 </ModalFooter>
               </>

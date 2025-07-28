@@ -1,59 +1,26 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../../lib/axios-Instance";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import GoBack from "../../../components/GoBack";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
+import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils";
+import { useLeaveById } from "../../../hooks/useAuth";
+import Loader from "../../../components/Loader/Loader";
 const LeaveView = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [leaveByIdData, setLeaveByIdData] = useState({});
   const { id } = useParams();
+  const hasaccess = hasReadAccess(MENU_NAMES.LEAVESTATUS);
 
-  const menu = LocalStorageUtil.getItem("menu");
+  const { data: leaveByIdData, isLoading } = useLeaveById(id);
 
-  /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 56)
-  );
-
-  const fetchLeaveById = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.post("/api/leave/leaveId", {
-        data: { rclId: id },
-      });
-      if (response.data.responseCode === "200") {
-        setLeaveByIdData(response.data.datalist[0]);
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching Leave:", error);
-      toast.error("Error fetching Leave.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
   useEffect(() => {
-    fetchLeaveById();
-  }, [id]);
-
-  // useEffect(() => {
-  //   if (!hasaccess) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [navigate]);
+    if (!hasaccess) {
+      navigate("/dashboard");
+    }
+  }, [navigate, hasaccess]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-pulse text-lg">Loading leave details...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   // Format status for display
@@ -115,7 +82,7 @@ const LeaveView = () => {
           {/* Subject */}
           <div className="pb-3 border-b border-gray-300">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-gray-600 text-sm">Body</span>
+              <span className="text-gray-600 text-sm">Reason</span>
             </div>
             <p className="text-gray-800 ">
               {leaveByIdData?.leaveSubject || "N/A"}
@@ -233,9 +200,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Team Lead:
                 </span>
-                {leaveByIdData?.isTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
@@ -248,9 +215,9 @@ const LeaveView = () => {
                 <span className="font-medium text-sm text-gray-700">
                   Associate Team Lead:
                 </span>
-                {leaveByIdData?.isAssociateTeamLeadApproved === true ? (
+                {leaveByIdData?.approvedByAssociateTeamLead === true ? (
                   <FaCircleCheck className="text-green-500 w-5 h-5" />
-                ) : leaveByIdData?.isAssociateTeamLeadApproved === false ? (
+                ) : leaveByIdData?.rejectedByAssociateTeamLead === false ? (
                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                 ) : (
                   <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">

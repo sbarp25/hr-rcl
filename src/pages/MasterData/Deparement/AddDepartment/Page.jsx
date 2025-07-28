@@ -1,21 +1,36 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import InputComponent from "../../../../components/InputComponent";
-import { Input, Textarea } from "@nextui-org/react";
-import { toast } from "react-toastify";
+import InputComponent from "../../../../components/ui/InputComponent.jsx";
+import { Textarea } from "@heroui/react";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../../lib/axios-Instance";
-import ButtonComponent from "../../../../components/ButtonComp";
-import BreadcrumbsComponent from "../../../../components/BreadCrumbsComp";
+import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
-import SelectComp from "../../../../components/Select";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
+import Loader from "../../../../components/Loader/Loader.jsx";
+import ReusableAutocomplete from "../../../../components/ui/SearableDropdown";
+import {
+  hasCreateAccess,
+  MENU_NAMES,
+} from "../../../../utils/permissionUtils.js";
+import {
+  useCreateDepartment,
+  useFetchTeamLead,
+} from "../../../../hooks/useAuth.js";
 
 const AddDepartment = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [teamLead, setTeamLead] = useState([]);
-
   const navigate = useNavigate();
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  // React Query hooks
+  const { mutate: createDepartment, isPending: isCreating } =
+    useCreateDepartment();
+  const {
+    data: teamLeadResponse,
+    isLoading: isLoadingTeamLead,
+    error: teamLeadError,
+  } = useFetchTeamLead();
+
+  // Form setup
   const {
     register,
     control,
@@ -26,18 +41,34 @@ const AddDepartment = () => {
     defaultValues: {
       title: "",
       description: "",
-      leaveType: "",
       teamlead: "",
       Associateteamlead: "",
     },
   });
-  /**To check The screen width */
+
+  // Permission check
+  const hasAccess = hasCreateAccess(MENU_NAMES.DEPARTMENT);
+
+  // Screen width handling
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  // Access control
+  useEffect(() => {
+    if (!hasAccess) {
+      navigate("/dashboard");
+    }
+  }, [hasAccess, navigate]);
+
+  // Handle team lead error
+  useEffect(() => {
+    if (teamLeadError) {
+      toast.error("Failed to load team leads. Please try again.");
+    }
+  }, [teamLeadError]);
 
   const getMaxRows = () => {
     if (screenWidth >= 1536) return 12; // 2xl
@@ -55,178 +86,139 @@ const AddDepartment = () => {
     return 4; // default for smaller screens
   };
 
-  /**To fetch Team lead */
-  const fetchTeamLead = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        "/api/v1/departments/get_all_users_name_id"
-      );
-      if (response.data.responseCode === "200") {
-        setTeamLead(response.data.datalist);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
+  const onSubmit = (data) => {
+    if (!hasAccess) {
+      toast.error("Currently you don't have access to this setting.");
+      return;
     }
-  };
-  useEffect(() => {
-    fetchTeamLead();
-  }, []);
 
-  const onSubmit = async (data) => {
-    if (hasaccess) {
-      const AddDepartment = {
-        data: {
-          departmentName: data?.title,
-          description: data?.description,
-          teamLeadId: parseFloat(data?.teamlead),
-          associateTeamLeadId: parseFloat(data?.Associateteamlead),
-        },
-      };
+    const departmentData = {
+      data: {
+        departmentName: data.title,
+        description: data.description,
+        teamLeadId: parseFloat(data.teamlead),
+        associateTeamLeadId: parseFloat(data.Associateteamlead),
+      },
+    };
 
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          toast.error("Authentication token is missing.");
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await axiosInstance.post(
-          "/api/v1/departments/register",
-          AddDepartment,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response?.data.responseCode === "201") {
-          navigate("/master-data/Department");
-          toast.success(response?.data?.message);
-          reset();
-        } else {
-          toast.error(response?.data?.message);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.error || "Something went wrong";
-        toast.error(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      toast.error("Currently You dont have access to this setting.");
-    }
+    createDepartment(departmentData, {
+      onSuccess: () => {
+        reset(); // Reset form on successful creation
+      },
+    });
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
+  // Transform team lead data for dropdown
+  const teamLeadOptions =
+    teamLeadResponse?.datalist?.map((item) => ({
+      key: item.userId,
+      label: item.fullName,
+    })) || [];
 
-  /**To check Employee see status */
-  const hasaccess = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 43)
-  );
-
-  useEffect(() => {
-    if (!hasaccess) {
-      navigate("/dashboard");
-    }
-  }, [hasaccess, navigate]);
-  const teamLeadid = teamLead.map((item) => ({
-    key: item.userId, // Using id as the key
-    label: item.fullName, // Using fullName as the display label
-  }));
+  // Show loader while loading team leads or during creation
+  const isLoading = isLoadingTeamLead || isCreating;
 
   return (
-    <div className="px-4 flex flex-col space-y-4">
-      {/* <BreadcrumbsComponent items={breadcrumbItems} /> */}
-      <div className="flex justify-between">
-        <GoBack />
-        <div className="page-title -pl-2">Add Department</div>
-        <div></div>
-      </div>
-      <div className="bg-white p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
-          {/* Department Title */}
-          <div>
-            <InputComponent
-              name="title"
-              control={control}
-              variant="bordered"
-              label="Title"
-              rules={{
-                required: "Title is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,300}$/,
-                  message: "Title must be 3-300 characters long.",
-                },
-              }}
-            />
+    <>
+      {isLoadingTeamLead ? (
+        <Loader />
+      ) : (
+        <div className="px-4 flex flex-col space-y-4">
+          <div className="flex justify-between">
+            <GoBack />
+            <div className="page-title -pl-2">Add Department</div>
+            <div></div>
           </div>
 
-          {/* Department description*/}
-          <div>
-            <Textarea
-              minRows={getRows()}
-              maxRows={getMaxRows()}
-              isInvalid={!!errors.description}
-              className={` rounded-xl `}
-              label="Description"
-              {...register("description", {
-                required: "Description is required",
-                minLength: {
-                  value: 10,
-                  message: "Description must be at least 10 characters long.",
-                },
-              })}
-              variant="bordered"
-            />
-            {errors.description && (
-              <p className="text-danger text-sm">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Team Leader */}
-            <div>
-              <SelectComp
-                name="teamlead"
-                label="Team Lead"
-                control={control}
-                rules={{ required: "Team Lead is required" }}
-                data={teamLeadid}
-                valueKey="key"
-                labelKey="label"
-              />
-            </div>
+          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
+              {/* Department Title */}
+              <div>
+                <InputComponent
+                  name="title"
+                  control={control}
+                  variant="bordered"
+                  label="Title"
+                  rules={{
+                    required: "Title is required",
+                    minLength: {
+                      value: 3,
+                      message: "Title must be at least 3 characters long.",
+                    },
+                    maxLength: {
+                      value: 100,
+                      message: "Title cannot exceed 100 characters.",
+                    },
+                  }}
+                />
+              </div>
 
-            {/* Associate Team Leader */}
-            <div>
-              <SelectComp
-                name="Associateteamlead"
-                label="Associate Team Lead"
-                control={control}
-                rules={{ required: "Associate Team Lead is required" }}
-                data={teamLeadid}
-                valueKey="key"
-                labelKey="label"
+              {/* Department Description */}
+              <div>
+                <Textarea
+                  minRows={getRows()}
+                  maxRows={getMaxRows()}
+                  isInvalid={!!errors.description}
+                  className="rounded-xl"
+                  label="Description"
+                  {...register("description", {
+                    required: "Description is required",
+                    minLength: {
+                      value: 10,
+                      message:
+                        "Description must be at least 10 characters long.",
+                    },
+                    maxLength: {
+                      value: 255,
+                      message: "Description cannot exceed 255 characters.",
+                    },
+                  })}
+                  variant="bordered"
+                />
+                {errors.description && (
+                  <p className="text-danger text-sm">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Team Leader */}
+                <div>
+                  <ReusableAutocomplete
+                    name="teamlead"
+                    control={control}
+                    label="Team Lead"
+                    items={teamLeadOptions}
+                    rules={{ required: "Team Lead is required" }}
+                    disabled={isLoadingTeamLead}
+                  />
+                </div>
+
+                {/* Associate Team Leader */}
+                <div>
+                  <ReusableAutocomplete
+                    name="Associateteamlead"
+                    control={control}
+                    label="Associate Team Lead"
+                    items={teamLeadOptions}
+                    rules={{ required: "Associate Team Lead is required" }}
+                    disabled={isLoadingTeamLead}
+                  />
+                </div>
+              </div>
+
+              <ButtonComponent
+                type="submit"
+                className="bg-black text-white dark:bg-white dark:text-black"
+                content={isCreating ? "Adding..." : "Add Department"}
+                disabled={isCreating || isLoadingTeamLead}
               />
-            </div>
+            </form>
           </div>
-          <ButtonComponent
-            type="submit"
-            className="bg-black text-white"
-            content={isLoading ? "Adding..." : "Add Department"}
-            disabled={isLoading}
-          />
-        </form>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

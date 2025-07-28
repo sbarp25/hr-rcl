@@ -4,19 +4,22 @@ import DocumentDetails from "../../components/DocumentDetails";
 import AddressDetails from "../../components/AddressDetails";
 import EducationDetails from "../../components/EducationDetails.jsx";
 import PersonalDetails from "../../components/PersonalDetails.jsx";
-import Loader from "../../components/Loader.jsx";
+
 import ValidationComponent from "../../components/ValidationComponent.jsx";
 import After from "../../assets/svgs/After.svg";
 import Before from "../../assets/svgs/Before.svg";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import FormStepper from "../../components/FormStepIndicator.jsx";
 import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
+import Loader from "../../components/Loader/Loader.jsx";
+import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [formData, setFormData] = useState({
     personalInfo: {
       email: "",
@@ -134,11 +137,7 @@ const Ekye = () => {
     "Document Details",
     "Educational Details",
   ];
-  const menu = LocalStorageUtil.getItem("menu");
 
-  // const hasaccess = menu?.some((menu) =>
-  //   menu?.actions?.some((action) => action.actionId === 2)
-  // );
   const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
@@ -148,7 +147,8 @@ const Ekye = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="min-h-screen overflow-y-auto bg-gray-200 p-4">
+      <div className="min-h-screen overflow-y-auto bg-gray-200 dark:bg-black p-4">
+        <ThemeSwitcher />
         {/* <a href="/">GO home</a> */}
         {/* Header */}
         <div className="page-title flex flex-col sm:flex-row justify-center items-center gap-2 text-center sm:text-left mb-4">
@@ -161,7 +161,7 @@ const Ekye = () => {
 
         {/* Form Container */}
         <ValidationComponent>
-          <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
             {step === 0 && !isLoading && (
               <PersonalDetails
                 handleNext={handleNext}
@@ -169,6 +169,7 @@ const Ekye = () => {
                 handleBack={handleBack}
                 handleNestedChange={handleNestedChange}
                 setFormData={setFormData}
+                setDateOfBirth={setDateOfBirth}
               />
             )}
             {step === 1 && (
@@ -188,6 +189,7 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
             {step === 3 && (
@@ -197,13 +199,14 @@ const Ekye = () => {
                 setFormData={setFormData}
                 formData={formData}
                 handleNestedChange={handleNestedChange}
+                dateOfBirth={dateOfBirth}
               />
             )}
           </div>
         </ValidationComponent>
 
         {/* Navigation Buttons */}
-        <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        {/* <div className="form-navigation flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
           {step > 0 && (
             <Button
               onPress={handleBack}
@@ -218,7 +221,7 @@ const Ekye = () => {
               Next
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

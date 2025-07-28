@@ -1,12 +1,14 @@
 import { useForm } from "react-hook-form";
-import InputComponent from "../../components/InputComponent";
-import ButtonComponent from "../../components/ButtonComp";
-import { toast } from "react-toastify";
+import InputComponent from "../../components/ui/InputComponent.jsx";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import { useFetchBank } from "../../hooks/useAuth.js";
+import Loader from "../../components/Loader/Loader.jsx";
 const Bank = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, reset } = useForm({
@@ -19,6 +21,21 @@ const Bank = () => {
     },
   });
   const navigate = useNavigate();
+
+  const { data: BankData, isLoading: isBankLoading } = useFetchBank();
+  const bankData = BankData?.data || {};
+
+  useEffect(() => {
+    if (bankData?.accountNumber || bankData?.accountName) {
+      reset({
+        branchName: "Kumaripati",
+        bankName: "Sanima Bank",
+        accountNumber: bankData?.accountNumber || "",
+        accountName: bankData?.accountName || "",
+        accountType: "Platinum PayRoll Saving",
+      });
+    }
+  }, [bankData?.accountNumber, bankData?.accountName, reset]);
 
   const onSubmit = async (data) => {
     if (AddBank) {
@@ -33,6 +50,7 @@ const Bank = () => {
       };
       try {
         const accessToken = localStorage.getItem("accessToken");
+        setIsLoading(true);
         if (!accessToken) {
           toast.error("Authentication token is missing.");
           setIsLoading(false);
@@ -40,7 +58,7 @@ const Bank = () => {
         }
 
         const response = await axiosInstance.post(
-          "/api/v1/banking/bank_details_create",
+          "/api/v1/banking/save",
           BankDetails,
           {
             headers: {
@@ -70,23 +88,19 @@ const Bank = () => {
     } else toast.error("You currently dont have access to this setting");
   };
 
-  const menu = LocalStorageUtil.getItem("menu");
-
   /**To check Employee see status */
-  // const seeAddBank = true;
+  const seeAddBank = true;
 
-  const seeAddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 76)
-  );
-  const AddBank = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 75)
-  );
+  const AddBank = true;
 
   useEffect(() => {
     if (!seeAddBank) {
       navigate("/dashboard");
     }
   }, []);
+  if (isBankLoading || isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="flex justify-between mb-8 text-center">
@@ -101,6 +115,7 @@ const Bank = () => {
         </div>
         <div></div>
       </div>
+      {/* {is} */}
       <div className="h-[80vh] border-2 border-gray-300 rounded-2xl p-4">
         <div>
           <form onSubmit={handleSubmit(onSubmit)} className=" space-y-4">
@@ -130,9 +145,9 @@ const Bank = () => {
               rules={{
                 required: "Account Number is required",
                 pattern: {
-                  value: /^[a-zA-Z0-9]{5,20}$/,
+                  value: /^(?=.*\d)[a-zA-Z0-9]{5,20}$/,
                   message:
-                    "Account Number is needs to be between 5 and 20 characters.",
+                    "Account Number needs to be between 5 and 20 characters.",
                 },
               }}
             />
@@ -146,6 +161,11 @@ const Bank = () => {
                 minLength: {
                   value: 3,
                   message: "Full name must be at least 3 characters",
+                },
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message:
+                    "Name must not contain numbers or special characters",
                 },
               }}
             />

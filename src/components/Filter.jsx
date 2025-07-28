@@ -1,7 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
-import { toast } from "react-toastify";
-import axiosInstance from "../lib/axios-Instance";
-import { Select, SelectItem } from "@nextui-org/select";
+import { useEffect, useMemo } from "react";
+import { toast } from "sonner";
 import {
   Button,
   Drawer,
@@ -9,11 +7,16 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { BsFilter } from "react-icons/bs";
-
 import { useForm } from "react-hook-form";
-import DatepickerComponent, { formatDate } from "./DatepickerComponent";
+import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
+import ReusableAutocomplete from "./ui/SearableDropdown.jsx";
+import {
+  useApplyFilters,
+  useFetchUnPaginatedDepartment,
+  useFetchUnPaginatedPosition,
+} from "../hooks/useAuth.js";
 
 const Filter = ({
   onApplyFilters,
@@ -25,253 +28,164 @@ const Filter = ({
     toDateField: "toDate",
   },
 }) => {
-  const { watch, control } = useForm();
-
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === "FromDate" || name === "toDate") {
-        setFormData((prev) => ({ ...prev, [name]: value[name] }));
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch]);
-  const [formData, setFormData] = useState({
-    FromDate: null,
-    toDate: null,
-    department: "",
-    position: "",
-    roles: "",
-  });
-
-  const [departmentsData, setDepartmentsData] = useState([]);
-  const [positionData, setPositionData] = useState([]);
-
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
-  const [loadingPositions, setLoadingPositions] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
-  const handleChange = (name, value) => {
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  /**Department Fetch */
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoadingDepartments(true);
-      try {
-        const response = await axiosInstance.post(
-          "/api/v1/departments/list",
-          {}
-        );
-        if (response.data.responseCode === "200") {
-          setDepartmentsData(response?.data?.datalist);
-        } else {
-          toast.error(response?.data?.message);
-        }
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-        toast.error("Error fetching departments.");
-      } finally {
-        setLoadingDepartments(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
-
-  /**Position Fetch */
-  useEffect(() => {
-    const fetchPositions = async () => {
-      setLoadingPositions(true);
-      try {
-        const response = await axiosInstance.post("/api/v1/positions/get/all");
-        if (response.data.responseCode === "200") {
-          setPositionData(response?.data?.datalist);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        toast.error("Error fetching positions.", error);
-      } finally {
-        setLoadingPositions(false);
-      }
-    };
-    fetchPositions();
-  }, []);
-
-  const resetFilters = () => {
-    setFormData({
+  const { control, handleSubmit, reset, watch } = useForm({
+    defaultValues: {
       FromDate: null,
       toDate: null,
       department: "",
       position: "",
-    });
+    },
+  });
 
-    onApplyFilters({});
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const fromDate = watch("FromDate");
+
+  // Use React Query hooks
+  const {
+    data: departmentsResponse = {},
+    isLoading: loadingDepartments,
+    error: departmentsError,
+  } = useFetchUnPaginatedDepartment();
+
+  const departmentsData = departmentsResponse?.datalist || [];
+  const {
+    data: positionResponse = {},
+    isLoading: loadingPositions,
+    error: positionsError,
+  } = useFetchUnPaginatedPosition();
+  const positionData = positionResponse?.datalist || [];
+
+  const applyFiltersMutation = useApplyFilters((data) => {
     onClose();
-  };
+    onApplyFilters(data);
+  });
 
-  const onSubmit = async (e) => {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-
-    setIsLoading(true);
-    const filterCriteria = {};
+  const onSubmit = async (formData) => {
+    const requestBody = {
+      pageIndex: 1,
+      pageSize: 10,
+      filterCriteria: {},
+    };
 
     if (formData.FromDate || formData.toDate) {
-      filterCriteria.createdAt = {};
-
+      requestBody.filterCriteria.createdAt = {};
       if (formData.FromDate) {
-        filterCriteria.createdAt.from = formatDate(formData.FromDate);
+        requestBody.filterCriteria.createdAt.from = formatDate(
+          formData.FromDate
+        );
       }
-
       if (formData.toDate) {
-        filterCriteria.createdAt.to = formatDate(formData.toDate);
+        requestBody.filterCriteria.createdAt.to = formatDate(formData.toDate);
       }
     }
 
     if (formData.department) {
-      filterCriteria.filterCriteria[fieldNames?.departmentField] = parseInt(
-        formData.department || ""
+      requestBody.filterCriteria[fieldNames?.departmentField] = parseInt(
+        formData.department
       );
     }
 
     if (formData.position) {
-      filterCriteria.filterCriteria[fieldNames?.positionField] = parseInt(
-        formData.position || ""
+      requestBody.filterCriteria[fieldNames?.positionField] = parseInt(
+        formData.position
       );
     }
-    const requestBody = {
-      pageIndex: 1,
-      pageSize: 10,
-      filterCriteria: filterCriteria,
-    };
 
-    try {
-      const response = await axiosInstance.post(`${url}`, requestBody, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.data.responseCode === "200") {
-        onClose();
-        onApplyFilters({
-          data: response.data.datalist,
-          totalPages: response.data.totalPages,
-          totalRecords: response.data.totalRecords,
-        });
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error fetching data", error);
-      toast.error("Error fetching data.");
-    } finally {
-      setIsLoading(false);
-    }
+    applyFiltersMutation.mutate({ url, requestBody });
   };
 
-  const filteredDepartments = useMemo(
-    () => departmentsData?.filter((department) => !department?.isDeleted),
-    [departmentsData]
-  );
+  const resetFilters = () => {
+    reset();
+    onApplyFilters({});
+    onClose();
+  };
 
-  const filteredPositions = useMemo(
-    () => positionData?.filter((position) => !position?.isDeleted),
-    [positionData]
-  );
+  const departmentItems = departmentsData
+    ?.filter((d) => !d?.isDeleted)
+    ?.map((department) => ({
+      key: department?.id,
+      label: department?.name,
+    }));
 
+  const positionItems = positionData
+    ?.filter((p) => !p?.isDeleted)
+    ?.map((position) => ({
+      key: position?.id,
+      label: position?.positionName,
+    }));
   return (
     <div className="bg-white rounded-xl">
       <Button onPress={onOpen} className="text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
-        <p className="">Filters</p>
+        <p>Filters</p>
       </Button>
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
+
+      <Drawer isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
         <DrawerContent>
           <DrawerHeader>Filter Options</DrawerHeader>
           <DrawerBody>
-            <div className="p-4 space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-6">
               <div className="flex gap-4">
                 <DatepickerComponent
+                  disabled={applyFiltersMutation.isLoading}
                   name="FromDate"
-                  label="From Date(A.D)"
+                  label="From Date (A.D)"
                   control={control}
-                  onChange={(date) => handleChange("FromDate", date)}
                 />
                 <DatepickerComponent
+                  disabled={applyFiltersMutation.isLoading}
                   name="toDate"
-                  label="To Date(A.D)"
+                  label="To Date (A.D)"
                   control={control}
-                  onChange={(date) => handleChange("toDate", date)}
+                  rules={{
+                    validate: (value) =>
+                      !fromDate ||
+                      !value ||
+                      value >= fromDate ||
+                      "End date cannot be before start date",
+                  }}
                 />
               </div>
 
-              <Select
-                label={loadingDepartments ? "Loading..." : "Department"}
-                variant="bordered"
-                selectedKeys={formData.department ? [formData.department] : []}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  handleChange("department", selected);
-                }}
-                placeholder="Select a department">
-                {loadingDepartments ? (
-                  <SelectItem key="loading">Loading departments...</SelectItem>
-                ) : (
-                  filteredDepartments?.map((department) => (
-                    <SelectItem
-                      key={department.id.toString()}
-                      value={department.name}>
-                      {department.name}
-                    </SelectItem>
-                  ))
-                )}
-              </Select>
+              <div>
+                <ReusableAutocomplete
+                  name="department"
+                  control={control}
+                  label={loadingDepartments ? "Loading..." : "Department"}
+                  items={departmentItems}
+                  isDisabled={
+                    applyFiltersMutation.isLoading || loadingDepartments
+                  }
+                />
+              </div>
 
-              <Select
-                label={loadingPositions ? "Loading..." : "Position"}
-                variant="bordered"
-                selectedKeys={formData.position ? [formData.position] : []}
-                onSelectionChange={(keys) => {
-                  const selected = Array.from(keys)[0];
-                  handleChange("position", selected);
-                }}
-                placeholder="Select a position">
-                {loadingPositions ? (
-                  <SelectItem key="loading">Loading positions...</SelectItem>
-                ) : (
-                  filteredPositions?.map((position) => (
-                    <SelectItem
-                      key={position.id.toString()}
-                      value={position.positionName}>
-                      {position.positionName}
-                    </SelectItem>
-                  ))
-                )}
-              </Select>
+              <div>
+                <ReusableAutocomplete
+                  name="position"
+                  control={control}
+                  label={loadingPositions ? "Loading..." : "Position"}
+                  items={positionItems}
+                  isDisabled={
+                    applyFiltersMutation.isLoading || loadingPositions
+                  }
+                />
+              </div>
 
               <div className="flex justify-between">
                 <Button
-                  className="bg-black text-white hover:bg-hoverbackground"
-                  onPress={onSubmit}
-                  isLoading={isLoading}>
+                  type="submit"
+                  className="bg-black dark:bg-slate-500 text-white dark:hover:bg-hoverbackground hover:bg-hoverbackground"
+                  isLoading={applyFiltersMutation.isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
                 </Button>
                 <Button
-                  className="bg-gray-300 hover:bg-gray-400 text-black"
+                  className="bg-gray-300 dark:bg-slate-300 dark:hover:bg-gray-500 hover:bg-gray-400 text-black"
                   onPress={resetFilters}>
                   Reset
                 </Button>
               </div>
-            </div>
+            </form>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

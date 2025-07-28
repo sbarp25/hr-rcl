@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
 import Logo from "../../../assets/Images/Logo.png";
-import { Button } from "@nextui-org/button";
-import InputComponent from "../../../components/InputComponent";
+import { Button } from "@heroui/button";
+import InputComponent from "../../../components/ui/InputComponent.jsx";
+import Loader from "../../../components/Loader/Loader.jsx";
+import { useMutation } from "@tanstack/react-query";
+import { resetPassword } from "../../../api/auth";
+import { useForgetPassword } from "../../../hooks/useAuth.js";
+
 const ResetForGetPassword = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(true);
@@ -37,71 +41,16 @@ const ResetForGetPassword = () => {
     }
   }, []);
 
+  const mutation = useForgetPassword();
   const onSubmit = async (data) => {
     setIsLoading(true);
-    let encryptedData = localStorage.getItem("resetpasswordData");
-
-    if (encryptedData) {
-      encryptedData = encryptedData.replace(/\s/g, "");
-    }
-    if (!encryptedData) {
-      toast.error("No reset password data found");
-      navigate("/login");
-      return;
-    }
-    try {
-      const newData = {
-        data: {
-          encryptedData: encryptedData,
-          newPassword: password,
-        },
-      };
-
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/api/v1/auth/forget-password-set-new`,
-        newData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
-        const accessToken = response.data.data.accessToken;
-        const refreshToken = response.data.data.refreshToken;
-        const userName = response.data.data.fullName;
-        const email = response.data.data.email;
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("fullName", userName);
-        localStorage.setItem("email", email);
-
-        if (
-          response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||
-          response?.data?.data?.ekyeStatus === "COMPLETED"
-        ) {
-          navigate("/dashboard");
-        } else {
-          navigate("/EKYE");
-        }
-      }
-    } catch (error) {
-      console.error("Error resetting password:", error);
-      toast.error(error.response?.data?.message);
-      navigate("/login");
-    } finally {
-      setIsLoading(false);
-      localStorage.removeItem("resetpasswordData");
-    }
+    mutation.mutate({ newPassword: data.password });
   };
 
   {
     /**TO Check if the data is valid or not if it is not valid it will redirect to the login page else it will show the reset password form*/
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -136,8 +85,10 @@ const ResetForGetPassword = () => {
         }
       } catch (error) {
         setError("An error occurred. Please try again later.");
-        toast.error(error.response?.data?.messages);
-        console.error("An error occurred:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
         navigate("/login");
       } finally {
         setIsLoading(false);
@@ -151,7 +102,6 @@ const ResetForGetPassword = () => {
       {isLoading && (
         <Loader message="Please wait while the work is being done" />
       )}
-
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">

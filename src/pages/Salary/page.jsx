@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { FaRegEye } from "react-icons/fa";
-import { Divider } from "@nextui-org/react";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import { Divider } from "@heroui/react";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import { useNavigate } from "react-router-dom";
 const SalaryDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,6 @@ const SalaryDetails = () => {
           toast.error(response?.data?.message);
         }
       } catch (error) {
-        console.error("Error fetching departments:", error);
         toast.error("Error fetching departments.", error);
       } finally {
         setIsLoading(false);

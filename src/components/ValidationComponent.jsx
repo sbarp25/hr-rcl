@@ -1,6 +1,6 @@
 // ValidationComponent.jsx
 import React, { useState } from "react";
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import PropTypes from "prop-types";
 
 const ValidationComponent = ({ children }) => {

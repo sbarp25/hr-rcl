@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios-Instance";
-import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
-import { toast } from "react-toastify";
+import { Button, Modal, ModalBody, ModalContent } from "@heroui/react";
+import { toast } from "sonner";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
-import Loader from "./Loader";
-import InputComponent from "./InputComponent";
+import InputComponent from "./ui/InputComponent.jsx";
 import { useForm, Controller } from "react-hook-form";
-import DatepickerComponent from "./DatepickerComponent";
+import DatepickerComponent from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
+import Loader from "./Loader/Loader.jsx";
+import {
+  useDocumentDetails,
+  useSaveDocumentDetails,
+} from "../hooks/useAuth.js";
 
-const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const DocumentDetails = ({
+  formData,
+  handleNext,
+  handleBack,
+  setFormData,
+  dateOfBirth,
+}) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
   const [citizenshipBack, setCitizenshipBack] = useState(false);
   const [photoPAN, setPhotoPAN] = useState(false);
@@ -20,15 +29,17 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
   const [citizenshipBackModalOpen, setCitizenshipBackModalOpen] =
     useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
+
   // Add new state to store the URLs
   const [documentUrls, setDocumentUrls] = useState({
     panCardDocumentUrl: null,
     citizenshipFrontDocumentUrl: null,
     citizenshipBackDocumentUrl: null,
   });
+
   const MAX_FILE_SIZE = 1024 * 1024;
+
   const { control, handleSubmit, setValue, formState } = useForm({
-    mode: "onBlur",
     defaultValues: {
       panNumber: formData?.documents?.panNumber || "",
       panIssuePlace: formData?.documents?.panIssuePlace || "",
@@ -42,84 +53,71 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       citizenshipBackDocumentFile:
         formData?.documents?.citizenshipBackDocumentFile || null,
     },
+    mode: "onChange",
   });
 
+  // React Query hooks
+  const { data: documentDetailsData, isLoading: isLoadingDocuments } =
+    useDocumentDetails();
+  const { mutate: saveDocuments, isPending: isSavingDocuments } =
+    useSaveDocumentDetails();
+
+  // Handle successful data fetch
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    const fetchDocumentDetails = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get("/api/v1/document/getById", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+    if (documentDetailsData?.data) {
+      const data = documentDetailsData.data;
 
-        if (response.data.responseCode === "200") {
-          const data = response.data.data;
+      // Set form values
+      setValue("panNumber", data.panNumber || "");
+      setValue("panIssuePlace", data.panIssuePlace || "");
+      setValue("panIssueDate", data.panIssueDate || "");
+      setValue("panCardDocumentFile", data.panCardDocumentUrl || null);
+      setValue("citizenshipNumber", data.citizenshipNumber || "");
+      setValue(
+        "isIssuedPlaceDistrict",
+        data.citizenshipIssuedPlaceDistrict || ""
+      );
+      setValue("issuedDate", data.citizenshipIssueDate || "");
+      setValue(
+        "citizenshipFrontDocumentFile",
+        data.citizenshipFrontDocumentUrl || null
+      );
+      setValue(
+        "citizenshipBackDocumentFile",
+        data.citizenshipBackDocumentUrl || null
+      );
 
-          // Set form values
-          setValue("panNumber", data.panNumber || "");
-          setValue("panIssuePlace", data.panIssuePlace || "");
-          setValue("panIssueDate", data.panIssueDate || "");
-          setValue("panCardDocumentFile", data.panCardDocumentUrl || null);
-          setValue("citizenshipNumber", data.citizenshipNumber || "");
-          setValue(
-            "isIssuedPlaceDistrict",
-            data.citizenshipIssuedPlaceDistrict || ""
-          );
-          setValue("issuedDate", data.citizenshipIssueDate || "");
-          setValue(
-            "citizenshipFrontDocumentFile",
-            data.citizenshipFrontDocumentUrl || null
-          );
-          setValue(
-            "citizenshipBackDocumentFile",
-            data.citizenshipBackDocumentUrl || null
-          );
+      // Store document URLs in state
+      setDocumentUrls({
+        panCardDocumentUrl: data.panCardDocumentUrl || null,
+        citizenshipFrontDocumentUrl: data.citizenshipFrontDocumentUrl || null,
+        citizenshipBackDocumentUrl: data.citizenshipBackDocumentUrl || null,
+      });
 
-          // Store document URLs in state
-          setDocumentUrls({
-            panCardDocumentUrl: data.panCardDocumentUrl || null,
-            citizenshipFrontDocumentUrl:
-              data.citizenshipFrontDocumentUrl || null,
-            citizenshipBackDocumentUrl: data.citizenshipBackDocumentUrl || null,
-          });
+      // Update formData state to maintain compatibility
+      setFormData((prev) => ({
+        ...prev,
+        documents: {
+          panNumber: data.panNumber || "",
+          panIssuePlace: data.panIssuePlace || "",
+          citizenshipNumber: data.citizenshipNumber || "",
+          panIssueDate: data.panIssueDate || "",
+          issuedDate: data.citizenshipIssueDate || "",
+          isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
+          panCardDocumentFile: data.panCardDocumentUrl || null,
+          citizenshipFrontDocumentFile:
+            data.citizenshipFrontDocumentUrl || null,
+          citizenshipBackDocumentFile: data.citizenshipBackDocumentUrl || null,
+        },
+      }));
 
-          // Update formData state to maintain compatibility
-          setFormData((prev) => ({
-            ...prev,
-            documents: {
-              panNumber: data.panNumber || "",
-              panIssuePlace: data.panIssuePlace || "",
-              citizenshipNumber: data.citizenshipNumber || "",
-              panIssueDate: data.panIssueDate || "",
-              issuedDate: data.citizenshipIssueDate || "",
-              isIssuedPlaceDistrict: data.citizenshipIssuedPlaceDistrict || "",
-              panCardDocumentFile: data.panCardDocumentUrl || null,
-              citizenshipFrontDocumentFile:
-                data.citizenshipFrontDocumentUrl || null,
-              citizenshipBackDocumentFile:
-                data.citizenshipBackDocumentUrl || null,
-            },
-          }));
-
-          setCitizenshipFront(true);
-          setCitizenshipBack(true);
-          setPhotoPAN(true);
-        }
-      } catch (error) {
-        console.error("Error fetching document details:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDocumentDetails();
-  }, [setValue, setFormData]);
+      setCitizenshipFront(true);
+      setCitizenshipBack(true);
+      setPhotoPAN(true);
+    }
+  }, [documentDetailsData, setValue, setFormData]);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
     const formDataToSubmit = new FormData();
 
     // Append form data
@@ -150,19 +148,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       );
     }
 
-    try {
-      const response = await axiosInstance.post(
-        "/api/v1/document/save",
-        formDataToSubmit,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+    saveDocuments(formDataToSubmit, {
+      onSuccess: (response) => {
+        toast.success(response.message);
 
         // Update formData to maintain state consistency
         setFormData((prev) => ({
@@ -173,18 +161,8 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         }));
 
         handleNext();
-      } else {
-        const errorMessage =
-          response?.data?.error?.errorList?.[0]?.errorMessage ||
-          "Something went wrong";
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("Error saving document details:", error);
-      toast.error("Error saving document details.");
-    } finally {
-      setIsLoading(false);
-    }
+      },
+    });
   };
 
   const validateFile = (file, existingUrl) => {
@@ -206,6 +184,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
 
     return true;
   };
+
   // Function to render the document link
   const renderDocumentLink = (url, label, isOpen, onOpenChange) => {
     if (!url) return null;
@@ -215,7 +194,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
         <FaRegEye className="text-green-500 mr-2" />
         <p
           onClick={() => onOpenChange(true)}
-          className="text-green-500 hover:text-green-700 text-sm">
+          className="text-green-500 hover:text-green-700 text-sm cursor-pointer">
           View {label}
         </p>
         <Modal
@@ -228,7 +207,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <>
                 <ModalBody>
                   <div className="h-full w-full">
-                    <img src={url} />
+                    <img src={url} alt={label} />
                   </div>
                 </ModalBody>
               </>
@@ -239,6 +218,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     );
   };
 
+  const isLoading = isLoadingDocuments || isSavingDocuments;
   return (
     <>
       {isLoading && <Loader />}
@@ -249,7 +229,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             <h3 className="text-xl font-semibold text-gray-600 pt-4">
               PAN Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
               {/* PAN number */}
               <div>
                 <InputComponent
@@ -266,7 +246,6 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   variant="bordered"
                   label="Enter your PAN number"
                   type="text"
-                  inputClassName="w-full rounded-2xl"
                 />
               </div>
               {/* PAN Issue Date */}
@@ -277,6 +256,15 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   control={control}
                   rules={{
                     required: "PAN Issue date is required",
+                    validate: (value) => {
+                      if (new Date(value) > new Date()) {
+                        return "PAN Issue date cannot be in the future";
+                      }
+                      if (new Date(value) < new Date(dateOfBirth)) {
+                        return "PAN Issue date cannot be before date of birth";
+                      }
+                      return true;
+                    },
                   }}
                 />
               </div>
@@ -302,7 +290,7 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               </div>
 
               {/* PAN photo */}
-              <div className="w-full">
+              <div className="w-full ">
                 <Controller
                   name="panCardDocumentFile"
                   control={control}
@@ -421,9 +409,9 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   rules={{
                     required: "Citizenship Number is required",
                     pattern: {
-                      value: /^[0-9]{4,12}$/,
+                      value: /^(\d{2}-){3}\d{5}$/,
                       message:
-                        "Invalid Citizenship number. Must be up to 11 digits starting with 1-9.",
+                        "Invalid format. Expected format: 00-00-00-00000",
                     },
                   }}
                   variant="bordered"
@@ -437,10 +425,19 @@ const DocumentDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div>
                 <DatepickerComponent
                   name="issuedDate"
-                  label="Citizenship Issue Date(A.D)"
+                  label="Citizenship Issue Date (A.D)"
                   control={control}
                   rules={{
                     required: "Citizenship Issue Date is required",
+                    validate: (value) => {
+                      if (new Date(value) > new Date()) {
+                        return " Issue Date cannot be in the future";
+                      }
+                      if (new Date(value) < new Date(dateOfBirth)) {
+                        return "Citizenship Issue date cannot be before date of birth";
+                      }
+                      return true;
+                    },
                   }}
                 />
               </div>

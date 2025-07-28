@@ -1,11 +1,13 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const GoBack = () => {
   function goBack() {
     window.history.back();
   }
   return (
-    <Button className="text-white bg-black" onPress={goBack}>
+    <Button
+      className="text-white bg-black dark:text-black dark:bg-white"
+      onPress={goBack}>
       Back
     </Button>
   );

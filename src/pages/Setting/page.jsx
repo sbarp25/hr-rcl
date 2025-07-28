@@ -1,18 +1,27 @@
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../components/BreadCrumbsComp";
+import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
 import axiosInstance from "../../lib/axios-Instance";
-import { toast } from "react-toastify";
-import ButtonComponent from "../../components/ButtonComp";
-import { Input, Avatar, Divider } from "@nextui-org/react";
+import { toast } from "sonner";
+import ButtonComponent from "../../components/ui/ButtonComp.jsx";
+import {
+  Input,
+  Avatar,
+  Divider,
+  Modal,
+  ModalBody,
+  useDisclosure,
+  ModalContent,
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
-import EkyeDetailsComponent from "../../components/EkyeDetailsComponent";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
+import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
 import getInitials from "../../utils/getInitials";
-import UnderlineComponent from "../../components/UnderlineComponent";
+import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";
+import Loader from "../../components/Loader/Loader.jsx";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
+
   const [rclId, setRclId] = useState();
   const {
     register,
@@ -29,12 +38,11 @@ const Settings = () => {
   const [imageURL, setImageURL] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef(null);
-
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const breadcrumbItems = [{ label: "Setting", href: "/settings" }];
   const navigate = useNavigate();
 
   const name = localStorage.getItem("fullName");
-  const menu = LocalStorageUtil.getItem("menu");
   const auth = localStorage.getItem("accessToken");
 
   const fetchProfilephoto = async () => {
@@ -51,7 +59,7 @@ const Settings = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
-      console.log(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -151,21 +159,17 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching RCL ID:", error);
-      toast.error("Failed to fetch RCL ID");
+      toast.error("Failed to fetch RCL ID", error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // const
   const fetchEmployeeData = async () => {
-    if (!rclId) return;
-
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get(
-        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
-      );
+      const response = await axiosInstance.get(`/api/v1/auth/get-logged-user`);
       if (response.data.responseCode === "200") {
         const data = response?.data?.data;
         setEmployeeData(data);
@@ -173,8 +177,7 @@ const Settings = () => {
         toast.error(response?.data?.Message);
       }
     } catch (error) {
-      console.error("Error fetching employee data:", error);
-      toast.error("Failed to fetch employee data");
+      toast.error("Failed to fetch employee data", error);
     } finally {
       setIsLoading(false);
     }
@@ -192,27 +195,15 @@ const Settings = () => {
     }
   }, [rclId]);
 
-  console.log("fetchEmployeeData", fetchEmployeeData);
+  const seeProfile = true;
 
-  // const seeProfile = true;
-  const seeProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 64)
-  );
-  const editProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 63)
-  );
-  const createProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 50)
-  );
-  const deleteProfile = menu?.some((menu) =>
-    menu?.actions?.some((action) => action.actionId === 2)
-  );
+  const editProfile = true;
 
   useEffect(() => {
     if (!seeProfile) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [navigate, seeProfile]);
 
   useEffect(() => {
     if (!auth) {
@@ -221,143 +212,173 @@ const Settings = () => {
   }, [auth, navigate]);
 
   return (
-    <div className="max-h-[97vh] overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 ">
-      {/* Breadcrumbs */}
-      <div className="mb-6">
-        <BreadcrumbsComponent items={breadcrumbItems} />
-      </div>
+    <div className="">
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="max-h-screen overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+          {/* Breadcrumbs */}
+          <div className="mb-6">
+            <BreadcrumbsComponent items={breadcrumbItems} />
+          </div>
 
-      {/* Profile Settings Card */}
-      <div className="bg-white dark:bg-neutral-900 shadow-xl rounded-3xl p-8 border border-gray-200">
-        {" "}
-        <h2 className="text-2xl font-bold text-center mb-8">
-          Profile Settings
-        </h2>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-10">
-          {/* Profile Image Upload */}
-          <div
-            className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer"
-            onClick={handleIconClick}>
-            {imageURL ? (
-              <Avatar className="h-full w-full object-cover" src={imageURL} />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-9xl ">
-                {getInitials(name)}
+          {/* Profile Settings Card */}
+          <div className="bg-white dark:bg-black  shadow-xl rounded-3xl p-8 border border-gray-200">
+            {" "}
+            <h2 className="text-2xl font-bold text-center mb-8">
+              Profile Settings
+            </h2>
+            <div className="flex flex-col  items-center justify-center gap-8 mb-10">
+              {/* Profile Image Upload */}
+              <div
+                className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300  hover:shadow-md transition cursor-pointer"
+                onClick={onOpen}>
+                <Avatar
+                  className="h-full w-full object-cover"
+                  showFallback
+                  fallback={
+                    <div className="flex items-center justify-center h-full w-full text-black text-9xl ">
+                      {getInitials(name)}
+                    </div>
+                  }
+                  src={imageURL}
+                />
               </div>
-            )}
-            <Input
-              type="file"
-              {...register("profilePicture", {
-                validate: {
-                  validateFileType,
-                  validateFileSize,
-                },
-              })}
-              ref={(e) => {
-                register("profilePicture").ref(e);
-                fileInputRef.current = e;
-              }}
-              className="hidden"
-              onChange={handleFileChange}
-              accept="image/jpeg, image/png, image/gif, image/webp"
-            />
-          </div>
 
-          {/* Upload Button */}
-          <div className="flex flex-col items-center gap-2">
-            {errors.profilePicture && (
-              <p className="text-red-500 text-sm">
-                {errors.profilePicture.message}
-              </p>
-            )}
+              {/* Upload Button */}
+              <div className="flex flex-col items-center gap-2">
+                <ButtonComponent
+                  className="bg-black text-white"
+                  content={isLoading ? "Updating..." : "Upload Photo"}
+                  onPress={onOpen}
+                />
+              </div>
+            </div>
+            {/* Personal Information Card */}
+            <div className=" dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold">
+                  <span className="relative">
+                    Personal Information Details
+                    <UnderlineComponent />
+                  </span>
+                </h3>
+                <div className="flex space-x-2">
+                  <div className="w-2 h-2 rounded-full bg-red-400" />
+                  <div className="w-2 h-2 rounded-full bg-black" />
+                  <div className="w-2 h-2 rounded-full bg-slate-600" />
+                </div>
+              </div>
 
-            <ButtonComponent
-              type="submit"
-              className="bg-black text-white"
-              content={isLoading ? "Updating..." : "Update Photo"}
-              // disabled={createProfile}
-            />
-          </div>
-        </form>
-        {/* Personal Information Card */}
-        <div className="bg-gray-50 dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold">
-              <span className="relative">
-                Personal Information Details
-                <UnderlineComponent />
-              </span>
-            </h3>
-            <div className="flex space-x-2">
-              <div className="w-2 h-2 rounded-full bg-red-400" />
-              <div className="w-2 h-2 rounded-full bg-black" />
-              <div className="w-2 h-2 rounded-full bg-slate-600" />
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <EkyeDetailsComponent
+                    label="Full Name"
+                    placeholder={employeeData?.fullName || "N/A"}
+                  />
+                  <EkyeDetailsComponent
+                    label="RCL ID"
+                    placeholder={employeeData?.rclId || "N/A"}
+                  />
+                  <EkyeDetailsComponent
+                    label="Email"
+                    placeholder={employeeData?.email || "N/A"}
+                  />
+                </div>
+
+                <Divider />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <EkyeDetailsComponent
+                    label="Phone"
+                    placeholder={employeeData?.phone || "N/A"}
+                  />
+
+                  <EkyeDetailsComponent
+                    label="Department"
+                    placeholder={employeeData?.departmentName || "N/A"}
+                  />
+                  <EkyeDetailsComponent
+                    label="Position"
+                    placeholder={employeeData?.postionName || "N/A"}
+                  />
+                </div>
+
+                <Divider />
+              </form>
             </div>
           </div>
-
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EkyeDetailsComponent
-                label="Full Name"
-                placeholder={employeeData?.personalDetails?.fullName || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="RCL ID"
-                placeholder={rclId || "N/A"}
-              />
-              <EkyeDetailsComponent
-                label="Email"
-                placeholder={employeeData?.personalDetails?.email || "N/A"}
-              />
-            </div>
-
-            <Divider />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EkyeDetailsComponent
-                label="Phone"
-                placeholder={employeeData?.personalDetails?.phone || "N/A"}
-              />
-
-              <EkyeDetailsComponent
-                label="Date of Birth"
-                placeholder={
-                  employeeData?.personalDetails?.dateOfBirthAd || "N/A"
-                }
-              />
-              <EkyeDetailsComponent
-                label="Department"
-                placeholder={
-                  employeeData?.personalDetails?.departmentName || "N/A"
-                }
-              />
-            </div>
-
-            <Divider />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EkyeDetailsComponent
-                label="Position"
-                placeholder={
-                  employeeData?.personalDetails?.postionName || "N/A"
-                }
-              />
-            </div>
-            <EkyeDetailsComponent
-              label="Marital Status"
-              placeholder={
-                employeeData?.personalDetails?.married === true
-                  ? "Married"
-                  : employeeData?.personalDetails?.married === false
-                  ? "Unmarried"
-                  : "N/A"
-              }
-            />
-          </form>
         </div>
-      </div>
+      )}
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={true}
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                {" "}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="flex flex-col items-center justify-center gap-8 mb-10">
+                  {/* Profile Image Upload */}
+                  <div
+                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer mt-10"
+                    onClick={handleIconClick}>
+                    {imageURL ? (
+                      <Avatar
+                        className="h-full w-full object-cover"
+                        src={imageURL}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full w-full bg-gray-200 dark:bg-gray-700 text-black dark:text-white text-9xl ">
+                        {getInitials(name)}
+                      </div>
+                    )}
+
+                    <Input
+                      type="file"
+                      {...register("profilePicture", {
+                        validate: {
+                          validateFileType,
+                          validateFileSize,
+                        },
+                      })}
+                      ref={(e) => {
+                        register("profilePicture").ref(e);
+                        fileInputRef.current = e;
+                      }}
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="image/jpeg, image/png, image/gif, image/webp"
+                    />
+                  </div>
+                  <p className="text-orange-300 text-xs">
+                    Please click the above circle to change the profile photo
+                  </p>
+                  {/* Upload Button */}
+                  <div className="flex flex-col items-center gap-2">
+                    {errors.profilePicture && (
+                      <p className="text-danger text-sm">
+                        {errors.profilePicture.message}
+                      </p>
+                    )}
+
+                    <ButtonComponent
+                      type="submit"
+                      className="bg-black text-white"
+                      content={isLoading ? "Updating..." : "Update Photo"}
+                      // disabled={createProfile}
+                    />
+                  </div>
+                </form>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
