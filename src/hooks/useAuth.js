@@ -305,7 +305,7 @@ export const useLateCheckInApprove = () => {
         const errorMessage =
           data?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
-        console.log(errorMessage);
+
         toast.error(errorMessage);
       }
       // Invalidate and refetch late check-in data
@@ -402,7 +402,16 @@ export const useEmployeeDelete = () => {
   return useMutation({
     mutationFn: deleteEmployees,
     onSuccess: (data) => {
-      toast.success(data.message || "Employee deleted successfully");
+      if (data?.data?.responseCode === "201") {
+        toast.success(data?.data?.message || "Employee deleted successfully");
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
+
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
   });
