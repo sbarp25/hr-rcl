@@ -73,6 +73,8 @@ const MobileNavigation = () => {
   const seeWorkFromHome = hasViewSingleAccess(MENU_NAMES.WORKFROMHOME);
 
   const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
+  const seeTeamLateCheckIn = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
+
   const navbarElements = [
     // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
@@ -92,6 +94,12 @@ const MobileNavigation = () => {
           label: "Late Checkin ",
           to: "/Attendance/Request",
           view: seeLateCheckIn,
+        },
+        {
+          icon: LuMapPinCheckInside,
+          label: "Team Lead Late Checkin ",
+          to: "/attendance/teamLead",
+          view: seeTeamLateCheckIn,
         },
       ],
     },

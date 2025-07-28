@@ -92,8 +92,12 @@ const AllTrustedDevices = () => {
     onClose();
   };
 
-  if (TrustedDeviceisLoading) {
-    <Loader />;
+  if (
+    TrustedDeviceisLoading ||
+    deleteAllDeviceMutation.isPending ||
+    deleteOneDeviceMutation.isPending
+  ) {
+    return <Loader />;
   }
   return (
     <>

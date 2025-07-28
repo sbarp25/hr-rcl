@@ -34,6 +34,7 @@ import {
   fetchPositionById,
   fetchrcl,
   fetchrole,
+  fetchTeamlateCheckin,
   fetchTeamLead,
   fetchTrustedDevices,
   fetchUnPaginatedDepartment,
@@ -76,7 +77,6 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: (data) => {
-      toast.success(data?.message || "User Logout Successfully.");
       navigate("/login");
     },
     onError: (error) => {
@@ -145,7 +145,6 @@ export const useOTPVerification = ({ onOpenChange, sessionToken }) => {
   return useMutation({
     mutationFn: (formData) => OTPVerification(formData, sessionToken),
     onSuccess: (data) => {
-      toast.success("MFA verification successful!");
       onOpenChange(false);
       // Extract data from the nested response structure
       const responseData = data?.data?.data?.data;
@@ -203,6 +202,7 @@ export const useForgetPassword = () => {
       localStorage.setItem("refreshToken", data.data.refreshToken);
       localStorage.setItem("fullName", data.data.fullName);
       localStorage.setItem("email", data.data.email);
+      LocalStorageUtil.setItem("menu", data.data.menuActionsAndPermissions);
 
       if (
         data.data.ekyeStatus === "NOT_REQUIRED" ||
@@ -275,6 +275,21 @@ export const useFetchLateCheckin = (currentPage, lateCheckInDataPerPage) => {
     },
   });
 };
+/**Fetch TeamLateCheckin */
+export const useFetchTeamLateCheckin = (
+  currentPage,
+  lateCheckInDataPerPage
+) => {
+  return useQuery({
+    queryKey: ["FetchLateChekin", currentPage, lateCheckInDataPerPage],
+    queryFn: () => fetchTeamlateCheckin(currentPage, lateCheckInDataPerPage),
+    onError: (error) => {
+      const errorMessage =
+        error?.message || "Failed to fetch late check-in data";
+      toast.error(errorMessage);
+    },
+  });
+};
 
 /**Approve Late Chekin   */
 export const useLateCheckInApprove = () => {
@@ -282,9 +297,17 @@ export const useLateCheckInApprove = () => {
   return useMutation({
     mutationFn: lateCheckInApprove,
     onSuccess: (data) => {
-      toast.success(
-        data?.data?.message || "Late check-in approved successfully"
-      );
+      if (data?.data?.responseCode === "200") {
+        toast.success(
+          data?.data?.message || "Late check-in approved successfully"
+        );
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
       // Invalidate and refetch late check-in data
       queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
     },
@@ -305,9 +328,17 @@ export const useLateCheckinReject = () => {
   return useMutation({
     mutationFn: lateCheckInReject,
     onSuccess: (data) => {
-      toast.success(
-        data?.data?.message || "Late check-in rejected successfully"
-      );
+      if (data?.data?.responseCode === "200") {
+        toast.success(
+          data?.data?.message || "Late check-in Rejected successfully"
+        );
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
       // Invalidate and refetch late check-in data
       queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
     },
@@ -358,7 +389,10 @@ export const useEmployeefetch = (currentPage, employeeDataPerPage) => {
     queryKey: ["employees", currentPage, employeeDataPerPage],
     queryFn: () => fetchEmployees(currentPage, employeeDataPerPage),
     onError: (error) => {
-      console.error("Employee fetch error:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -440,7 +474,10 @@ export const useFetchDepartment = (currentPage, departmentPerPage) => {
     queryKey: ["fetchDepartment", currentPage, departmentPerPage],
     queryFn: () => fetchDepartment(currentPage, departmentPerPage),
     onError: (error) => {
-      console.error("Error fetching Department", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -475,16 +512,11 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: createDepartment,
     onSuccess: (response) => {
-      console.log("🔍 Full response received:", response);
-      console.log("🔍 Response code:", response?.responseCode);
-      console.log("🔍 Response code type:", typeof response?.responseCode);
-
       if (response?.responseCode == "201") {
         toast.success(response?.message || "Department Created Successfully");
         queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
         navigate("/master-data/Department");
       } else {
-        console.log("❌ Falling into else block - response code doesn't match");
         const errorMessage =
           response?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
@@ -492,7 +524,6 @@ export const useCreateDepartment = () => {
       }
     },
     onError: (error) => {
-      console.log("🚨 Error occurred:", error);
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
         error.response?.data?.error ||
@@ -556,7 +587,10 @@ export const useFetchUnPaginatedDepartment = () => {
     queryKey: ["fetchUnPaginatedDepartment"],
     queryFn: () => fetchUnPaginatedDepartment(),
     onError: (error) => {
-      console.error("Error fetching Department", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -663,7 +697,10 @@ export const useFetchUnPaginatedPosition = () => {
     queryKey: ["fetchUnpaginatedPosition"],
     queryFn: () => fetchUnPaginatedPosition(),
     onError: (error) => {
-      console.error("Error fetching Position", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -674,7 +711,10 @@ export const useFetchPosition = (currentPage, positionPerPage) => {
     queryKey: ["FetchPaginatedPosition", currentPage, positionPerPage],
     queryFn: () => fetchPosition(currentPage, positionPerPage),
     onError: (error) => {
-      console.error("Error fetching Position", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -685,7 +725,10 @@ export const useFetchRoles = (currentPage, rolesPerPage) => {
     queryKey: ["FetchRoles", currentPage, rolesPerPage],
     queryFn: () => fetchrole(currentPage, rolesPerPage),
     onError: (error) => {
-      console.error("Error fetching Roles", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -720,7 +763,10 @@ export const useFetchUnPaginatedRoles = () => {
     queryKey: ["fetchUnpaginatedRoles"],
     queryFn: () => fetchUnPaginatedRoles(),
     onError: (error) => {
-      console.error("Error fetching Roles", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -754,15 +800,14 @@ export const useRecaptcha = () => {
         if (response && response.siteKey) {
           setSiteKey(response.siteKey);
           setEnabled(response.enabled);
-          console.log("reCAPTCHA configuration loaded:", {
-            siteKey: response.siteKey,
-            enabled: response.enabled,
-          });
         } else {
           throw new Error("Site key not found in response");
         }
-      } catch (err) {
-        console.error("Failed to fetch reCAPTCHA site key:", err);
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.response?.data?.error;
+        toast.error(errorMessage);
         setError("Failed to load reCAPTCHA configuration");
         setSiteKey("");
         setEnabled(false);
@@ -862,7 +907,10 @@ export const useFetchEKYE = (currentPage, ekyeDashboardDataPerPage) => {
     queryFn: () => fetchEkye(currentPage, ekyeDashboardDataPerPage),
     enabled: !!(currentPage && ekyeDashboardDataPerPage),
     onError: (error) => {
-      console.error("Error Fetching EKYE:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -873,7 +921,10 @@ export const useEmployeeDetails = (rclId) => {
     queryKey: ["fetchEmployeeDetails", rclId],
     queryFn: () => fetchEmployeeDetails(rclId),
     onError: (error) => {
-      console.error("Error Fetching employee details", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -884,7 +935,10 @@ export const useEmployeeRCL = () => {
     queryKey: ["fetchRCL"],
     queryFn: () => fetchrcl(),
     onError: (error) => {
-      console.error("Error Fetching employee details", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -922,7 +976,10 @@ export const useLeaveByRole = (currentPage, leaveDataPerPage) => {
     queryKey: ["FetchLeaveByRole", currentPage, leaveDataPerPage],
     queryFn: () => fetchleave(currentPage, leaveDataPerPage),
     onError: (error) => {
-      console.error("Unable to fetch:", error);
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -933,8 +990,10 @@ export const useLeaveByList = (currentPage, leaveDataPerPage) => {
     queryFn: () => fetchListLeave(currentPage, leaveDataPerPage),
     enabled: !!(currentPage && leaveDataPerPage),
     onError: (error) => {
-      console.error("Failed to fetch leave data:", error);
-      toast.error(error.message || "Failed to fetch leave data");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
     },
   });
 };
@@ -1003,7 +1062,6 @@ export const usePersonalDetails = () => {
     queryKey: ["PersonalDetails"],
     queryFn: () => getPersonalDetails(),
     onError: (error) => {
-      console.error("usePersonalDetails error:", error);
       const errorMessage =
         error.response?.data?.error?.errorList?.[0]?.errorMessage ||
         error.message ||
@@ -1044,8 +1102,10 @@ export const useProvinces = () => {
     queryKey: ["provinces"],
     queryFn: getProvinces,
     onError: (error) => {
-      console.error("useProvinces error:", error);
-      const errorMessage = error.message || "Failed to fetch provinces";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
     retry: 1,
@@ -1059,8 +1119,10 @@ export const useDistrictsByProvince = (provinceId) => {
     queryFn: () => getDistrictsByProvince(provinceId),
     enabled: !!provinceId, // Only run query when provinceId is available
     onError: (error) => {
-      console.error("useDistrictsByProvince error:", error);
-      const errorMessage = error.message || "Failed to fetch districts";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
     retry: 1,
@@ -1075,8 +1137,10 @@ export const useAddressDetails = () => {
     queryKey: ["addressDetails"],
     queryFn: getAddressDetails,
     onError: (error) => {
-      console.error("useAddressDetails error:", error);
-      const errorMessage = error.message || "Failed to fetch address details";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
     retry: 1,
@@ -1096,8 +1160,10 @@ export const useSaveAddressDetails = () => {
       queryClient.invalidateQueries({ queryKey: ["addressDetails"] });
     },
     onError: (error) => {
-      console.error("useSaveAddressDetails error:", error);
-      const errorMessage = error.message || "Failed to save address details";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
   });
@@ -1109,8 +1175,10 @@ export const useDocumentDetails = () => {
     queryKey: ["documentDetails"],
     queryFn: getDocumentDetails,
     onError: (error) => {
-      console.error("useDocumentDetails error:", error);
-      const errorMessage = error.message || "Failed to fetch document details";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
     retry: 1,
@@ -1138,8 +1206,10 @@ export const useEducationDetails = () => {
     queryKey: ["educationDetails"],
     queryFn: getEducationDetails,
     onError: (error) => {
-      console.error("useEducationDetails error:", error);
-      const errorMessage = error.message || "Failed to fetch education details";
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something went wrong. Try again.";
       toast.error(errorMessage);
     },
     retry: 1,

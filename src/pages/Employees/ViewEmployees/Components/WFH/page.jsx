@@ -90,7 +90,7 @@ const WFHdetails = ({ employeeData }) => {
 
           return (
             <AccordionItem
-              key={wfh.id}
+              key={wfh.workFromHomeId}
               aria-label={`WFH from ${formatDate(wfh.workFromHomeStartDate)}`}
               title={
                 <div className="flex items-center justify-between w-full pr-4">
@@ -138,15 +138,6 @@ const WFHdetails = ({ employeeData }) => {
                       <div className="space-y-3">
                         <div className="flex items-start gap-3">
                           <span className="text-sm font-medium text-gray-600 min-w-[80px]">
-                            Name:
-                          </span>
-                          <span className="text-sm text-gray-800">
-                            {wfh.userFullName}
-                          </span>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <span className="text-sm font-medium text-gray-600 min-w-[80px]">
                             Subject:
                           </span>
                           <span className="text-sm text-gray-800">
@@ -175,16 +166,6 @@ const WFHdetails = ({ employeeData }) => {
                               </span>
                             )}
                           </span>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <span className="text-sm font-medium text-gray-600 min-w-[100px]">
-                            Department:
-                          </span>
-                          <Chip size="sm" variant="flat" color="primary">
-                            <FaBuilding className="w-3 h-3 mr-1" />
-                            {wfh.departmentName}
-                          </Chip>
                         </div>
                       </div>
                     </div>

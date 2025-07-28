@@ -139,15 +139,6 @@ const LeaveDetails = ({ employeeData }) => {
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
                         <span className="text-sm font-medium text-gray-600 min-w-[80px]">
-                          Name:
-                        </span>
-                        <span className="text-sm text-gray-800">
-                          {leave.fullName}
-                        </span>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-gray-600 min-w-[80px]">
                           Subject:
                         </span>
                         <span className="text-sm text-gray-800">
@@ -181,16 +172,6 @@ const LeaveDetails = ({ employeeData }) => {
                         <span className="text-sm text-gray-800">
                           {leave.associateTeamLeadName}
                         </span>
-                      </div>
-
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-gray-600 min-w-[120px]">
-                          Department:
-                        </span>
-                        <Chip size="sm" variant="flat" color="primary">
-                          <FaBuilding className="w-3 h-3 mr-1" />
-                          {leave.departmentName}
-                        </Chip>
                       </div>
                     </div>
                   </div>

@@ -17,8 +17,10 @@ import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import {
+  hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
+  hasViewone,
   hasViewSingleAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
@@ -39,8 +41,8 @@ const Page = () => {
 
   // Permission checks
   const hasaccess = hasReadAccess(MENU_NAMES.EKYE);
-  const hasViewAccess = hasViewSingleAccess(MENU_NAMES.EKYE);
-  const hasActionAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasViewAccess = hasViewone(MENU_NAMES.EKYE);
+  const hasActionAccess = hasApproveAccess(MENU_NAMES.EKYE);
 
   // Fetch data using React Query
   const {

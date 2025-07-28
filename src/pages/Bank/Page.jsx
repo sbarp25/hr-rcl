@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
 import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useFetchBank } from "../../hooks/useAuth.js";
+import Loader from "../../components/Loader/Loader.jsx";
 const Bank = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, reset } = useForm({
@@ -49,6 +50,7 @@ const Bank = () => {
       };
       try {
         const accessToken = localStorage.getItem("accessToken");
+        setIsLoading(true);
         if (!accessToken) {
           toast.error("Authentication token is missing.");
           setIsLoading(false);
@@ -96,6 +98,9 @@ const Bank = () => {
       navigate("/dashboard");
     }
   }, []);
+  if (isBankLoading || isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="flex justify-between mb-8 text-center">

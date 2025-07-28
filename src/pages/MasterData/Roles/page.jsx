@@ -150,13 +150,19 @@ const Roles = () => {
             setRoleId(null); // Clear the roleId
           },
           onError: (error) => {
-            toast.error("Failed to delete role");
-            console.error("Delete error:", error);
+            const errorMessage =
+              error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+              error.message ||
+              "Something went wrong. Try again.";
+            toast.error(errorMessage);
           },
         });
       } catch (error) {
-        toast.error("Failed to delete role");
-        console.error("Delete error:", error);
+        const errorMessage =
+          error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+          error.message ||
+          "Something went wrong. Try again.";
+        toast.error(errorMessage);
       }
     }
   };

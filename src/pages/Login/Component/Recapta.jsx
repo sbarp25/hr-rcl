@@ -55,7 +55,6 @@ const Recaptcha = ({ setCapta, onError }) => {
             setVerificationResult(response);
             setIsVerified(true);
             isVerifiedRef.current = true;
-            toast.success("reCAPTCHA verification successful!");
           } else {
             recaptchaRef.current?.reset();
             setCapta(null);
@@ -92,7 +91,6 @@ const Recaptcha = ({ setCapta, onError }) => {
 
   const handleExpired = useCallback(() => {
     if (isVerifiedRef.current) {
-      console.log("Already verified. Keeping previous verified state.");
       setCapta(verifiedToken);
       return;
     }
@@ -104,7 +102,6 @@ const Recaptcha = ({ setCapta, onError }) => {
 
   const handleError = useCallback(() => {
     if (isVerifiedRef.current) {
-      console.log("Already verified. Ignoring error.");
       return;
     }
 

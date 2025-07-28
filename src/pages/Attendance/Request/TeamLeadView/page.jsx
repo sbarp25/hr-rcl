@@ -19,26 +19,28 @@ import {
 } from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import DropDownComp from "../../../components/ui/Dropdown.jsx";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
-import Search from "../../../components/Search";
-import Filter from "../../../components/Filter";
+
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import Loader from "../../../components/Loader/Loader.jsx";
+
 import {
   hasApproveAccess,
   hasReadAccess,
+  hasUpdateAccess,
   MENU_NAMES,
-} from "../../../utils/permissionUtils.js";
+} from "../../../../utils/permissionUtils.js";
 import {
-  useFetchLateCheckin,
+  useFetchTeamLateCheckin,
   useLateCheckInApprove,
   useLateCheckinReject,
-} from "../../../hooks/useAuth.js";
+} from "../../../../hooks/useAuth.js";
 import { toast } from "sonner";
+import Loader from "../../../../components/Loader/Loader.jsx";
+import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
+import Search from "../../../../components/Search.jsx";
+import Filter from "../../../../components/Filter.jsx";
 
-const AttendanceRequest = () => {
+const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
   const [filteredPagination, setFilteredPagination] = useState(null);
   const [expandedRow, setExpandedRow] = useState(null);
@@ -65,7 +67,7 @@ const AttendanceRequest = () => {
 
   /**Permission Check */
   const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
-  const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
+  const hasaccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   // const hasaccess = true;
   useEffect(() => {
     if (!hasaccess) {
@@ -73,7 +75,7 @@ const AttendanceRequest = () => {
     }
   }, [hasaccess, navigate]);
 
-  const { data, isLoading, refetch } = useFetchLateCheckin(
+  const { data, isLoading, refetch } = useFetchTeamLateCheckin(
     currentPage,
     lateCheckInDataPerPage
   );
@@ -196,7 +198,6 @@ const AttendanceRequest = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
-
   return (
     <div className="max-h-[85vh] overflow-y-auto">
       {isLoading ? (
@@ -260,6 +261,7 @@ const AttendanceRequest = () => {
                     <TableColumn>Status</TableColumn>
                     <TableColumn>Actual checkInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
+                    <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {lateCheckinData
@@ -344,6 +346,20 @@ const AttendanceRequest = () => {
                             )}
                             {/* {late?.lateReason} */}
                           </TableCell>
+                          <TableCell>
+                            <div className="flex justify-between items-center">
+                              <div className="flex justify-center gap-4">
+                                <Button
+                                  className="bg-black text-white"
+                                  onPress={() => {
+                                    setSelectedData(late);
+                                    onOpen();
+                                  }}>
+                                  Action
+                                </Button>
+                              </div>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -361,6 +377,7 @@ const AttendanceRequest = () => {
                     <TableColumn>Date</TableColumn>
                     <TableColumn>Check In</TableColumn>
                     <TableColumn>Reason</TableColumn>
+                    <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
                     {lateCheckinData?.map((late) => (
@@ -397,6 +414,34 @@ const AttendanceRequest = () => {
                             title={late?.lateReason}>
                             {late?.lateReason}
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {late?.status === "Pending" && (
+                            <div className="flex justify-center gap-4">
+                              <FaCheck
+                                className={`${
+                                  hasAttendanceEditAccess
+                                    ? "text-orange-500 hover:text-orange-700 cursor-pointer"
+                                    : ""
+                                }`}
+                                title="Edit"
+                                onClick={() =>
+                                  handleAction("Approve", late?.lateCheckInId)
+                                }
+                              />
+                              <MdDelete
+                                className={`${
+                                  hasAttendanceEditAccess
+                                    ? "text-red-500 cursor-pointer hover:text-red-700"
+                                    : ""
+                                }`}
+                                title="Delete"
+                                onClick={() =>
+                                  handleAction("Reject", late?.lateCheckInId)
+                                }
+                              />
+                            </div>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -775,4 +820,4 @@ const AttendanceRequest = () => {
   );
 };
 
-export default AttendanceRequest;
+export default TeamLeadLateCheckin;

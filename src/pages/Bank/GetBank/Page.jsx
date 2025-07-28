@@ -33,7 +33,7 @@ const GetBankDetails = () => {
   }, [navigate, seeBankDetailsAccess]);
 
   if (isBankLoading) {
-    <Loader />;
+    return <Loader />;
   }
 
   return (

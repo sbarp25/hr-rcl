@@ -11,31 +11,68 @@ import UserEducation from "../../../components/Ekye/View/UserEducation";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../../components/Loader/Loader";
 import { useEmployeeDetails, useEmployeeRCL } from "../../../hooks/useAuth";
+import EkyeDetails from "./Components/EKYE/page";
+import Salary from "./Components/Salary/Salary";
+import AttendanceDetails from "./Components/Attendance/page";
+import WFHdetails from "./Components/WFH/page";
+import LeaveDetails from "./Components/Leave/page";
+// const tabData = [
+//   {
+//     name: "Personal Information",
+//     shortName: "Personal", // Short name for mobile
+//     component: Personal,
+//     panelClass: "panel-success",
+//   },
+//   {
+//     name: "Address Details",
+//     shortName: "Address",
+//     component: EkyeAddress,
+//     panelClass: "panel-warning",
+//   },
+//   {
+//     name: "Document Details",
+//     shortName: "Documents",
+//     component: EkyeDocumentDetail,
+//     panelClass: "panel-danger",
+//   },
+//   {
+//     name: "Education Details",
+//     shortName: "Education",
+//     component: UserEducation,
+//     panelClass: "panel-info",
+//   },
+// ];
 
 const tabData = [
   {
-    name: "Personal Information",
-    shortName: "Personal", // Short name for mobile
-    component: Personal,
+    name: "EKYE",
+    shortName: "EKYE",
+    component: EkyeDetails,
     panelClass: "panel-success",
   },
   {
-    name: "Address Details",
-    shortName: "Address",
-    component: EkyeAddress,
-    panelClass: "panel-warning",
+    name: "Salary",
+    shortName: "Salary",
+    component: Salary,
+    panelClass: "panel-success",
   },
   {
-    name: "Document Details",
-    shortName: "Documents",
-    component: EkyeDocumentDetail,
-    panelClass: "panel-danger",
+    name: "WFH",
+    shortName: "WFH",
+    component: WFHdetails,
+    panelClass: "panel-success",
   },
   {
-    name: "Education Details",
-    shortName: "Education",
-    component: UserEducation,
-    panelClass: "panel-info",
+    name: "Attendace",
+    shortName: "Attendace",
+    component: AttendanceDetails,
+    panelClass: "panel-success",
+  },
+  {
+    name: "Leave",
+    shortName: "Leave",
+    component: LeaveDetails,
+    panelClass: "panel-success",
   },
 ];
 
@@ -168,11 +205,11 @@ const ViewEKYE = () => {
   const { data: RCLIdData } = useEmployeeRCL();
 
   const rclId = RCLIdData?.data?.rclId;
-  console.log(rclId);
 
   const { data: EmployeeEKYEData, isLoading } = useEmployeeDetails(rclId);
 
   const employeeData = EmployeeEKYEData?.data;
+  console.log(employeeData);
 
   /**To check Employee see status */
   const seeEKYEAccess = true;
@@ -190,7 +227,7 @@ const ViewEKYE = () => {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
       <h1 className="page-title my-3 text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-        EKYE
+        Employee Details
       </h1>
 
       {/* Go back button */}

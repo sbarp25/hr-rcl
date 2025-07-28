@@ -30,7 +30,7 @@ const DocumentAction = ({ employeeData }) => {
       {/* Single Form Section */}
       <Form className="grid grid-cols-1 gap-12">
         {/* Citizenship Details Section */}
-        <div className="bg-white text-lg p-6 rounded-lg">
+        <div className="bg-white dark:bg-black text-lg p-6 rounded-lg">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
               Citizenship Details
@@ -110,7 +110,7 @@ const DocumentAction = ({ employeeData }) => {
         </div>
 
         {/* PAN Details Section */}
-        <div className="bg-white text-lg px-6 rounded-lg">
+        <div className="bg-white dark:bg-black text-lg px-6 rounded-lg">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
               PAN Details

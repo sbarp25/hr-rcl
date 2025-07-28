@@ -21,9 +21,9 @@ const UserEducation = ({ employeeData }) => {
   }, [educationalDetails]);
 
   return (
-    <div className="max-h-[75vh] overflow-auto bg-gray-50 h-[75vh] py-8 mx-auto rounded-lg border border-gray-300">
+    <div className="max-h-[75vh] overflow-auto bg-gray-50 dark:bg-black h-[75vh] py-8 mx-auto rounded-lg border border-gray-300">
       <div className="px-8">
-        <div className="bg-white rounded-lg p-6">
+        <div className="bg-white dark:bg-black rounded-lg p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-xl font-semibold flex">
@@ -45,7 +45,7 @@ const UserEducation = ({ employeeData }) => {
               {educationalDetails.map((education, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                  className="border border-gray-200 rounded-lg p-6 bg-gray-50 dark:bg-black">
                   <div className="space-y-6">
                     {/* Education Level, Institute, Faculty */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
