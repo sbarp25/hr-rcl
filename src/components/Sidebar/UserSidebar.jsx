@@ -164,12 +164,14 @@ const UserSidebar = () => {
               onClick={toggleSidebar}
             />
             {isSidebarExpanded && (
-              <Link to="/dashboard">
-                <img src={Logo} className="w-32" alt="Logo" />
-              </Link>
+              <>
+                <Link to="/dashboard">
+                  <img src={Logo} className="w-32" alt="Logo" />
+                </Link>
+                <ThemeSwitcher />
+              </>
             )}
           </div>
-          <ThemeSwitcher />
           {/* Navigation items */}
           <div className="flex-grow">
             {navbarElements.map((service, index) => {
@@ -226,16 +228,18 @@ const UserSidebar = () => {
           <div className="p-4">
             <div className="flex items-center gap-4">
               <Link to="/settings">
-                {imageURL ? (
+                <div className="h-12 w-12">
                   <Avatar
                     className="h-full w-full object-cover"
+                    showFallback
+                    fallback={
+                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
+                        {getInitials(username)}
+                      </div>
+                    }
                     src={imageURL}
                   />
-                ) : (
-                  <div className="flex rounded-full items-center justify-center h-full w-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-700 dark:to-gray-800 text-blue-800 dark:text-blue-200 text-xl shadow-inner border border-white/20 dark:border-black/20">
-                    {getInitials(username)}
-                  </div>
-                )}
+                </div>
               </Link>
               {isSidebarExpanded && (
                 <div>

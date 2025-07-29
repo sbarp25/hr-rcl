@@ -10,7 +10,7 @@ const OTPInputComponent = ({
   label = "Enter OTP",
   type = "text",
 }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const isPasswordField = type === "password";
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);

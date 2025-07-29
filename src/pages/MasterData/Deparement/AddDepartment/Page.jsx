@@ -44,6 +44,7 @@ const AddDepartment = () => {
       teamlead: "",
       Associateteamlead: "",
     },
+    mode: "onChange",
   });
 
   // Permission check
@@ -149,6 +150,10 @@ const AddDepartment = () => {
                       value: 100,
                       message: "Title cannot exceed 100 characters.",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Title cannot start with a space",
+                    },
                   }}
                 />
               </div>
@@ -171,6 +176,10 @@ const AddDepartment = () => {
                     maxLength: {
                       value: 255,
                       message: "Description cannot exceed 255 characters.",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Description cannot start with a space",
                     },
                   })}
                   variant="bordered"

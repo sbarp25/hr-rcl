@@ -60,6 +60,7 @@ import ALlTrustedDevices from "./pages/AllDevices/page.jsx";
 import Security from "./pages/Security/page.jsx";
 import MFA from "./pages/Security/MFA/page.jsx";
 import TeamLeadLateCheckin from "./pages/Attendance/Request/TeamLeadView/page.jsx";
+import DarkMode from "./pages/Setting/DarkMode/Page.js";
 
 // import HandBook from "./pages/HandBook/page.jsx";
 const queryClient = new QueryClient();
@@ -81,7 +82,7 @@ function App() {
   const location = useLocation();
   const authRoutes = [
     "/login",
-    "/",
+    // "/",
     "/rstpwd",
     "/resetpwd",
     "/EKYE",
@@ -90,6 +91,7 @@ function App() {
   ];
   const userRoutes = [
     "/trustedDevicess",
+    "/dark",
     "/MFA",
     "/changePassword",
     "/settings",
@@ -120,7 +122,6 @@ function App() {
           <AuthLayout>
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Login />} />
               <Route path="/rstpwd" element={<ValidateLink />} />
               <Route element={<PrivateRoutes />}>
                 <Route path="/EKYE" element={<Ekye />} />
@@ -140,6 +141,7 @@ function App() {
             <Routes>
               <Route element={<PrivateRoutes />}>
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/dark" element={<DarkMode />} />
                 <Route path="/settings/ViewEKYE" element={<ViewEKYE />} />
                 <Route path="/MFA" element={<MFA />} />
                 <Route path="/security" element={<Security />} />
@@ -163,6 +165,7 @@ function App() {
             </div>
             <Routes>
               <Route element={<PrivateRoutes />}>
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 {/* <Route path="/dashboard" element={<Dashboard />} /> */}
                 <Route path="/Attendance" element={<Attendance />} />

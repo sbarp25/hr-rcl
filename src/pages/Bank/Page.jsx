@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios-Instance";
 import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useFetchBank } from "../../hooks/useAuth.js";
 import Loader from "../../components/Loader/Loader.jsx";
 const Bank = () => {
@@ -19,6 +18,7 @@ const Bank = () => {
       accountName: "",
       accountType: "Platinum PayRoll Saving",
     },
+    mode: "onChange",
   });
   const navigate = useNavigate();
 
@@ -97,7 +97,7 @@ const Bank = () => {
     if (!seeAddBank) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [navigate, seeAddBank]);
   if (isBankLoading || isLoading) {
     return <Loader />;
   }
@@ -106,10 +106,10 @@ const Bank = () => {
       <div className="flex justify-between mb-8 text-center">
         <GoBack />
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800  dark:text-white mb-2">
             Banking Details
           </h2>
-          <p className="text-gray-800">
+          <p className="text-gray-800 dark:text-white">
             Please enter your bank account information
           </p>
         </div>

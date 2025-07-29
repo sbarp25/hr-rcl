@@ -388,6 +388,7 @@ const TotalPage = () => {
                           <Button
                             size="sm"
                             color="warning"
+                            variant="flat"
                             className={`${
                               !hasPositionEditAccess
                                 ? "opacity-50 cursor-not-allowed"
@@ -398,11 +399,13 @@ const TotalPage = () => {
                               handleAction("edit", position)
                             }
                             disabled={!hasPositionEditAccess}>
+                            <HiPencilSquare className="w-4 h-4" />
                             Edit
                           </Button>
                           <Button
                             size="sm"
                             color="danger"
+                            variant="flat"
                             className={`${
                               !hasPositionDeleteAccess
                                 ? "opacity-50 cursor-not-allowed"
@@ -413,6 +416,7 @@ const TotalPage = () => {
                               handleAction("delete", position)
                             }
                             disabled={!hasPositionDeleteAccess}>
+                            <MdDelete className="w-4 h-4" />
                             Delete
                           </Button>
                         </div>

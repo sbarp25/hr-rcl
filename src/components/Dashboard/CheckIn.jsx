@@ -211,6 +211,10 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                           message:
                             "Reason must be at least 10 characters long.",
                         },
+                        pattern: {
+                          value: /^[^\s]/,
+                          message: "Reason cannot start with a space",
+                        },
                       }}
                     />
                     <div className="flex justify-center gap-4 mt-4">

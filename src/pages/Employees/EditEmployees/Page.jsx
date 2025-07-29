@@ -22,7 +22,7 @@ import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils";
 
 const EditEmployees = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { handleSubmit, control, reset } = useForm();
+  const { handleSubmit, control, reset } = useForm({ mode: "onChange" });
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -153,6 +153,10 @@ const EditEmployees = () => {
                     minLength: {
                       value: 3,
                       message: "Full name must be at least 3 characters",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Full name cannot start with a space",
                     },
                   }}
                 />

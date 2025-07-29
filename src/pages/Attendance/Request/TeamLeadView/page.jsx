@@ -380,71 +380,75 @@ const TeamLeadLateCheckin = () => {
                     <TableColumn>Actions</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    {lateCheckinData?.map((late) => (
-                      <TableRow
-                        key={late?.lateCheckInId}
-                        className="hover:bg-gray-50 dark:hover:bg-slate-500">
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span>{late?.fullName}</span>
-                            <span className="text-xs text-gray-500">
-                              {late?.rclId}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {late?.departmentName.length < 7 ? (
-                            late?.departmentName
-                          ) : (
-                            <Tooltip content={late?.departmentName}>
-                              {truncateText(late?.departmentName, 7)}
-                            </Tooltip>
-                          )}
-                        </TableCell>
-                        <TableCell>{late?.attendanceDate}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span>Expected: {late?.expectedCheckInTime}</span>
-                            <span>Actual: {late?.checkInTime}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div
-                            className="max-w-[150px] truncate"
-                            title={late?.lateReason}>
-                            {late?.lateReason}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {late?.status === "Pending" && (
-                            <div className="flex justify-center gap-4">
-                              <FaCheck
-                                className={`${
-                                  hasAttendanceEditAccess
-                                    ? "text-orange-500 hover:text-orange-700 cursor-pointer"
-                                    : ""
-                                }`}
-                                title="Edit"
-                                onClick={() =>
-                                  handleAction("Approve", late?.lateCheckInId)
-                                }
-                              />
-                              <MdDelete
-                                className={`${
-                                  hasAttendanceEditAccess
-                                    ? "text-red-500 cursor-pointer hover:text-red-700"
-                                    : ""
-                                }`}
-                                title="Delete"
-                                onClick={() =>
-                                  handleAction("Reject", late?.lateCheckInId)
-                                }
-                              />
+                    {lateCheckinData
+                      ?.filter(
+                        (lateCHeckin) => lateCHeckin?.status !== "APPROVED"
+                      )
+                      .map((late) => (
+                        <TableRow
+                          key={late?.lateCheckInId}
+                          className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span>{late?.fullName}</span>
+                              <span className="text-xs text-gray-500">
+                                {late?.rclId}
+                              </span>
                             </div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                          <TableCell>
+                            {late?.departmentName.length < 7 ? (
+                              late?.departmentName
+                            ) : (
+                              <Tooltip content={late?.departmentName}>
+                                {truncateText(late?.departmentName, 7)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>{late?.attendanceDate}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span>Expected: {late?.expectedCheckInTime}</span>
+                              <span>Actual: {late?.checkInTime}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div
+                              className="max-w-[150px] truncate"
+                              title={late?.lateReason}>
+                              {late?.lateReason}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {late?.status === "Pending" && (
+                              <div className="flex justify-center gap-4">
+                                <FaCheck
+                                  className={`${
+                                    hasAttendanceEditAccess
+                                      ? "text-orange-500 hover:text-orange-700 cursor-pointer"
+                                      : ""
+                                  }`}
+                                  title="Edit"
+                                  onClick={() =>
+                                    handleAction("Approve", late?.lateCheckInId)
+                                  }
+                                />
+                                <MdDelete
+                                  className={`${
+                                    hasAttendanceEditAccess
+                                      ? "text-red-500 cursor-pointer hover:text-red-700"
+                                      : ""
+                                  }`}
+                                  title="Delete"
+                                  onClick={() =>
+                                    handleAction("Reject", late?.lateCheckInId)
+                                  }
+                                />
+                              </div>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </div>
@@ -453,104 +457,108 @@ const TeamLeadLateCheckin = () => {
             {/* Small screens - Card-like view */}
             <div className="block md:hidden">
               <div className="space-y-4 overflow-y-auto">
-                {lateCheckinData.map((late) => (
-                  <div
-                    key={late?.lateCheckInId}
-                    className="border rounded-lg overflow-hidden shadow-sm">
+                {lateCheckinData
+                  .filter((lateCHeckin) => lateCHeckin?.status !== "APPROVED")
+                  .map((late) => (
                     <div
-                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-blac"
-                      onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
-                      <div className="font-medium">{late?.fullName}</div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">
-                          {late?.attendanceDate}
-                        </span>
-                        <FaChevronDown
-                          size={16}
-                          className={`transition-transform ${
-                            expandedRow === late?.lateCheckInId
-                              ? "rotate-180"
-                              : ""
-                          }`}
-                        />
+                      key={late?.lateCheckInId}
+                      className="border rounded-lg overflow-hidden shadow-sm">
+                      <div
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50  dark:bg-black"
+                        onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
+                        <div className="font-medium">{late?.fullName}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">
+                            {late?.attendanceDate}
+                          </span>
+                          <FaChevronDown
+                            size={16}
+                            className={`transition-transform ${
+                              expandedRow === late?.lateCheckInId
+                                ? "rotate-180"
+                                : ""
+                            }`}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div
-                      className={`${
-                        expandedRow === late?.lateCheckInId ? "block" : "hidden"
-                      } p-3 space-y-2 text-sm`}>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">RCL-ID:</div>
-                        <div>{late?.rclId}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Email:</div>
-                        <div className="truncate">{late?.email}</div>
-                      </div>
+                      <div
+                        className={`${
+                          expandedRow === late?.lateCheckInId
+                            ? "block"
+                            : "hidden"
+                        } p-3 space-y-2 text-sm`}>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">RCL-ID:</div>
+                          <div>{late?.rclId}</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Email:</div>
+                          <div className="truncate">{late?.email}</div>
+                        </div>
 
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Department:</div>
-                        <div className="truncate">
-                          {late?.departmentName.length < 7 ? (
-                            late?.departmentName
-                          ) : (
-                            <Tooltip content={late?.departmentName}>
-                              {truncateText(late?.departmentName, 7)}
-                            </Tooltip>
-                          )}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Department:</div>
+                          <div className="truncate">
+                            {late?.departmentName.length < 7 ? (
+                              late?.departmentName
+                            ) : (
+                              <Tooltip content={late?.departmentName}>
+                                {truncateText(late?.departmentName, 7)}
+                              </Tooltip>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Expected Time:</div>
-                        <div>{late?.expectedCheckInTime}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Actual Time:</div>
-                        <div>{late?.checkInTime}</div>
-                      </div>
-                      <div className="col-span-2 mt-2">
-                        <div className="font-medium">Justification:</div>
-                        <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
-                          {late?.lateReason}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Expected Time:</div>
+                          <div>{late?.expectedCheckInTime}</div>
                         </div>
-                      </div>
-                      {late?.status === "Pending" && (
-                        <div className="flex justify-end gap-4 mt-2">
-                          <Button
-                            size="sm"
-                            color="success"
-                            className={`${
-                              !hasAttendanceEditAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasAttendanceEditAccess &&
-                              handleAction("Approve", late?.lateCheckInId)
-                            }
-                            disabled={!hasAttendanceEditAccess}>
-                            Approve
-                          </Button>
-                          <Button
-                            size="sm"
-                            color="danger"
-                            className={`${
-                              !hasAttendanceEditAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasAttendanceEditAccess &&
-                              handleAction("Reject", late?.lateCheckInId)
-                            }
-                            disabled={!hasAttendanceEditAccess}>
-                            Reject
-                          </Button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Actual Time:</div>
+                          <div>{late?.checkInTime}</div>
                         </div>
-                      )}
+                        <div className="col-span-2 mt-2">
+                          <div className="font-medium">Justification:</div>
+                          <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
+                            {late?.lateReason}
+                          </div>
+                        </div>
+                        {late?.status === "Pending" && (
+                          <div className="flex justify-end gap-4 mt-2">
+                            <Button
+                              size="sm"
+                              color="success"
+                              className={`${
+                                !hasAttendanceEditAccess
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              onPress={() =>
+                                hasAttendanceEditAccess &&
+                                handleAction("Approve", late?.lateCheckInId)
+                              }
+                              disabled={!hasAttendanceEditAccess}>
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              color="danger"
+                              className={`${
+                                !hasAttendanceEditAccess
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              onPress={() =>
+                                hasAttendanceEditAccess &&
+                                handleAction("Reject", late?.lateCheckInId)
+                              }
+                              disabled={!hasAttendanceEditAccess}>
+                              Reject
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
                 {(!lateCheckinData || lateCheckinData.length === 0) && (
                   <div className="p-8 text-center text-gray-500">
@@ -563,15 +571,13 @@ const TeamLeadLateCheckin = () => {
             {/* Pagination - Responsive for all screens */}
             {!lateCheckinData && lateCheckinData.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
+                <div className="text-sm font-medium text-gray-800 dark:text-white order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
-                  <span className="font-bold text-gray-800 mx-1">
+                  <span className="font-bold  mx-1">
                     {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
-                  <span className="font-bold text-gray-800">
-                    {totalRecords}
-                  </span>
+                  <span className="font-bold ">{totalRecords}</span>
                 </div>
 
                 <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

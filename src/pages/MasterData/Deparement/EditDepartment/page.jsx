@@ -36,6 +36,7 @@ const EditDepartment = () => {
       teamlead: "",
       Associateteamlead: "",
     },
+    mode: "onChange",
   });
 
   /**To check The screen width */
@@ -143,6 +144,10 @@ const EditDepartment = () => {
                       value: 100,
                       message: "Title cannot exceed 100 characters.",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Title cannot start with a space",
+                    },
                   }}
                 />
               </div>
@@ -158,6 +163,10 @@ const EditDepartment = () => {
                       value: 10,
                       message:
                         "Description must be at least 10 characters long.",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Description cannot start with a space",
                     },
                   }}
                   render={({ field }) => (

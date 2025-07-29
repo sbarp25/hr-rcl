@@ -328,13 +328,13 @@ const LeaveStatus = () => {
                       </TableCell> */}
                       <TableCell>
                         <div className="flex gap-2">
-                          {hasaccess && (
+                          {/* {hasaccess && (
                             <button
                               className="text-blue-600 hover:text-blue-800"
                               onClick={() => handleAction("view", item)}>
                               <FaRegEye size={18} />
                             </button>
-                          )}
+                          )} */}
                           {item?.leaveStatus === "PENDING" &&
                             hasLeaveUpdateAccess && (
                               <>
@@ -492,12 +492,14 @@ const LeaveStatus = () => {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-black text-white"
+                                color="warning"
+                                variant="flat"
                                 onPress={() => handleAction("approve", leave)}>
                                 Approve
                               </Button>
                               <Button
                                 size="sm"
+                                variant="flat"
                                 color="danger"
                                 onPress={() => handleAction("reject", leave)}>
                                 Reject

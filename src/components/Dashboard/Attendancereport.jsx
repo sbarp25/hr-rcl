@@ -167,7 +167,7 @@ const AttendanceReport = ({ attendanceData }) => {
               key={data.SN}
               className="border rounded-lg overflow-hidden shadow-sm">
               <div
-                className="flex justify-between items-center p-3 cursor-pointer bg-gray-50"
+                className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-500"
                 onClick={() => toggleExpandedRow(data.SN)}>
                 <div className="font-medium">
                   {data.Day} ({data.weekDays || "N/A"})

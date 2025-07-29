@@ -22,7 +22,7 @@ const AddPosition = () => {
     control,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const onSubmit = async (data) => {
     if (hasaccess) {
@@ -109,6 +109,10 @@ const AddPosition = () => {
                       value: 100,
                       message: "Title cannot exceed 100 characters.",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Title cannot start with a space",
+                    },
                   }}
                 />
               </div>
@@ -131,6 +135,10 @@ const AddPosition = () => {
                     maxLength: {
                       value: 255,
                       message: "Description cannot exceed 255 characters long.",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Description cannot start with a space",
                     },
                   })}
                   variant="bordered"

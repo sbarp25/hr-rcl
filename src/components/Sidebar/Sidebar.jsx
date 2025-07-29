@@ -51,7 +51,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
@@ -66,10 +66,11 @@ const Sidebar = () => {
   useEffect(() => {
     const checkPermissions = () => {
       const menu = LocalStorageUtil.getItem("menu");
-      if (menu && Array.isArray(menu) && menu.length > 0) {
+      // Check if menu exists in localStorage
+      if (menu !== null && menu !== undefined) {
         setPermissionsLoaded(true);
         permissionManager.refresh(); // Refresh the permission manager
-        triggerRerender(); // Force component re-render
+        triggerRerender();
       } else {
         // If permissions not loaded, check again after a short delay
         setTimeout(checkPermissions, 100);
@@ -82,7 +83,7 @@ const Sidebar = () => {
   // Listen for localStorage changes (useful if menu data is set after component mounts)
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (e.key === "menu" && e.newValue) {
+      if (e.key === "menu" && e.newValue !== null) {
         permissionManager.refresh();
         setPermissionsLoaded(true);
         triggerRerender();
@@ -292,7 +293,7 @@ const Sidebar = () => {
     logoutMutation.mutate();
   };
 
-  // Show loading state if permissions not loaded
+  // Show loading state only if menu hasn't been checked yet (null/undefined)
   if (!permissionsLoaded) {
     return (
       <div className="flex h-screen bg-black">
@@ -323,12 +324,14 @@ const Sidebar = () => {
               onClick={toggleSidebar}
             />
             {isSidebarExpanded && (
-              <Link to="/dashboard">
-                <img src={Logo} className="w-32" alt="Logo" />
-              </Link>
+              <>
+                <Link to="/dashboard">
+                  <img src={Logo} className="w-32" alt="Logo" />
+                </Link>
+                <ThemeSwitcher />
+              </>
             )}
           </div>
-          <ThemeSwitcher />
 
           {/* Navigation items */}
           <div className="flex-grow overflow-y-auto">
