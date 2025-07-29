@@ -82,14 +82,14 @@ const Page = () => {
         {/* WFH and Leave Sections */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Work From Home Panel */}
-          <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
+          <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
             <div className="">
               <WorkFromHome />
             </div>
           </div>
 
           {/* Leave Panel */}
-          <div className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100">
+          <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
             <div className="">
               <Leave />
             </div>
