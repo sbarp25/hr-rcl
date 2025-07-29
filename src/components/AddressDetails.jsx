@@ -587,7 +587,13 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                   <InputComponent
                     name="permanent.municipality"
                     control={control}
-                    rules={{ required: "Permanent Municipality is required" }}
+                    rules={{
+                      required: "Permanent Municipality is required",
+                      pattern: {
+                        value: /^[^\s]/,
+                        message: "Municipality cannot start with a space",
+                      },
+                    }}
                     label="Municipality"
                     variant="bordered"
                     type="text"
@@ -641,7 +647,13 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                 <InputComponent
                   name="permanent.tole"
                   control={control}
-                  rules={{ required: "Permanent Tole/Area is required" }}
+                  rules={{
+                    required: "Permanent Tole/Area is required",
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Description cannot start with a space",
+                    },
+                  }}
                   label="Tole/Area"
                   variant="bordered"
                   type="text"
@@ -783,6 +795,10 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                     required: !watchedSameAsPermanent
                       ? "Temporary Municipality is required"
                       : false,
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Municipality cannot start with a space",
+                    },
                   }}
                   label="Municipality"
                   variant="bordered"
@@ -801,7 +817,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
                       ? "Temporary Ward Number is required"
                       : false,
                     pattern: {
-                      value: /^(?:[1-9]|[12][0-9]|3[0-2])$/,
+                      value: /^([1-9]|0[1-9]|[1-2][0-9]|3[0-2])$/,
                       message: "Ward Number must be between 1 and 32",
                     },
                   }}

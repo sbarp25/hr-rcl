@@ -33,7 +33,7 @@ const AutoCheckout = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
 
   const breadcrumbItems = [
-    { label: "Attendance", href: "/Attendance" },
+    { label: "Attendance", href: "" },
     { label: "Auto-Checkout", href: "/autoCheckOut" },
   ];
 

@@ -60,6 +60,44 @@ const Login = () => {
     setCapta(null);
   };
 
+  // Helper function to render reCAPTCHA section
+  const renderRecaptchaSection = () => {
+    if (recaptchaLoading) {
+      return (
+        <div className="flex justify-center py-4">
+          <div className="flex flex-col items-center gap-3">
+            <Spinner size="md" color="danger" className="ml-2" />
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              Loading reCAPTCHA...
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    if (recaptchaError) {
+      return (
+        <div className="flex justify-center py-4">
+          <div className="text-red-500 text-center text-sm">
+            <p>{recaptchaError}</p>
+            <p className="text-xs mt-1">Please refresh the page to try again</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (recaptchaEnabled && siteKey) {
+      return (
+        <div className="flex justify-center py-4">
+          <Recaptcha setCapta={setCapta} onError={handleRecaptchaError} />
+        </div>
+      );
+    }
+
+    // Return null if reCAPTCHA is disabled
+    return null;
+  };
+
   return (
     <>
       <LocationComponent />
@@ -111,32 +149,8 @@ const Login = () => {
                 }}
               />
 
-              {/* reCAPTCHA Section - only show if enabled */}
-              {recaptchaEnabled && (
-                <div className="flex justify-center py-4">
-                  {recaptchaLoading && (
-                    <div className="flex items-center gap-2">
-                      <Spinner size="sm" />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Loading reCAPTCHA...
-                      </span>
-                    </div>
-                  )}
-
-                  {recaptchaError && (
-                    <div className="text-red-500 text-center">
-                      {recaptchaError}
-                    </div>
-                  )}
-
-                  {siteKey && !recaptchaLoading && !recaptchaError && (
-                    <Recaptcha
-                      setCapta={setCapta}
-                      onError={handleRecaptchaError}
-                    />
-                  )}
-                </div>
-              )}
+              {/* reCAPTCHA Section */}
+              {renderRecaptchaSection()}
 
               <div className="flex items-center justify-between w-full">
                 <ButtonComponent
@@ -144,7 +158,8 @@ const Login = () => {
                   className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={
                     loginMutation.isPending ||
-                    (recaptchaEnabled && (!capta || recaptchaLoading))
+                    recaptchaLoading || // Disable button while loading
+                    (recaptchaEnabled && !capta) // Disable if reCAPTCHA is enabled but not completed
                   }
                   content={
                     <>

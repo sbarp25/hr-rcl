@@ -213,10 +213,12 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                     value: 3,
                     message: "Guardian Name must atleast be 3 character long",
                   },
-                  pattern: {
-                    value: /^[A-Za-z\s]+$/,
-                    message:
+                  validate: {
+                    onlyLettersAndSpaces: (value) =>
+                      /^[A-Za-z\s]+$/.test(value) ||
                       "Name must not contain numbers or special characters",
+                    noLeadingSpace: (value) =>
+                      !/^\s/.test(value) || "Name must not start with a space",
                   },
                 }}
                 label="Guardian Name"
@@ -232,9 +234,12 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                 control={control}
                 rules={{
                   required: "Guardian Phone is required",
-                  pattern: {
-                    value: /^9[0-9]{9}$/,
-                    message: "Phone must start with 9 and be 10 digits long",
+                  validate: {
+                    only9and8: (value) =>
+                      /^9[0-9]{9}$/.test(value) ||
+                      "Phone must start with 9 and be 10 digits long",
+                    noLeadingSpace: (value) =>
+                      !/^\s/.test(value) || "Name must not start with a space",
                   },
                 }}
                 label="Guardian Phone"
@@ -274,10 +279,12 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                     value: 3,
                     message: "Emergency Name must atleast be 3 character long",
                   },
-                  pattern: {
-                    value: /^[A-Za-z\s]+$/,
-                    message:
+                  validate: {
+                    onlyLettersAndSpaces: (value) =>
+                      /^[A-Za-z\s]+$/.test(value) ||
                       "Name must not contain numbers or special characters",
+                    noLeadingSpace: (value) =>
+                      !/^\s/.test(value) || "Name must not start with a space",
                   },
                 }}
                 label="Emergency Name"
@@ -315,6 +322,10 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                     value: 3,
                     message:
                       "Emergency Relation must atleast be 3 character long",
+                  },
+                  pattern: {
+                    value: /^[^\s]/,
+                    message: "Relation cannot start with a space",
                   },
                 }}
                 label="Emergency Relationship"

@@ -115,6 +115,10 @@ const RequestWorkFromHome = () => {
                   value: 255,
                   message: "Title must be less than 255 characters long.",
                 },
+                pattern: {
+                  value: /^[^\s]/,
+                  message: "Title cannot start with a space",
+                },
               }}
             />
           </div>
@@ -177,6 +181,10 @@ const RequestWorkFromHome = () => {
                 maxLength: {
                   value: 255,
                   message: "Description must be less than 255 characters long.",
+                },
+                pattern: {
+                  value: /^[^\s]/,
+                  message: "Description cannot start with a space",
                 },
               }}
             />

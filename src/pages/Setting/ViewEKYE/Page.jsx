@@ -51,8 +51,8 @@ const Tabs = ({ activeTab, changeTab }) => (
           }}
           className={`cursor-pointer py-2 px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 text-center min-w-0 flex-1 font-semibold rounded-t-2xl border transition-all duration-300 ${
             activeTab.name === tab.name
-              ? "bg-gray-50 border border-gray-300"
-              : "hover:border-gray-300 hover:bg-gray-100"
+              ? "bg-gray-50 dark:bg-slate-500 border border-gray-300"
+              : "hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
           }`}>
           <span className="text-xs sm:text-sm md:text-sm lg:text-base xl:text-base truncate block">
             <span className="hidden lg:inline">{tab.name}</span>

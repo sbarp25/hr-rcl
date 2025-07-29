@@ -128,6 +128,10 @@ const EditPosition = () => {
                       value: 100,
                       message: "Title cannot exceed 100 characters.",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Title cannot start with a space",
+                    },
                   }}
                 />
               </div>
@@ -146,7 +150,11 @@ const EditPosition = () => {
                     },
                     maxLength: {
                       value: 255,
-                      message: "Title cannot exceed 300 characters.",
+                      message: "Description cannot exceed 255 characters.",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Description cannot start with a space",
                     },
                   }}
                   render={({ field }) => (

@@ -282,6 +282,10 @@ const AddRoles = () => {
                         value: 300,
                         message: "Title cannot exceed 300 characters.",
                       },
+                      pattern: {
+                        value: /^[^\s]/,
+                        message: "Title cannot start with a space",
+                      },
                     }}
                   />
                 </div>
@@ -296,6 +300,10 @@ const AddRoles = () => {
                         value: 10,
                         message:
                           "Description must be at least 10 characters long.",
+                      },
+                      pattern: {
+                        value: /^[^\s]/,
+                        message: "Description cannot start with a space",
                       },
                     }}
                   />

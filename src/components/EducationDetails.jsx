@@ -578,6 +578,10 @@ const EducationalDetails = ({
                     message:
                       "Institution name must be atleast 3 character long",
                   },
+                  pattern: {
+                    value: /^[^\s]/,
+                    message: "Institution cannot start with a space",
+                  },
                 }}
                 variant="bordered"
                 type="text"
@@ -597,6 +601,10 @@ const EducationalDetails = ({
                     minLength: {
                       value: 3,
                       message: "Faculty must be atleast 3 character long",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Faculty cannot start with a space",
                     },
                   }}
                   variant="bordered"

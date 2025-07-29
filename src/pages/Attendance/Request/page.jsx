@@ -216,7 +216,7 @@ const AttendanceRequest = () => {
                 <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                   <Search
                     onApplySearch={handleApplySearch}
-                    url="/api/v1/attendance/late-check-in/late-attendance/by-role"
+                    url="/api/v1/attendance/late-check-in/late-attendance/list"
                     searchFields={[
                       "rclId",
                       "departmentName",

@@ -281,6 +281,10 @@ const DocumentDetails = ({
                       message:
                         "PAN Issue place must atleast be 3 character long",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "PAN Issue place cannot start with a space",
+                    },
                   }}
                   variant="bordered"
                   label="Enter PAN issued place"
@@ -452,6 +456,11 @@ const DocumentDetails = ({
                       value: 3,
                       message:
                         "Citizenship Issue place must atleast be 3 character long",
+                    },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message:
+                        "Citizenship issue place cannot start with a space",
                     },
                   }}
                   variant="bordered"

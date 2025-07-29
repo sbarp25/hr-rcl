@@ -19,6 +19,11 @@ const Security = () => {
       label: "Trusted Device",
       to: "/trustedDevicess",
     },
+    // {
+    //   icon: IoShieldCheckmark,
+    //   label: "Dark Mode Setting",
+    //   to: "/dark",
+    // },
   ];
 
   return (

@@ -154,6 +154,10 @@ const EditEmployees = () => {
                       value: 3,
                       message: "Full name must be at least 3 characters",
                     },
+                    pattern: {
+                      value: /^[^\s]/,
+                      message: "Full name cannot start with a space",
+                    },
                   }}
                 />
               </div>

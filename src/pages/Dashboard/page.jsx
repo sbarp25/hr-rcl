@@ -46,15 +46,13 @@ const Page = () => {
             />
           )}
         </div>
-        {/* *<TemporaryAdmin /> */}
-
+        {/* <TemporaryAdmin /> */}
         {/* Welcome Banner */}
         <div className="flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm">
           <p className="font-light text-lg leading-10">
             Welcome, {username || "User"}
           </p>
         </div>
-
         {/* Weekly Attendance Report */}
         <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm ">
           <div className="flex flex-col justify-center items-center">
@@ -81,7 +79,6 @@ const Page = () => {
             </p>
           </div>
         </div>
-
         {/* WFH and Leave Sections */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Work From Home Panel */}
