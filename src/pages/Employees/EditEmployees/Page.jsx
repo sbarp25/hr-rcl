@@ -22,7 +22,7 @@ import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils";
 
 const EditEmployees = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { handleSubmit, control, reset } = useForm();
+  const { handleSubmit, control, reset } = useForm({ mode: "onChange" });
   const { id } = useParams();
 
   const navigate = useNavigate();

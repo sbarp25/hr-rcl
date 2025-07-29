@@ -76,7 +76,6 @@ const MobileNavigation = () => {
   const seeTeamLateCheckIn = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
 
   const navbarElements = [
-    // { icon: MdDashboard, label: "Dashboard", to: "/", view: seeDashboard },
     {
       icon: MdDashboard,
       label: "Dashboard",
@@ -88,7 +87,6 @@ const MobileNavigation = () => {
       label: "Attendance",
       view: seeAttendance,
       children: [
-        // { label: "My Attendence", to: "/Attendance", view: seeMyAttendance },
         {
           icon: LuMapPinCheckInside,
           label: "Late Checkin ",
@@ -101,6 +99,12 @@ const MobileNavigation = () => {
           to: "/attendance/teamLead",
           view: seeTeamLateCheckIn,
         },
+        {
+          icon: IoIosPeople,
+          label: "Auto-Checkout",
+          to: "/autoCheckOut",
+          view: true,
+        },
       ],
     },
     {
@@ -109,7 +113,6 @@ const MobileNavigation = () => {
       to: "/Employees",
       view: seeEmployee,
     },
-
     {
       icon: BiData,
       label: "Master Data",
@@ -135,17 +138,9 @@ const MobileNavigation = () => {
         },
       ],
     },
-    // {
-    //   icon: FaBookBookmark,
-    //   label: "HandBook",
-    //   to: "/handbook",
-    //   view: seeHandbook,
-    // },
-    // { icon: FaNewspaper, label: "Notice", to: "/notice", view: seeNotices },
     {
       icon: FcLeave,
       label: "Leave",
-      // view: seeLeave,
       view: seeLeave,
       children: [
         {
@@ -171,7 +166,8 @@ const MobileNavigation = () => {
           icon: GrStatusGoodSmall,
           label: "WFH Status",
           to: "/WFH/Status",
-          view: seeWorkFromHome && seeWorkFromHomeAdmin,
+          // view: seeWorkFromHome && seeWorkFromHomeAdmin,
+          view: true,
         },
         {
           icon: VscGitPullRequestNewChanges,

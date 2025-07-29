@@ -10,6 +10,7 @@ const InputComponent = ({
   label,
   variant,
   type,
+  isRequired,
   inputClassName = "",
   icon,
   isReadOnly = false, // Default to false
@@ -39,6 +40,7 @@ const InputComponent = ({
             isDisabled={isReadOnly} // Set read-only state
             variant={variant}
             label={label}
+            isRequired={isRequired}
             type={isPasswordField && showPassword ? "text" : type}
             isInvalid={!!error}
             errorMessage={error?.message}

@@ -36,6 +36,7 @@ const EditDepartment = () => {
       teamlead: "",
       Associateteamlead: "",
     },
+    mode: "onChange",
   });
 
   /**To check The screen width */

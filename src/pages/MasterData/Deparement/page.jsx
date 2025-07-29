@@ -437,6 +437,7 @@ const Department = () => {
                           <div className="flex justify-end gap-4 mt-2">
                             <Button
                               size="sm"
+                              variant="flat"
                               color="warning"
                               className={`${
                                 !hasDepartmentEditAccess
@@ -448,10 +449,13 @@ const Department = () => {
                                 handleAction("edit", department)
                               }
                               disabled={!hasDepartmentEditAccess}>
+                              {" "}
+                              <HiPencilSquare className="w-4 h-4" />
                               Edit
                             </Button>
                             <Button
                               size="sm"
+                              variant="flat"
                               color="danger"
                               className={`${
                                 !hasDepartmentDeleteAccess
@@ -463,6 +467,7 @@ const Department = () => {
                                 handleAction("delete", department)
                               }
                               disabled={!hasDepartmentDeleteAccess}>
+                              <MdDelete className="w-4 h-4" />
                               Delete
                             </Button>
                           </div>

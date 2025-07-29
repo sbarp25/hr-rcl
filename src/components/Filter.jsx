@@ -114,7 +114,7 @@ const Filter = ({
       label: position?.positionName,
     }));
   return (
-    <div className="bg-white rounded-xl">
+    <div className="bg-white dark:bg-black rounded-xl">
       <Button onPress={onOpen} className="text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
         <p>Filters</p>

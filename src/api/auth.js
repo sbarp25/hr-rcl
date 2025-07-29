@@ -525,6 +525,7 @@ export const getSiteKey = async () => {
       );
     }
   } catch (error) {
+    console.log(error?.response);
     const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;

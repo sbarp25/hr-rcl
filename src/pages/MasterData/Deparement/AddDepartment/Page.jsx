@@ -44,6 +44,7 @@ const AddDepartment = () => {
       teamlead: "",
       Associateteamlead: "",
     },
+    mode: "onChange",
   });
 
   // Permission check

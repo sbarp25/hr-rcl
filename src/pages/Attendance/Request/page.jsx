@@ -518,15 +518,13 @@ const AttendanceRequest = () => {
             {/* Pagination - Responsive for all screens */}
             {!lateCheckinData && lateCheckinData.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="text-sm font-medium text-gray-600 order-2 sm:order-1 flex items-center">
+                <div className="text-sm font-medium text-gray-600 dark:text-white order-2 sm:order-1 flex items-center">
                   <span className="mr-1">Showing</span>
-                  <span className="font-bold text-gray-800 mx-1">
+                  <span className="font-bold mx-1">
                     {Math.min(totalRecords, lateCheckInDataPerPage)}
                   </span>
                   <span className="mr-1">of</span>
-                  <span className="font-bold text-gray-800">
-                    {totalRecords}
-                  </span>
+                  <span className="font-bold ">{totalRecords}</span>
                 </div>
 
                 <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

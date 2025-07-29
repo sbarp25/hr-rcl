@@ -489,11 +489,11 @@ const WorkFromHomeStatus = () => {
               <div className="space-y-4">
                 {displayData.map((WFH) => (
                   <div
-                    key={WFH.rclId || Math.random()}
+                    key={WFH.id || Math.random()}
                     className="border rounded-lg overflow-hidden shadow-sm">
                     <div
                       className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                      onClick={() => toggleExpandedRow(WFH.rclId)}>
+                      onClick={() => toggleExpandedRow(WFH.id)}>
                       <div className="font-medium">
                         {WFH.userFullName || "N/A"}
                       </div>
@@ -507,14 +507,14 @@ const WorkFromHomeStatus = () => {
                         <FaChevronDown
                           size={16}
                           className={`transition-transform ${
-                            expandedRow === WFH.rclId ? "rotate-180" : ""
+                            expandedRow === WFH.id ? "rotate-180" : ""
                           }`}
                         />
                       </div>
                     </div>
                     <div
                       className={`${
-                        expandedRow === WFH.rclId ? "block" : "hidden"
+                        expandedRow === WFH.id ? "block" : "hidden"
                       } p-3 space-y-2 text-sm`}>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="font-medium">Request Date:</div>
@@ -538,13 +538,15 @@ const WorkFromHomeStatus = () => {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-black text-white"
+                                color="warning"
+                                variant="flat"
                                 onPress={() => handleAction("approve", WFH)}>
                                 Approve
                               </Button>
                               <Button
                                 size="sm"
                                 color="danger"
+                                variant="flat"
                                 onPress={() => handleAction("reject", WFH)}>
                                 Reject
                               </Button>
@@ -566,17 +568,15 @@ const WorkFromHomeStatus = () => {
             {/**Pagination Section - Responsive for all screens */}
             {workFromHome && workFromHome.length > 0 && (
               <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <div className="text-sm font-medium text-gray-600 flex items-center">
+                <div className="text-sm font-medium text-gray-600  dark:text-white flex items-center">
                   <span className="mr-1">Showing:</span>
-                  <span className="font-bold text-gray-800 mx-1">
+                  <span className="font-bold mx-1">
                     {totalRecords < WFHDataPerPage
                       ? totalRecords
                       : WFHDataPerPage}
                   </span>
                   <span className="mr-1">of</span>
-                  <span className="font-bold text-gray-800">
-                    {totalRecords}
-                  </span>
+                  <span className="font-bold ">{totalRecords}</span>
                 </div>
 
                 <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">

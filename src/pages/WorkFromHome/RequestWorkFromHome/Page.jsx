@@ -17,7 +17,7 @@ import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { control, handleSubmit, watch, reset } = useForm();
+  const { control, handleSubmit, watch, reset } = useForm({ mode: "onChange" });
 
   const fromDate = watch("fromDate");
   const navigate = useNavigate();

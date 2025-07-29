@@ -492,12 +492,14 @@ const LeaveStatus = () => {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-black text-white"
+                                color="warning"
+                                variant="flat"
                                 onPress={() => handleAction("approve", leave)}>
                                 Approve
                               </Button>
                               <Button
                                 size="sm"
+                                variant="flat"
                                 color="danger"
                                 onPress={() => handleAction("reject", leave)}>
                                 Reject

@@ -26,6 +26,7 @@ const EditRole = () => {
       roleName: "",
       roleDescription: "",
     },
+    mode: "onChange",
   });
 
   const NumroleId = parseInt(roleId);

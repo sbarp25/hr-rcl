@@ -21,7 +21,9 @@ const AddRoles = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, setValue } = useForm();
+  const { control, handleSubmit, reset, setValue } = useForm({
+    mode: "onChange",
+  });
 
   const createRoleMutation = useCreateRoles();
   // Get all selected action IDs from the menus

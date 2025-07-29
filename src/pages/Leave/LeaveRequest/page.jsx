@@ -33,6 +33,7 @@ const LeaveRequest = () => {
       ToDate: null,
       isHalfDay: false,
     },
+    mode: "onChange",
   });
 
   const [isLoading, setIsLoading] = useState(false);

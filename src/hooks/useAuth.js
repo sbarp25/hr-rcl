@@ -402,7 +402,7 @@ export const useEmployeeDelete = () => {
   return useMutation({
     mutationFn: deleteEmployees,
     onSuccess: (data) => {
-      if (data?.data?.responseCode === "201") {
+      if (data?.responseCode === "204") {
         toast.success(data?.data?.message || "Employee deleted successfully");
       } else {
         const errorMessage =
@@ -785,7 +785,15 @@ export const useDeleteRoles = () => {
   return useMutation({
     mutationFn: deleteRole,
     onSuccess: (data) => {
-      toast.success(data.message || "Employee deleted successfully");
+      if (data?.responseCode === "204") {
+        toast.success(data.message || "Employee deleted successfully");
+      } else {
+        const errorMessage =
+          data?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        console.log(errorMessage);
+        toast.error(errorMessage);
+      }
       queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
     },
   });

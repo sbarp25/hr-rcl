@@ -51,7 +51,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();

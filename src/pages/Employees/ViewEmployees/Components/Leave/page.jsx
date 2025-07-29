@@ -86,7 +86,8 @@ const LeaveDetails = ({ employeeData }) => {
         className="gap-3"
         itemClasses={{
           base: "px-0",
-          trigger: "px-4 py-3 hover:bg-gray-50 transition-colors",
+          trigger:
+            "px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-500 transition-colors",
           content: "px-0 pb-0",
         }}>
         {leaveData.map((leave) => (
@@ -97,11 +98,11 @@ const LeaveDetails = ({ employeeData }) => {
               <div className="flex items-center justify-between w-full pr-4">
                 <div className="flex items-center gap-3">
                   <div className="flex flex-col">
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-gray-800 dark:text-white">
                       {formatDate(leave.leaveStartDate)} -{" "}
                       {formatDate(leave.leaveEndDate)}
                     </span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-white">
                       {leave.leaveType} •{" "}
                       {calculateDuration(
                         leave.leaveStartDate,
@@ -126,50 +127,46 @@ const LeaveDetails = ({ employeeData }) => {
                 </Chip>
               </div>
             }>
-            <Card className="shadow-none border-0 bg-gray-50">
+            <Card className="shadow-none border-0 bg-gray-50 dark:bg-slate-500">
               <CardBody className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Personal Information */}
                   <div className="space-y-4">
-                    <h4 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                    <h4 className="font-semibold text-gray-700 dark:text-white flex items-center gap-2 mb-3">
                       <FaUser className="w-4 h-4" />
                       Personal Details
                     </h4>
 
                     <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-gray-600 min-w-[80px]">
+                      <div className="flex items-start gap-3 text-gray-600 dark:text-white">
+                        <span className="text-sm font-medium  min-w-[80px]">
                           Subject:
                         </span>
-                        <span className="text-sm text-gray-800">
-                          {leave.leaveSubject}
-                        </span>
+                        <span className="text-sm ">{leave.leaveSubject}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Management Information */}
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                  <div className="space-y-4 ">
+                    <h4 className="font-semibold text-gray-700 dark:text-white  flex items-center gap-2 mb-3">
                       <FaUsers className="w-4 h-4" />
                       Management Details
                     </h4>
 
                     <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-gray-600 min-w-[120px]">
+                      <div className="flex items-start gap-3 text-gray-600 dark:text-white">
+                        <span className="text-sm font-medium  min-w-[120px]">
                           Team Leader:
                         </span>
-                        <span className="text-sm text-gray-800">
-                          {leave.teamLeaderName}
-                        </span>
+                        <span className="text-sm ">{leave.teamLeaderName}</span>
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <span className="text-sm font-medium text-gray-600 min-w-[120px]">
+                        <span className="text-sm font-medium text-gray-600 dark:text-white min-w-[120px]">
                           Assoc. Team Lead:
                         </span>
-                        <span className="text-sm text-gray-800">
+                        <span className="text-sm text-gray-800 dark:text-white">
                           {leave.associateTeamLeadName}
                         </span>
                       </div>
@@ -180,21 +177,21 @@ const LeaveDetails = ({ employeeData }) => {
                 <Divider className="my-4" />
 
                 {/* Leave Summary */}
-                <div className="bg-white rounded-lg p-4 border">
+                <div className="bg-white dark:bg-slate-500 rounded-lg p-4 border">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                         Leave Type
                       </p>
-                      <p className="font-semibold text-gray-800 mt-1">
+                      <p className="font-semibold text-gray-800  dark:text-white mt-1">
                         {leave.leaveType}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                         Duration
                       </p>
-                      <p className="font-semibold text-gray-800 mt-1">
+                      <p className="font-semibold text-gray-800 dark:text-white mt-1">
                         {calculateDuration(
                           leave.leaveStartDate,
                           leave.leaveEndDate
@@ -209,18 +206,18 @@ const LeaveDetails = ({ employeeData }) => {
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                         Start Date
                       </p>
-                      <p className="font-semibold text-gray-800 mt-1">
+                      <p className="font-semibold text-gray-800 dark:text-white mt-1">
                         {formatDate(leave.leaveStartDate)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
+                      <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                         End Date
                       </p>
-                      <p className="font-semibold text-gray-800 mt-1">
+                      <p className="font-semibold text-gray-800 dark:text-white mt-1">
                         {formatDate(leave.leaveEndDate)}
                       </p>
                     </div>

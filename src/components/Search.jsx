@@ -80,7 +80,7 @@ const Search = ({
         <Loader />
       ) : (
         <div className="bg-white dark:bg-black rounded-xl flex flex-col gap-2 md:flex-row md:items-center">
-          <Select
+          {/* <Select
             aria-label="Search by field"
             size="sm"
             className="max-w-xs"
@@ -91,7 +91,7 @@ const Search = ({
                 {field}
               </SelectItem>
             ))}
-          </Select>
+          </Select> */}
           <Input
             className={width}
             onKeyDown={handleKeyPress}

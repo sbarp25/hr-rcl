@@ -82,7 +82,8 @@ const WFHdetails = ({ employeeData }) => {
         className="gap-3"
         itemClasses={{
           base: "px-0",
-          trigger: "px-4 py-3 hover:bg-gray-50 transition-colors",
+          trigger:
+            "px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-500 transition-colors",
           content: "px-0 pb-0",
         }}>
         {workFromHome.map((wfh) => {
@@ -96,11 +97,11 @@ const WFHdetails = ({ employeeData }) => {
                 <div className="flex items-center justify-between w-full pr-4">
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-gray-800">
+                      <span className="font-semibold text-gray-800 dark:text-white">
                         {formatDate(wfh.workFromHomeStartDate)} -{" "}
                         {formatDate(wfh.workFromHomeEndDate)}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-white">
                         Work From Home •{" "}
                         {calculateDuration(
                           wfh.workFromHomeStartDate,
@@ -125,43 +126,41 @@ const WFHdetails = ({ employeeData }) => {
                   </Chip>
                 </div>
               }>
-              <Card className="shadow-none border-0 bg-gray-50">
+              <Card className="shadow-none border-0 bg-gray-50 dark:bg-slate-500">
                 <CardBody className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Personal Information */}
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-gray-700 dark:text-white flex items-center gap-2 mb-3">
                         <FaUser className="w-4 h-4" />
                         Personal Details
                       </h4>
 
                       <div className="space-y-3">
-                        <div className="flex items-start gap-3">
-                          <span className="text-sm font-medium text-gray-600 min-w-[80px]">
+                        <div className="flex items-start gap-3 text-gray-600 dark:text-white">
+                          <span className="text-sm font-medium  min-w-[80px]">
                             Subject:
                           </span>
-                          <span className="text-sm text-gray-800">
-                            {wfh.title}
-                          </span>
+                          <span className="text-sm ">{wfh.title}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Management Information */}
                     <div className="space-y-4">
-                      <h4 className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                      <h4 className="font-semibold text-gray-700 dark:text-white flex items-center gap-2 mb-3">
                         <FaUserCheck className="w-4 h-4" />
                         Approval Details
                       </h4>
 
                       <div className="space-y-3">
                         <div className="flex items-start gap-3">
-                          <span className="text-sm font-medium text-gray-600 min-w-[100px]">
+                          <span className="text-sm font-medium text-gray-600 dark:text-white min-w-[100px]">
                             Approved By:
                           </span>
-                          <span className="text-sm text-gray-800">
+                          <span className="text-sm text-gray-800 dark:text-white">
                             {wfh.approverFullName || (
-                              <span className="text-orange-600 italic">
+                              <span className="text-orange-600 dark:text-orange-300 italic">
                                 Pending Approval
                               </span>
                             )}
@@ -174,22 +173,22 @@ const WFHdetails = ({ employeeData }) => {
                   <Divider className="my-4" />
 
                   {/* WFH Summary */}
-                  <div className="bg-white rounded-lg p-4 border">
+                  <div className="bg-white dark:bg-slate-500 rounded-lg p-4 border">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                        <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                           Request Type
                         </p>
-                        <p className="font-semibold text-gray-800 mt-1 flex items-center justify-center gap-1">
+                        <p className="font-semibold text-gray-800 dark:text-white mt-1 flex items-center justify-center gap-1">
                           <FaHome className="w-3 h-3" />
                           Work From Home
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                        <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                           Duration
                         </p>
-                        <p className="font-semibold text-gray-800 mt-1">
+                        <p className="font-semibold text-gray-800 dark:text-white mt-1">
                           {calculateDuration(
                             wfh.workFromHomeStartDate,
                             wfh.workFromHomeEndDate
@@ -204,18 +203,18 @@ const WFHdetails = ({ employeeData }) => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                        <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                           Start Date
                         </p>
-                        <p className="font-semibold text-gray-800 mt-1">
+                        <p className="font-semibold text-gray-800  dark:text-white mt-1">
                           {formatDate(wfh.workFromHomeStartDate)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                        <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">
                           End Date
                         </p>
-                        <p className="font-semibold text-gray-800 mt-1">
+                        <p className="font-semibold text-gray-800 dark:text-white mt-1">
                           {formatDate(wfh.workFromHomeEndDate)}
                         </p>
                       </div>

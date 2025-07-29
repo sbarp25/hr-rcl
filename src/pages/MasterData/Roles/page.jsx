@@ -35,7 +35,11 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-import { useEmployeeDelete, useFetchRoles } from "../../../hooks/useAuth.js";
+import {
+  useDeleteRoles,
+  useEmployeeDelete,
+  useFetchRoles,
+} from "../../../hooks/useAuth.js";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
@@ -76,7 +80,7 @@ const Roles = () => {
   const { data, isLoading, refetch } = useFetchRoles();
 
   // Fix: Properly destructure the delete function from the hook
-  const { mutate: deleteRole, isLoading: isDeleting } = useEmployeeDelete();
+  const { mutate: deleteRole, isLoading: isDeleting } = useDeleteRoles();
 
   const roleData = filteredData || data?.datalist || [];
   const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
@@ -144,7 +148,6 @@ const Roles = () => {
       try {
         await deleteRole(roleId, {
           onSuccess: () => {
-            toast.success("Role deleted successfully");
             refetch(); // Refresh the data
             onClose(); // Close the modal
             setRoleId(null); // Clear the roleId
@@ -373,6 +376,7 @@ const Roles = () => {
                           <Button
                             size="sm"
                             color="warning"
+                            variant="flat"
                             className={`${
                               !hasRoleEditAccess
                                 ? "opacity-50 cursor-not-allowed"
@@ -382,11 +386,13 @@ const Roles = () => {
                               hasRoleEditAccess && handleAction("edit", role)
                             }
                             disabled={!hasRoleEditAccess}>
+                            <HiPencilSquare className="w-4 h-4" />
                             Edit
                           </Button>
                           <Button
                             size="sm"
                             color="danger"
+                            variant="flat"
                             className={`${
                               !hasRoleDeleteAccess
                                 ? "opacity-50 cursor-not-allowed"
@@ -397,6 +403,7 @@ const Roles = () => {
                               handleAction("delete", role)
                             }
                             disabled={!hasRoleDeleteAccess}>
+                            <MdDelete className="w-4 h-4" />
                             Delete
                           </Button>
                         </div>

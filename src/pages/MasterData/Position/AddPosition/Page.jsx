@@ -22,7 +22,7 @@ const AddPosition = () => {
     control,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const onSubmit = async (data) => {
     if (hasaccess) {
