@@ -48,6 +48,8 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     if (!checkedInStatus) {
       const requestData = {
         data: {
+          // requestLat: 27.7213826,
+          // requestLong: 85.3228181,
           requestLat: latitude,
           requestLong: longitude,
           requestDevice: "Mobile",
@@ -68,6 +70,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
               data?.error?.errorList?.[0]?.errorMessage ||
               "Something went wrong";
             toast.error(errorMessage);
+            reset();
           }
         },
       });
@@ -76,6 +79,8 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         data: {
           requestLat: latitude,
           requestLong: longitude,
+          // requestLat: 27.7213826,
+          // requestLong: 85.3228181,
           requestIp: ipAddress,
         },
       };
@@ -84,10 +89,12 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           if (data.responseCode === "200") {
             toast.success(data?.message || "Checked in successfully!");
             onStatusChange(false);
+            reset();
           } else {
             const errorMessage =
               data?.error?.errorList?.[0]?.errorMessage ||
               "Something went wrong";
+            reset();
             toast.error(errorMessage);
           }
         },
@@ -99,6 +106,8 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     const ipAddress = await getIpAddress();
     const lateCheckin = {
       data: {
+        // requestLat: 27.7213826,
+        // requestLong: 85.3228181,
         requestLat: latitude,
         requestLong: longitude,
         requestDevice: "Mobile",
@@ -119,6 +128,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           const errorMessage =
             data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
           toast.error(errorMessage);
+          reset();
         }
       },
     });

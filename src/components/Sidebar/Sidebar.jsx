@@ -51,7 +51,7 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
@@ -141,7 +141,7 @@ const Sidebar = () => {
     ? hasViewSingleAccess(MENU_NAMES.WORKFROMHOME)
     : false;
   const seeWorkFromHomeAdmin = permissionsLoaded
-    ? hasUpdateAccess(MENU_NAMES.WORKFROMHOME)
+    ? hasApproveAccess(MENU_NAMES.WFHSTATUS)
     : false;
 
   const navbarElements = [
@@ -164,7 +164,7 @@ const Sidebar = () => {
         },
         {
           icon: LuMapPinCheckInside,
-          label: "Team Lead Late Checkin ",
+          label: "Late Checkin Review",
           to: "/attendance/teamLead",
           view: seeTeamLateCheckIn,
         },
@@ -236,7 +236,7 @@ const Sidebar = () => {
           label: "WFH Status",
           to: "/WFH/Status",
           // view: seeWorkFromHome && seeWorkFromHomeAdmin,
-          view: true,
+          view: seeWorkFromHomeAdmin,
         },
         {
           icon: VscGitPullRequestNewChanges,
@@ -328,7 +328,6 @@ const Sidebar = () => {
                 <Link to="/dashboard">
                   <img src={Logo} className="w-32" alt="Logo" />
                 </Link>
-                <ThemeSwitcher />
               </>
             )}
           </div>

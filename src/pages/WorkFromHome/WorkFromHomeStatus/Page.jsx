@@ -140,7 +140,7 @@ const WorkFromHomeStatus = () => {
     const updateWFH = {
       data: {
         workFromHomeId: selectedWorkFromHome.id,
-        isApproved: true,
+        approvalStatus: "APPROVED",
       },
     };
 
@@ -186,7 +186,7 @@ const WorkFromHomeStatus = () => {
     const RejectLeave = {
       data: {
         workFromHomeId: selectedWorkFromHome.id,
-        isApproved: false,
+        approvalStatus: "REJECTED",
         remark: formData.reason,
       },
     };
@@ -280,7 +280,7 @@ const WorkFromHomeStatus = () => {
   }, [currentPage, WFHDataPerPage]);
 
   const hasWorkFromHomeReviewAccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
-  const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
+  const hasaccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
 
   useEffect(() => {
     if (!hasaccess) {

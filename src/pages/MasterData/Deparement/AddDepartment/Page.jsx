@@ -121,7 +121,7 @@ const AddDepartment = () => {
 
   return (
     <>
-      {isLoadingTeamLead ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <div className="px-4 flex flex-col space-y-4">

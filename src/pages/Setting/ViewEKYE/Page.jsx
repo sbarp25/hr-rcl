@@ -115,7 +115,10 @@ const ViewEKYE = () => {
         const data = response?.data?.data?.rclId;
         setRclId(data);
       } else {
-        toast.error(response?.data?.Message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
       toast.error("Failed to fetch RCL ID");
@@ -136,10 +139,17 @@ const ViewEKYE = () => {
         const data = response?.data?.data;
         setEmployeeData(data);
       } else {
-        toast.error(response?.data?.Message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
-      toast.error("Failed to fetch employee data");
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.message ||
+        "Something Went Wrong. Try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

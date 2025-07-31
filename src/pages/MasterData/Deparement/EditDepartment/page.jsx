@@ -62,9 +62,13 @@ const EditDepartment = () => {
     if (screenWidth >= 768) return 4; // md
     return 4; // default for smaller screens
   };
-  const { data: teamLead, isLoading } = useFetchTeamLead();
 
+  const { data: teamLead, isLoading: isTeamLeadLoading } = useFetchTeamLead();
   const { data } = useIndivisualDepartment(longid);
+  const editDepartmentMutation = useEditDepartment();
+
+  // Check if any loading operation is in progress
+  const isLoading = isTeamLeadLoading || editDepartmentMutation.isPending;
 
   useEffect(() => {
     if (data) {
@@ -77,7 +81,6 @@ const EditDepartment = () => {
     }
   }, [data, reset]);
 
-  const editDepartmentMutation = useEditDepartment();
   const onSubmit = async (data) => {
     if (hasaccess) {
       const updatedDepartment = {
@@ -99,6 +102,7 @@ const EditDepartment = () => {
       toast.error("Currently You dont have access to this setting.");
     }
   };
+
   const teamLeadid = teamLead?.datalist?.map((item) => ({
     key: item.userId, // Using id as the key
     label: item.fullName, // Using fullName as the display label
@@ -213,8 +217,10 @@ const EditDepartment = () => {
               <ButtonComponent
                 type="submit"
                 className="bg-black text-white dark:bg-white dark:text-black"
-                content={isLoading ? "Updating..." : "Update"}
-                disabled={isLoading}
+                content={
+                  editDepartmentMutation.isPending ? "Updating..." : "Update"
+                }
+                disabled={editDepartmentMutation.isPending}
               />
             </form>
           </div>

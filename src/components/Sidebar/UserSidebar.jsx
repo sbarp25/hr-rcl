@@ -168,7 +168,6 @@ const UserSidebar = () => {
                 <Link to="/dashboard">
                   <img src={Logo} className="w-32" alt="Logo" />
                 </Link>
-                <ThemeSwitcher />
               </>
             )}
           </div>

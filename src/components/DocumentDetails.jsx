@@ -226,7 +226,7 @@ const DocumentDetails = ({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* PAN Details Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-600 pt-4">
+            <h3 className="text-xl font-semibold text-gray-600 dark:text-white pt-4">
               PAN Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
@@ -401,7 +401,7 @@ const DocumentDetails = ({
 
           {/* Citizenship Details Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-600">
+            <h3 className="text-xl font-semibold text-gray-600 dark:text-white">
               Citizenship Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -413,9 +413,9 @@ const DocumentDetails = ({
                   rules={{
                     required: "Citizenship Number is required",
                     pattern: {
-                      value: /^(\d{2}-){3}\d{5}$/,
+                      value: /^[0-9/-]{3,}$/,
                       message:
-                        "Invalid format. Expected format: 00-00-00-00000",
+                        "Only numbers, '/' and '-' are allowed. Minimum 3 characters.",
                     },
                   }}
                   variant="bordered"

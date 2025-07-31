@@ -1,5 +1,6 @@
 import { Checkbox, Switch } from "@heroui/react";
 import { useTheme } from "@heroui/use-theme";
+import { useEffect } from "react";
 
 export const MoonIcon = (props) => {
   return (
@@ -40,18 +41,33 @@ export const SunIcon = (props) => {
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
-  return (
-    // <div>
-    //   {/* The current theme is: {theme} */}
-    //   <button onClick={() => setTheme("light")}>Light Mode</button>
-    //   <button onClick={() => setTheme("dark")}>Dark Mode</button>
-    // </div>
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("heroui-theme");
+    if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
+      setTheme(savedTheme);
+    }
+  }, [setTheme]);
+
+  useEffect(() => {
+    if (theme) {
+      localStorage.setItem("heroui-theme", theme);
+    }
+  }, [theme]);
+
+  const handleThemeChange = (selected) => {
+    const newTheme = selected ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("heroui-theme", newTheme);
+  };
+
+  return (
     <Switch
       color="default"
       isSelected={isDark}
-      onValueChange={(selected) => setTheme(selected ? "dark" : "light")}
+      onValueChange={handleThemeChange}
       endContent={<SunIcon />}
-      startContent={<MoonIcon />}></Switch>
+      startContent={<MoonIcon />}
+    />
   );
 };

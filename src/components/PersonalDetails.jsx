@@ -120,7 +120,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
       <div className="space-y-8 rounded-2xl mx-auto">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-gray-700 py-3">
+            <h2 className="text-2xl font-semibold text-gray-700 dark:text-white py-3">
               Personal Information
             </h2>
 
@@ -198,7 +198,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
 
           {/* Guardian Details */}
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-800">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
               Guardian Details
             </h3>
 
@@ -264,7 +264,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
 
           {/* Emergency Details */}
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-gray-800">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
               Emergency Details
             </h3>
 
@@ -274,10 +274,10 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                 name="emergencyName"
                 control={control}
                 rules={{
-                  required: "Emergency Name is required",
+                  required: " Name is required",
                   minLength: {
                     value: 3,
-                    message: "Emergency Name must atleast be 3 character long",
+                    message: " Name must atleast be 3 character long",
                   },
                   validate: {
                     onlyLettersAndSpaces: (value) =>
@@ -287,7 +287,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                       !/^\s/.test(value) || "Name must not start with a space",
                   },
                 }}
-                label="Emergency Name"
+                label="Full Name"
                 variant="bordered"
                 type="text"
                 inputClassName="w-full rounded-xl"
@@ -299,13 +299,13 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                 name="emergencyNumber"
                 control={control}
                 rules={{
-                  required: "Emergency Number is required",
+                  required: " Number is required",
                   pattern: {
                     value: /^9[0-9]{9}$/,
                     message: "Phone must start with 9 and be 10 digits long",
                   },
                 }}
-                label="Emergency Phone"
+                label=" Phone Number"
                 variant="bordered"
                 type="text"
                 inputClassName="w-full rounded-xl"
@@ -317,18 +317,17 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                 name="emergencyRelation"
                 control={control}
                 rules={{
-                  required: "Emergency Relation is required",
+                  required: "Relation is required",
                   minLength: {
                     value: 3,
-                    message:
-                      "Emergency Relation must atleast be 3 character long",
+                    message: "Relation must atleast be 3 character long",
                   },
                   pattern: {
                     value: /^[^\s]/,
                     message: "Relation cannot start with a space",
                   },
                 }}
-                label="Emergency Relationship"
+                label=" Relation"
                 variant="bordered"
                 type="text"
                 inputClassName="w-full rounded-xl"

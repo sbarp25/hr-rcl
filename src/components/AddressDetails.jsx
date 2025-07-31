@@ -487,13 +487,13 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       {isLoading && <Loader message="Loading please wait" />}
       <ValidationComponent>
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-700 py-3">
+          <h2 className="text-2xl font-semibold text-gray-700 dark:text-white py-3">
             Address Details
           </h2>
           <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
             {/* Permanent Address */}
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-gray-600">
+              <h3 className="text-xl font-semibold text-gray-600 dark:text-white">
                 Permanent Address
               </h3>
 
@@ -666,7 +666,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
             {/* Temporary Address */}
             <div className="space-y-4">
               <div className="flex flex-col justify-start gap-x-4 my-4">
-                <h3 className="text-xl font-semibold text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-600 dark:text-white">
                   Temporary Address
                 </h3>
                 <Controller

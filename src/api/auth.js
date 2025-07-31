@@ -91,26 +91,32 @@ export const logoutUser = async () => {
   const accessToken = localStorage.getItem("accessToken");
   if (!accessToken) {
     toast.error("Access Token not found");
+    return;
   }
-  const LogoutData = {
-    data: {
-      jwtToken: accessToken,
-    },
-  };
-  const response = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-    LogoutData,
-    {
-      headers: {
-        "Content-Type": "application/json",
+
+  try {
+    const LogoutData = {
+      data: {
+        jwtToken: accessToken,
       },
+    };
+    const response = await axiosInstance.post(
+      `/api/v1/auth/logout`,
+      LogoutData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.data?.responseCode === "200") {
+      localStorage.clear();
+    } else {
+      const errorMessage = response?.data?.error?.errorList?.[0]?.errorMessage;
+      throw new Error(errorMessage || "Log In Failed");
     }
-  );
-  if (response.data?.responseCode === "200") {
+  } catch {
     localStorage.clear();
-  } else {
-    const errorMessage = response?.data?.error?.errorList?.[0]?.errorMessage;
-    throw new Error(errorMessage || "Log In Failed");
   }
 };
 
@@ -659,6 +665,19 @@ export const fetchEkye = async (currentPage, ekyeDashboardDataPerPage) => {
 
 /**fetch Employee Data */
 export const fetchEmployeeDetails = async (rclId) => {
+  const response = await axiosInstance.post(
+    `/api/v1/admin/complete-details/rclId`,
+    { data: { rclId: rclId } }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch fetch employee details"
+    );
+  }
+};
+export const fetchEmployeeEKYEDetails = async (rclId) => {
   const response = await axiosInstance.post(
     `/api/v1/admin/complete-details/rclId`,
     { data: { rclId: rclId } }

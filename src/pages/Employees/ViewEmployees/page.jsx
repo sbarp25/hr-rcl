@@ -3,7 +3,7 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import GoBack from "../../../components/GoBack";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import EkyeDocumentDetail from "../../../components/Ekye/View/Document";
 import Personal from "../../../components/Ekye/View/Personal";
 import EkyeAddress from "../../../components/Ekye/View/Address";
@@ -204,7 +204,9 @@ const ViewEKYE = () => {
 
   const { data: RCLIdData } = useEmployeeRCL();
 
-  const rclId = RCLIdData?.data?.rclId;
+  // const rclId = RCLIdData?.data?.rclId;
+  const { rclId } = useParams();
+  console.log(rclId);
 
   const { data: EmployeeEKYEData, isLoading } = useEmployeeDetails(rclId);
 

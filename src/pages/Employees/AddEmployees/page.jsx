@@ -113,7 +113,7 @@ const AddEmployeeForm = () => {
   }));
   return (
     <>
-      {positionIsLoading ? (
+      {isPending ? (
         <Loader />
       ) : (
         <div className="container space-y-4">

@@ -268,6 +268,7 @@ export const useFetchLateCheckin = (currentPage, lateCheckInDataPerPage) => {
   return useQuery({
     queryKey: ["FetchLateChekin", currentPage, lateCheckInDataPerPage],
     queryFn: () => fetchlateCheckin(currentPage, lateCheckInDataPerPage),
+    staleTime: 0,
     onError: (error) => {
       const errorMessage =
         error?.message || "Failed to fetch late check-in data";
@@ -281,8 +282,9 @@ export const useFetchTeamLateCheckin = (
   lateCheckInDataPerPage
 ) => {
   return useQuery({
-    queryKey: ["FetchLateChekin", currentPage, lateCheckInDataPerPage],
+    queryKey: ["FetchTeamLeadLateChekin", currentPage, lateCheckInDataPerPage],
     queryFn: () => fetchTeamlateCheckin(currentPage, lateCheckInDataPerPage),
+    staleTime: 0,
     onError: (error) => {
       const errorMessage =
         error?.message || "Failed to fetch late check-in data";
@@ -309,7 +311,7 @@ export const useLateCheckInApprove = () => {
         toast.error(errorMessage);
       }
       // Invalidate and refetch late check-in data
-      queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
+      queryClient.invalidateQueries({ queryKey: ["FetchTeamLeadLateChekin"] });
     },
     onError: (error) => {
       const errorMessage =
@@ -340,7 +342,7 @@ export const useLateCheckinReject = () => {
         toast.error(errorMessage);
       }
       // Invalidate and refetch late check-in data
-      queryClient.invalidateQueries({ queryKey: ["FetchLateChekin"] });
+      queryClient.invalidateQueries({ queryKey: ["FetchTeamLeadLateChekin"] });
     },
     onError: (error) => {
       const errorMessage =

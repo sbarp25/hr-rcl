@@ -60,7 +60,7 @@ const WorkFromHome = () => {
   };
   return (
     <>
-      <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
+      <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm ">
         <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
           <p className="hidden md:block text-xl font-bold">Work From Home</p>
           <p className="flex md:hidden text-xl font-bold">WFH</p>
@@ -86,10 +86,10 @@ const WorkFromHome = () => {
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-800">
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                           {data.userName || data.fullName || "Unknown"}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-white">
                           Department: {data.departmentName || "N/A"}
                         </p>
                       </div>
@@ -98,16 +98,18 @@ const WorkFromHome = () => {
                     <div className="border-t border-gray-200 dark: pt-3">
                       <div className="flex justify-between items-center">
                         <div className="text-sm">
-                          <span className="font-medium text-gray-500">
+                          <span className="font-medium text-gray-500 dark:text-white">
                             From:
                           </span>
-                          <span className="ml-1 text-gray-800">
+                          <span className="ml-1 text-gray-800 dark:text-white">
                             {formatDate(data.workFromHomeStartDate)}
                           </span>
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium text-gray-500">To:</span>
-                          <span className="ml-1 text-gray-800">
+                          <span className="font-medium text-gray-500 dark:text-white">
+                            To:
+                          </span>
+                          <span className="ml-1 text-gray-800 dark:text-white">
                             {formatDate(data.workFromHomeEndDate)}
                           </span>
                         </div>
