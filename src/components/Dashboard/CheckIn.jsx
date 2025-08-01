@@ -145,7 +145,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   return (
     <>
       {isloading && <Loader />}
-      <div className="flex justify-end items-center ">
+      <div className="flex justify-end items-center space-x-4">
         <div className="">
           {checkedInStatus ? (
             <MdRadioButtonChecked className="text-green-700 h-8 w-8 md:h-10 md:w-10" />

@@ -51,7 +51,10 @@ const Sidebar = () => {
   const email = localStorage.getItem("email");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
+    const saved = LocalStorageUtil.getItem("sidebarExpanded");
+    return saved !== null ? saved : false;
+  });
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
@@ -93,6 +96,10 @@ const Sidebar = () => {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+  useEffect(() => {
+    LocalStorageUtil.setItem("sidebarExpanded", isSidebarExpanded);
+  }, [isSidebarExpanded]);
 
   // Get permission values (will be recalculated when component re-renders)
   const seeEmployee = permissionsLoaded
@@ -214,7 +221,7 @@ const Sidebar = () => {
       children: [
         {
           icon: GrStatusGoodSmall,
-          label: "Leave Status",
+          label: "Review Leave",
           to: "/Leave/Status",
           view: seeLeaveStatus,
         },
@@ -233,7 +240,7 @@ const Sidebar = () => {
       children: [
         {
           icon: GrStatusGoodSmall,
-          label: "WFH Status",
+          label: "Review WFH",
           to: "/WFH/Status",
           // view: seeWorkFromHome && seeWorkFromHomeAdmin,
           view: seeWorkFromHomeAdmin,
@@ -277,9 +284,10 @@ const Sidebar = () => {
         toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
+      // const errorMessage =
+      //   error.response?.data?.errorList?.[0]?.errorMessage ||
+      //   "Something went wrong";
+      // toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

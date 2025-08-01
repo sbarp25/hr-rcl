@@ -13,6 +13,7 @@ import {
   useDocumentDetails,
   useSaveDocumentDetails,
 } from "../hooks/useAuth.js";
+import truncateText from "../utils/truncateText.js";
 
 const DocumentDetails = ({
   formData,
@@ -317,19 +318,22 @@ const DocumentDetails = ({
                               : value?.name || documentUrls.panCardDocumentUrl
                           } border-2 rounded-2xl p-2 overflow-hidden `}>
                           {/* Left icon */}
-                          <CiImageOn className="text-3xl text-gray-400" />
+                          <CiImageOn className="text-3xl text-gray-400 dark:text-white" />
 
                           {/* Text area (fake input) */}
                           <div className="flex-1 px-2 py-2.5">
                             <span
                               className={`text-sm ${
                                 value?.name || documentUrls.panCardDocumentUrl
-                                  ? "text-gray-700 font-medium"
-                                  : "text-gray-500"
+                                  ? "text-gray-700 font-medium dark:text-white"
+                                  : "text-gray-500 dark:text-white"
                               } truncate block`}>
                               {value?.name
-                                ? value.name
-                                : documentUrls.panCardDocumentUrl
+                                ? truncateText(value.name, 25)
+                                : truncateText(
+                                    documentUrls.panCardDocumentUrl,
+                                    25
+                                  )
                                 ? "File uploaded successfully"
                                 : "Upload Front photo of Pan Card"}
                             </span>
@@ -370,13 +374,13 @@ const DocumentDetails = ({
 
                         {/* Error message */}
                         {formState.errors.panCardDocumentFile && (
-                          <p className="mt-1 text-sm text-danger">
+                          <p className="mt-1 text-sm text-danger ">
                             {formState.errors.panCardDocumentFile.message}
                           </p>
                         )}
 
                         {/* Help text */}
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-1 text-xs text-gray-500 dark:text-white">
                           Please upload PNG or JPG image under 1 MB
                         </p>
 
@@ -503,7 +507,7 @@ const DocumentDetails = ({
                               : "border-gray-300"
                           } border-2 rounded-2xl p-2 overflow-hidden`}>
                           {/* Left icon */}
-                          <CiImageOn className="text-3xl text-gray-400" />
+                          <CiImageOn className="text-3xl text-gray-400 dark:text-white" />
 
                           {/* Text area */}
                           <div className="flex-1 px-2 py-2.5">
@@ -511,12 +515,15 @@ const DocumentDetails = ({
                               className={`text-sm ${
                                 value?.name ||
                                 documentUrls.citizenshipFrontDocumentUrl
-                                  ? "text-gray-700 font-medium"
-                                  : "text-gray-500"
+                                  ? "text-gray-700 dark:text-white font-medium"
+                                  : "text-gray-500 dark:text-white"
                               } truncate block`}>
                               {value?.name
-                                ? value.name
-                                : documentUrls.citizenshipFrontDocumentUrl
+                                ? truncateText(value.name, 25)
+                                : truncateText(
+                                    documentUrls.citizenshipFrontDocumentUrl,
+                                    25
+                                  )
                                 ? "File uploaded successfully"
                                 : "Upload Front photo of Citizenship"}
                             </span>
@@ -614,7 +621,7 @@ const DocumentDetails = ({
                               : "border-gray-300"
                           } border-2 rounded-2xl p-2 overflow-hidden`}>
                           {/* Icon */}
-                          <CiImageOn className="text-3xl text-gray-400" />
+                          <CiImageOn className="text-3xl text-gray-400 dark:text-white" />
 
                           {/* Text display */}
                           <div className="flex-1 px-2 py-2.5">
@@ -622,12 +629,15 @@ const DocumentDetails = ({
                               className={`text-sm ${
                                 value?.name ||
                                 documentUrls.citizenshipBackDocumentUrl
-                                  ? "text-gray-700 font-medium"
-                                  : "text-gray-500"
+                                  ? "text-gray-700 font-medium dark:text-white"
+                                  : "text-gray-500 dark:text-white"
                               } truncate block`}>
                               {value?.name
-                                ? value.name
-                                : documentUrls.citizenshipBackDocumentUrl
+                                ? truncateText(value.name, 25)
+                                : truncateText(
+                                    documentUrls.citizenshipBackDocumentUrl,
+                                    25
+                                  )
                                 ? "File uploaded successfully"
                                 : "Upload Back photo of Citizenship"}
                             </span>

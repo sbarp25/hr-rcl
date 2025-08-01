@@ -19,6 +19,10 @@ import {
   useDisclosure,
   Avatar,
   Tooltip,
+  Modal,
+  ModalContent,
+  ModalBody,
+  Button,
 } from "@heroui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -27,18 +31,28 @@ import { RxCross2 } from "react-icons/rx";
 import axiosInstance from "../../lib/axios-Instance";
 import getInitials from "../../utils/getInitials";
 import {
+  hasApproveAccess,
   hasReadAccess,
   hasUpdateAccess,
   hasViewSingleAccess,
   MENU_NAMES,
+  permissionManager,
 } from "../../utils/permissionUtils.js";
 import truncateText from "../../utils/truncateText.js";
 import { useLogout } from "../../hooks/useAuth.js";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
+import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 const MobileNavigation = () => {
   const [imageURL, setImageURL] = useState("");
+  const [permissionsLoaded, setPermissionsLoaded] = useState(false);
   const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenLogout,
+    onOpen: onOpenLogout,
+    onOpenChange: onOpenChangeLogout,
+    onClose: onCloseLogout,
+  } = useDisclosure();
   const username = localStorage.getItem("fullName");
   const email = localStorage.getItem("email");
   const logoutMutation = useLogout();
@@ -46,34 +60,58 @@ const MobileNavigation = () => {
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
+  const [, forceUpdate] = useState({});
+  const triggerRerender = () => forceUpdate({});
 
-  const seeEmployee = hasReadAccess(MENU_NAMES.EMPLOYEES);
-
-  const seeDashboard = true;
-
-  const seeDepartment = hasReadAccess(MENU_NAMES.DEPARTMENT);
-  /**To check Position see status */
-  const seePosition = hasReadAccess(MENU_NAMES.POSITION);
-  const seeRole = hasReadAccess(MENU_NAMES.ROLES);
-  const seeMasterData = hasViewSingleAccess(MENU_NAMES.MASTERDATA);
-  const seeAttendance = hasViewSingleAccess(MENU_NAMES.ATTENDANCE);
-  // const seeAttendance = true;
-
-  const seeMyAttendance = hasReadAccess(MENU_NAMES.MYATTENDANCE);
-  const seeLateCheckIn = hasReadAccess(MENU_NAMES.LATECHECKIN);
-  const seeHandbook = hasReadAccess(MENU_NAMES.HANDBOOK);
-
-  const seeNotices = hasReadAccess(MENU_NAMES.NOTICE);
-  const seeLeave = hasViewSingleAccess(MENU_NAMES.LEAVE);
-
-  const seeLeaveStatus = hasReadAccess(MENU_NAMES.LEAVESTATUS);
-  const seeLeaveRequest = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
-  const seeEKYE = hasReadAccess(MENU_NAMES.EKYE);
-
-  const seeWorkFromHome = hasViewSingleAccess(MENU_NAMES.WORKFROMHOME);
-
-  const seeWorkFromHomeAdmin = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
-  const seeTeamLateCheckIn = hasUpdateAccess(MENU_NAMES.WORKFROMHOME);
+  // Get permission values (will be recalculated when component re-renders)
+  const seeEmployee = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.EMPLOYEES)
+    : false;
+  const seeDashboard = true; // Dashboard is always visible
+  const seeDepartment = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.DEPARTMENT)
+    : false;
+  const seePosition = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.POSITION)
+    : false;
+  const seeRole = permissionsLoaded ? hasReadAccess(MENU_NAMES.ROLES) : false;
+  const seeMasterData = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.MASTERDATA)
+    : false;
+  const seeAttendance = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.ATTENDANCE)
+    : false;
+  const seeMyAttendance = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.MYATTENDANCE)
+    : false;
+  const seeLateCheckIn = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LATECHECKIN)
+    : false;
+  const seeTeamLateCheckIn = permissionsLoaded
+    ? hasApproveAccess(MENU_NAMES.LATECHECKIN)
+    : false;
+  const seeHandbook = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.HANDBOOK)
+    : false;
+  const seeNotices = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.NOTICE)
+    : false;
+  const seeLeave = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.LEAVE)
+    : false;
+  const seeLeaveStatus = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LEAVESTATUS)
+    : false;
+  const seeLeaveRequest = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.LEAVEREQUEST)
+    : false;
+  const seeEKYE = permissionsLoaded ? hasReadAccess(MENU_NAMES.EKYE) : false;
+  const seeWorkFromHome = permissionsLoaded
+    ? hasViewSingleAccess(MENU_NAMES.WORKFROMHOME)
+    : false;
+  const seeWorkFromHomeAdmin = permissionsLoaded
+    ? hasApproveAccess(MENU_NAMES.WFHSTATUS)
+    : false;
 
   const navbarElements = [
     {
@@ -95,7 +133,7 @@ const MobileNavigation = () => {
         },
         {
           icon: LuMapPinCheckInside,
-          label: "Team Lead Late Checkin ",
+          label: "Late Checkin Review",
           to: "/attendance/teamLead",
           view: seeTeamLateCheckIn,
         },
@@ -145,7 +183,7 @@ const MobileNavigation = () => {
       children: [
         {
           icon: GrStatusGoodSmall,
-          label: "Leave Status",
+          label: "Review Leave",
           to: "/Leave/Status",
           view: seeLeaveStatus,
         },
@@ -164,10 +202,10 @@ const MobileNavigation = () => {
       children: [
         {
           icon: GrStatusGoodSmall,
-          label: "WFH Status",
+          label: "Review WFH",
           to: "/WFH/Status",
           // view: seeWorkFromHome && seeWorkFromHomeAdmin,
-          view: true,
+          view: seeWorkFromHomeAdmin,
         },
         {
           icon: VscGitPullRequestNewChanges,
@@ -184,6 +222,23 @@ const MobileNavigation = () => {
       view: seeEKYE,
     },
   ];
+
+  useEffect(() => {
+    const checkPermissions = () => {
+      const menu = LocalStorageUtil.getItem("menu");
+      // Check if menu exists in localStorage
+      if (menu !== null && menu !== undefined) {
+        setPermissionsLoaded(true);
+        permissionManager.refresh(); // Refresh the permission manager
+        triggerRerender();
+      } else {
+        // If permissions not loaded, check again after a short delay
+        setTimeout(checkPermissions, 100);
+      }
+    };
+
+    checkPermissions();
+  }, []);
 
   const toggleDropdown = (index) => {
     setExpandedDropdown(expandedDropdown === index ? null : index);
@@ -206,12 +261,16 @@ const MobileNavigation = () => {
       if (response.data.responseCode === "200") {
         setImageURL(response.data.data?.profilePicture);
       } else {
-        toast.error(response.data.message);
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
+        toast.error(errorMessage);
       }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong";
-      toast.error(errorMessage);
+      // const errorMessage =
+      //   error.response?.data?.errorList?.[0]?.errorMessage ||
+      //   "Something went wrong";
+      // toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -333,12 +392,9 @@ const MobileNavigation = () => {
                     );
                   })}
                 </div>
-                {/* <button>
-                  <CheckIn />
-                </button> */}
                 <button className="">
                   <CiLogout
-                    onClick={handleLogOut}
+                    onClick={onOpenLogout}
                     className="text-2xl text-red-500  hover:scale-125"
                   />
                 </button>
@@ -347,6 +403,35 @@ const MobileNavigation = () => {
           )}
         </DrawerContent>
       </Drawer>
+
+      <Modal
+        isOpen={isOpenLogout}
+        onOpenChange={onOpenChangeLogout}
+        isDismissable={true}
+        placement="center"
+        size="sm"
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center">
+                <p>Are you sure you want to Log out ?</p>
+                <div className="flex gap-y-2 justify-center mt-4 ">
+                  <div className="h-16"></div>
+                  <div className="flex items-center space-x-6">
+                    <Button
+                      className="bg-black text-white"
+                      onPress={handleLogOut}>
+                      Log Out
+                    </Button>
+                    <Button onPress={onClose}>Cancel</Button>
+                  </div>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

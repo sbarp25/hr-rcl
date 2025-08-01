@@ -271,7 +271,7 @@ const SelfWorkFromHome = () => {
                         <TableRow
                           key={item.id || item.workFromHomeId}
                           className="hover:bg-gray-50">
-                          <TableCell>{item?.fullName}</TableCell>
+                          <TableCell>{item?.userFullName}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
                               <span>
@@ -283,16 +283,18 @@ const SelfWorkFromHome = () => {
                             <span>{item?.workFromHomeEndDate || "N/A"}</span>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base ${getStatusClass(
-                                  item?.approvalStatus
-                                )}`}>
-                                {item?.teamLeaderName?.charAt(0) || "?"}
-                              </div>
-                              <div className="text-sm truncate max-w-20">
-                                {item?.teamLeaderName || "N/A"}
-                              </div>
+                            {" "}
+                            <div
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
+                                item?.approvalStatus
+                              )}`}>
+                              {item?.approvalStatus === "PENDING"
+                                ? "Pending"
+                                : item?.approvalStatus === "APPROVED"
+                                ? "Approved"
+                                : item?.approvalStatus === "REJECTED"
+                                ? "Rejected"
+                                : "N/A"}{" "}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -316,7 +318,7 @@ const SelfWorkFromHome = () => {
                           className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
                           onClick={() => toggleExpandedRow(WFH.id)}>
                           <div className="font-medium">
-                            {WFH.fullName || "N/A"}
+                            {WFH.userFullName || "N/A"}
                           </div>
                           <div className="flex items-center gap-2">
                             <div
@@ -348,10 +350,6 @@ const SelfWorkFromHome = () => {
                           <div className="grid grid-cols-2 gap-2">
                             <div className="font-medium">End Date:</div>
                             <div>{WFH?.workFromHomeEndDate || "N/A"}</div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="font-medium">Team Leader:</div>
-                            <div>{WFH?.teamLeaderName || "N/A"}</div>
                           </div>
                         </div>
                       </div>

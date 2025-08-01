@@ -47,15 +47,21 @@ const Page = () => {
     <>
       <div className="w-full h-[97vh] overflow-y-auto">
         <div className="w-full flex flex-col gap-4 ">
-          <div className="">
-            {email === "superadmin@rebootedcl.com" ? (
-              ""
-            ) : (
-              <CheckIn
-                checkedInStatus={checkedInStatus}
-                onStatusChange={handleStatusChange}
-              />
-            )}
+          {/* Theme Switcher and CheckIn next to each other */}
+          <div className="flex items-center justify-end gap-4">
+            <div className="">
+              <ThemeSwitcher />
+            </div>
+            <div className="">
+              {email === "superadmin@rebootedcl.com" ? (
+                ""
+              ) : (
+                <CheckIn
+                  checkedInStatus={checkedInStatus}
+                  onStatusChange={handleStatusChange}
+                />
+              )}
+            </div>
           </div>
           {/* <TemporaryAdmin /> */}
           {/* Welcome Banner */}
@@ -63,9 +69,6 @@ const Page = () => {
             <p className="font-light text-lg leading-10">
               Welcome, {username || "User"}
             </p>
-            <div className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2">
-              <ThemeSwitcher />
-            </div>
           </div>
           {/* Weekly Attendance Report */}
           <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm ">

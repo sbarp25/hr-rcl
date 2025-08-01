@@ -30,7 +30,10 @@ import Loader from "../Loader/Loader.jsx";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 const UserSidebar = () => {
   const [imageURL, setImageURL] = useState("");
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
+    const saved = LocalStorageUtil.getItem("sidebarExpanded");
+    return saved !== null ? saved : false;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -41,6 +44,10 @@ const UserSidebar = () => {
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
+
+  useEffect(() => {
+    LocalStorageUtil.setItem("sidebarExpanded", isSidebarExpanded);
+  }, [isSidebarExpanded]);
 
   const seeProfile = true;
   const seeDashboard = true;

@@ -279,7 +279,7 @@ const Page = () => {
                             <FaEdit
                               className={`text-xl ${
                                 hasActionAccess
-                                  ? "text-yellow-500 cursor-pointer hover:text-yellow-700"
+                                  ? "text-amber-600 dark:text-amber-500 cursor-pointer hover:text-amber-800 dark:hover:text-amber-300"
                                   : "text-gray-400 cursor-not-allowed"
                               }`}
                               title={
@@ -345,7 +345,13 @@ const Page = () => {
                           : "N/A"}
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm">{data?.email || "N/A"}</span>
+                        {data?.email?.length < 7 ? (
+                          data?.email
+                        ) : (
+                          <Tooltip content={data?.email}>
+                            {truncateText(data?.email, 7)}
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">

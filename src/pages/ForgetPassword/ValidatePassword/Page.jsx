@@ -103,10 +103,10 @@ const ResetForGetPassword = () => {
         <Loader message="Please wait while the work is being done" />
       )}
       {showPassword ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
             {/* Left Section */}
-            <div className="hidden md:flex bg-bgprimary  flex-col items-center justify-center text-white px-12 py-20">
+            <div className="hidden md:flex bg-bgprimary dark:bg-gray-800 flex-col items-center justify-center text-white px-12 py-20">
               <img src={Logo} alt="logo" className="w-72 mb-8" />
               <p className="text-2xl font-medium text-center leading-10">
                 Whispers of Code, <br /> Symphonies of Solution
@@ -115,7 +115,7 @@ const ResetForGetPassword = () => {
 
             {/*  Reset Password Form */}
             <div className="px-16 py-20 flex flex-col justify-center">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white dark:text- mb-6">
                 Reset Password
               </h1>
 
@@ -167,7 +167,7 @@ const ResetForGetPassword = () => {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className={` bg-bgprimary text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
+                  className={` bg-bgprimary dark:bg-white text-white dark:text-black py-3 rounded-lg transition-colors ease-in-out duration-200 ${
                     errors.password || errors.confirmPassword
                       ? " cursor-not-allowed"
                       : ""

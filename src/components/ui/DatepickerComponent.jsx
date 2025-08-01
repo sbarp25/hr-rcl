@@ -1,5 +1,5 @@
 import { Controller } from "react-hook-form";
-import { getLocalTimeZone, parseDate } from "@internationalized/date";
+import { getLocalTimeZone, parseDate, now } from "@internationalized/date";
 import { DatePicker } from "@heroui/react";
 
 // Helper function to convert string date to CalendarDate
@@ -60,6 +60,7 @@ const DatepickerComponent = ({
   compareErrorMessage = "",
   placeholderDate = null,
   disabled,
+  minValue,
 }) => {
   const validationRules = {
     ...rules,
@@ -123,6 +124,7 @@ const DatepickerComponent = ({
                 onChange={(date) => {
                   field.onChange(date);
                 }}
+                minValue={minValue}
               />
             </>
           );

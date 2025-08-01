@@ -188,19 +188,20 @@ const AllTrustedDevices = () => {
                 </div>
               </div>
             ))}
-          </div>
-
-          {trustedDevices.length === 0 && (
-            <div className="text-center py-12">
-              <CiMonitor className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No trusted devices found
-              </h3>
-              <p className="text-gray-500 dark:text-white">
-                Your trusted devices will appear here once you add them.
-              </p>
+            <div className="w-full  flex justify-center ">
+              {trustedDevices.length === 0 && (
+                <div className="text-center py-12">
+                  <CiMonitor className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    No trusted devices found
+                  </h3>
+                  <p className="text-gray-500 dark:text-white">
+                    Your trusted devices will appear here once you add them.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       <Modal
