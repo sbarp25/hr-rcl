@@ -388,7 +388,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
       );
 
       if (response?.data?.responseCode === "201") {
-        toast.success(response?.data?.message);
+        // toast.success(response?.data?.message);
         handleNext();
       } else {
         const errorMessage =
@@ -874,7 +874,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
               <div className="form-navigation flex justify-between mt-6">
                 <Button
                   onPress={handleBack}
-                  className="px-4 py-2 bg-gray-300 rounded">
+                  className="px-6 py-3 bg-gray-300 dark:bg-slate-500 text-gray-700 dark:text-white rounded-lg">
                   Back
                 </Button>
                 <button

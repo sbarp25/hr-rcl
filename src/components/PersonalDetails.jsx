@@ -341,7 +341,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
             <Button
               onPress={handleBack}
               isDisabled
-              className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg">
+              className="px-6 py-3 bg-gray-300 dark:bg-slate-500 text-gray-700 dark:text-white rounded-lg">
               Back
             </Button>
             <Button

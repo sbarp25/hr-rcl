@@ -151,7 +151,7 @@ const DocumentDetails = ({
 
     saveDocuments(formDataToSubmit, {
       onSuccess: (response) => {
-        toast.success(response.message);
+        // toast.success(response.message);
 
         // Update formData to maintain state consistency
         setFormData((prev) => ({
@@ -709,8 +709,8 @@ const DocumentDetails = ({
             <div className="form-navigation flex justify-between mt-6">
               <Button
                 onPress={handleBack}
-                className="px-4 py-2 bg-gray-300 rounded"
-                type="button">
+                type="button"
+                className="px-6 py-3 bg-gray-300 dark:bg-slate-500 text-gray-700 dark:text-white rounded-lg">
                 Back
               </Button>
               <Button

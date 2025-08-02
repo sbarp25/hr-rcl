@@ -689,8 +689,8 @@ export const fetchEmployeeDetails = async (rclId) => {
 };
 export const fetchEmployeeEKYEDetails = async (rclId) => {
   const response = await axiosInstance.post(
-    `/api/v1/admin/complete-details/rclId`,
-    { data: { rclId: rclId } }
+    `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`,
+    {}
   );
   if (response?.data?.responseCode === "200") {
     return response?.data;

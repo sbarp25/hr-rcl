@@ -10,6 +10,9 @@ import EkyeAddress from "../../../components/Ekye/View/Address";
 import UserEducation from "../../../components/Ekye/View/UserEducation";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../../components/Loader/Loader";
+import { FaBell, FaCheck, FaCross } from "react-icons/fa6";
+import { ImCross } from "react-icons/im";
+import { Tooltip } from "@heroui/react";
 
 const tabData = [
   {
@@ -132,8 +135,9 @@ const ViewEKYE = () => {
 
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get(
-        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`
+      const response = await axiosInstance.post(
+        `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`,
+        {}
       );
       if (response.data.responseCode === "200") {
         const data = response?.data?.data;
@@ -179,7 +183,32 @@ const ViewEKYE = () => {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 max-w-full sm:max-w-full md:max-w-6xl lg:max-w-7xl xl:max-w-screen-2xl">
       <h1 className="page-title my-2 sm:my-3 md:my-4 lg:my-5 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800">
-        EKYE
+        <div className="flex items-center gap-3">
+          <span className="">EKYE</span>
+          <div className="flex items-center justify-center">
+            {employeeData?.approvalStatus === "APPROVED" ? (
+              <Tooltip content="Your EKYE has been approved" placement="right">
+                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-green-100 rounded-full border-2 border-green-200 shadow-sm">
+                  <FaCheck className="text-green-600 text-sm sm:text-base md:text-lg" />
+                </div>
+              </Tooltip>
+            ) : employeeData?.approvalStatus === "REJECTED" ? (
+              <Tooltip content="Your EKYE has been Rejected" placement="right">
+                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-red-100 rounded-full border-2 border-red-200 shadow-sm">
+                  <ImCross className="text-red-600 text-xs sm:text-sm md:text-base" />
+                </div>
+              </Tooltip>
+            ) : (
+              <Tooltip
+                content="Your EKYE is waiting for approval"
+                placement="right">
+                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-amber-100 rounded-full border-2 border-amber-200 shadow-sm animate-pulse">
+                  <FaBell className="text-amber-600 text-sm sm:text-base md:text-lg" />
+                </div>
+              </Tooltip>
+            )}
+          </div>
+        </div>
       </h1>
 
       <div className="">

@@ -13,7 +13,7 @@ import PersonalAction from "./Action/PersonalAction";
 import AddressAction from "./Action/AddressAction";
 import DocumentAction from "./Action/DocumentAction";
 import EducationAction from "./Action/EducationAction";
-import { useEmployeeDetails } from "../../hooks/useAuth";
+import { useEmployeeEKYEDetails } from "../../hooks/useAuth";
 
 const EkyeAction = () => {
   const { rclId } = useParams();
@@ -24,7 +24,7 @@ const EkyeAction = () => {
     onOpen();
   }, [onOpen]);
 
-  const { data } = useEmployeeDetails(rclId);
+  const { data } = useEmployeeEKYEDetails(rclId);
 
   const employeeData = data?.data || [];
 

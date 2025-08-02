@@ -10,7 +10,11 @@ import RejectComp from "../../RejectComp";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import Loader from "../../Loader/Loader.jsx";
-import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import {
+  hasApproveAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -28,15 +32,14 @@ const EducationAction = ({ employeeData }) => {
     }
   }, [employeeData]);
 
-  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasEKYEApproveAccess = hasApproveAccess(MENU_NAMES.EKYE);
   const onApprove = async () => {
     const submitData = {
       userId: rclId,
       status: "APPROVED",
-      remark: "Congrulations",
     };
     try {
-      if (hasApproveAccess) {
+      if (hasEKYEApproveAccess) {
         const response = await axiosInstance.post(
           "/api/v1/approved/users",
           submitData,
@@ -50,7 +53,7 @@ const EducationAction = ({ employeeData }) => {
           toast.success(response?.data?.message);
           navigate("/AdminEkye");
         } else {
-          toast.error(response?.data?.data?.message);
+          toast.error(response?.data?.error?.errorList?.[0]?.errorMessage);
         }
       } else {
         toast.error("Access Denied");
@@ -150,17 +153,17 @@ const EducationAction = ({ employeeData }) => {
           )}
         </div>
 
-        {/* Buttons Section */}
-        {employeeData?.status === "PENDING" ||
-          (employeeData?.status === "REJECTED" && (
-            <div className="mt-6 flex justify-end gap-4">
-              <RejectComp employeeData={employeeData} />
-              <Button className="bg-emerald-500 text-white" onPress={onApprove}>
-                <FaCheck />
-                Approve
-              </Button>
-            </div>
-          ))}
+        {/* Buttons Section  */}
+        {(employeeData?.approvalStatus === "REJECTED" ||
+          employeeData?.approvalStatus === "PENDING") && (
+          <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
+            <RejectComp employeeData={employeeData} />
+            <Button className="bg-teal-500 text-white" onPress={onApprove}>
+              <FaCheck />
+              Approve
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );

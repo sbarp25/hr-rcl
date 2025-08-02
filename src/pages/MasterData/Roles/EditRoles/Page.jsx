@@ -176,7 +176,7 @@ const EditRole = () => {
     const updatedRole = {
       data: {
         selectedActions: selectedActions,
-        roleName: formData.roleName,
+        name: formData.roleName,
         description: formData.roleDescription,
         isActive: true,
       },

@@ -24,7 +24,7 @@ const Calander = ({ employeeData, calendarData: propsCalendarData }) => {
       );
 
       if (response.data.responseCode === "200") {
-        setCalanderData(response.data.datalist);
+        setCalanderData(response.data.datalist || []);
       }
     } catch (error) {
       const errorMessage =

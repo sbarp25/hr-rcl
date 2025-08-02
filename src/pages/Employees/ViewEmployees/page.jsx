@@ -206,12 +206,10 @@ const ViewEKYE = () => {
 
   // const rclId = RCLIdData?.data?.rclId;
   const { rclId } = useParams();
-  console.log(rclId);
 
   const { data: EmployeeEKYEData, isLoading } = useEmployeeDetails(rclId);
 
   const employeeData = EmployeeEKYEData?.data;
-  console.log(employeeData);
 
   /**To check Employee see status */
   const seeEKYEAccess = true;

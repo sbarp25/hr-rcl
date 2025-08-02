@@ -80,7 +80,7 @@ const EkyeAddress = ({ employeeData }) => {
               </div>
             </div>
           </div>
-          <fiv className="space-y-4 w-full p-6">
+          <div className="space-y-4 w-full p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-20">
               <EkyeDetailsComponent
                 label="Provinces"
@@ -111,7 +111,7 @@ const EkyeAddress = ({ employeeData }) => {
                 placeholder={temporaryAddress?.tole || "N/A"}
               />
             </div>
-          </fiv>
+          </div>
         </div>
       </div>
     </div>

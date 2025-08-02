@@ -25,6 +25,7 @@ import {
   fetchDepartmentId,
   fetchEkye,
   fetchEmployeeDetails,
+  fetchEmployeeEKYEDetails,
   fetchEmployees,
   fetchlateCheckin,
   fetchleave,
@@ -947,6 +948,19 @@ export const useEmployeeDetails = (rclId) => {
     },
   });
 };
+/**Fetch Employee EKYE details  */
+export const useEmployeeEKYEDetails = (rclId) => {
+  return useQuery({
+    queryKey: ["fetchEmployeeEKYEDetails", rclId],
+    queryFn: () => fetchEmployeeEKYEDetails(rclId),
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
+        error.response?.data?.error;
+      toast.error(errorMessage);
+    },
+  });
+};
 
 /**Fetch Employee RCL ID */
 export const useEmployeeRCL = () => {
@@ -1103,7 +1117,7 @@ export const useSavePersonalDetails = (onSuccess) => {
       queryClient.invalidateQueries({
         queryKey: ["PersonalDetails"],
       });
-      toast.success(data?.message || "Personal details saved successfully");
+      // toast.success(data?.message || "Personal details saved successfully");
       onSuccess?.();
     },
     onError: (error) => {
@@ -1241,7 +1255,7 @@ export const useSubmitEducationDetails = (onSuccess) => {
   return useMutation({
     mutationFn: submitEducationDetails,
     onSuccess: (data) => {
-      toast.success(data.message);
+      // toast.success(data.message);
       if (onSuccess) {
         onSuccess(data);
       }
@@ -1276,18 +1290,17 @@ export const useRejectUser = (onSuccess) => {
     onSuccess: (data) => {
       if (data?.responseCode === "201") {
         toast.success(data?.message);
-
-        // Invalidate relevant queries to refetch data
+        console.log(data?.message);
         queryClient.invalidateQueries({ queryKey: ["employees"] });
         queryClient.invalidateQueries({ queryKey: ["adminEkye"] });
 
-        // Navigate to admin page
         navigate("/AdminEkye");
 
         if (onSuccess) {
           onSuccess(data);
         }
       } else {
+        console.log(data.error?.errorList?.[0]?.errorMessage);
         const errorMessage =
           data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
         toast.error(errorMessage);
