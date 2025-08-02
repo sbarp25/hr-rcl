@@ -44,77 +44,77 @@ const Page = () => {
   // }, [ekeyStep]);
 
   return (
-    <>
-      <div className="w-full h-[97vh] overflow-y-auto">
-        <div className="w-full flex flex-col gap-4 ">
-          {/* Theme Switcher and CheckIn next to each other */}
-          <div className="flex items-center justify-end gap-4">
-            <div className="">
-              <ThemeSwitcher />
-            </div>
-            <div className="">
-              {email === "superadmin@rebootedcl.com" ? (
-                ""
-              ) : (
-                <CheckIn
-                  checkedInStatus={checkedInStatus}
-                  onStatusChange={handleStatusChange}
-                />
-              )}
-            </div>
-          </div>
-          {/* <TemporaryAdmin /> */}
-          {/* Welcome Banner */}
-          <div className="relative flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm py-2 px-4">
-            <p className="font-light text-lg leading-10">
-              Welcome, {username || "User"}
-            </p>
-          </div>
-          {/* Weekly Attendance Report */}
-          <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm ">
-            <div className="flex flex-col justify-center items-center">
-              <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
-                Weekly Attendance Report
-              </h1>
-              <div className="w-full ">
-                {isLoading ? (
-                  <div className="text-center py-4">
-                    Loading attendance data...
-                  </div>
-                ) : (
-                  <Attendancereport attendanceData={attendanceData} />
-                )}
-              </div>
-            </div>
+    <div className="w-[calc(100%-1rem)] flex flex-col gap-4">
+      {/* Theme Switcher and CheckIn next to each other */}
+      <div className="flex items-center justify-end gap-4">
+        <div className="">
+          <ThemeSwitcher />
+        </div>
+        <div className="">
+          {email === "superadmin@rebootedcl.com" ? (
+            ""
+          ) : (
+            <CheckIn
+              checkedInStatus={checkedInStatus}
+              onStatusChange={handleStatusChange}
+            />
+          )}
+        </div>
+      </div>
 
-            <div className="text-sm font-semibold text-right mt-1 mr-4 mb-3">
-              <p className="text-green-700 mt-1">
-                Total Early Time: {totalEarlyTime || "N/A"}
-              </p>
-              <p className="text-red-700 mt-1">
-                Total delay Time: {totalDelayTime || "N/A"}
-              </p>
-            </div>
-          </div>
-          {/* WFH and Leave Sections */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {/* Work From Home Panel */}
-            <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
-              <div className="">
-                <WorkFromHome />
-              </div>
-            </div>
+      {/* <TemporaryAdmin /> */}
 
-            {/* Leave Panel */}
-            <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
-              <div className="">
-                <Leave />
+      {/* Welcome Banner */}
+      <div className="relative flex justify-center bg-white dark:bg-black items-center rounded-md w-full shadow-sm py-2 px-4">
+        <p className="font-light text-lg leading-10">
+          Welcome, {username || "User"}
+        </p>
+      </div>
+
+      {/* Weekly Attendance Report */}
+      <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm">
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
+            Weekly Attendance Report
+          </h1>
+          <div className="w-full">
+            {isLoading ? (
+              <div className="text-center py-4">Loading attendance data...</div>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <Attendancereport attendanceData={attendanceData} />
               </div>
-            </div>
+            )}
+          </div>
+        </div>
+
+        <div className="text-sm font-semibold text-right mt-1 mr-4 mb-3">
+          <p className="text-green-700 mt-1">
+            Total Early Time: {totalEarlyTime || "N/A"}
+          </p>
+          <p className="text-red-700 mt-1">
+            Total delay Time: {totalDelayTime || "N/A"}
+          </p>
+        </div>
+      </div>
+
+      {/* WFH and Leave Sections */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* Work From Home Panel */}
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
+          <div className="">
+            <WorkFromHome />
+          </div>
+        </div>
+
+        {/* Leave Panel */}
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100">
+          <div className="">
+            <Leave />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

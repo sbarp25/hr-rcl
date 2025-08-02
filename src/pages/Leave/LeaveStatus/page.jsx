@@ -104,7 +104,7 @@ const LeaveStatus = () => {
 
   const breadcrumbItems = [
     { label: "Leave", href: "" },
-    { label: "Leave Status", href: "/Leave/Status" },
+    { label: "Review Leave", href: "/Leave/Status" },
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
@@ -217,7 +217,7 @@ const LeaveStatus = () => {
           </div>
           <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Applied Leaves</h1>
+              <h1 className="page-title">Leaves Review</h1>
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
@@ -719,6 +719,38 @@ const LeaveStatus = () => {
                     }}
                   />
                   <div className="flex gap-2 justify-end mt-4">
+                    <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-gray-700 dark:text-white">
+                          Team Lead:
+                        </span>
+                        {selectedLeave?.approvedByTeamLead === true ? (
+                          <FaCircleCheck className="text-green-500 w-5 h-5" />
+                        ) : selectedLeave?.rejectedByTeamLead === true ? (
+                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-gray-700 dark:text-white">
+                          Associate Team Lead:
+                        </span>
+                        {selectedLeave?.approvedByAssociateTeamLead === true ? (
+                          <FaCircleCheck className="text-green-500 w-5 h-5" />
+                        ) : selectedLeave?.rejectedByAssociateTeamLead ===
+                          true ? (
+                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <Button className="text-white bg-black" type="submit">
                       Reject
                     </Button>

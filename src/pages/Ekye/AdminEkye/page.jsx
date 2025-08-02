@@ -142,7 +142,7 @@ const Page = () => {
 
   return (
     <div>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+      <div className="max-h-[90vh] overflow-y-auto">
         {/* Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -184,11 +184,11 @@ const Page = () => {
         <div className="bg-white dark:bg-black rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+            <div className="shadow-md rounded-lg  overflow-y-auto text-left">
               <Table
                 bordered
                 aria-label="List of Employees who have Completed EKYE"
-                className="max-h-[75vh]">
+                className="">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>RCL-ID</TableColumn>
@@ -304,7 +304,7 @@ const Page = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+            <div className="shadow-md rounded-lg  overflow-y-auto text-left">
               <Table
                 bordered
                 aria-label="List of Employees who have Completed EKYE">

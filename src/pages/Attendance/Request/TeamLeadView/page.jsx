@@ -86,6 +86,7 @@ const TeamLeadLateCheckin = () => {
     filteredPagination?.totalRecords || data?.totalRecords || 0;
 
   const approveMutation = useLateCheckInApprove();
+  // const { mutateAsync, isPending } = useLateCheckInApprove();
   const rejectMutation = useLateCheckinReject();
 
   // Reset filtered data when page size changes
@@ -233,7 +234,8 @@ const TeamLeadLateCheckin = () => {
                   <Filter
                     onApplyFilters={handleApplyFilters}
                     // url="api/v1/attendance/late-check-in/all-reviews"
-                    url="api/v1/attendance/late-check-in/all-reviews"
+                    // url="api/v1/attendance/late-check-in/all-reviews"
+                    url="/api/v1/attendance/late-check-in/late-attendance/by-role"
                     fieldNames={{
                       departmentField: "departmentId",
                       fromDateField: "createdAt",
@@ -259,7 +261,7 @@ const TeamLeadLateCheckin = () => {
                     <TableColumn>Attendance Date</TableColumn>
                     <TableColumn>Expected CheckInTime</TableColumn>
                     <TableColumn>Status</TableColumn>
-                    <TableColumn>Actual checkInTime</TableColumn>
+                    <TableColumn>Actual CheckInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
                     <TableColumn>Actions</TableColumn>
                   </TableHeader>

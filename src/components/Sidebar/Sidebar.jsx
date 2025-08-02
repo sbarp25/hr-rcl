@@ -320,134 +320,133 @@ const Sidebar = () => {
   return (
     <div className="">
       {isLoading && <Loader />}
-      <div className="flex h-screen bg-black">
-        <div
-          className={` h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
-            isSidebarExpanded ? "w-64" : "w-20"
-          }`}>
-          {/* Hamburger menu */}
-          <div className="flex items-center gap-4 p-4 flex-shrink-0">
-            <GiHamburgerMenu
-              className="text-2xl cursor-pointer"
-              onClick={toggleSidebar}
-            />
-            {isSidebarExpanded && (
-              <>
-                <Link to="/dashboard">
-                  <img src={Logo} className="w-32" alt="Logo" />
-                </Link>
-              </>
-            )}
-          </div>
+      <div
+        className={`h-full sticky top-0 bg-black text-white flex flex-col transition-all duration-300 ${
+          isSidebarExpanded ? "w-64" : "w-20"
+        }`}>
+        {/* Hamburger menu */}
+        <div className="flex items-center gap-4 p-4 flex-shrink-0">
+          <GiHamburgerMenu
+            className="text-2xl cursor-pointer"
+            onClick={toggleSidebar}
+          />
+          {isSidebarExpanded && (
+            <>
+              <Link to="/dashboard">
+                <img src={Logo} className="w-32" alt="Logo" />
+              </Link>
+            </>
+          )}
+        </div>
 
-          {/* Navigation items */}
-          <div className="flex-grow overflow-y-auto">
-            {navbarElements.map((service, index) => {
-              if (!service.view) return null;
-              return (
-                <div key={index} className="relative">
-                  <Link
-                    to={service.to}
-                    className={`flex items-center gap-4 p-3  rounded-lg cursor-pointer transition-all duration-300 ${
-                      location.pathname === service.to
-                        ? "bg-active text-white border-l-4 border-l-red-800"
-                        : "hover:bg-gray-700"
-                    }`}
-                    onClick={() => service.children && toggleDropdown(index)}>
-                    <service.icon className="text-2xl" />
-                    {isSidebarExpanded && (
-                      <span className="text-base">{service.label}</span>
-                    )}
-                  </Link>
-                  {/* Dropdown items */}
-                  {service.children && expandedDropdown === index && (
-                    <div
-                      className={`pl-8 mt-2 space-y-2 bg-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
-                        expandedDropdown === index
-                          ? "max-h-96 opacity-100 mt-2"
-                          : "max-h-0 opacity-0"
-                      }`}>
-                      {service.children.map((child, childIndex) => {
-                        if (!child?.view) return null;
-                        return (
-                          <Link
-                            key={childIndex}
-                            to={child.to}
-                            className={`flex p-2 rounded-lg transition-all duration-300 gap-4  ${
-                              location.pathname === child.to
-                                ? "bg-active text-white border-l-4 border-l-red-800"
-                                : "hover:bg-gray-600"
-                            }`}>
-                            {location.pathname === child.to &&
-                              isSidebarExpanded && (
-                                <BsArrowReturnRight className="mt-1 " />
-                              )}
-                            {isSidebarExpanded ? (
-                              <span className="text-base">{child.label}</span>
-                            ) : (
-                              <child.icon className="text-2xl" />
-                            )}
-                          </Link>
-                        );
-                      })}
-                    </div>
+        {/* Navigation items */}
+        <div className="flex-grow overflow-y-auto">
+          {navbarElements.map((service, index) => {
+            if (!service.view) return null;
+            return (
+              <div key={index} className="relative">
+                <Link
+                  to={service.to}
+                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                    location.pathname === service.to
+                      ? "bg-active text-white border-l-4 border-l-red-800"
+                      : "hover:bg-gray-700"
+                  }`}
+                  onClick={() => service.children && toggleDropdown(index)}>
+                  <service.icon className="text-2xl" />
+                  {isSidebarExpanded && (
+                    <span className="text-base">{service.label}</span>
                   )}
-                </div>
-              );
-            })}
-          </div>
+                </Link>
 
-          {/* Profile section */}
-          <div className="p-4 flex-shrink-0">
-            <div className="flex items-center gap-4">
-              <Link to="/settings">
-                <div className="h-12 w-12">
-                  <Avatar
-                    className="h-full w-full object-cover"
-                    showFallback
-                    fallback={
-                      <div className="flex items-center justify-center h-full w-full  dark:bg-gray-700 text-black dark:text-white text-2xl">
-                        {getInitials(username)}
-                      </div>
-                    }
-                    src={imageURL}
-                  />
+                {/* Dropdown items */}
+                {service.children && expandedDropdown === index && (
+                  <div
+                    className={`pl-8 mt-2 space-y-2 bg-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
+                      expandedDropdown === index
+                        ? "max-h-96 opacity-100 mt-2"
+                        : "max-h-0 opacity-0"
+                    }`}>
+                    {service.children.map((child, childIndex) => {
+                      if (!child?.view) return null;
+                      return (
+                        <Link
+                          key={childIndex}
+                          to={child.to}
+                          className={`flex p-2 rounded-lg transition-all duration-300 gap-4 ${
+                            location.pathname === child.to
+                              ? "bg-active text-white border-l-4 border-l-red-800"
+                              : "hover:bg-gray-600"
+                          }`}>
+                          {location.pathname === child.to &&
+                            isSidebarExpanded && (
+                              <BsArrowReturnRight className="mt-1" />
+                            )}
+                          {isSidebarExpanded ? (
+                            <span className="text-base">{child.label}</span>
+                          ) : (
+                            <child.icon className="text-2xl" />
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Profile section */}
+        <div className="p-4 flex-shrink-0">
+          <div className="flex items-center gap-4">
+            <Link to="/settings">
+              <div className="h-12 w-12">
+                <Avatar
+                  className="h-full w-full object-cover"
+                  showFallback
+                  fallback={
+                    <div className="flex items-center justify-center h-full w-full dark:bg-gray-700 text-black dark:text-white text-2xl">
+                      {getInitials(username)}
+                    </div>
+                  }
+                  src={imageURL}
+                />
+              </div>
+            </Link>
+
+            {isSidebarExpanded && (
+              <Link to="/settings" className="flex-grow min-w-0">
+                <div>
+                  <p className="text-xl">
+                    <Tooltip content={username}>
+                      {truncateText(username, 7)}
+                    </Tooltip>
+                  </p>
+                  <p className="text-sm" title={email}>
+                    <Tooltip content={email}>{truncateText(email, 10)}</Tooltip>
+                  </p>
                 </div>
               </Link>
-
-              {isSidebarExpanded && (
-                <Link to="/settings" className="flex-grow min-w-0">
-                  <div>
-                    <p className="text-xl">
-                      <Tooltip content={username}>
-                        {truncateText(username, 7)}
-                      </Tooltip>
-                    </p>
-                    <p className="text-sm" title={email}>
-                      <Tooltip content={email}>
-                        {truncateText(email, 10)}
-                      </Tooltip>
-                    </p>
-                  </div>
+            )}
+            {isSidebarExpanded && (
+              <div className="flex items-center gap-x-2">
+                <Link to="/settings">
+                  <GoGear className="text-2xl" />
                 </Link>
-              )}
-              {isSidebarExpanded && (
-                <div className="flex items-center gap-x-2">
-                  <Link to="/settings">
-                    <GoGear className="text-2xl" />
-                  </Link>
-                  <button className="">
-                    <IoLogOutOutline
-                      onClick={onOpen}
-                      className="text-2xl text-red-500  hover:scale-125"
-                    />
-                  </button>
-                </div>
-              )}
-            </div>
+                <button className="">
+                  <IoLogOutOutline
+                    onClick={onOpen}
+                    className="text-2xl text-red-500 hover:scale-125"
+                  />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Modal */}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -457,8 +456,8 @@ const Sidebar = () => {
           {(onClose) => (
             <>
               <ModalBody className="text-center">
-                <p>Are you sure you want to Log out ?</p>
-                <div className="flex gap-2 justify-end mt-4 ">
+                <p>Are you sure you want to Log out?</p>
+                <div className="flex gap-2 justify-end mt-4">
                   <Button
                     className="bg-black text-white"
                     onPress={handleLogout}>

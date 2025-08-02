@@ -266,7 +266,7 @@ const AttendanceRequest = () => {
                     <TableColumn>Attendance Date</TableColumn>
                     <TableColumn>Expected CheckInTime</TableColumn>
                     <TableColumn>Status</TableColumn>
-                    <TableColumn>Actual checkInTime</TableColumn>
+                    <TableColumn>Actual CheckInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
                   </TableHeader>
                   <TableBody>

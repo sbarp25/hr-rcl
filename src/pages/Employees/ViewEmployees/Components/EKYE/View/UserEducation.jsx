@@ -86,7 +86,7 @@ const UserEducation = ({ employeeData }) => {
                     {/* Education Certificate */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        <label className="text-black font-semibold text-sm">
+                        <label className="text-black dark:text-white font-semibold text-sm">
                           Education Certificate
                         </label>
                         {educationDocuments[index] ? (
@@ -94,8 +94,8 @@ const UserEducation = ({ employeeData }) => {
                             href={education.documentUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block text-sm text-green-600 underline hover:text-green-700 transition-colors">
-                            <span className="flex items-center gap-2">
+                            className="block text-sm text-green-600 underline mb-2">
+                            <span className="flex items-center gap-x-2">
                               <FaRegEye />
                               View Certificate
                             </span>

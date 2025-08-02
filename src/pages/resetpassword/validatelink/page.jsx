@@ -7,6 +7,7 @@ import Loader from "../../../components/Loader/Loader.jsx";
 import Logo from "../../../assets/Images/Logo.png";
 import { Button } from "@heroui/button";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 const ValidateLink = () => {
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(true);
@@ -68,15 +69,17 @@ const ValidateLink = () => {
       );
 
       if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
         const userName = response.data.data.fullName;
         const email = response.data.data.email;
+        const menu = response.data.data.menuActionsAndPermissions;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("fullName", userName);
         localStorage.setItem("email", email);
+        LocalStorageUtil.setItem("menu", menu);
 
         if (
           response?.data?.data?.ekyeStatus === "NOT_REQUIRED" ||

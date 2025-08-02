@@ -24,9 +24,8 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="pt-10  bg-gray-200 dark:bg-gray-900 h-screen">
-      {/* <GoBack /> */}
-      <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
+    <>
+      <div className=" grid grid-cols-1 md:grid-cols-2 h-full pt-10">
         {/* Left Side - Logo and Tagline */}
         <div className="hidden md:flex flex-col items-center justify-center bg-bgprimary dark:bg-gray-800   rounded-l-3xl">
           <img src={Logo} alt="Logo" className="w-72 mb-10" />
@@ -86,7 +85,7 @@ const ForgetPassword = () => {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

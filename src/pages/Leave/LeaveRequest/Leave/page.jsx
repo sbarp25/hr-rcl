@@ -52,7 +52,7 @@ const SelfLeaveStatus = () => {
 
   const breadcrumbItems = [
     { label: "Leave", href: "" },
-    { label: "Leave Status", href: "/Leave/Status" },
+    { label: "Leave Request", href: "/Leave/Status" },
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
@@ -110,7 +110,7 @@ const SelfLeaveStatus = () => {
           </div>
           <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
             <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Leave Status</h1>
+              <h1 className="page-title">Leave Request</h1>
             </div>
             <div className="flex gap-x-2 w-full sm:w-auto">
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">

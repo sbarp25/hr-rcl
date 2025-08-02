@@ -62,7 +62,7 @@ const WorkFromHomeStatus = () => {
   const { reset, control, handleSubmit } = useForm();
   const breadcrumbItems = [
     { label: "WFH", href: "" },
-    { label: "WFH Status", href: "/WFH/Status" },
+    { label: "Review WFH", href: "/WFH/Status" },
   ];
 
   // Fixed handleApplyFilters function
@@ -247,10 +247,13 @@ const WorkFromHomeStatus = () => {
   const fetchWorkFromHome = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`/api/v1/work_from_home/list`, {
-        pageIndex: currentPage,
-        pageSize: WFHDataPerPage,
-      });
+      const response = await axiosInstance.post(
+        `/api/v1/work-from-home/by-role`,
+        {
+          pageIndex: currentPage,
+          pageSize: WFHDataPerPage,
+        }
+      );
 
       if (response.data.responseCode === "200") {
         setWorkFromHome(response.data.datalist || []);
@@ -300,7 +303,7 @@ const WorkFromHomeStatus = () => {
             </div>
             <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center gap-2">
               <div className="flex items-center page-title -pl-2">
-                <h1 className="page-title">Applied WFH</h1>
+                <h1 className="page-title">Review WFH</h1>
               </div>
               <div className="flex gap-x-2 w-full sm:w-auto">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">

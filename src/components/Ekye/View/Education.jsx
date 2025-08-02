@@ -114,7 +114,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   <Divider />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <div>
-                      <label className="text-black font-semibold text-sm">
+                      <label className="text-black dark:text-white font-semibold text-sm">
                         Education Certificate
                       </label>
                       {educationDocuments[index] ? (
