@@ -238,7 +238,7 @@ const TotalPage = () => {
                         .filter((position) => !position.isDeleted)
                         .map((position, index) => (
                           <TableRow
-                            key={position.rclId}
+                            key={position.id}
                             className="h-14 justify-center items-center border-b-2 border-gray-300">
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
@@ -264,7 +264,7 @@ const TotalPage = () => {
                                 <HiPencilSquare
                                   className={`${
                                     hasPositionEditAccess
-                                      ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                      ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                       : "text-xl mr-2"
                                   }`}
                                   title="Edit"
@@ -302,15 +302,12 @@ const TotalPage = () => {
                     <TableBody>
                       {positionData.map((position, index) => (
                         <TableRow
-                          key={position.rclId}
-                          className="hover:bg-gray-50">
+                          key={position.id}
+                          className="hover:bg-gray-50 dark:hover:bg-slate-500 border-b ">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">
                                 {position.positionName}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                ID: {position.rclId}
                               </span>
                             </div>
                           </TableCell>
@@ -328,7 +325,7 @@ const TotalPage = () => {
                               <HiPencilSquare
                                 className={`${
                                   hasPositionEditAccess
-                                    ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                    ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                     : "text-xl mr-2"
                                 }`}
                                 title="Edit"
@@ -387,7 +384,7 @@ const TotalPage = () => {
                         <div className="flex justify-end gap-4 mt-2">
                           <Button
                             size="sm"
-                            color="warning"
+                            color="success"
                             variant="flat"
                             className={`${
                               !hasPositionEditAccess

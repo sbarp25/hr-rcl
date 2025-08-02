@@ -22,7 +22,7 @@ import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { FaCheckCircle, FaRegEye } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
+import { FaCircleCheck, FaXmark } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
 import Search from "../../../components/Search";
@@ -36,6 +36,7 @@ import {
 import { useLeaveByRole } from "../../../hooks/useAuth.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateLeaveStatus } from "../../../api/auth.js";
+import { IoIosRemoveCircle } from "react-icons/io";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -283,11 +284,11 @@ const LeaveStatus = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        {item.departmentName.length < 7 ? (
-                          item.departmentName
+                        {item?.departmentName?.length < 7 ? (
+                          item?.departmentName
                         ) : (
-                          <Tooltip content={item.departmentName}>
-                            {truncateText(item.departmentName, 7)}
+                          <Tooltip content={item?.departmentName}>
+                            {truncateText(item?.departmentName, 7)}
                           </Tooltip>
                         )}
                       </TableCell>
@@ -339,7 +340,7 @@ const LeaveStatus = () => {
                             hasLeaveUpdateAccess && (
                               <>
                                 <FaCheckCircle
-                                  className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
+                                  className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
                                   onClick={() => handleAction("approve", item)}
                                 />
                                 <FaXmark
@@ -422,7 +423,7 @@ const LeaveStatus = () => {
                             hasLeaveUpdateAccess && (
                               <>
                                 <FaCheckCircle
-                                  className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
+                                  className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
                                   onClick={() => handleAction("approve", item)}
                                 />
                                 <FaXmark
@@ -444,14 +445,14 @@ const LeaveStatus = () => {
           <div className="block md:hidden">
             <div className="space-y-4 overflow-y-auto">
               <Accordion variant="bordered">
-                {leaveData.map((leave) => (
+                {leaveData?.map((leave) => (
                   <AccordionItem
-                    key={leave.leaveId}
-                    aria-label={`${leave.leaveType} - ${leave.leaveStatus}`}
+                    key={leave?.leaveId}
+                    aria-label={`${leave?.leaveType} - ${leave?.leaveStatus}`}
                     title={
                       <div className="flex justify-between items-center w-full">
                         <span className="font-medium">
-                          {leave.leaveType || "N/A"}
+                          {leave?.leaveType || "N/A"}
                         </span>
                         <div
                           className={`${getStatusClass(
@@ -492,7 +493,7 @@ const LeaveStatus = () => {
                             <>
                               <Button
                                 size="sm"
-                                color="warning"
+                                color="success"
                                 variant="flat"
                                 onPress={() => handleAction("approve", leave)}>
                                 Approve
@@ -514,14 +515,14 @@ const LeaveStatus = () => {
             </div>
           </div>
 
-          {!showLoading && (!leaveData || leaveData.length === 0) && (
+          {!showLoading && (!leaveData || leaveData?.length === 0) && (
             <div className="p-8 text-center text-gray-500">
               No Data available
             </div>
           )}
 
           {/**Pagination Section - Responsive for all screens */}
-          {leaveData && leaveData.length > 0 && (
+          {leaveData && leaveData?.length > 0 && (
             <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
               <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
                 <span className="mr-1">Showing:</span>
@@ -606,7 +607,40 @@ const LeaveStatus = () => {
                     </div>
                   )}
                 </div>
+
                 <div className="flex gap-2 justify-end mt-4">
+                  <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-gray-700 dark:text-white">
+                        Team Lead:
+                      </span>
+                      {selectedLeave?.approvedByTeamLead === true ? (
+                        <FaCircleCheck className="text-green-500 w-5 h-5" />
+                      ) : selectedLeave?.rejectedByTeamLead === true ? (
+                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                      ) : (
+                        <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-gray-700 dark:text-white">
+                        Associate Team Lead:
+                      </span>
+                      {selectedLeave?.approvedByAssociateTeamLead === true ? (
+                        <FaCircleCheck className="text-green-500 w-5 h-5" />
+                      ) : selectedLeave?.rejectedByAssociateTeamLead ===
+                        true ? (
+                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                      ) : (
+                        <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <Button
                     className="bg-black text-white"
                     onPress={() => onApprove()}>

@@ -169,8 +169,8 @@ const SelfLeaveStatus = () => {
                       className="h-14 border-b-2 border-gray-300">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                       <TableCell>
-                        {item.fullName.length < 7 ? (
-                          item.fullName
+                        {item?.fullName?.length < 7 ? (
+                          item?.fullName
                         ) : (
                           <Tooltip content={item.fullName}>
                             {truncateText(item.fullName, 7)}
@@ -178,11 +178,11 @@ const SelfLeaveStatus = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        {item.departmentName.length < 7 ? (
-                          item.departmentName
+                        {item?.departmentName?.length < 7 ? (
+                          item?.departmentName
                         ) : (
-                          <Tooltip content={item.departmentName}>
-                            {truncateText(item.departmentName, 7)}
+                          <Tooltip content={item?.departmentName}>
+                            {truncateText(item?.departmentName, 7)}
                           </Tooltip>
                         )}
                       </TableCell>

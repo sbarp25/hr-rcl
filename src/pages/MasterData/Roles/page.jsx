@@ -259,7 +259,7 @@ const Roles = () => {
                               <HiPencilSquare
                                 className={`${
                                   hasRoleEditAccess
-                                    ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                    ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                     : "text-xl mr-2"
                                 }`}
                                 title="Edit"
@@ -296,7 +296,7 @@ const Roles = () => {
                       {roleData?.map((role) => (
                         <TableRow
                           key={role.roleId}
-                          className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                          className="hover:bg-gray-50 dark:hover:bg-slate-500 border-b-2 border-gray-300">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">
@@ -318,7 +318,7 @@ const Roles = () => {
                               <HiPencilSquare
                                 className={`${
                                   hasRoleEditAccess
-                                    ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                    ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                     : "text-xl mr-2"
                                 }`}
                                 title="Edit"
@@ -375,7 +375,7 @@ const Roles = () => {
                         <div className="flex justify-end gap-4 mt-2">
                           <Button
                             size="sm"
-                            color="warning"
+                            color="success"
                             variant="flat"
                             className={`${
                               !hasRoleEditAccess

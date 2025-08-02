@@ -65,6 +65,7 @@ const EducationalDetails = ({
 
   const submitMutation = useSubmitEducationDetails((data) => {
     navigate("/dashboard");
+    // localStorage.setItem("ekeyStep", "");
   });
 
   // Watch all status fields to check for IN_PROGRESS
@@ -527,12 +528,14 @@ const EducationalDetails = ({
   }
   return (
     <div className="space-y-4 py-4">
-      <h2 className="text-2xl font-semibold text-gray-700">
+      <h2 className="text-2xl font-semibold text-gray-700 dark:text-white">
         Educational Details
       </h2>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Level</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-white">
+          Level
+        </label>
 
         <Select
           variant="bordered"
@@ -561,7 +564,7 @@ const EducationalDetails = ({
 
       {Array.from({ length: numberOfItems }).map((_, index) => (
         <div key={index} className="space-y-4 border p-4 rounded-md">
-          <h3 className="text-lg font-semibold text-gray-600">
+          <h3 className="text-lg font-semibold text-gray-600 dark:text-white">
             {degrees[index]} Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -815,7 +818,7 @@ const EducationalDetails = ({
 
                       {/* Help text and view document section */}
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-white">
                           Please upload the image of type either PNG or JPG
                           under 1 MB
                         </p>
@@ -936,7 +939,9 @@ const EducationalDetails = ({
       </div>
 
       <div className="form-navigation flex justify-between mt-6">
-        <Button onPress={handleBack} className="px-4 py-2 bg-gray-300 rounded">
+        <Button
+          onPress={handleBack}
+          className="px-6 py-3 bg-gray-300 dark:bg-slate-500 text-gray-700 dark:text-white rounded-lg">
           Back
         </Button>
         <button

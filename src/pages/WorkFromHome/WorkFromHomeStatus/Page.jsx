@@ -21,7 +21,7 @@ import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
+import { FaCircleCheck, FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { toast } from "sonner";
@@ -35,6 +35,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { IoIosRemoveCircle } from "react-icons/io";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -140,7 +141,7 @@ const WorkFromHomeStatus = () => {
     const updateWFH = {
       data: {
         workFromHomeId: selectedWorkFromHome.id,
-        isApproved: true,
+        approvalStatus: "APPROVED",
       },
     };
 
@@ -186,7 +187,7 @@ const WorkFromHomeStatus = () => {
     const RejectLeave = {
       data: {
         workFromHomeId: selectedWorkFromHome.id,
-        isApproved: false,
+        approvalStatus: "REJECTED",
         remark: formData.reason,
       },
     };
@@ -280,7 +281,7 @@ const WorkFromHomeStatus = () => {
   }, [currentPage, WFHDataPerPage]);
 
   const hasWorkFromHomeReviewAccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
-  const hasaccess = hasReadAccess(MENU_NAMES.WFHREQUEST);
+  const hasaccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -402,7 +403,7 @@ const WorkFromHomeStatus = () => {
                               hasWorkFromHomeReviewAccess && (
                                 <>
                                   <FaCheckCircle
-                                    className="text-xl text-orange-500 hover:text-orange-700 cursor-pointer"
+                                    className="text-xl text-green-600 hover:text-green-700 dark:text-green-700 dark:hover:text-green-300 cursor-pointer"
                                     onClick={() =>
                                       handleAction("approve", item)
                                     }
@@ -464,7 +465,7 @@ const WorkFromHomeStatus = () => {
                               hasWorkFromHomeReviewAccess && (
                                 <>
                                   <FaCheckCircle
-                                    className="text-lg text-orange-600 hover:text-orange-800 cursor-pointer"
+                                    className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
                                     onClick={() =>
                                       handleAction("approve", item)
                                     }
@@ -538,7 +539,7 @@ const WorkFromHomeStatus = () => {
                             <>
                               <Button
                                 size="sm"
-                                color="warning"
+                                color="success"
                                 variant="flat"
                                 onPress={() => handleAction("approve", WFH)}>
                                 Approve
@@ -654,6 +655,40 @@ const WorkFromHomeStatus = () => {
                     )}
                   </div>
                   <div className="flex gap-2 justify-end mt-4">
+                    <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-gray-700 dark:text-white">
+                          Team Lead:
+                        </span>
+                        {selectedWorkFromHome?.approvedByTeamLead === true ? (
+                          <FaCircleCheck className="text-green-500 w-5 h-5" />
+                        ) : selectedWorkFromHome?.rejectedByTeamLead ===
+                          true ? (
+                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-gray-700 dark:text-white">
+                          Associate Team Lead:
+                        </span>
+                        {selectedWorkFromHome?.approvedByAssociateTeamLead ===
+                        true ? (
+                          <FaCircleCheck className="text-green-500 w-5 h-5" />
+                        ) : selectedWorkFromHome?.rejectedByAssociateTeamLead ===
+                          true ? (
+                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <Button
                       className="bg-black text-white"
                       onPress={() => onApprove()}>
@@ -739,6 +774,40 @@ const WorkFromHomeStatus = () => {
                       }}
                     />
                     <div className="flex gap-2 justify-end mt-4">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
+                            Team Lead:
+                          </span>
+                          {selectedWorkFromHome?.approvedByTeamLead === true ? (
+                            <FaCircleCheck className="text-green-500 w-5 h-5" />
+                          ) : selectedWorkFromHome?.rejectedByTeamLead ===
+                            true ? (
+                            <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                              Pending
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
+                            Associate Team Lead:
+                          </span>
+                          {selectedWorkFromHome?.approvedByAssociateTeamLead ===
+                          true ? (
+                            <FaCircleCheck className="text-green-500 w-5 h-5" />
+                          ) : selectedWorkFromHome?.rejectedByAssociateTeamLead ===
+                            true ? (
+                            <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                              Pending
+                            </span>
+                          )}
+                        </div>
+                      </div>
                       <Button className="text-white bg-black" type="submit">
                         Reject
                       </Button>

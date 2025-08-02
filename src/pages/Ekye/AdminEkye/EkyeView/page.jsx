@@ -5,7 +5,7 @@ import EkyeAddress from "../../../../components/Ekye/View/Address";
 import EkyeEducationDetails from "../../../../components/Ekye/View/Education";
 import EkyeDocumentDetail from "../../../../components/Ekye/View/Document";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEmployeeDetails } from "../../../../hooks/useAuth.js";
+import { useEmployeeEKYEDetails } from "../../../../hooks/useAuth.js";
 import { FaChevronDown, FaBars } from "react-icons/fa";
 import GoBack from "../../../../components/GoBack.jsx";
 
@@ -132,7 +132,7 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState(tabData[0]);
   const { rclId } = useParams();
 
-  const { data } = useEmployeeDetails(rclId);
+  const { data } = useEmployeeEKYEDetails(rclId);
 
   const employeeData = data?.data || [];
 

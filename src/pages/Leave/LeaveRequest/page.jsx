@@ -6,7 +6,7 @@ import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-
+import { now } from "@internationalized/date";
 import DatepickerComponent, {
   formatDate,
 } from "../../../components/ui/DatepickerComponent.jsx";
@@ -187,6 +187,7 @@ const LeaveRequest = () => {
                 control={control}
                 size="sm"
                 className="w-full"
+                minValue={now("Etc/UTC")}
                 rules={{
                   required: "Start date is required",
                   validate: (value) => {
@@ -211,6 +212,7 @@ const LeaveRequest = () => {
                 size="sm"
                 className="w-full"
                 disabled={isToDateDisabled}
+                minValue={now("Etc/UTC")}
                 rules={{
                   required: "End date is required",
                   validate: (value) =>

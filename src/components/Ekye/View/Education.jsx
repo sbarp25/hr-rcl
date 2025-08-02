@@ -9,7 +9,11 @@ import axiosInstance from "../../../lib/axios-Instance";
 import { FaCheck } from "react-icons/fa6";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
-import { hasUpdateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import {
+  hasApproveAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../../../utils/permissionUtils.js";
 
 const EkyeEducationDetails = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -27,14 +31,14 @@ const EkyeEducationDetails = ({ employeeData }) => {
     }
   }, [employeeData]);
 
-  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasEKYEApproveAccess = hasApproveAccess(MENU_NAMES.EKYE);
   const onApprove = async () => {
     const approve = {
       userId: rclId,
       status: "APPROVED",
     };
     try {
-      if (hasApproveAccess) {
+      if (hasEKYEApproveAccess) {
         const response = await axiosInstance.post(
           "/api/v1/approved/users",
           approve,
@@ -46,7 +50,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
           toast.success(response?.data?.message);
           navigate("/AdminEkye");
         } else {
-          toast.error(response?.data?.data?.message);
+          toast.error(response?.data?.error?.errorList?.[0]?.errorMessage);
         }
       } else {
         toast.error("You currently dont have access to this setting ");
@@ -58,8 +62,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white dark:bg-black text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center bg-gray-50 dark:bg-black h-[75vh] py-6 mx-auto rounded-lg border border-gray-300">
+        <div className="bg-white dark:bg-black text-lg w-full rounded-lg px-8 mt-2 mx-1 flex-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
@@ -76,66 +80,63 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
-              <>
-                <div key={index} className="mb-6 p-4 rounded-md ">
-                  <Form className="py-6 gap-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
-                      <EkyeDetailsComponent
-                        label="Level"
-                        placeholder={education.degree}
-                      />
-                      <EkyeDetailsComponent
-                        label="Institute"
-                        placeholder={education.institution}
-                      />
-                      <EkyeDetailsComponent
-                        label="Faculty"
-                        placeholder={education.faculty}
-                      />
+              <div key={index} className="mb-6 p-4 rounded-md">
+                <Form className="py-6 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <EkyeDetailsComponent
+                      label="Level"
+                      placeholder={education.degree}
+                    />
+                    <EkyeDetailsComponent
+                      label="Institute"
+                      placeholder={education.institution}
+                    />
+                    <EkyeDetailsComponent
+                      label="Faculty"
+                      placeholder={education.faculty}
+                    />
+                  </div>
+                  <Divider />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <EkyeDetailsComponent
+                      label="Start Date"
+                      placeholder={education.startYear}
+                    />
+                    <EkyeDetailsComponent
+                      label="End Date"
+                      placeholder={education.endYear}
+                    />
+                    <EkyeDetailsComponent
+                      label="Status"
+                      placeholder={education.status}
+                    />
+                  </div>
+                  <Divider />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+                    <div>
+                      <label className="text-black font-semibold text-sm">
+                        Education Certificate
+                      </label>
+                      {educationDocuments[index] ? (
+                        <a
+                          href={education.documentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-sm text-green-600 underline mb-2">
+                          <span className="flex items-center gap-x-2">
+                            <FaRegEye />
+                            View Certificate
+                          </span>
+                        </a>
+                      ) : (
+                        <div className="text-xs text-red-500">
+                          No Links Available
+                        </div>
+                      )}
                     </div>
-                    <Divider />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
-                      <EkyeDetailsComponent
-                        label="Start Date"
-                        placeholder={education.startYear}
-                      />
-                      <EkyeDetailsComponent
-                        label="End Date"
-                        placeholder={education.endYear}
-                      />
-                      <EkyeDetailsComponent
-                        label="Status"
-                        placeholder={education.status}
-                      />
-                    </div>
-                    <Divider />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
-                      <div>
-                        <label className="text-black font-semibold text-sm">
-                          Education Certificate
-                        </label>
-                        {educationDocuments[index] ? (
-                          <a
-                            href={education.documentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block text-sm text-green-600 underline mb-2">
-                            <span className="flex items-center gap-x-2">
-                              <FaRegEye />
-                              View Certificate
-                            </span>
-                          </a>
-                        ) : (
-                          <div className="text-xs text-red-500">
-                            No Links Available
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Form>
-                </div>
-                <Divider />
-              </>
+                  </div>
+                </Form>
+              </div>
             ))
           ) : (
             <div className="text-center text-gray-500">
@@ -143,17 +144,18 @@ const EkyeEducationDetails = ({ employeeData }) => {
             </div>
           )}
         </div>
-      </div>
-      {employeeData?.status === "PENDING" ||
-        (employeeData?.status === "REJECTED" && (
-          <div className="absolute right-28 -mt-20 flex items-end justify-end  gap-4">
+
+        {/* Buttons Section - Moved to bottom-right inside the container */}
+        {employeeData?.approvalStatus !== "APPROVED" && (
+          <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
             <RejectComp employeeData={employeeData} />
             <Button className="bg-teal-500 text-white" onPress={onApprove}>
               <FaCheck />
               Approve
             </Button>
           </div>
-        ))}
+        )}
+      </div>
     </>
   );
 };

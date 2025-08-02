@@ -101,8 +101,8 @@ const AllTrustedDevices = () => {
   }
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-black p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="h-screen bg-gray-50 dark:bg-black p-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto h-screen flex flex-col">
           {/* Header */}
           <div className="flex justify-between mb-8">
             <div>
@@ -121,7 +121,7 @@ const AllTrustedDevices = () => {
             />
           </div>
           {/* Devices Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[calc(100vh-210px)] overflow-y-auto flex-1">
             {trustedDevices?.map((device) => (
               <div
                 key={device.id}
@@ -188,19 +188,20 @@ const AllTrustedDevices = () => {
                 </div>
               </div>
             ))}
-          </div>
-
-          {trustedDevices.length === 0 && (
-            <div className="text-center py-12">
-              <CiMonitor className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No trusted devices found
-              </h3>
-              <p className="text-gray-500 dark:text-white">
-                Your trusted devices will appear here once you add them.
-              </p>
+            <div className="w-full  flex justify-center ">
+              {trustedDevices.length === 0 && (
+                <div className="text-center py-12">
+                  <CiMonitor className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    No trusted devices found
+                  </h3>
+                  <p className="text-gray-500 dark:text-white">
+                    Your trusted devices will appear here once you add them.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
       <Modal

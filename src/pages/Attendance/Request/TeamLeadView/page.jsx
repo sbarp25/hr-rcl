@@ -268,7 +268,7 @@ const TeamLeadLateCheckin = () => {
                       ?.filter(
                         (lateCHeckin) => lateCHeckin?.status !== "APPROVED"
                       )
-                      .map((late, index) => (
+                      ?.map((late, index) => (
                         <TableRow
                           key={late?.lateCheckInId}
                           className="h-14 border-b-2 border-gray-300">
@@ -310,15 +310,15 @@ const TeamLeadLateCheckin = () => {
                           <TableCell>
                             <div
                               className={`px-3 py-1.5 text-xs font-medium rounded-full text-center inline-flex items-center justify-center shadow-sm ${
-                                late?.isPending === true
+                                late?.status === "APPROVED"
                                   ? "bg-green-100 border border-green-600 text-green-600"
-                                  : late?.isPending === false
+                                  : late?.status === "REJECTED"
                                   ? "bg-red-100 border border-red-600 text-red-600"
                                   : "bg-yellow-100 border border-yellow-500 text-yellow-500"
                               } text-center p-2 w-fit`}>
-                              {late?.isApproved === true ? (
+                              {late?.status === "APPROVED" ? (
                                 <span>Approved</span>
-                              ) : late?.isApproved === true ? (
+                              ) : late?.status === "REJECTED" ? (
                                 <span>Rejected</span>
                               ) : (
                                 <span>Pending</span>
@@ -420,13 +420,13 @@ const TeamLeadLateCheckin = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {late?.status === "Pending" && (
+                            {late?.status === "PENDING" && (
                               <div className="flex justify-center gap-4">
                                 <FaCheck
                                   className={`${
                                     hasAttendanceEditAccess
-                                      ? "text-orange-500 hover:text-orange-700 cursor-pointer"
-                                      : ""
+                                      ? "text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      : "text-gray-500 dark:text-slate-500"
                                   }`}
                                   title="Edit"
                                   onClick={() =>
@@ -468,7 +468,7 @@ const TeamLeadLateCheckin = () => {
                         onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
                         <div className="font-medium">{late?.fullName}</div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-white">
                             {late?.attendanceDate}
                           </span>
                           <FaChevronDown
@@ -619,18 +619,18 @@ const TeamLeadLateCheckin = () => {
                           {/**Personal details */}
                           <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
                             <div className="flex  items-center">
-                              <span className="font-semibold text-gray-700">
+                              <span className="font-semibold text-gray-700 dark:text-white">
                                 Employee:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-white">
                                 {selectedData?.fullName}
                               </span>
                             </div>
                             <div className="flex  items-center">
-                              <span className="font-semibold text-gray-700">
+                              <span className="font-semibold text-gray-700 dark:text-white">
                                 RCL-ID:
                               </span>
-                              <span className="font-mono text-gray-800">
+                              <span className="font-mono text-gray-800 dark:text-white">
                                 {selectedData?.rclId}
                               </span>
                             </div>
@@ -638,34 +638,34 @@ const TeamLeadLateCheckin = () => {
                           {/**Date and Time */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
                             <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
+                              <span className="font-semibold text-gray-700 dark:text-white">
                                 Date:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-white">
                                 {selectedData?.attendanceDate}
                               </span>
                             </div>
 
                             <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
+                              <span className="font-semibold text-gray-700 dark:text-white">
                                 Expected Time:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-white">
                                 {selectedData?.expectedCheckInTime || "N/A"}
                               </span>
                             </div>
                             <div className="flex items-center">
-                              <span className="font-semibold text-gray-700">
+                              <span className="font-semibold text-gray-700 dark:text-white">
                                 Actual Time:
                               </span>
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-white">
                                 {selectedData?.checkInTime}
                               </span>
                             </div>
                           </div>
                           {/**Justification  */}
                           <div className="flex flex-col h-60">
-                            <span className="font-semibold text-gray-700 mb-2">
+                            <span className="font-semibold text-gray-700 dark:text-white mb-2">
                               Justification:
                             </span>
                             <p className="text-sm p-3 h-full bg-gray-50 dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
@@ -680,12 +680,12 @@ const TeamLeadLateCheckin = () => {
                     <div className="flex gap-2 justify-end mt-4">
                       <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm text-gray-700">
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
                             Team Lead:
                           </span>
                           {selectedData?.approvedByTeamLead === true ? (
                             <FaCircleCheck className="text-green-500 w-5 h-5" />
-                          ) : selectedData?.rejectedByTeamLead === false ? (
+                          ) : selectedData?.rejectedByTeamLead === true ? (
                             <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                           ) : (
                             <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
@@ -695,14 +695,14 @@ const TeamLeadLateCheckin = () => {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm text-gray-700">
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
                             Associate Team Lead:
                           </span>
                           {selectedData?.approvedByAssociateTeamLead ===
                           true ? (
                             <FaCircleCheck className="text-green-500 w-5 h-5" />
                           ) : selectedData?.rejectedByAssociateTeamLead ===
-                            false ? (
+                            true ? (
                             <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                           ) : (
                             <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">

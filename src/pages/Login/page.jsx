@@ -11,9 +11,10 @@ import {
   useRecaptcha,
 } from "../../hooks/useAuth";
 import OTPInputComponent from "../../components/ui/OTPInputComponent";
-import Recaptcha from "./Component/Recapta";
+import RecaptchaV3 from "./Component/Recapta";
 
 const Login = () => {
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [sessionToken, setSessionToken] = useState("");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [capta, setCapta] = useState(null);
@@ -39,10 +40,18 @@ const Login = () => {
     }
   }, []);
 
-  // Set capta to "disabled" when reCAPTCHA is disabled
+  // Initialize captcha state based on reCAPTCHA configuration
   useEffect(() => {
-    if (!recaptchaLoading && !recaptchaEnabled) {
-      setCapta("disabled");
+    if (!recaptchaLoading) {
+      if (!recaptchaEnabled) {
+        // If reCAPTCHA is disabled, allow form submission
+        setCapta("disabled");
+        setCaptchaVerified(true);
+      } else {
+        // If reCAPTCHA is enabled, require verification
+        setCapta(null);
+        setCaptchaVerified(false);
+      }
     }
   }, [recaptchaLoading, recaptchaEnabled]);
 
@@ -58,6 +67,16 @@ const Login = () => {
 
   const handleRecaptchaError = () => {
     setCapta(null);
+    setCaptchaVerified(false);
+  };
+
+  // Enhanced form submission to include reCAPTCHA token
+  const onSubmit = (data) => {
+    const submitData = {
+      ...data,
+      recaptchaToken: capta !== "disabled" ? capta : null,
+    };
+    loginMutation.mutate(submitData);
   };
 
   // Helper function to render reCAPTCHA section
@@ -77,7 +96,7 @@ const Login = () => {
 
     if (recaptchaError) {
       return (
-        <div className="flex justify-center py-4">
+        <div className="flex flex-col justify-center py-4">
           <div className="text-red-500 text-center text-sm">
             <p>{recaptchaError}</p>
             <p className="text-xs mt-1">Please refresh the page to try again</p>
@@ -86,16 +105,38 @@ const Login = () => {
       );
     }
 
-    if (recaptchaEnabled && siteKey) {
-      return (
-        <div className="flex justify-center py-4">
-          <Recaptcha setCapta={setCapta} onError={handleRecaptchaError} />
-        </div>
-      );
-    }
+    // Always render RecaptchaV3 component - it handles enabled/disabled state internally
+    return (
+      <div className="flex justify-center py-4">
+        <RecaptchaV3
+          setCapta={(token) => {
+            setCapta(token);
 
-    // Return null if reCAPTCHA is disabled
-    return null;
+            if (token && token !== "disabled") {
+              setCaptchaVerified(true);
+            } else if (token === "disabled") {
+              setCaptchaVerified(true);
+            } else {
+              setCaptchaVerified(false);
+            }
+          }}
+          onError={() => {
+            console.log("Captcha error occurred"); // Debug log
+            handleRecaptchaError();
+          }}
+          action="login"
+        />
+      </div>
+    );
+  };
+
+  const isFormDisabled = () => {
+    const disabled =
+      loginMutation.isPending ||
+      recaptchaLoading ||
+      (recaptchaEnabled && !captchaVerified);
+
+    return disabled;
   };
 
   return (
@@ -112,9 +153,9 @@ const Login = () => {
               </p>
             </div>
           </div>
-          <div className="px-16 pt-64 bg-white dark:bg-gray-800 rounded-2xl md:rounded-r-3xl md:rounded-l-none transition-colors duration-300">
+          <div className="px-16 pt-48 bg-white dark:bg-gray-800 rounded-2xl md:rounded-r-3xl md:rounded-l-none transition-colors duration-300">
             <form
-              onSubmit={handleSubmit(loginMutation.mutate)}
+              onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col space-y-4 gap-6 w-full">
               <p className="text-2xl sm:text-xl font-bold text-center text-gray-900 dark:text-white transition-colors duration-300">
                 Log in
@@ -149,21 +190,17 @@ const Login = () => {
                 }}
               />
 
-              {/* reCAPTCHA Section */}
+              {/* reCAPTCHA v3 Section */}
               {renderRecaptchaSection()}
 
               <div className="flex items-center justify-between w-full">
                 <ButtonComponent
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={
-                    loginMutation.isPending ||
-                    recaptchaLoading || // Disable button while loading
-                    (recaptchaEnabled && !capta) // Disable if reCAPTCHA is enabled but not completed
-                  }
+                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-black dark:hover:bg-gray-600 text-white dark:text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isFormDisabled()}
                   content={
                     <>
-                      <span className="text-xl font-bold">Log In</span>
+                      <span className="text-xl font-bold ">Login</span>
                       {loginMutation?.isPending && (
                         <Spinner size="sm" color="danger" />
                       )}

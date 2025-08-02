@@ -24,11 +24,11 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="pt-10  bg-gray-200 h-screen">
+    <div className="pt-10  bg-gray-200 dark:bg-gray-900 h-screen">
       {/* <GoBack /> */}
       <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
         {/* Left Side - Logo and Tagline */}
-        <div className="hidden md:flex flex-col items-center justify-center bg-bgprimary  rounded-3xl">
+        <div className="hidden md:flex flex-col items-center justify-center bg-bgprimary dark:bg-gray-800   rounded-l-3xl">
           <img src={Logo} alt="Logo" className="w-72 mb-10" />
           <p className="text-2xl text-white text-center font-light leading-relaxed">
             Whispers of Code, <br />
@@ -37,11 +37,11 @@ const ForgetPassword = () => {
         </div>
 
         {/* Right Side - Form */}
-        <div className="flex flex-col justify-center p-8 sm:p-12 bg-white">
+        <div className="flex flex-col justify-center p-8 sm:p-12 bg-white dark:bg-gray-800">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Reset Your Password
           </h2>
-          <p className="text-sm text-gray-600 text-center mb-8">
+          <p className="text-sm text-gray-600  dark:text-white text-center mb-8">
             Enter your email address below and we&apos;ll send you a password
             reset link.
           </p>
@@ -68,7 +68,7 @@ const ForgetPassword = () => {
               />
               <Link
                 to="/login"
-                className="text-sm font-semibold text-slate-600 hover:text-slate-800 transition-colors duration-200 flex items-center gap-1">
+                className="text-sm font-semibold text-slate-600 hover:text-slate-800 dark:text-white transition-colors duration-200 flex items-center gap-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"

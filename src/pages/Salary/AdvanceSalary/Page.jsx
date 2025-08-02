@@ -4,22 +4,17 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import ButtonComp from "../../../components/ui/ButtonComp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import GoBack from "../../../components/GoBack.jsx";
 
 const AdvanceSalary = () => {
   const { control, handleSubmit } = useForm({});
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm({});
 
-  const breadcrumbItems = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "RCL-ID", href: "" },
-    { label: "Add Advance", href: "/advanceSalary" },
-  ];
+  const breadcrumbItems = [{ label: "Add Advance", href: "/AdvanceSalary" }];
 
   const onSubmit = (data) => {
+    // const advanceSalaryData:{data:{
+
+    // }}
     console.log("Submitted Data", data);
   };
 
@@ -33,66 +28,53 @@ const AdvanceSalary = () => {
   return (
     <div className="flex flex-col space-y-10">
       <BreadcrumbsComponent items={breadcrumbItems} />
-      <div className="bg-white rounded-lg h-[85vh] m-3">
-        <form className="p-7" onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex  justify-between text-center place-items-center gap-7 h-16  py-5">
-            <InputComponent
-              name="Description"
-              control={control}
-              variant="bordered"
-              label="Description"
-              rules={{
-                required: "Description is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9 ]{3,50}$/,
-                  message: "Description must be 3-50 characters long.",
-                },
-              }}
-            />
-            <InputComponent
-              name="Year"
-              control={control}
-              variant="bordered"
-              label="Year"
-              rules={{
-                required: "Year is required",
-                pattern: {
-                  value: /^\d{4}$/,
-                  message: "Year must be a 4-digit number.",
-                },
-              }}
-            />
-            <InputComponent
-              name="Month"
-              control={control}
-              variant="bordered"
-              label="Month"
-              rules={{
-                required: "Month is required",
-                pattern: {
-                  value: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)$/i,
-                  message: "Please enter a valid month (e.g., jan, dec).",
-                },
-              }}
-            />
-            {/* -(1[0-2]|[1-9]) */}
-            <InputComponent
-              name="AddAmount"
-              control={control}
-              variant="bordered"
-              label="Add Amount"
-              rules={{
-                required: "Add Amount is required",
-                pattern: {
-                  value: /^(100|[1-9]\d{2,5}|1000000)(\.\d{1,2})?$/,
-                  message: "Please enter a valid amount.",
-                },
-              }}
-            />
-          </div>
+      <div className="flex justify-between items-center">
+        <GoBack />
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
+            Advance Salary
+          </h1>
+        </div>
+        <div></div>
+      </div>
+      <div className="bg-white dark:bg-black rounded-lg h-[85vh] m-3">
+        <form
+          className="flex flex-col space-y-4"
+          onSubmit={handleSubmit(onSubmit)}>
+          <InputComponent
+            name="advanceAmount"
+            control={control}
+            variant="bordered"
+            label="Advance Amount"
+            rules={{
+              required: "Amount is required",
+              pattern: {
+                value: /^\d+(\.\d{1,2})?$/,
+                message: "Please enter a valid amount",
+              },
+              min: {
+                value: 0.01,
+                message: "Amount must be greater than 0",
+              },
+            }}
+          />
+          <InputComponent
+            name="repaymentPeriod"
+            control={control}
+            variant="bordered"
+            label="Repayment Period"
+            rules={{
+              required: "Amount is required",
+              pattern: {
+                value: /^[1-9][0-9]*$/,
+                message: "Amount must be a positive number",
+              },
+            }}
+          />
+
           <ButtonComp
             onPress={handleSubmit(onSubmit)}
-            className="justify-start my-12 py-6  text-lg border border-gray-300 font-semibold bg-blue-100"
+            className="text-lg font-semibold w-fit"
             content="Submit"
           />
         </form>

@@ -15,9 +15,14 @@ import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Loader from "./Loader/Loader.jsx";
-import { hasUpdateAccess, MENU_NAMES } from "../utils/permissionUtils.js";
+import {
+  hasApproveAccess,
+  hasUpdateAccess,
+  MENU_NAMES,
+} from "../utils/permissionUtils.js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRejectUser } from "../hooks/useAuth.js";
+import TextAreaComp from "./ui/TextAreaComp.jsx";
 
 const RejectComp = ({ employeeData }) => {
   const {
@@ -25,12 +30,13 @@ const RejectComp = ({ employeeData }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { rclId } = useParams();
   const queryClient = useQueryClient();
-  const hasApproveAccess = hasUpdateAccess(MENU_NAMES.EKYE);
+  const hasrejectAccess = hasApproveAccess(MENU_NAMES.EKYE);
 
   // Using the custom hook
   const rejectMutation = useRejectUser((data) => {
@@ -43,7 +49,7 @@ const RejectComp = ({ employeeData }) => {
   });
 
   const onReject = async (data) => {
-    if (!hasApproveAccess) {
+    if (!hasrejectAccess) {
       toast.error("Access Denied");
       return;
     }
@@ -91,27 +97,24 @@ const RejectComp = ({ employeeData }) => {
                 </ModalHeader>
 
                 <ModalBody>
-                  <Textarea
-                    placeholder="Comment :"
-                    minRows={10}
-                    maxRows={10}
-                    className={`${errors.reject ? "border-red-900" : ""}`}
-                    variant="bordered"
-                    isDisabled={rejectMutation.isPending}
-                    {...register("reject", {
+                  <TextAreaComp
+                    control={control}
+                    name="reject"
+                    label="Reason"
+                    rules={{
                       required: "Reject reason is required",
-                      maxLength: {
-                        value: 1000,
+                      minLength: {
+                        value: 10,
                         message:
-                          "Reason to reject cannot exceed 1000 characters",
+                          "Reason to reject must be more than 10 charactes",
                       },
-                    })}
+                      maxLength: {
+                        value: 255,
+                        message:
+                          "Reason to reject cannot exceed 255 characters",
+                      },
+                    }}
                   />
-                  {errors.reject && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.reject.message}
-                    </p>
-                  )}
                 </ModalBody>
 
                 <ModalFooter>
@@ -124,22 +127,20 @@ const RejectComp = ({ employeeData }) => {
                       </div>
                     }
                     color="warning"
-                    className="text-white"
+                    className="text-white dark:text-black"
                     isDisabled={rejectMutation.isPending}
                   />
-                  <ButtonComponent
+                  <Button
+                    color="danger"
                     onPress={handleSubmit(onReject)}
-                    content={
-                      <div className="flex items-center justify-center gap-2">
-                        <RxCross1 />
-                        <span>
-                          {rejectMutation.isPending ? "Rejecting..." : "Reject"}
-                        </span>
-                      </div>
-                    }
-                    className="bg-red-700 text-white"
-                    isDisabled={rejectMutation.isPending}
-                  />
+                    isDisabled={rejectMutation.isPending || !hasrejectAccess}>
+                    <div className="flex items-center justify-center gap-2">
+                      <RxCross1 />
+                      <span>
+                        {rejectMutation.isPending ? "Rejecting..." : "Reject"}
+                      </span>
+                    </div>
+                  </Button>
                 </ModalFooter>
               </>
             )}

@@ -91,26 +91,32 @@ export const logoutUser = async () => {
   const accessToken = localStorage.getItem("accessToken");
   if (!accessToken) {
     toast.error("Access Token not found");
+    return;
   }
-  const LogoutData = {
-    data: {
-      jwtToken: accessToken,
-    },
-  };
-  const response = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-    LogoutData,
-    {
-      headers: {
-        "Content-Type": "application/json",
+
+  try {
+    const LogoutData = {
+      data: {
+        jwtToken: accessToken,
       },
+    };
+    const response = await axiosInstance.post(
+      `/api/v1/auth/logout`,
+      LogoutData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.data?.responseCode === "200") {
+      localStorage.clear();
+    } else {
+      const errorMessage = response?.data?.error?.errorList?.[0]?.errorMessage;
+      throw new Error(errorMessage || "Log In Failed");
     }
-  );
-  if (response.data?.responseCode === "200") {
+  } catch {
     localStorage.clear();
-  } else {
-    const errorMessage = response?.data?.error?.errorList?.[0]?.errorMessage;
-    throw new Error(errorMessage || "Log In Failed");
   }
 };
 
@@ -525,7 +531,6 @@ export const getSiteKey = async () => {
       );
     }
   } catch (error) {
-    console.log(error?.response);
     const errorMessage =
       error.response?.data?.error?.errorList?.[0]?.errorMessage ||
       error.response?.data?.error;
@@ -536,22 +541,33 @@ export const getSiteKey = async () => {
 
 /**Verify Recapta */
 export const verifyRecaptcha = async (request) => {
-  const ipAddress = await getIpAddress();
-  const params = new URLSearchParams(request);
-  const response = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/api/verify-recaptcha`,
-    params,
-    {
-      headers: {
-        "X-Forwarded-For": ipAddress,
-        "X-Real-IP": ipAddress,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    }
-  );
-  return response.data;
-};
+  try {
+    const ipAddress = await getIpAddress();
 
+    // For reCAPTCHA v3, we send data as URL parameters
+    const params = new URLSearchParams({
+      recaptchaResponse: request.recaptchaResponse,
+      ...(request.action && { action: request.action }),
+    });
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/api/verify-recaptcha`,
+      params,
+      {
+        headers: {
+          "X-Forwarded-For": ipAddress,
+          "X-Real-IP": ipAddress,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("reCAPTCHA verification error:", error);
+    throw error;
+  }
+};
 /**Fetch Trusted Devices */
 export const fetchTrustedDevices = async () => {
   const response = await axiosInstance.get(`/api/v1/auth/trusted-devices`);
@@ -662,6 +678,19 @@ export const fetchEmployeeDetails = async (rclId) => {
   const response = await axiosInstance.post(
     `/api/v1/admin/complete-details/rclId`,
     { data: { rclId: rclId } }
+  );
+  if (response?.data?.responseCode === "200") {
+    return response?.data;
+  } else {
+    throw new Error(
+      response?.data?.message || "Failed to fetch fetch employee details"
+    );
+  }
+};
+export const fetchEmployeeEKYEDetails = async (rclId) => {
+  const response = await axiosInstance.post(
+    `/api/v1/admin/singleCompleteEkyeUser/rclId/${rclId}`,
+    {}
   );
   if (response?.data?.responseCode === "200") {
     return response?.data;

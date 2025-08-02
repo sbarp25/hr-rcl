@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import DatepickerComponent, {
   formatDate,
@@ -14,6 +13,7 @@ import { getIpAddress } from "../../../utils/getIpAddress";
 import GoBack from "../../../components/GoBack";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import { now } from "@internationalized/date";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,10 +59,12 @@ const RequestWorkFromHome = () => {
 
       if (response?.data?.responseCode === "200") {
         reset();
-        navigate("/WFH/Status");
+        navigate("/WFH");
         toast.success(response?.data?.message);
       } else {
-        const errorMessage = response?.data?.error || "Something went wrong";
+        const errorMessage =
+          response?.data?.error?.errorList?.[0]?.errorMessage ||
+          "Something went wrong";
         toast.error(errorMessage);
       }
     } catch (error) {
@@ -143,6 +145,7 @@ const RequestWorkFromHome = () => {
                     );
                   },
                 }}
+                minValue={now("Etc/UTC")}
               />
             </div>
 
@@ -154,6 +157,7 @@ const RequestWorkFromHome = () => {
                 label="To Date(A.D)"
                 size="sm"
                 className="w-full"
+                minValue={now("Etc/UTC")}
                 rules={{
                   required: "End date is required",
                   validate: (value) =>

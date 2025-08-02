@@ -282,7 +282,7 @@ const Department = () => {
                                 <HiPencilSquare
                                   className={`${
                                     hasDepartmentEditAccess
-                                      ? "text-orange-500 cursor-pointer hover:text-orange-700 text-xl mr-2"
+                                      ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                       : "text-xl mr-2"
                                   }`}
                                   title="Edit"
@@ -362,7 +362,7 @@ const Department = () => {
                                 <HiPencilSquare
                                   className={`${
                                     hasDepartmentEditAccess
-                                      ? "text-yellow-500 cursor-pointer hover:text-green-700 text-xl mr-2"
+                                      ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
                                       : "text-xl mr-2"
                                   }`}
                                   title="Edit"
@@ -438,7 +438,7 @@ const Department = () => {
                             <Button
                               size="sm"
                               variant="flat"
-                              color="warning"
+                              color="success"
                               className={`${
                                 !hasDepartmentEditAccess
                                   ? "opacity-50 cursor-not-allowed"
