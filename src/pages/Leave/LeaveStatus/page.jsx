@@ -37,6 +37,7 @@ import { useLeaveByRole } from "../../../hooks/useAuth.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateLeaveStatus } from "../../../api/auth.js";
 import { IoIosRemoveCircle } from "react-icons/io";
+import Loader from "../../../components/Loader/Loader.jsx";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,7 +105,7 @@ const LeaveStatus = () => {
 
   const breadcrumbItems = [
     { label: "Leave", href: "" },
-    { label: "Leave Status", href: "/Leave/Status" },
+    { label: "Review Leave", href: "/Leave/Status" },
   ];
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
@@ -209,110 +210,114 @@ const LeaveStatus = () => {
 
   return (
     <>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
-        {/**Page Section */}
-        <div className="flex flex-col space-y-4">
-          <div className="text-sm">
-            <BreadcrumbsComponent items={breadcrumbItems} />
-          </div>
-          <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
-            <div className="flex items-center page-title -pl-2">
-              <h1 className="page-title">Applied Leaves</h1>
-            </div>
-            <div className="flex gap-x-2 w-full sm:w-auto">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                <Search
-                  onApplySearch={handleApplySearch}
-                  url="/api/v1/leave_management/by-role"
-                  searchFields={[
-                    "fullName",
-                    "departmentName",
-                    "requestDate",
-                    "leaveType",
-                    "leaveStartDate",
-                    "leaveEndDate",
-                  ]}
-                  placeholder="Search employees..."
-                />
-                <Filter
-                  onApplyFilters={handleApplyFilters}
-                  url="/api/leave/all"
-                  className="w-full sm:w-auto"
-                />
+      {showLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+            {/**Page Section */}
+            <div className="flex flex-col space-y-4">
+              <div className="text-sm">
+                <BreadcrumbsComponent items={breadcrumbItems} />
+              </div>
+              <div className="flex flex-col justify-between sm:flex-row  items-start sm:items-center gap-2">
+                <div className="flex items-center page-title -pl-2">
+                  <h1 className="page-title">Leaves Review</h1>
+                </div>
+                <div className="flex gap-x-2 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                    <Search
+                      onApplySearch={handleApplySearch}
+                      url="/api/v1/leave_management/by-role"
+                      searchFields={[
+                        "fullName",
+                        "departmentName",
+                        "requestDate",
+                        "leaveType",
+                        "leaveStartDate",
+                        "leaveEndDate",
+                      ]}
+                      placeholder="Search employees..."
+                    />
+                    <Filter
+                      onApplyFilters={handleApplyFilters}
+                      url="/api/leave/all"
+                      className="w-full sm:w-auto"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/**Table Section */}
-        <div className="bg-white dark:bg-black rounded-lg p-2 max-h-[80vh]  overflow-y-auto">
-          {/* Large screens - Full table */}
-          <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg  text-left">
-              <Table
-                bordered
-                aria-label="Table of Leave"
-                className="max-h-[75vh]">
-                <TableHeader>
-                  <TableColumn>S.N</TableColumn>
-                  <TableColumn>Full Name</TableColumn>
-                  <TableColumn>Department</TableColumn>
-                  <TableColumn>Request Date</TableColumn>
-                  <TableColumn>Leave Type</TableColumn>
-                  <TableColumn>Leave Start Date</TableColumn>
-                  <TableColumn>Leave End Date</TableColumn>
-                  <TableColumn>Status</TableColumn>
-                  {/* <TableColumn>Approved by</TableColumn> */}
-                  <TableColumn>Action</TableColumn>
-                </TableHeader>
-                <TableBody
-                  items={showLoading ? [] : leaveData}
-                  isLoading={showLoading}
-                  loadingContent={<SkeletonLoader />}>
-                  {(item) => (
-                    <TableRow
-                      key={item.rclId}
-                      className="h-14 border-b-2 border-gray-300">
-                      <TableCell>{displayData.indexOf(item) + 1}</TableCell>
-                      <TableCell>
-                        {item.fullName.length < 7 ? (
-                          item.fullName
-                        ) : (
-                          <Tooltip content={item.fullName}>
-                            {truncateText(item.fullName, 7)}
-                          </Tooltip>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {item?.departmentName?.length < 7 ? (
-                          item?.departmentName
-                        ) : (
-                          <Tooltip content={item?.departmentName}>
-                            {truncateText(item?.departmentName, 7)}
-                          </Tooltip>
-                        )}
-                      </TableCell>
-                      <TableCell>{item?.requestDate || "N/A"}</TableCell>
-                      <TableCell>{item?.leaveType || "N/A"}</TableCell>
-                      <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
-                      <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
-                      <TableCell>
-                        {" "}
-                        <div
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
-                            item?.leaveStatus
-                          )}`}>
-                          {item?.leaveStatus === "PENDING"
-                            ? "Pending"
-                            : item?.leaveStatus === "APPROVED"
-                            ? "Approved"
-                            : item?.leaveStatus === "REJECTED"
-                            ? "Rejected"
-                            : "N/A"}{" "}
-                        </div>
-                      </TableCell>
+            {/**Table Section */}
+            <div className="bg-white dark:bg-black rounded-lg p-2 max-h-[80vh]  overflow-y-auto">
+              {/* Large screens - Full table */}
+              <div className="hidden lg:block">
+                <div className="shadow-md rounded-lg  text-left">
+                  <Table
+                    bordered
+                    aria-label="Table of Leave"
+                    className="max-h-[75vh]">
+                    <TableHeader>
+                      <TableColumn>S.N</TableColumn>
+                      <TableColumn>Full Name</TableColumn>
+                      <TableColumn>Department</TableColumn>
+                      <TableColumn>Request Date</TableColumn>
+                      <TableColumn>Leave Type</TableColumn>
+                      <TableColumn>Leave Start Date</TableColumn>
+                      <TableColumn>Leave End Date</TableColumn>
+                      <TableColumn>Status</TableColumn>
+                      {/* <TableColumn>Approved by</TableColumn> */}
+                      <TableColumn>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody
+                      items={showLoading ? [] : leaveData}
+                      isLoading={showLoading}
+                      loadingContent={<SkeletonLoader />}>
+                      {(item) => (
+                        <TableRow
+                          key={item.rclId}
+                          className="h-14 border-b-2 border-gray-300">
+                          <TableCell>{displayData.indexOf(item) + 1}</TableCell>
+                          <TableCell>
+                            {item.fullName.length < 7 ? (
+                              item.fullName
+                            ) : (
+                              <Tooltip content={item.fullName}>
+                                {truncateText(item.fullName, 7)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {item?.departmentName?.length < 7 ? (
+                              item?.departmentName
+                            ) : (
+                              <Tooltip content={item?.departmentName}>
+                                {truncateText(item?.departmentName, 7)}
+                              </Tooltip>
+                            )}
+                          </TableCell>
+                          <TableCell>{item?.requestDate || "N/A"}</TableCell>
+                          <TableCell>{item?.leaveType || "N/A"}</TableCell>
+                          <TableCell>{item?.leaveStartDate || "N/A"}</TableCell>
+                          <TableCell>{item?.leaveEndDate || "N/A"}</TableCell>
+                          <TableCell>
+                            {" "}
+                            <div
+                              className={`px-3 py-1.5 rounded-full text-xs font-medium text-center w-fit ${getStatusClass(
+                                item?.leaveStatus
+                              )}`}>
+                              {item?.leaveStatus === "PENDING"
+                                ? "Pending"
+                                : item?.leaveStatus === "APPROVED"
+                                ? "Approved"
+                                : item?.leaveStatus === "REJECTED"
+                                ? "Rejected"
+                                : "N/A"}{" "}
+                            </div>
+                          </TableCell>
 
-                      {/* <TableCell>
+                          {/* <TableCell>
                         <div className="flex items-center gap-3 p-2 rounded-lg">
                           <div
                             className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
@@ -327,409 +332,471 @@ const LeaveStatus = () => {
                           </div>
                         </div>
                       </TableCell> */}
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {/* {hasaccess && (
+                          <TableCell>
+                            <div className="flex gap-2">
+                              {/* {hasaccess && (
                             <button
                               className="text-blue-600 hover:text-blue-800"
                               onClick={() => handleAction("view", item)}>
                               <FaRegEye size={18} />
                             </button>
                           )} */}
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
+                              {item?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess && (
+                                  <>
+                                    <FaCheckCircle
+                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      onClick={() =>
+                                        handleAction("approve", item)
+                                      }
+                                    />
+                                    <FaXmark
+                                      className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                      onClick={() =>
+                                        handleAction("reject", item)
+                                      }
+                                    />
+                                  </>
+                                )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Medium screens - Simplified table */}
+              <div className="hidden md:block lg:hidden">
+                <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto  text-left">
+                  <Table bordered aria-label="Table of Leave">
+                    <TableHeader>
+                      <TableColumn>Leave</TableColumn>
+                      <TableColumn>Date</TableColumn>
+                      <TableColumn>Duration</TableColumn>
+                      <TableColumn>Status</TableColumn>
+                      <TableColumn>Team</TableColumn>
+                      <TableColumn>Action</TableColumn>
+                    </TableHeader>
+                    <TableBody
+                      items={showLoading ? [] : leaveData}
+                      isLoading={showLoading}
+                      loadingContent={<SkeletonLoader />}>
+                      {(item) => (
+                        <TableRow key={item.rclId} className="hover:bg-gray-50">
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {item?.leaveType || "N/A"}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                #{item.rclId}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span>
+                                Start: {item?.leaveStartDate || "N/A"}
+                              </span>
+                              <span>End: {item?.leaveEndDate || "N/A"}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span>{item?.Days || "N/A"} days</span>
+                          </TableCell>
+                          <TableCell>
+                            <div
+                              className={`${getStatusClass(
+                                item?.leaveStatus
+                              )} text-center py-1 px-2 rounded-md w-fit`}>
+                              {item?.leaveStatus || "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base ${getStatusClass(
+                                  item?.leaveStatus
+                                )}`}>
+                                {item?.teamLeaderName?.charAt(0) || "?"}
+                              </div>
+                              <div className="text-sm truncate max-w-20">
+                                {item?.teamLeaderName || "N/A"}
+                              </div>
+                            </div>
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex gap-2">
+                              {item?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess && (
+                                  <>
+                                    <FaCheckCircle
+                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      onClick={() =>
+                                        handleAction("approve", item)
+                                      }
+                                    />
+                                    <FaXmark
+                                      className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
+                                      onClick={() =>
+                                        handleAction("reject", item)
+                                      }
+                                    />
+                                  </>
+                                )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Small screens - Card-like view */}
+              <div className="block md:hidden">
+                <div className="space-y-4 overflow-y-auto">
+                  <Accordion variant="bordered">
+                    {leaveData?.map((leave) => (
+                      <AccordionItem
+                        key={leave?.leaveId}
+                        aria-label={`${leave?.leaveType} - ${leave?.leaveStatus}`}
+                        title={
+                          <div className="flex justify-between items-center w-full">
+                            <span className="font-medium">
+                              {leave?.leaveType || "N/A"}
+                            </span>
+                            <div
+                              className={`${getStatusClass(
+                                leave?.leaveStatus
+                              )} text-center py-1 px-2 text-xs rounded-md`}>
+                              {leave?.leaveStatus || "N/A"}
+                            </div>
+                          </div>
+                        }>
+                        <div className={` p-3 space-y-2 text-sm`}>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Request Date:</div>
+                            <div>{leave?.requestDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Start Date:</div>
+                            <div>{leave?.leaveStartDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">End Date:</div>
+                            <div>{leave?.leaveEndDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Days:</div>
+                            <div>{leave?.Days || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Team Leader:</div>
+                            <div>{leave?.teamLeaderName || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Approver:</div>
+                            <div>{leave?.approvedBy || "N/A"}</div>
+                          </div>
+                          <div className="flex justify-end gap-2 mt-4">
+                            {leave?.leaveStatus === "PENDING" &&
+                              hasLeaveUpdateAccess && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    color="success"
+                                    variant="flat"
+                                    onPress={() =>
+                                      handleAction("approve", leave)
+                                    }>
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="flat"
+                                    color="danger"
+                                    onPress={() =>
+                                      handleAction("reject", leave)
+                                    }>
+                                    Reject
+                                  </Button>
+                                </>
+                              )}
+                          </div>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </div>
+
+              {!showLoading && (!leaveData || leaveData?.length === 0) && (
+                <div className="p-8 text-center text-gray-500">
+                  No Data available
+                </div>
+              )}
+
+              {/**Pagination Section - Responsive for all screens */}
+              {leaveData && leaveData?.length > 0 && (
+                <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                  <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
+                    <span className="mr-1">Showing:</span>
+                    <span className="font-bold  mx-1">
+                      {totalRecords < leaveDataPerPage
+                        ? totalRecords
+                        : leaveDataPerPage}
+                    </span>
+                    <span className="mr-1">of</span>
+                    <span className="font-bold ">{totalRecords}</span>
+                  </div>
+
+                  <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+                    <Pagination
+                      showControls
+                      total={totalPages}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                      size="sm"
+                    />
+                  </div>
+                  <div className="flex justify-center items-center order-3">
+                    <span className="text-xs mr-2">Lines Per Page:</span>
+                    <DropDownComp
+                      items={dropdownItems}
+                      selectedValue={leaveDataPerPage}
+                      onSelect={setLeaveDataPerPage}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Medium screens - Simplified table */}
-          <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto  text-left">
-              <Table bordered aria-label="Table of Leave">
-                <TableHeader>
-                  <TableColumn>Leave</TableColumn>
-                  <TableColumn>Date</TableColumn>
-                  <TableColumn>Duration</TableColumn>
-                  <TableColumn>Status</TableColumn>
-                  <TableColumn>Team</TableColumn>
-                  <TableColumn>Action</TableColumn>
-                </TableHeader>
-                <TableBody
-                  items={showLoading ? [] : leaveData}
-                  isLoading={showLoading}
-                  loadingContent={<SkeletonLoader />}>
-                  {(item) => (
-                    <TableRow key={item.rclId} className="hover:bg-gray-50">
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-medium">
-                            {item?.leaveType || "N/A"}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            #{item.rclId}
-                          </span>
+          {/* Approve Modal */}
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            size="4xl"
+            isDismissable={true}
+            isKeyboardDismissDisabled={false}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalBody>
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Leave Approval</h3>
+                      <p>Are you sure you want to approve this leave?</p>
+                      {selectedLeave && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Full Name: &nbsp;
+                            </span>
+                            <span>{selectedLeave?.fullName}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Department Name: &nbsp;
+                            </span>
+                            <span>{selectedLeave?.departmentName}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Team Lead:&nbsp;
+                            </span>
+                            <span>{selectedLeave?.teamLeaderName}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              AssociateTeam Lead:&nbsp;
+                            </span>
+                            <span>{selectedLeave?.associateTeamLeadName}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Leave Type:&nbsp;
+                            </span>
+                            <span>{selectedLeave?.leaveType}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Start Date:&nbsp;
+                            </span>
+                            <span>{selectedLeave?.leaveStartDate}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">End Date:&nbsp;</span>
+                            <span>{selectedLeave?.leaveEndDate}</span>
+                          </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span>Start: {item?.leaveStartDate || "N/A"}</span>
-                          <span>End: {item?.leaveEndDate || "N/A"}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span>{item?.Days || "N/A"} days</span>
-                      </TableCell>
-                      <TableCell>
-                        <div
-                          className={`${getStatusClass(
-                            item?.leaveStatus
-                          )} text-center py-1 px-2 rounded-md w-fit`}>
-                          {item?.leaveStatus || "N/A"}
-                        </div>
-                      </TableCell>
-                      <TableCell>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 justify-end mt-4">
+                      <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
                         <div className="flex items-center gap-2">
-                          <div
-                            className={`flex items-center justify-center w-8 h-8 rounded-full font-bold shadow-md text-base ${getStatusClass(
-                              item?.leaveStatus
-                            )}`}>
-                            {item?.teamLeaderName?.charAt(0) || "?"}
-                          </div>
-                          <div className="text-sm truncate max-w-20">
-                            {item?.teamLeaderName || "N/A"}
-                          </div>
-                        </div>
-                      </TableCell>
-
-                      <TableCell>
-                        <div className="flex gap-2">
-                          {item?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess && (
-                              <>
-                                <FaCheckCircle
-                                  className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
-                                  onClick={() => handleAction("approve", item)}
-                                />
-                                <FaXmark
-                                  className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
-                                  onClick={() => handleAction("reject", item)}
-                                />
-                              </>
-                            )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-
-          {/* Small screens - Card-like view */}
-          <div className="block md:hidden">
-            <div className="space-y-4 overflow-y-auto">
-              <Accordion variant="bordered">
-                {leaveData?.map((leave) => (
-                  <AccordionItem
-                    key={leave?.leaveId}
-                    aria-label={`${leave?.leaveType} - ${leave?.leaveStatus}`}
-                    title={
-                      <div className="flex justify-between items-center w-full">
-                        <span className="font-medium">
-                          {leave?.leaveType || "N/A"}
-                        </span>
-                        <div
-                          className={`${getStatusClass(
-                            leave?.leaveStatus
-                          )} text-center py-1 px-2 text-xs rounded-md`}>
-                          {leave?.leaveStatus || "N/A"}
-                        </div>
-                      </div>
-                    }>
-                    <div className={` p-3 space-y-2 text-sm`}>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Request Date:</div>
-                        <div>{leave?.requestDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Start Date:</div>
-                        <div>{leave?.leaveStartDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">End Date:</div>
-                        <div>{leave?.leaveEndDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Days:</div>
-                        <div>{leave?.Days || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Team Leader:</div>
-                        <div>{leave?.teamLeaderName || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Approver:</div>
-                        <div>{leave?.approvedBy || "N/A"}</div>
-                      </div>
-                      <div className="flex justify-end gap-2 mt-4">
-                        {leave?.leaveStatus === "PENDING" &&
-                          hasLeaveUpdateAccess && (
-                            <>
-                              <Button
-                                size="sm"
-                                color="success"
-                                variant="flat"
-                                onPress={() => handleAction("approve", leave)}>
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="flat"
-                                color="danger"
-                                onPress={() => handleAction("reject", leave)}>
-                                Reject
-                              </Button>
-                            </>
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
+                            Team Lead:
+                          </span>
+                          {selectedLeave?.approvedByTeamLead === true ? (
+                            <FaCircleCheck className="text-green-500 w-5 h-5" />
+                          ) : selectedLeave?.rejectedByTeamLead === true ? (
+                            <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                              Pending
+                            </span>
                           )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm text-gray-700 dark:text-white">
+                            Associate Team Lead:
+                          </span>
+                          {selectedLeave?.approvedByAssociateTeamLead ===
+                          true ? (
+                            <FaCircleCheck className="text-green-500 w-5 h-5" />
+                          ) : selectedLeave?.rejectedByAssociateTeamLead ===
+                            true ? (
+                            <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                              Pending
+                            </span>
+                          )}
+                        </div>
                       </div>
+                      <Button
+                        className="bg-black text-white"
+                        onPress={() => onApprove()}>
+                        Approve
+                      </Button>
+                      <Button onPress={onClose}>Cancel</Button>
                     </div>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          </div>
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
 
-          {!showLoading && (!leaveData || leaveData?.length === 0) && (
-            <div className="p-8 text-center text-gray-500">
-              No Data available
-            </div>
-          )}
-
-          {/**Pagination Section - Responsive for all screens */}
-          {leaveData && leaveData?.length > 0 && (
-            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-              <div className="text-sm font-medium text-gray-600 dark:text-white  flex items-center">
-                <span className="mr-1">Showing:</span>
-                <span className="font-bold  mx-1">
-                  {totalRecords < leaveDataPerPage
-                    ? totalRecords
-                    : leaveDataPerPage}
-                </span>
-                <span className="mr-1">of</span>
-                <span className="font-bold ">{totalRecords}</span>
-              </div>
-
-              <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
-                <Pagination
-                  showControls
-                  total={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                  size="sm"
-                />
-              </div>
-              <div className="flex justify-center items-center order-3">
-                <span className="text-xs mr-2">Lines Per Page:</span>
-                <DropDownComp
-                  items={dropdownItems}
-                  onSelect={setLeaveDataPerPage}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Approve Modal */}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size="4xl"
-        isDismissable={true}
-        isKeyboardDismissDisabled={false}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Leave Approval</h3>
-                  <p>Are you sure you want to approve this leave?</p>
-                  {selectedLeave && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
-                      <div className="flex ">
-                        <span className="font-medium">Full Name: &nbsp;</span>
-                        <span>{selectedLeave?.fullName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">
-                          Department Name: &nbsp;
-                        </span>
-                        <span>{selectedLeave?.departmentName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Team Lead:&nbsp;</span>
-                        <span>{selectedLeave?.teamLeaderName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">
-                          AssociateTeam Lead:&nbsp;
-                        </span>
-                        <span>{selectedLeave?.associateTeamLeadName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Leave Type:&nbsp;</span>
-                        <span>{selectedLeave?.leaveType}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Start Date:&nbsp;</span>
-                        <span>{selectedLeave?.leaveStartDate}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">End Date:&nbsp;</span>
-                        <span>{selectedLeave?.leaveEndDate}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-2 justify-end mt-4">
-                  <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-gray-700 dark:text-white">
-                        Team Lead:
-                      </span>
-                      {selectedLeave?.approvedByTeamLead === true ? (
-                        <FaCircleCheck className="text-green-500 w-5 h-5" />
-                      ) : selectedLeave?.rejectedByTeamLead === true ? (
-                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                      ) : (
-                        <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
-                          Pending
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-gray-700 dark:text-white">
-                        Associate Team Lead:
-                      </span>
-                      {selectedLeave?.approvedByAssociateTeamLead === true ? (
-                        <FaCircleCheck className="text-green-500 w-5 h-5" />
-                      ) : selectedLeave?.rejectedByAssociateTeamLead ===
-                        true ? (
-                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                      ) : (
-                        <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
-                          Pending
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <Button
-                    className="bg-black text-white"
-                    onPress={() => onApprove()}>
-                    Approve
-                  </Button>
-                  <Button onPress={onClose}>Cancel</Button>
-                </div>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
-      {/* Reject Modal */}
-      <Modal
-        isOpen={isRejectOpen}
-        onOpenChange={onRejectOpenChange}
-        isDismissable={true}
-        size="4xl"
-        isKeyboardDismissDisabled={false}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Leave Rejection</h3>
-                  <p>Are you sure you want to reject this leave?</p>
-                  {selectedLeave && (
-                    <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
-                      <div className="flex ">
-                        <span className="font-medium">Full Name: &nbsp;</span>
-                        <span>{selectedLeave?.fullName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">
-                          Department Name: &nbsp;
-                        </span>
-                        <span>{selectedLeave?.departmentName}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">Leave Type:</span>
-                        <span>{selectedLeave?.leaveType}</span>
-                      </div>
-
-                      <div className="flex ">
-                        <span className="font-medium">Start Date:</span>
-                        <span>{selectedLeave?.leaveStartDate}</span>
-                      </div>
-                      <div className="flex ">
-                        <span className="font-medium">End Date:</span>
-                        <span>{selectedLeave?.leaveEndDate}</span>
-                      </div>
-                      <div className="flex ">
-                        {selectedLeave.isHalfDay && (
-                          <div>
-                            <span className="font-medium">Half Day</span>
-                            <span>{selectedLeave?.isHalfDay}</span>
+          {/* Reject Modal */}
+          <Modal
+            isOpen={isRejectOpen}
+            onOpenChange={onRejectOpenChange}
+            isDismissable={true}
+            size="4xl"
+            isKeyboardDismissDisabled={false}>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalBody>
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium">Leave Rejection</h3>
+                      <p>Are you sure you want to reject this leave?</p>
+                      {selectedLeave && (
+                        <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Full Name: &nbsp;
+                            </span>
+                            <span>{selectedLeave?.fullName}</span>
                           </div>
-                        )}
-                      </div>
+                          <div className="flex ">
+                            <span className="font-medium">
+                              Department Name: &nbsp;
+                            </span>
+                            <span>{selectedLeave?.departmentName}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">Leave Type:</span>
+                            <span>{selectedLeave?.leaveType}</span>
+                          </div>
+
+                          <div className="flex ">
+                            <span className="font-medium">Start Date:</span>
+                            <span>{selectedLeave?.leaveStartDate}</span>
+                          </div>
+                          <div className="flex ">
+                            <span className="font-medium">End Date:</span>
+                            <span>{selectedLeave?.leaveEndDate}</span>
+                          </div>
+                          <div className="flex ">
+                            {selectedLeave.isHalfDay && (
+                              <div>
+                                <span className="font-medium">Half Day</span>
+                                <span>{selectedLeave?.isHalfDay}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <form onSubmit={handleSubmit(onReject)}>
-                  <TextAreaComp
-                    name="reason"
-                    label="Rejection Reason"
-                    control={control}
-                    placeholder="Enter reason for rejection"
-                    rules={{
-                      required: "Reason is required",
-                      minLength: {
-                        value: 10,
-                        message: "Reason must be at least 10 characters long.",
-                      },
-                    }}
-                  />
-                  <div className="flex gap-2 justify-end mt-4">
-                    <Button className="text-white bg-black" type="submit">
-                      Reject
-                    </Button>
-                    <Button onPress={onClose}>Cancel</Button>
-                  </div>
-                </form>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                    <form onSubmit={handleSubmit(onReject)}>
+                      <TextAreaComp
+                        name="reason"
+                        label="Rejection Reason"
+                        control={control}
+                        placeholder="Enter reason for rejection"
+                        rules={{
+                          required: "Reason is required",
+                          minLength: {
+                            value: 10,
+                            message:
+                              "Reason must be at least 10 characters long.",
+                          },
+                        }}
+                      />
+                      <div className="flex gap-2 justify-end mt-4">
+                        <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm text-gray-700 dark:text-white">
+                              Team Lead:
+                            </span>
+                            {selectedLeave?.approvedByTeamLead === true ? (
+                              <FaCircleCheck className="text-green-500 w-5 h-5" />
+                            ) : selectedLeave?.rejectedByTeamLead === true ? (
+                              <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                            ) : (
+                              <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                                Pending
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm text-gray-700 dark:text-white">
+                              Associate Team Lead:
+                            </span>
+                            {selectedLeave?.approvedByAssociateTeamLead ===
+                            true ? (
+                              <FaCircleCheck className="text-green-500 w-5 h-5" />
+                            ) : selectedLeave?.rejectedByAssociateTeamLead ===
+                              true ? (
+                              <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                            ) : (
+                              <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <Button className="text-white bg-black" type="submit">
+                          Reject
+                        </Button>
+                        <Button onPress={onClose}>Cancel</Button>
+                      </div>
+                    </form>
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
+      )}
     </>
   );
 };

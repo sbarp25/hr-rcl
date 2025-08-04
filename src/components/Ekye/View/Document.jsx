@@ -22,7 +22,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, [employeeData]);
 
   return (
-    <div className="flex flex-col  max-h-[75vh] overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md h-[75vh] border border-gray-300">
+    <div className="flex flex-col  overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md border border-gray-300">
       <div className="flex flex-col mt-2 px-8 gap-6 ">
         {/**Citizenship details */}
         <div className="bg-white dark:bg-black text-lg p-6 rounded-lg">
@@ -62,7 +62,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
               {/* Citizenship Front Photo */}
               <div>
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   Citizenship Front Photo
                 </label>
                 {citizenshipFront ? (
@@ -88,7 +88,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
               </div>
               {/**Citizenship Back Photo */}
               <div className="">
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   Citizenship Back Photo
                 </label>
                 {citizenshipBack ? (
@@ -151,7 +151,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 w-full">
               {/**Pan Document */}
               <div>
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   PAN Photo
                 </label>
                 {photoPAN ? (

@@ -62,14 +62,15 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center bg-gray-50 dark:bg-black h-[75vh] py-6 mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white dark:bg-black text-lg w-full rounded-lg px-8 mt-2 mx-1 flex-1">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
+        <div className="bg-white dark:bg-black text-lg w-[calc(100%-.5rem)]  rounded-lg px-6 mt-2 mx-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
                 Education Details
                 <UnderlineComponent />
               </span>
+              {/* h-[calc(100vh-210px)] */}
             </h1>
             <div className="flex gap-1 items-end justify-end text-right">
               <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
@@ -80,7 +81,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
-              <div key={index} className="mb-6 p-4 rounded-md">
+              <div key={index} className="mb-6 p-4 rounded-md ">
                 <Form className="py-6 gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <EkyeDetailsComponent
@@ -114,7 +115,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   <Divider />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <div>
-                      <label className="text-black font-semibold text-sm">
+                      <label className="text-black dark:text-white font-semibold text-sm">
                         Education Certificate
                       </label>
                       {educationDocuments[index] ? (
@@ -144,17 +145,16 @@ const EkyeEducationDetails = ({ employeeData }) => {
             </div>
           )}
         </div>
-
-        {/* Buttons Section - Moved to bottom-right inside the container */}
-        {employeeData?.approvalStatus !== "APPROVED" && (
-          <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
-            <RejectComp employeeData={employeeData} />
-            <Button className="bg-teal-500 text-white" onPress={onApprove}>
-              <FaCheck />
-              Approve
-            </Button>
-          </div>
-        )}
+        {employeeData?.approvalStatus !== "APPROVED" &&
+          employeeData?.educationalDetails?.length > 0 && (
+            <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
+              <RejectComp employeeData={employeeData} />
+              <Button className="bg-teal-500 text-white" onPress={onApprove}>
+                <FaCheck />
+                Approve
+              </Button>
+            </div>
+          )}
       </div>
     </>
   );

@@ -61,6 +61,7 @@ const DatepickerComponent = ({
   placeholderDate = null,
   disabled,
   minValue,
+  maxValue,
 }) => {
   const validationRules = {
     ...rules,
@@ -125,6 +126,7 @@ const DatepickerComponent = ({
                   field.onChange(date);
                 }}
                 minValue={minValue}
+                maxValue={maxValue}
               />
             </>
           );

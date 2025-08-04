@@ -266,7 +266,7 @@ const AttendanceRequest = () => {
                     <TableColumn>Attendance Date</TableColumn>
                     <TableColumn>Expected CheckInTime</TableColumn>
                     <TableColumn>Status</TableColumn>
-                    <TableColumn>Actual checkInTime</TableColumn>
+                    <TableColumn>Actual CheckInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
                   </TableHeader>
                   <TableBody>
@@ -545,6 +545,7 @@ const AttendanceRequest = () => {
                   <span className="text-xs mr-2">Lines Per Page:</span>
                   <DropDownComp
                     items={dropdownItems}
+                    selectedValue={lateCheckInDataPerPage}
                     onSelect={setLateCheckInDataPerPage}
                   />
                 </div>

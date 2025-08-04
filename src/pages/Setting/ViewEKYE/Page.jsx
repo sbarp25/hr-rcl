@@ -215,7 +215,7 @@ const ViewEKYE = () => {
         <Tabs activeTab={activeTab} changeTab={setActiveTab} />
 
         {isLoading ? (
-          <div className="flex justify-center items-center p-6 sm:p-8 md:p-10 lg:p-12 xl:p-16">
+          <div className="">
             <Loader />
           </div>
         ) : (

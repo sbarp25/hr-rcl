@@ -39,6 +39,7 @@ import Loader from "../../../../components/Loader/Loader.jsx";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../../components/Search.jsx";
 import Filter from "../../../../components/Filter.jsx";
+import DropDownComp from "../../../../components/ui/Dropdown.jsx";
 
 const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
@@ -87,6 +88,9 @@ const TeamLeadLateCheckin = () => {
 
   const approveMutation = useLateCheckInApprove();
   const rejectMutation = useLateCheckinReject();
+
+  const isApproving = approveMutation.isLoading || approveMutation.isPending;
+  const isRejecting = rejectMutation.isLoading || rejectMutation.isPending;
 
   // Reset filtered data when page size changes
   useEffect(() => {
@@ -182,7 +186,8 @@ const TeamLeadLateCheckin = () => {
 
     try {
       await rejectMutation.mutateAsync(RejectLeave);
-      onRejectClose();
+      onClose();
+
       reset();
     } catch (error) {
       const errorMessage =
@@ -190,6 +195,8 @@ const TeamLeadLateCheckin = () => {
         error.message ||
         "Something went wrong. Try again.";
       toast.error(errorMessage);
+    } finally {
+      onClose();
     }
   };
   const toggleExpandedRow = (id) => {
@@ -198,9 +205,12 @@ const TeamLeadLateCheckin = () => {
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
+
+  const showLoader = isLoading || isApproving || isRejecting;
+
   return (
     <div className="max-h-[85vh] overflow-y-auto">
-      {isLoading ? (
+      {showLoader ? (
         <Loader />
       ) : (
         <div className="px-2 md:px-8 max-h-[85vh] space-y-4">
@@ -233,7 +243,8 @@ const TeamLeadLateCheckin = () => {
                   <Filter
                     onApplyFilters={handleApplyFilters}
                     // url="api/v1/attendance/late-check-in/all-reviews"
-                    url="api/v1/attendance/late-check-in/all-reviews"
+                    // url="api/v1/attendance/late-check-in/all-reviews"
+                    url="/api/v1/attendance/late-check-in/late-attendance/by-role"
                     fieldNames={{
                       departmentField: "departmentId",
                       fromDateField: "createdAt",
@@ -259,7 +270,7 @@ const TeamLeadLateCheckin = () => {
                     <TableColumn>Attendance Date</TableColumn>
                     <TableColumn>Expected CheckInTime</TableColumn>
                     <TableColumn>Status</TableColumn>
-                    <TableColumn>Actual checkInTime</TableColumn>
+                    <TableColumn>Actual CheckInTime</TableColumn>
                     <TableColumn>Justification</TableColumn>
                     <TableColumn>Actions</TableColumn>
                   </TableHeader>
@@ -593,6 +604,7 @@ const TeamLeadLateCheckin = () => {
                   <span className="text-xs mr-2">Lines Per Page:</span>
                   <DropDownComp
                     items={dropdownItems}
+                    selectedValue={lateCheckInDataPerPage}
                     onSelect={setLateCheckInDataPerPage}
                   />
                 </div>
@@ -736,7 +748,7 @@ const TeamLeadLateCheckin = () => {
             placement="center"
             isKeyboardDismissDisabled={false}>
             <ModalContent>
-              {(onClose) => (
+              {(onRejectClose) => (
                 <>
                   <ModalBody>
                     <form onSubmit={handleSubmit(onReject)}>
@@ -812,7 +824,7 @@ const TeamLeadLateCheckin = () => {
                           type="submit">
                           Reject
                         </Button>
-                        <Button onPress={onClose}>Cancel</Button>
+                        <Button onPress={onRejectClose}>Cancel</Button>
                       </div>
                     </form>
                   </ModalBody>

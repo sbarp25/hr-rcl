@@ -457,6 +457,7 @@ const TotalPage = () => {
                     <span className="text-xs mr-2">Lines Per Page:</span>
                     <DropDownComp
                       items={dropdownItems}
+                      selectedValue={positionPerPage}
                       onSelect={setPositionPerPage}
                     />
                   </div>

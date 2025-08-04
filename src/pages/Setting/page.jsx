@@ -216,7 +216,7 @@ const Settings = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="max-h-screen overflow-y-auto mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8 pb-4">
           {/* Breadcrumbs */}
           <div className="mb-6">
             <BreadcrumbsComponent items={breadcrumbItems} />

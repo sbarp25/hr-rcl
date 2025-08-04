@@ -142,7 +142,7 @@ const Page = () => {
 
   return (
     <div>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+      <div className="max-h-[90vh] overflow-y-auto">
         {/* Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -184,11 +184,11 @@ const Page = () => {
         <div className="bg-white dark:bg-black rounded-lg p-2">
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+            <div className="shadow-md rounded-lg  overflow-y-auto text-left">
               <Table
                 bordered
                 aria-label="List of Employees who have Completed EKYE"
-                className="max-h-[75vh]">
+                className="">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>RCL-ID</TableColumn>
@@ -265,7 +265,7 @@ const Page = () => {
                             <GrView
                               className={`text-xl ${
                                 hasViewAccess
-                                  ? "text-green-500 cursor-pointer hover:text-green-700"
+                                  ? "text-gray-900-600 cursor-pointer hover:text-gray-700 dark:text-white"
                                   : "text-gray-400 cursor-not-allowed"
                               }`}
                               title={
@@ -279,8 +279,8 @@ const Page = () => {
                             <FaEdit
                               className={`text-xl ${
                                 hasActionAccess
-                                  ? "text-amber-600 dark:text-amber-500 cursor-pointer hover:text-amber-800 dark:hover:text-amber-300"
-                                  : "text-gray-400 cursor-not-allowed"
+                                  ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white "
+                                  : "text-gray-600 cursor-not-allowed"
                               }`}
                               title={
                                 hasActionAccess
@@ -304,7 +304,7 @@ const Page = () => {
 
           {/* Medium screens - Simplified table */}
           <div className="hidden md:block lg:hidden">
-            <div className="shadow-md rounded-lg max-h-[80vh] overflow-y-auto text-left">
+            <div className="shadow-md rounded-lg  overflow-y-auto text-left">
               <Table
                 bordered
                 aria-label="List of Employees who have Completed EKYE">

@@ -1,7 +1,7 @@
 const AuthLayout = ({ children }) => {
   return (
     <div className="">
-      <main>{children}</main>
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 };

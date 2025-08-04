@@ -446,6 +446,7 @@ const Roles = () => {
                     <span className="text-xs mr-2">Lines Per Page:</span>
                     <DropDownComp
                       items={dropdownItems}
+                      selectedValue={rolesPerPage}
                       onSelect={setRolesPerPage}
                     />
                   </div>

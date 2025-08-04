@@ -54,7 +54,7 @@ const MFA = () => {
     <div className="max-w-4xl mx-auto p-6">
       <GoBack />
 
-      <div className="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="mt-6 bg-white dark:bg-black rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
         {/* Header Section */}
         <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
@@ -157,7 +157,7 @@ const MFA = () => {
             <div className="flex justify-center pt-4">
               <Button
                 type="submit"
-                className="w-fit  px-16 py-4 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-fit  px-16 py-4 bg-black hover:bg-gray-800 dark:bg-active dark:hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 isDisabled={isTwoFactorSubmitting}
                 isLoading={isTwoFactorSubmitting}>
                 {isTwoFactorSubmitting

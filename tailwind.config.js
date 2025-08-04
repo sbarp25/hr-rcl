@@ -14,6 +14,7 @@ export default {
         bgprimaryhover: "#277c9c",
         titletext: "#3F3D56",
         active: "#ef4660",
+        activehover: "#d63851",
         text: "#184c5f",
         hoverbackground: "#F05366",
         lineBg: "#184cg5",

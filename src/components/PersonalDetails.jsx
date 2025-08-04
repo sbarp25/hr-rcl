@@ -10,6 +10,7 @@ import {
   usePersonalDetails,
   useSavePersonalDetails,
 } from "../hooks/useAuth.js";
+import { now } from "@internationalized/date";
 
 const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   // Form options
@@ -114,6 +115,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   // Loading state
   const isLoading = isLoadingDetails || savePersonalDetailsMutation.isPending;
 
+  const eighteenYearsAgo = now("UTC").subtract({ years: 18 });
   return (
     <>
       {isLoading && <Loader message="Loading please wait" />}
@@ -145,6 +147,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
                 name="dob"
                 label="Date of birth(A.D)"
                 control={control}
+                maxValue={eighteenYearsAgo}
                 rules={{
                   required: "Date of Birth is required",
                   validate: (value) => {

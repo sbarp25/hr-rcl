@@ -21,13 +21,14 @@ const UserEducation = ({ employeeData }) => {
   return (
     <>
       <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white dark:bg-black text-lg w-[75vw]  rounded-lg px-6 mt-2 mx-1">
+        <div className="bg-white dark:bg-black text-lg w-[calc(100%-.5rem)]  rounded-lg px-6 mt-2 mx-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
               <span className="relative">
                 Education Details
                 <UnderlineComponent />
               </span>
+              {/* h-[calc(100vh-210px)] */}
             </h1>
             <div className="flex gap-1 items-end justify-end text-right">
               <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
@@ -72,7 +73,7 @@ const UserEducation = ({ employeeData }) => {
                   <Divider />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <div>
-                      <label className="text-black font-semibold text-sm">
+                      <label className="text-black dark:text-white font-semibold text-sm">
                         Education Certificate
                       </label>
                       {educationDocuments[index] ? (

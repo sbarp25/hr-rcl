@@ -511,6 +511,7 @@ const Department = () => {
                     <span className="text-xs mr-2">Lines Per Page:</span>
                     <DropDownComp
                       items={dropdownItems}
+                      selectedValue={departmentPerPage}
                       onSelect={setDepartmentPerPage}
                     />
                   </div>

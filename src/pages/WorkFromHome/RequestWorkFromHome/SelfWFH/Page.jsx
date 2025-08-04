@@ -391,6 +391,7 @@ const SelfWorkFromHome = () => {
                     <span className="text-xs mr-2">Lines Per Page:</span>
                     <DropDownComp
                       items={dropdownItems}
+                      selectedValue={WFHDataPerPage}
                       onSelect={setWFHDataPerPage}
                     />
                   </div>
