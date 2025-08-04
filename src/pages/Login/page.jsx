@@ -142,18 +142,18 @@ const Login = () => {
   return (
     <>
       <LocationComponent />
-      <div className="pt-10 bg-gray-200 dark:bg-gray-900 h-screen transition-colors duration-300">
-        <div className=" container grid grid-cols-1 md:grid-cols-2  h-[90vh]">
-          <div className="hidden md:block bg-bgprimary dark:bg-gray-800 rounded-l-3xl transition-colors duration-300">
-            <div className="mt-64 flex flex-col gap-y-16 items-center justify-center">
-              <img src={Logo} alt="logo" className="w-96" />
-              <p className="text-2xl leading-10 text-white dark:text-gray-100 text-center font-normal transition-colors duration-300">
+      <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors duration-300 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden">
+          <div className="hidden md:flex bg-bgprimary dark:bg-black transition-colors duration-300">
+            <div className="flex flex-col gap-y-8 items-center justify-center w-full p-8">
+              <img src={Logo} alt="logo" className="w-80 max-w-full" />
+              <p className="text-xl lg:text-2xl leading-relaxed text-white dark:text-gray-100 text-center font-normal transition-colors duration-300">
                 Whispers of Code,
                 <br /> Symphonies of Solution
               </p>
             </div>
           </div>
-          <div className="px-16 pt-48 bg-white dark:bg-gray-800 rounded-2xl md:rounded-r-3xl md:rounded-l-none transition-colors duration-300">
+          <div className="bg-white dark:bg-black transition-colors duration-300 flex items-center justify-center p-8">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col space-y-4 gap-6 w-full">
@@ -196,7 +196,7 @@ const Login = () => {
               <div className="flex items-center justify-between w-full">
                 <ButtonComponent
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-black dark:hover:bg-gray-600 text-white dark:text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 dark:bg-active dark:hover:bg-gray-600 text-white dark:text-white rounded-xl py-6 shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isFormDisabled()}
                   content={
                     <>

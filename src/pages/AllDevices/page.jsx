@@ -101,17 +101,19 @@ const AllTrustedDevices = () => {
   }
   return (
     <>
-      <div className="h-screen bg-gray-50 dark:bg-black p-6 overflow-hidden">
+      <div className="h-screen bg-gray-50 dark:bg-black p-6 ">
         <div className="max-w-7xl mx-auto h-screen flex flex-col">
           {/* Header */}
           <div className="flex justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Trusted Devices
-              </h1>
-              <p className="text-gray-600  dark:text-white">
-                Manage devices that have access to your account
-              </p>
+            <div className=" space-y-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  Trusted Devices
+                </h1>
+                <p className="text-gray-600  dark:text-white">
+                  Manage devices that have access to your account
+                </p>
+              </div>
               <GoBack />
             </div>
             <ButtonComponent
@@ -121,13 +123,13 @@ const AllTrustedDevices = () => {
             />
           </div>
           {/* Devices Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[calc(100vh-210px)] overflow-y-auto flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6   flex-1">
             {trustedDevices?.map((device) => (
               <div
                 key={device.id}
                 className="bg-white dark:bg-black rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                 {/* Device Header */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-4 h-fit">
                   <div className="flex items-center gap-3">
                     {getDeviceIcon(device.deviceName)}
                     <div>
@@ -188,6 +190,7 @@ const AllTrustedDevices = () => {
                 </div>
               </div>
             ))}
+            <div></div>
             <div className="w-full  flex justify-center ">
               {trustedDevices.length === 0 && (
                 <div className="text-center py-12">
@@ -200,6 +203,7 @@ const AllTrustedDevices = () => {
                   </p>
                 </div>
               )}
+              <div></div>
             </div>
           </div>
         </div>

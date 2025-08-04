@@ -7,17 +7,16 @@ import {
   Button,
 } from "@heroui/react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-const DropDownComp = ({ items, onSelect }) => {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["10"]));
 
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
-    [selectedKeys]
+const DropDownComp = ({ items, onSelect, selectedValue = 10 }) => {
+  const selectedKeys = React.useMemo(
+    () => new Set([selectedValue.toString()]),
+    [selectedValue]
   );
+
   const handleSelectionChange = (keys) => {
-    const selected = Array.from(keys)[0]; // Get selected value
-    setSelectedKeys(keys);
-    onSelect(Number(selected)); // Pass selected value to parent
+    const selected = Array.from(keys)[0]; // Get selected value as string
+    onSelect(Number(selected)); // Convert to number before passing to parent
   };
 
   return (
@@ -36,7 +35,7 @@ const DropDownComp = ({ items, onSelect }) => {
         variant="flat"
         onSelectionChange={handleSelectionChange}>
         {items.map((item) => (
-          <DropdownItem key={item}>{item}</DropdownItem>
+          <DropdownItem key={item.toString()}>{item}</DropdownItem>
         ))}
       </DropdownMenu>
     </Dropdown>

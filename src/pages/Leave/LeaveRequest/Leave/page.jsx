@@ -361,6 +361,7 @@ const SelfLeaveStatus = () => {
                 <span className="text-xs mr-2">Lines Per Page:</span>
                 <DropDownComp
                   items={dropdownItems}
+                  selectedValue={leaveDataPerPage}
                   onSelect={setLeaveDataPerPage}
                 />
               </div>

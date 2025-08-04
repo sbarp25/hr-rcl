@@ -70,7 +70,7 @@ const Bank = () => {
 
         if (response?.data?.responseCode === "200") {
           reset();
-          navigate("/settings");
+          navigate("/Bank");
           toast.success(response?.data?.message);
         } else {
           const errorMessage =

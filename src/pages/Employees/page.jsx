@@ -282,7 +282,7 @@ const Employees = () => {
                         className={`${
                           hasEmployeeEditAccess
                             ? "text-orange-500 hover:text-orange-700 cursor-pointer "
-                            : "text-gray-300"
+                            : "text-gray-600"
                         }`}
                         title="Edit"
                         onClick={() => handleAction("edit", employee.rclId)}
@@ -291,7 +291,7 @@ const Employees = () => {
                         className={`${
                           hasEmployeeDeleteAccess
                             ? "text-red-500 cursor-pointer hover:text-red-700"
-                            : "text-gray-300"
+                            : "text-gray-600"
                         }`}
                         title="Delete"
                         onClick={() => handleAction("delete", employee.rclId)}
@@ -515,6 +515,7 @@ const Employees = () => {
                 <span className="text-xs mr-2">Lines Per Page:</span>
                 <DropDownComp
                   items={dropdownItems}
+                  selectedValue={employeeDataPerPage}
                   onSelect={setEmployeeDataPerPage}
                 />
               </div>

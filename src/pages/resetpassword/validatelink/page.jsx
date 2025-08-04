@@ -152,7 +152,7 @@ const ValidateLink = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full">
             {/* Left Section */}
-            <div className="hidden md:flex bg-bgprimary dark:bg-gray-800  flex-col items-center justify-center text-white px-12 py-20">
+            <div className="hidden md:flex bg-bgprimary dark:bg-black  flex-col items-center justify-center text-white px-12 py-20">
               <img src={Logo} alt="logo" className="w-72 mb-8" />
               <p className="text-2xl font-medium text-center leading-10">
                 Whispers of Code, <br /> Symphonies of Solution
@@ -160,8 +160,8 @@ const ValidateLink = () => {
             </div>
 
             {/*  Reset Password Form */}
-            <div className="dark:bg-gray-800 px-16 py-20 flex flex-col justify-center">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="dark:bg-black px-16 py-20 flex flex-col justify-center">
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
                 Reset Password
               </h1>
 
@@ -214,7 +214,7 @@ const ValidateLink = () => {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className={` bg-bgprimary text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
+                  className={` bg-bgprimary dark:bg-active text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
                     errors.password || errors.confirmPassword
                       ? " cursor-not-allowed"
                       : ""

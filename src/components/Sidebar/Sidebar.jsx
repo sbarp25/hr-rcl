@@ -301,22 +301,6 @@ const Sidebar = () => {
     logoutMutation.mutate();
   };
 
-  // Show loading state only if menu hasn't been checked yet (null/undefined)
-  if (!permissionsLoaded) {
-    return (
-      <div className="flex h-screen bg-black">
-        <div className="w-20 h-full bg-black text-white flex flex-col">
-          <div className="flex items-center gap-4 p-4 flex-shrink-0">
-            <GiHamburgerMenu className="text-2xl cursor-pointer" />
-          </div>
-          <div className="flex-grow flex items-center justify-center">
-            <div className="text-white text-sm">Loading...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="">
       {isLoading && <Loader />}
@@ -341,60 +325,66 @@ const Sidebar = () => {
 
         {/* Navigation items */}
         <div className="flex-grow overflow-y-auto">
-          {navbarElements.map((service, index) => {
-            if (!service.view) return null;
-            return (
-              <div key={index} className="relative">
-                <Link
-                  to={service.to}
-                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
-                    location.pathname === service.to
-                      ? "bg-active text-white border-l-4 border-l-red-800"
-                      : "hover:bg-gray-700"
-                  }`}
-                  onClick={() => service.children && toggleDropdown(index)}>
-                  <service.icon className="text-2xl" />
-                  {isSidebarExpanded && (
-                    <span className="text-base">{service.label}</span>
-                  )}
-                </Link>
+          {permissionsLoaded ? (
+            navbarElements.map((service, index) => {
+              if (!service.view) return null;
+              return (
+                <div key={index} className="relative">
+                  <Link
+                    to={service.to}
+                    className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+                      location.pathname === service.to
+                        ? "bg-active text-white border-l-4 border-l-red-800"
+                        : "hover:bg-gray-700"
+                    }`}
+                    onClick={() => service.children && toggleDropdown(index)}>
+                    <service.icon className="text-2xl" />
+                    {isSidebarExpanded && (
+                      <span className="text-base">{service.label}</span>
+                    )}
+                  </Link>
 
-                {/* Dropdown items */}
-                {service.children && expandedDropdown === index && (
-                  <div
-                    className={`pl-8 mt-2 space-y-2 bg-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
-                      expandedDropdown === index
-                        ? "max-h-96 opacity-100 mt-2"
-                        : "max-h-0 opacity-0"
-                    }`}>
-                    {service.children.map((child, childIndex) => {
-                      if (!child?.view) return null;
-                      return (
-                        <Link
-                          key={childIndex}
-                          to={child.to}
-                          className={`flex p-2 rounded-lg transition-all duration-300 gap-4 ${
-                            location.pathname === child.to
-                              ? "bg-active text-white border-l-4 border-l-red-800"
-                              : "hover:bg-gray-600"
-                          }`}>
-                          {location.pathname === child.to &&
-                            isSidebarExpanded && (
-                              <BsArrowReturnRight className="mt-1" />
+                  {/* Dropdown items */}
+                  {service.children && expandedDropdown === index && (
+                    <div
+                      className={`pl-8 mt-2 space-y-2 bg-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
+                        expandedDropdown === index
+                          ? "max-h-96 opacity-100 mt-2"
+                          : "max-h-0 opacity-0"
+                      }`}>
+                      {service.children.map((child, childIndex) => {
+                        if (!child?.view) return null;
+                        return (
+                          <Link
+                            key={childIndex}
+                            to={child.to}
+                            className={`flex p-2 rounded-lg transition-all duration-300 gap-4 ${
+                              location.pathname === child.to
+                                ? "bg-active text-white border-l-4 border-l-red-800"
+                                : "hover:bg-gray-600"
+                            }`}>
+                            {location.pathname === child.to &&
+                              isSidebarExpanded && (
+                                <BsArrowReturnRight className="mt-1" />
+                              )}
+                            {isSidebarExpanded ? (
+                              <span className="text-base">{child.label}</span>
+                            ) : (
+                              <child.icon className="text-2xl" />
                             )}
-                          {isSidebarExpanded ? (
-                            <span className="text-base">{child.label}</span>
-                          ) : (
-                            <child.icon className="text-2xl" />
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="flex-grow flex items-center justify-center">
+              <div className="text-white text-sm">Loading...</div>
+            </div>
+          )}
         </div>
 
         {/* Profile section */}

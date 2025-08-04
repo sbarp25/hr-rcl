@@ -860,7 +860,6 @@ export const useDeleteAllDevices = () => {
   return useMutation({
     mutationFn: deleteDevice,
     onSuccess: (data) => {
-      toast.success(data?.message || "Devices deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["FetchTrustedDevices"] });
     },
   });
@@ -990,7 +989,7 @@ export const useForgetPasswordEmail = () => {
         const errorMessage =
           response?.data?.error?.errorList?.[0]?.errorMessage ||
           "Something went wrong";
-        toast.error(errorMessage);
+        toast.success(errorMessage);
       }
     },
     onError: (error) => {

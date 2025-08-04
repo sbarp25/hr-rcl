@@ -186,12 +186,12 @@ const RecaptchaV3 = ({ setCapta, onError, action = "submit" }) => {
           <div className="w-full max-w-md mx-auto px-3 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-xl hover:border-gray-600 transition-all duration-300 group bg-gray-50 dark:bg-gray-900">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
               <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                <FaCheck className="text-lg sm:text-xl lg:text-2xl text-green-500 dark:text-green-400 shrink-0" />
-                <span className="text-sm sm:text-base lg:text-lg font-semibold text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 truncate">
+                <FaCheck className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-green-600 dark:text-green-400 group-hover:text-green-800 dark:group-hover:text-green-200 transition-colors duration-300 shrink-0" />
+                <span className="text-sm sm:text-base lg:text-lg  text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 truncate">
                   I&apos;m not a robot
                 </span>
               </div>
-              <div className="h-8 w-8 sm:h-12 sm:w-12 lg:h-16 lg:w-16 shrink-0">
+              <div className="h-6 w-6 sm:h-8 sm:w-8 lg:h-12 lg:w-12 shrink-0">
                 <img
                   src={Logo}
                   alt="RCL Logo"
@@ -201,13 +201,14 @@ const RecaptchaV3 = ({ setCapta, onError, action = "submit" }) => {
             </div>
           </div>
         ) : (
-          <div
-            onClick={handleRecaptchaClick}
-            className="w-full max-w-md mx-auto px-3 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-xl hover:border-gray-600 transition-all duration-300 group bg-gray-50 dark:bg-gray-900 cursor-pointer">
+          <div className="w-full max-w-md mx-auto px-3 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-xl hover:border-gray-600 transition-all duration-300 group bg-gray-50 dark:bg-gray-900 cursor-pointer">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
               <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                <MdCheckBoxOutlineBlank className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors duration-300 shrink-0" />
-                <span className="text-sm sm:text-base lg:text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 truncate">
+                <MdCheckBoxOutlineBlank
+                  onClick={handleRecaptchaClick}
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors duration-300 shrink-0"
+                />
+                <span className="text-sm sm:text-base lg:text-lg  text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 truncate">
                   I&apos;m not a robot
                 </span>
               </div>
