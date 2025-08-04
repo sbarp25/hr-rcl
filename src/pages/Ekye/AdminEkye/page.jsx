@@ -265,7 +265,7 @@ const Page = () => {
                             <GrView
                               className={`text-xl ${
                                 hasViewAccess
-                                  ? "text-gray-900-600 cursor-pointer hover:text-gray-700 dark:text-white"
+                                  ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white"
                                   : "text-gray-400 cursor-not-allowed"
                               }`}
                               title={
@@ -358,8 +358,8 @@ const Page = () => {
                           <GrView
                             className={`text-lg ${
                               hasViewAccess
-                                ? "text-green-500 cursor-pointer hover:text-green-700"
-                                : "text-gray-400 cursor-not-allowed"
+                                ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
+                                : "text-gray-600 cursor-not-allowed"
                             }`}
                             onClick={() =>
                               hasViewAccess && handleChange("view", data.rclId)
@@ -368,7 +368,7 @@ const Page = () => {
                           <FaEdit
                             className={`text-lg ${
                               hasActionAccess
-                                ? "text-yellow-500 cursor-pointer hover:text-yellow-700"
+                                ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
                                 : "text-gray-400 cursor-not-allowed"
                             }`}
                             onClick={() =>

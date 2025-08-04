@@ -265,7 +265,7 @@ const TotalPage = () => {
                                   className={`${
                                     hasPositionEditAccess
                                       ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                      : "text-xl mr-2"
+                                      : "text-xl mr-2 text-gray-600"
                                   }`}
                                   title="Edit"
                                   onClick={() => handleAction("edit", position)}
@@ -274,7 +274,7 @@ const TotalPage = () => {
                                   className={`${
                                     hasPositionDeleteAccess
                                       ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                      : "text-xl ml-2"
+                                      : "text-xl ml-2 text-gray-600"
                                   }`}
                                   title="Delete"
                                   onClick={() =>
@@ -326,7 +326,7 @@ const TotalPage = () => {
                                 className={`${
                                   hasPositionEditAccess
                                     ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                    : "text-xl mr-2"
+                                    : "text-xl mr-2 text-gray-600"
                                 }`}
                                 title="Edit"
                                 onClick={() => handleAction("edit", position)}
@@ -335,7 +335,7 @@ const TotalPage = () => {
                                 className={`${
                                   hasPositionDeleteAccess
                                     ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2"
+                                    : "text-xl ml-2 text-gray-600"
                                 }`}
                                 title="Delete"
                                 onClick={() => handleAction("delete", position)}

@@ -10,7 +10,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 
 const DropDownComp = ({ items, onSelect, selectedValue = 10 }) => {
   const selectedKeys = React.useMemo(
-    () => new Set([selectedValue.toString()]),
+    () => new Set([selectedValue?.toString()]),
     [selectedValue]
   );
 

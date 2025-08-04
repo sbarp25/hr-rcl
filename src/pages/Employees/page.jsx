@@ -273,7 +273,7 @@ const Employees = () => {
                         className={`${
                           hasaccess
                             ? "text-green-500 hover:text-green-700 cursor-pointer "
-                            : "text-gray-300"
+                            : "text-gray-600"
                         }`}
                         title="View"
                         onClick={() => handleAction("view", employee.rclId)}
