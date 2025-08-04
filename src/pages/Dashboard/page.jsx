@@ -7,9 +7,15 @@ import TemporaryAdmin from "../../components/TemporaryAdmin.jsx";
 import { useWeeklyAttendanceReport } from "../../hooks/useAuth.js";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import axiosInstance from "../../lib/axios-Instance.js";
+import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 
 const Page = () => {
   const [checkedInStatus, setCheckedInStatus] = useState(false);
+  const [isDetailsLoading, setIsDetailsLoading] = useState();
+  const [rclId, setRclId] = useState();
+  const [employeeData, setEmployeeData] = useState();
   const navigate = useNavigate();
 
   const username = localStorage.getItem("fullName");
@@ -42,6 +48,53 @@ const Page = () => {
   //     navigate("/EKYE");
   //   }
   // }, [ekeyStep]);
+  const fetchrcl = async () => {
+    try {
+      setIsDetailsLoading(true);
+      const response = await axiosInstance.get(`/api/v1/auth/ekye/details`);
+      if (response.data.responseCode === "200") {
+        const data = response?.data?.data?.rclId;
+        setRclId(data);
+      } else {
+        // toast.error(response?.data?.Message);
+      }
+    } catch (error) {
+      // toast.error("Failed to fetch RCL ID", error);
+    } finally {
+      setIsDetailsLoading(false);
+    }
+  };
+
+  // const
+  const fetchEmployeeData = async () => {
+    try {
+      setIsDetailsLoading(true);
+      const response = await axiosInstance.get(`/api/v1/auth/get-logged-user`);
+      if (response.data.responseCode === "200") {
+        const data = response?.data?.data;
+        const position = data.postionName;
+        LocalStorageUtil.setItem("position", position), setEmployeeData(data);
+      } else {
+        // toast.error(response?.data?.Message);
+      }
+    } catch (error) {
+      //
+    } finally {
+      setIsDetailsLoading(false);
+    }
+  };
+
+  // First fetch the rclId
+  useEffect(() => {
+    fetchrcl();
+  }, []);
+
+  // Then fetch employee data once rclId is available
+  useEffect(() => {
+    if (rclId) {
+      fetchEmployeeData();
+    }
+  }, [rclId]);
 
   return (
     <div className="w-[calc(100%-1rem)] flex flex-col gap-4">

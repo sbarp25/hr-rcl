@@ -38,6 +38,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateLeaveStatus } from "../../../api/auth.js";
 import { IoIosRemoveCircle } from "react-icons/io";
 import Loader from "../../../components/Loader/Loader.jsx";
+import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 
 const LeaveStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -208,6 +209,9 @@ const LeaveStatus = () => {
     approveMutation.isPending ||
     rejectMutation.isPending;
 
+  const isAssociateTeamLead =
+    LocalStorageUtil.getItem("position") === "Associate Team Lead";
+
   return (
     <>
       {showLoading ? (
@@ -267,7 +271,6 @@ const LeaveStatus = () => {
                       <TableColumn>Leave Start Date</TableColumn>
                       <TableColumn>Leave End Date</TableColumn>
                       <TableColumn>Status</TableColumn>
-                      {/* <TableColumn>Approved by</TableColumn> */}
                       <TableColumn>Action</TableColumn>
                     </TableHeader>
                     <TableBody
@@ -317,47 +320,61 @@ const LeaveStatus = () => {
                             </div>
                           </TableCell>
 
-                          {/* <TableCell>
-                        <div className="flex items-center gap-3 p-2 rounded-lg">
-                          <div
-                            className={`flex items-center justify-center w-10 h-10 rounded-full font-bold shadow-md text-lg ${getStatusClass(
-                              item?.leaveStatus
-                            )}`}>
-                            {item?.approvedBy?.charAt(0) ||
-                              item?.rejectedBy?.charAt(0) ||
-                              "?"}
-                          </div>
-                          <div>
-                            {item?.approvedBy || item?.rejectedBy || "N/A"}
-                          </div>
-                        </div>
-                      </TableCell> */}
+                          {/* * {selectedLeave?.approvedByTeamLead === true ? (
+                            <FaCircleCheck className="text-green-500 w-5 h-5" />
+                          ) : selectedLeave?.rejectedByTeamLead === true ? (
+                            <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
+                              Pending
+                            </span>
+                          )} */}
                           <TableCell>
                             <div className="flex gap-2">
-                              {/* {hasaccess && (
-                            <button
-                              className="text-blue-600 hover:text-blue-800"
-                              onClick={() => handleAction("view", item)}>
-                              <FaRegEye size={18} />
-                            </button>
-                          )} */}
-                              {item?.leaveStatus === "PENDING" &&
-                                hasLeaveUpdateAccess && (
-                                  <>
-                                    <FaCheckCircle
-                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
-                                      onClick={() =>
-                                        handleAction("approve", item)
-                                      }
-                                    />
-                                    <FaXmark
-                                      className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
-                                      onClick={() =>
-                                        handleAction("reject", item)
-                                      }
-                                    />
-                                  </>
-                                )}
+                              {isAssociateTeamLead &&
+                              item?.leaveStatus === "PENDING" &&
+                              hasLeaveUpdateAccess ? (
+                                <>
+                                  {item?.approvedByAssociateTeamLead ===
+                                  true ? (
+                                    <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                  ) : item?.rejectedByAssociateTeamLead ===
+                                    true ? (
+                                    <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                  ) : (
+                                    <>
+                                      <FaCheckCircle
+                                        className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                        onClick={() =>
+                                          handleAction("approve", item)
+                                        }
+                                      />
+                                      <FaXmark
+                                        className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                        onClick={() =>
+                                          handleAction("reject", item)
+                                        }
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              ) : item?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess ? (
+                                <>
+                                  <FaCheckCircle
+                                    className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                    onClick={() =>
+                                      handleAction("approve", item)
+                                    }
+                                  />
+                                  <FaXmark
+                                    className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                    onClick={() => handleAction("reject", item)}
+                                  />
+                                </>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -430,23 +447,50 @@ const LeaveStatus = () => {
 
                           <TableCell>
                             <div className="flex gap-2">
-                              {item?.leaveStatus === "PENDING" &&
-                                hasLeaveUpdateAccess && (
-                                  <>
-                                    <FaCheckCircle
-                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
-                                      onClick={() =>
-                                        handleAction("approve", item)
-                                      }
-                                    />
-                                    <FaXmark
-                                      className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
-                                      onClick={() =>
-                                        handleAction("reject", item)
-                                      }
-                                    />
-                                  </>
-                                )}
+                              {isAssociateTeamLead &&
+                              item?.leaveStatus === "PENDING" &&
+                              hasLeaveUpdateAccess ? (
+                                <>
+                                  {item?.approvedByAssociateTeamLead ===
+                                  true ? (
+                                    <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                  ) : item?.rejectedByAssociateTeamLead ===
+                                    true ? (
+                                    <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                  ) : (
+                                    <>
+                                      <FaCheckCircle
+                                        className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                        onClick={() =>
+                                          handleAction("approve", item)
+                                        }
+                                      />
+                                      <FaXmark
+                                        className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                        onClick={() =>
+                                          handleAction("reject", item)
+                                        }
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              ) : item?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess ? (
+                                <>
+                                  <FaCheckCircle
+                                    className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                    onClick={() =>
+                                      handleAction("approve", item)
+                                    }
+                                  />
+                                  <FaXmark
+                                    className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                    onClick={() => handleAction("reject", item)}
+                                  />
+                                </>
+                              ) : (
+                                ""
+                              )}{" "}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -503,8 +547,42 @@ const LeaveStatus = () => {
                             <div>{leave?.approvedBy || "N/A"}</div>
                           </div>
                           <div className="flex justify-end gap-2 mt-4">
-                            {leave?.leaveStatus === "PENDING" &&
-                              hasLeaveUpdateAccess && (
+                            <>
+                              {isAssociateTeamLead &&
+                              leave?.leaveStatus === "PENDING" &&
+                              hasLeaveUpdateAccess ? (
+                                <>
+                                  {leave?.approvedByAssociateTeamLead ===
+                                  true ? (
+                                    <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                  ) : leave?.rejectedByAssociateTeamLead ===
+                                    true ? (
+                                    <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                  ) : (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        color="success"
+                                        variant="flat"
+                                        onPress={() =>
+                                          handleAction("approve", leave)
+                                        }>
+                                        Approve
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="flat"
+                                        color="danger"
+                                        onPress={() =>
+                                          handleAction("reject", leave)
+                                        }>
+                                        Reject
+                                      </Button>
+                                    </>
+                                  )}
+                                </>
+                              ) : leave?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess ? (
                                 <>
                                   <Button
                                     size="sm"
@@ -525,7 +603,10 @@ const LeaveStatus = () => {
                                     Reject
                                   </Button>
                                 </>
+                              ) : (
+                                ""
                               )}
+                            </>
                           </div>
                         </div>
                       </AccordionItem>

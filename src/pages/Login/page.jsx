@@ -142,8 +142,8 @@ const Login = () => {
   return (
     <>
       <LocationComponent />
-      <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors duration-300 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden">
+      <div className="min-h-screen bg-gray-200 dark:bg-black transition-colors duration-300 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden  border border-gray-300 ">
           <div className="hidden md:flex bg-bgprimary dark:bg-black transition-colors duration-300">
             <div className="flex flex-col gap-y-8 items-center justify-center w-full p-8">
               <img src={Logo} alt="logo" className="w-80 max-w-full" />
@@ -201,9 +201,7 @@ const Login = () => {
                   content={
                     <>
                       <span className="text-xl font-bold ">Login</span>
-                      {loginMutation?.isPending && (
-                        <Spinner size="sm" color="danger" />
-                      )}
+                      {loginMutation?.isPending && <Spinner color="default" />}
                     </>
                   }
                 />

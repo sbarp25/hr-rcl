@@ -40,6 +40,7 @@ import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx"
 import Search from "../../../../components/Search.jsx";
 import Filter from "../../../../components/Filter.jsx";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";
+import LocalStorageUtil from "../../../../utils/LocalStorageUtil.js";
 
 const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
@@ -208,6 +209,8 @@ const TeamLeadLateCheckin = () => {
 
   const showLoader = isLoading || isApproving || isRejecting;
 
+  const isAssociateTeamLead =
+    LocalStorageUtil.getItem("position") === "Associate Team Lead";
   return (
     <div className="max-h-[85vh] overflow-y-auto">
       {showLoader ? (
@@ -360,14 +363,44 @@ const TeamLeadLateCheckin = () => {
                           <TableCell>
                             <div className="flex justify-between items-center">
                               <div className="flex justify-center gap-4">
-                                <Button
-                                  className="bg-black text-white"
-                                  onPress={() => {
-                                    setSelectedData(late);
-                                    onOpen();
-                                  }}>
-                                  Action
-                                </Button>
+                                <>
+                                  <div className="flex gap-2">
+                                    {isAssociateTeamLead &&
+                                    late?.status === "PENDING" ? (
+                                      <>
+                                        {late?.approvedByAssociateTeamLead ===
+                                        true ? (
+                                          <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                        ) : late?.rejectedByAssociateTeamLead ===
+                                          true ? (
+                                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                        ) : (
+                                          <Button
+                                            className="bg-black text-white"
+                                            onPress={() => {
+                                              setSelectedData(late);
+                                              onOpen();
+                                            }}>
+                                            Action
+                                          </Button>
+                                        )}
+                                      </>
+                                    ) : late?.status === "PENDING" ? (
+                                      <>
+                                        <Button
+                                          className="bg-black text-white"
+                                          onPress={() => {
+                                            setSelectedData(late);
+                                            onOpen();
+                                          }}>
+                                          Action
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      ""
+                                    )}{" "}
+                                  </div>
+                                </>
                               </div>
                             </div>
                           </TableCell>
@@ -431,32 +464,44 @@ const TeamLeadLateCheckin = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {late?.status === "PENDING" && (
-                              <div className="flex justify-center gap-4">
-                                <FaCheck
-                                  className={`${
-                                    hasAttendanceEditAccess
-                                      ? "text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
-                                      : "text-gray-500 dark:text-slate-500"
-                                  }`}
-                                  title="Edit"
-                                  onClick={() =>
-                                    handleAction("Approve", late?.lateCheckInId)
-                                  }
-                                />
-                                <MdDelete
-                                  className={`${
-                                    hasAttendanceEditAccess
-                                      ? "text-red-500 cursor-pointer hover:text-red-700"
-                                      : ""
-                                  }`}
-                                  title="Delete"
-                                  onClick={() =>
-                                    handleAction("Reject", late?.lateCheckInId)
-                                  }
-                                />
+                            <>
+                              <div className="flex gap-2">
+                                {isAssociateTeamLead &&
+                                late?.status === "PENDING" ? (
+                                  <>
+                                    {late?.approvedByAssociateTeamLead ===
+                                    true ? (
+                                      <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                    ) : late?.rejectedByAssociateTeamLead ===
+                                      true ? (
+                                      <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                    ) : (
+                                      <Button
+                                        className="bg-black text-white"
+                                        onPress={() => {
+                                          setSelectedData(late);
+                                          onOpen();
+                                        }}>
+                                        Action
+                                      </Button>
+                                    )}
+                                  </>
+                                ) : late?.status === "PENDING" ? (
+                                  <>
+                                    <Button
+                                      className="bg-black text-white"
+                                      onPress={() => {
+                                        setSelectedData(late);
+                                        onOpen();
+                                      }}>
+                                      Action
+                                    </Button>
+                                  </>
+                                ) : (
+                                  ""
+                                )}{" "}
                               </div>
-                            )}
+                            </>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -533,40 +578,43 @@ const TeamLeadLateCheckin = () => {
                             {late?.lateReason}
                           </div>
                         </div>
-                        {late?.status === "Pending" && (
-                          <div className="flex justify-end gap-4 mt-2">
-                            <Button
-                              size="sm"
-                              color="success"
-                              className={`${
-                                !hasAttendanceEditAccess
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                              onPress={() =>
-                                hasAttendanceEditAccess &&
-                                handleAction("Approve", late?.lateCheckInId)
-                              }
-                              disabled={!hasAttendanceEditAccess}>
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="danger"
-                              className={`${
-                                !hasAttendanceEditAccess
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                              onPress={() =>
-                                hasAttendanceEditAccess &&
-                                handleAction("Reject", late?.lateCheckInId)
-                              }
-                              disabled={!hasAttendanceEditAccess}>
-                              Reject
-                            </Button>
+                        <>
+                          <div className="flex gap-2">
+                            {isAssociateTeamLead &&
+                            late?.status === "PENDING" ? (
+                              <>
+                                {late?.approvedByAssociateTeamLead === true ? (
+                                  <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                ) : late?.rejectedByAssociateTeamLead ===
+                                  true ? (
+                                  <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                ) : (
+                                  <Button
+                                    className="bg-black text-white"
+                                    onPress={() => {
+                                      setSelectedData(late);
+                                      onOpen();
+                                    }}>
+                                    Action
+                                  </Button>
+                                )}
+                              </>
+                            ) : late?.status === "PENDING" ? (
+                              <>
+                                <Button
+                                  className="bg-black text-white"
+                                  onPress={() => {
+                                    setSelectedData(late);
+                                    onOpen();
+                                  }}>
+                                  Action
+                                </Button>
+                              </>
+                            ) : (
+                              ""
+                            )}
                           </div>
-                        )}
+                        </>
                       </div>
                     </div>
                   ))}

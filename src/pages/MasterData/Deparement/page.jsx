@@ -283,7 +283,7 @@ const Department = () => {
                                   className={`${
                                     hasDepartmentEditAccess
                                       ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                      : "text-xl mr-2"
+                                      : "text-xl mr-2 text-gray-600"
                                   }`}
                                   title="Edit"
                                   onClick={() =>
@@ -294,7 +294,7 @@ const Department = () => {
                                   className={`${
                                     hasDepartmentDeleteAccess
                                       ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                      : "text-xl ml-2"
+                                      : "text-xl ml-2 text-gray-600"
                                   }`}
                                   title="Delete"
                                   onClick={() =>
@@ -363,7 +363,7 @@ const Department = () => {
                                   className={`${
                                     hasDepartmentEditAccess
                                       ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                      : "text-xl mr-2"
+                                      : "text-xl mr-2 text-gray-600"
                                   }`}
                                   title="Edit"
                                   onClick={() =>
@@ -374,7 +374,7 @@ const Department = () => {
                                   className={`${
                                     hasDepartmentDeleteAccess
                                       ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                      : "text-xl ml-2"
+                                      : "text-xl ml-2 text-gray-600"
                                   }`}
                                   title="Delete"
                                   onClick={() =>

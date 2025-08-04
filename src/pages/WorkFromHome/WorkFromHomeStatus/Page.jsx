@@ -293,6 +293,9 @@ const WorkFromHomeStatus = () => {
     }
   }, [hasaccess, navigate]);
 
+  const isAssociateTeamLead =
+    LocalStorageUtil.getItem("position") === "Associate Team Lead";
+
   return (
     <>
       {isLoading ? (
@@ -408,12 +411,40 @@ const WorkFromHomeStatus = () => {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-2">
-                                {item?.approvalStatus === "PENDING" &&
-                                  hasWorkFromHomeReviewAccess && (
+                              <>
+                                <div className="flex gap-2">
+                                  {isAssociateTeamLead &&
+                                  item?.approvalStatus === "PENDING" &&
+                                  hasWorkFromHomeReviewAccess ? (
+                                    <>
+                                      {item?.approvedByAssociateTeamLead ===
+                                      true ? (
+                                        <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                      ) : item?.rejectedByAssociateTeamLead ===
+                                        true ? (
+                                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                      ) : (
+                                        <>
+                                          <FaCheckCircle
+                                            className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                            onClick={() =>
+                                              handleAction("approve", item)
+                                            }
+                                          />
+                                          <FaXmark
+                                            className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                            onClick={() =>
+                                              handleAction("reject", item)
+                                            }
+                                          />
+                                        </>
+                                      )}
+                                    </>
+                                  ) : item?.approvalStatus === "PENDING" &&
+                                    hasWorkFromHomeReviewAccess ? (
                                     <>
                                       <FaCheckCircle
-                                        className="text-xl text-green-600 hover:text-green-700 dark:text-green-700 dark:hover:text-green-300 cursor-pointer"
+                                        className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
                                         onClick={() =>
                                           handleAction("approve", item)
                                         }
@@ -425,8 +456,11 @@ const WorkFromHomeStatus = () => {
                                         }
                                       />
                                     </>
-                                  )}
-                              </div>
+                                  ) : (
+                                    ""
+                                  )}{" "}
+                                </div>
+                              </>
                             </TableCell>
                           </TableRow>
                         )}
@@ -474,9 +508,37 @@ const WorkFromHomeStatus = () => {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-2">
-                                {item?.approvalStatus === "PENDING" &&
-                                  hasWorkFromHomeReviewAccess && (
+                              <>
+                                <div className="flex gap-2">
+                                  {isAssociateTeamLead &&
+                                  item?.approvalStatus === "PENDING" &&
+                                  hasWorkFromHomeReviewAccess ? (
+                                    <>
+                                      {item?.approvedByAssociateTeamLead ===
+                                      true ? (
+                                        <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                      ) : item?.rejectedByAssociateTeamLead ===
+                                        true ? (
+                                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                      ) : (
+                                        <>
+                                          <FaCheckCircle
+                                            className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                            onClick={() =>
+                                              handleAction("approve", item)
+                                            }
+                                          />
+                                          <FaXmark
+                                            className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                            onClick={() =>
+                                              handleAction("reject", item)
+                                            }
+                                          />
+                                        </>
+                                      )}
+                                    </>
+                                  ) : item?.approvalStatus === "PENDING" &&
+                                    hasWorkFromHomeReviewAccess ? (
                                     <>
                                       <FaCheckCircle
                                         className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
@@ -485,14 +547,17 @@ const WorkFromHomeStatus = () => {
                                         }
                                       />
                                       <FaXmark
-                                        className="text-lg text-red-600 hover:text-red-800 cursor-pointer"
+                                        className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
                                         onClick={() =>
                                           handleAction("reject", item)
                                         }
                                       />
                                     </>
-                                  )}
-                              </div>
+                                  ) : (
+                                    ""
+                                  )}{" "}
+                                </div>
+                              </>
                             </TableCell>
                           </TableRow>
                         )}
@@ -550,7 +615,71 @@ const WorkFromHomeStatus = () => {
                             <div>{WFH?.departmentName || "N/A"}</div>
                           </div>
                           <div className="flex justify-end gap-2 mt-4">
-                            {WFH?.approvalStatus === "PENDING" &&
+                            <>
+                              <>
+                                <div className="flex gap-2">
+                                  {isAssociateTeamLead &&
+                                  WFH?.approvalStatus === "PENDING" &&
+                                  hasWorkFromHomeReviewAccess ? (
+                                    <>
+                                      {WFH?.approvedByAssociateTeamLead ===
+                                      true ? (
+                                        <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                      ) : WFH?.rejectedByAssociateTeamLead ===
+                                        true ? (
+                                        <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                      ) : (
+                                        <>
+                                          <Button
+                                            size="sm"
+                                            color="success"
+                                            variant="flat"
+                                            onPress={() =>
+                                              handleAction("approve", WFH)
+                                            }>
+                                            Approve
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            color="danger"
+                                            variant="flat"
+                                            onPress={() =>
+                                              handleAction("reject", WFH)
+                                            }>
+                                            Reject
+                                          </Button>
+                                        </>
+                                      )}
+                                    </>
+                                  ) : WFH?.approvalStatus === "PENDING" &&
+                                    hasWorkFromHomeReviewAccess ? (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        color="success"
+                                        variant="flat"
+                                        onPress={() =>
+                                          handleAction("approve", WFH)
+                                        }>
+                                        Approve
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        color="danger"
+                                        variant="flat"
+                                        onPress={() =>
+                                          handleAction("reject", WFH)
+                                        }>
+                                        Reject
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}{" "}
+                                </div>
+                              </>
+                            </>
+                            {/* {WFH?.approvalStatus === "PENDING" &&
                               hasWorkFromHomeReviewAccess && (
                                 <>
                                   <Button
@@ -570,7 +699,7 @@ const WorkFromHomeStatus = () => {
                                     Reject
                                   </Button>
                                 </>
-                              )}
+                              )} */}
                           </div>
                         </div>
                       </div>
