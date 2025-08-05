@@ -13,8 +13,8 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import { useEffect, useState } from "react";
-import { GrView } from "react-icons/gr";
-import { FaEdit, FaChevronDown } from "react-icons/fa";
+
+import { FaChevronDown } from "react-icons/fa";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
@@ -29,6 +29,8 @@ import {
 import { useFetchEKYE } from "../../../hooks/useAuth.js";
 import { toast } from "sonner";
 import truncateText from "../../../utils/truncateText";
+import { FaEye } from "react-icons/fa6";
+import { HiPencilSquare } from "react-icons/hi2";
 
 const Page = () => {
   const breadcrumbItems = [{ label: "EKYE", href: "/AdminEkye" }];
@@ -262,8 +264,8 @@ const Page = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <GrView
-                              className={`text-xl ${
+                            <FaEye
+                              className={` ${
                                 hasViewAccess
                                   ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white"
                                   : "text-gray-400 dark:text-gray-500 opacity-50  cursor-not-allowed"
@@ -276,8 +278,8 @@ const Page = () => {
                                 handleChange("view", data.rclId)
                               }
                             />
-                            <FaEdit
-                              className={`text-xl ${
+                            <HiPencilSquare
+                              className={` ${
                                 hasActionAccess
                                   ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white "
                                   : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
@@ -355,8 +357,8 @@ const Page = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <GrView
-                            className={`text-lg ${
+                          <FaEye
+                            className={` ${
                               hasViewAccess
                                 ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
                                 : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
@@ -365,8 +367,8 @@ const Page = () => {
                               hasViewAccess && handleChange("view", data.rclId)
                             }
                           />
-                          <FaEdit
-                            className={`text-lg ${
+                          <HiPencilSquare
+                            className={` ${
                               hasActionAccess
                                 ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
                                 : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
@@ -488,6 +490,9 @@ const Page = () => {
                   total={totalPages}
                   page={currentPage}
                   onChange={handlePageChange}
+                  classNames={{
+                    cursor: "bg-active text-white",
+                  }}
                   size="sm"
                   isDisabled={isEKYELoading}
                 />

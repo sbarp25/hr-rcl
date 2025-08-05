@@ -81,10 +81,10 @@ const AttendanceReport = ({ attendanceData }) => {
                   <div
                     className={`px-3 py-1.5 text-xs font-medium rounded-full text-center inline-flex items-center justify-center shadow-sm ${
                       data.attendanceStatus?.toLowerCase() === "present"
-                        ? "bg-green-100 text-green-700 border border-green-200"
+                        ? "bg-green-400/20 text-green-700 border border-green-200"
                         : data.attendanceStatus?.toLowerCase() === "absent"
-                        ? "bg-red-100 text-red-700 border border-red-200"
-                        : "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                        ? "bg-red-400/20 text-red-700 border border-red-200"
+                        : "bg-yellow-400/20 text-yellow-700 border border-yellow-200"
                     }`}>
                     {data.attendanceStatus
                       ? data.attendanceStatus.charAt(0).toUpperCase() +

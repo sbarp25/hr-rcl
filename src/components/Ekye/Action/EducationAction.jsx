@@ -157,11 +157,15 @@ const EducationAction = ({ employeeData }) => {
         {employeeData?.approvalStatus === "PENDING" ? (
           <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
             <RejectComp employeeData={employeeData} />
-            <Button className="bg-teal-500 text-white" onPress={onApprove}>
-              <FaCheck />
-              {employeeData?.approvalStatus === "REJECTED"
-                ? "Re-approve"
-                : "Approve"}
+            <Button
+              className="bg-teal-500 hover:bg-active text-white inline-flex items-center gap-2  cursor-pointer"
+              onPress={onApprove}>
+              <div className="flex items-center space-x-1">
+                <FaCheck />
+                {employeeData?.approvalStatus === "REJECTED"
+                  ? "Re-approve"
+                  : "Approve"}
+              </div>
             </Button>
           </div>
         ) : employeeData?.approvalStatus === "APPROVED" ? (

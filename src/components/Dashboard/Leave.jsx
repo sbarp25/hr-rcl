@@ -60,7 +60,7 @@ const Leave = () => {
   return (
     <>
       <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm  ">
-        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
+        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-gray-500 gap-3">
           <p className="text-xl font-bold">Leave</p>
           <div>
             <CustomToggleButton

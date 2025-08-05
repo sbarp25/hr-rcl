@@ -296,6 +296,9 @@ const AutoCheckout = () => {
               page={currentPage}
               onChange={handlePageChange}
               size="sm"
+              classNames={{
+                cursor: "bg-active text-white",
+              }}
             />
           </div>
           <div className="flex justify-center items-center order-3">

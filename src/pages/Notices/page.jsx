@@ -281,6 +281,9 @@ const Page = () => {
             initialPage={1}
             total={Math.ceil(Notice.length / noticesPerPage)}
             onChange={handlePageChange}
+            classNames={{
+              cursor: "bg-active text-white",
+            }}
           />
         </div>
       </div>

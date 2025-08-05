@@ -272,7 +272,7 @@ const Employees = () => {
                       <FaEye
                         className={`${
                           hasaccess
-                            ? "text-green-500 hover:text-green-700 cursor-pointer "
+                            ? "text-white hover:text-green-500 cursor-pointer "
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="View"
@@ -281,7 +281,7 @@ const Employees = () => {
                       <HiPencilSquare
                         className={`${
                           hasEmployeeEditAccess
-                            ? "text-orange-500 hover:text-orange-700 cursor-pointer "
+                            ? "text-white hover:text-orange-500 cursor-pointer "
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Edit"
@@ -290,7 +290,7 @@ const Employees = () => {
                       <MdDelete
                         className={`${
                           hasEmployeeDeleteAccess
-                            ? "text-red-500 cursor-pointer hover:text-red-700"
+                            ? "text-white cursor-pointer hover:text-red-500"
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Delete"
@@ -515,6 +515,9 @@ const Employees = () => {
                   total={totalPages}
                   page={currentPage}
                   onChange={handlePageChange}
+                  classNames={{
+                    cursor: "bg-active text-white",
+                  }}
                   size="sm"
                 />
               </div>

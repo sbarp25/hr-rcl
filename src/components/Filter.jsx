@@ -176,13 +176,13 @@ const Filter = ({
               <div className="flex justify-between">
                 <Button
                   type="submit"
-                  className="bg-black text-white dark:bg-white dark:text-black dark:hover:bg-active dark:hover:text-white   hover:bg-hoverbackground"
+                  className="bg-black text-white dark:bg-white dark:text-black hover:bg-hoverbackground dark:hover:bg-active dark:hover:text-white   "
                   isLoading={applyFiltersMutation.isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
                 </Button>
                 <Button
-                  className="bg-slate-300 dark:bg-slate-500 dark:hover:bg-gray-500 hover:bg-gray-400 text-black"
+                  className="bg-slate-300 dark:bg-slate-500 hover:bg-hoverbackground dark:hover:bg-active text-black dark:hover:text-white"
                   onPress={resetFilters}>
                   Reset
                 </Button>

@@ -23,11 +23,13 @@ const BreadcrumbsComponent = ({ items }) => {
             // href={item.href}
             isCurrent={currentPage === `{item.label}`}>
             <Link to={item.href}>
-              <span className="relative inline-flex items-center h-8">
-                <div className="relative w-24  md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 bg-stone-950 hover:bg-stone-950  pl-2 text-white text-xs text-center flex items-center justify-center clip-ribbon whitespace-nowrap overflow-hidden text-ellipsis">
-                  {item.label}
+              <>
+                <div className="relative w-24 md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 clip-ribbon-border bg-gray-600 flex items-center justify-center">
+                  <div className="w-full h-[95%] clip-ribbon bg-stone-950 hover:bg-active text-white text-xs sm:text-sm scale-[0.98] flex items-center justify-center">
+                    {item.label}
+                  </div>
                 </div>
-              </span>
+              </>
             </Link>
           </BreadcrumbItem>
         ))}

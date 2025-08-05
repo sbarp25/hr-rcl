@@ -733,6 +733,9 @@ const WorkFromHomeStatus = () => {
                         total={totalPages}
                         page={currentPage}
                         onChange={handlePageChange}
+                        classNames={{
+                          cursor: "bg-active text-white",
+                        }}
                         size="sm"
                       />
                     </div>

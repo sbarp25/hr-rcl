@@ -503,6 +503,9 @@ const AttendanceRequest = () => {
                     showControls
                     total={totalPages}
                     page={currentPage}
+                    classNames={{
+                      cursor: "bg-active text-white",
+                    }}
                     onChange={handlePageChange}
                     size="sm"
                   />
