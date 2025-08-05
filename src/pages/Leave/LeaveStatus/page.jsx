@@ -78,7 +78,7 @@ const LeaveStatus = () => {
   const approveMutation = useMutation({
     mutationFn: updateLeaveStatus,
     onSuccess: (data) => {
-      toast.success(data.message);
+      // toast.success(data.message);
       queryClient.invalidateQueries(["leaveList"]);
       onClose();
     },
@@ -90,7 +90,7 @@ const LeaveStatus = () => {
   const rejectMutation = useMutation({
     mutationFn: updateLeaveStatus,
     onSuccess: (data) => {
-      toast.success(data.message);
+      // toast.success(data.message);
       queryClient.invalidateQueries(["leaveList"]);
       onRejectClose();
       reset();
@@ -752,7 +752,7 @@ const LeaveStatus = () => {
                         </div>
                       </div>
                       <Button
-                        className="bg-black text-white"
+                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         onPress={() => onApprove()}>
                         Approve
                       </Button>
@@ -865,7 +865,9 @@ const LeaveStatus = () => {
                             )}
                           </div>
                         </div>
-                        <Button className="text-white bg-black" type="submit">
+                        <Button
+                          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                          type="submit">
                           Reject
                         </Button>
                         <Button onPress={onClose}>Cancel</Button>

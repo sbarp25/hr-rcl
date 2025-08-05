@@ -247,13 +247,13 @@ const Login = () => {
                   <ButtonComponent
                     type="button"
                     onClick={closeModal}
-                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg"
+                    className="flex-1 bg-gray-500 dark:bg-gray-500 hover:bg-gray-600 dark:text-white py-3 rounded-lg"
                     content="Cancel"
                   />
 
                   <ButtonComponent
                     type="submit"
-                    className="flex-1 bg-black hover:bg-gray-800 text-white py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-black hover:bg-gray-800 text-white dark:text-white py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={verifyOTPMutation.isPending}
                     content={
                       <>

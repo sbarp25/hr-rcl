@@ -43,7 +43,7 @@ const GetBankDetails = () => {
         <h2 className="text-2xl font-semibold mb-4">Bank Details</h2>
         <ButtonComponent
           onPress={navigateTo}
-          className="bg-black text-white"
+          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
           content="Add Bank"
         />
       </div>

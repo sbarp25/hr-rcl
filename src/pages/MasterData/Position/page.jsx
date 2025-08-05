@@ -208,7 +208,7 @@ const TotalPage = () => {
                     />
                   </div>
                   <Button
-                    className="flex bg-black text-white dark:bg-white dark:text-black w-full sm:w-auto"
+                    className="flex text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active w-full sm:w-auto"
                     onPress={navigateAdd}>
                     <div className="flex justify-center items-center gap-2">
                       <IoIosAddCircleOutline className=" text-xl" />
@@ -265,7 +265,7 @@ const TotalPage = () => {
                                   className={`${
                                     hasPositionEditAccess
                                       ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                      : "text-xl mr-2 text-gray-600"
+                                      : "text-xl mr-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                   }`}
                                   title="Edit"
                                   onClick={() => handleAction("edit", position)}
@@ -274,7 +274,7 @@ const TotalPage = () => {
                                   className={`${
                                     hasPositionDeleteAccess
                                       ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                      : "text-xl ml-2 text-gray-600"
+                                      : "text-xl ml-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                   }`}
                                   title="Delete"
                                   onClick={() =>
@@ -326,7 +326,7 @@ const TotalPage = () => {
                                 className={`${
                                   hasPositionEditAccess
                                     ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                    : "text-xl mr-2 text-gray-600"
+                                    : "text-xl mr-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Edit"
                                 onClick={() => handleAction("edit", position)}
@@ -335,7 +335,7 @@ const TotalPage = () => {
                                 className={`${
                                   hasPositionDeleteAccess
                                     ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2 text-gray-600"
+                                    : "text-xl ml-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Delete"
                                 onClick={() => handleAction("delete", position)}

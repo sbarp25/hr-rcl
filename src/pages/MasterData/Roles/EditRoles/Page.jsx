@@ -194,7 +194,7 @@ const EditRole = () => {
       );
 
       if (response.data.responseCode === "200") {
-        toast.success(response.data.messages || "Role updated successfully");
+        // toast.success(response.data.messages || "Role updated successfully");
         // Navigate back to roles list after successful update
         navigate("/master-data/Roles");
       } else {

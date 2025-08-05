@@ -219,7 +219,7 @@ const AddDepartment = () => {
 
               <ButtonComponent
                 type="submit"
-                className="bg-black text-white dark:bg-white dark:text-black"
+                className="bg-black text-white "
                 content={isCreating ? "Adding..." : "Add Department"}
                 disabled={isCreating || isLoadingTeamLead}
               />

@@ -266,7 +266,7 @@ const Page = () => {
                               className={`text-xl ${
                                 hasViewAccess
                                   ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white"
-                                  : "text-gray-400 cursor-not-allowed"
+                                  : "text-gray-400 dark:text-gray-500 opacity-50  cursor-not-allowed"
                               }`}
                               title={
                                 hasViewAccess ? "View" : "No permission to view"
@@ -280,7 +280,7 @@ const Page = () => {
                               className={`text-xl ${
                                 hasActionAccess
                                   ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white "
-                                  : "text-gray-600 cursor-not-allowed"
+                                  : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                               }`}
                               title={
                                 hasActionAccess
@@ -359,7 +359,7 @@ const Page = () => {
                             className={`text-lg ${
                               hasViewAccess
                                 ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
-                                : "text-gray-600 cursor-not-allowed"
+                                : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                             }`}
                             onClick={() =>
                               hasViewAccess && handleChange("view", data.rclId)
@@ -369,7 +369,7 @@ const Page = () => {
                             className={`text-lg ${
                               hasActionAccess
                                 ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
-                                : "text-gray-400 cursor-not-allowed"
+                                : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                             }`}
                             onClick={() =>
                               hasActionAccess &&

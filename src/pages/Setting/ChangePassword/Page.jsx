@@ -176,13 +176,13 @@ const ChangePassword = () => {
                       errors.confirmPassword ||
                       !changePasswordAccess
                     }
-                    className={`w-full py-3 rounded-lg text-white font-semibold transition duration-200 ${
+                    className={`w-full py-3 rounded-lg  font-semibold transition duration-200 ${
                       isLoading ||
                       errors.password ||
                       errors.confirmPassword ||
                       !changePasswordAccess
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-active hover:bg-gray-800"
+                        : "text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     }`}>
                     {isLoading ? "Loading..." : "Submit"}
                   </Button>

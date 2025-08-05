@@ -474,40 +474,6 @@ const AttendanceRequest = () => {
                           {late?.lateReason}
                         </div>
                       </div>
-                      {late?.status === "Pending" && (
-                        <div className="flex justify-end gap-4 mt-2">
-                          <Button
-                            size="sm"
-                            color="success"
-                            className={`${
-                              !hasAttendanceEditAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasAttendanceEditAccess &&
-                              handleAction("Approve", late?.lateCheckInId)
-                            }
-                            disabled={!hasAttendanceEditAccess}>
-                            Approve
-                          </Button>
-                          <Button
-                            size="sm"
-                            color="danger"
-                            className={`${
-                              !hasAttendanceEditAccess
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            onPress={() =>
-                              hasAttendanceEditAccess &&
-                              handleAction("Reject", late?.lateCheckInId)
-                            }
-                            disabled={!hasAttendanceEditAccess}>
-                            Reject
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -666,7 +632,7 @@ const AttendanceRequest = () => {
                         </div>
                       </div>
                       <Button
-                        className="bg-black dark:bg-white dark:text-black text-white"
+                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         onPress={() => onApprove()}>
                         Approve
                       </Button>
@@ -761,7 +727,7 @@ const AttendanceRequest = () => {
                       )}
                       <div className="flex gap-2 justify-end mt-4">
                         <Button
-                          className="bg-black dark:bg-white dark:text-black text-white"
+                          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                           type="submit">
                           Reject
                         </Button>

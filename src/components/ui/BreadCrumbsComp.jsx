@@ -24,7 +24,7 @@ const BreadcrumbsComponent = ({ items }) => {
             isCurrent={currentPage === `{item.label}`}>
             <Link to={item.href}>
               <span className="relative inline-flex items-center h-8">
-                <div className="relative w-24  md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 bg-teal-800 hover:bg-red-600 pl-2 text-white text-xs text-center flex items-center justify-center clip-ribbon whitespace-nowrap overflow-hidden text-ellipsis">
+                <div className="relative w-24  md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 bg-stone-950 hover:bg-stone-950  pl-2 text-white text-xs text-center flex items-center justify-center clip-ribbon whitespace-nowrap overflow-hidden text-ellipsis">
                   {item.label}
                 </div>
               </span>

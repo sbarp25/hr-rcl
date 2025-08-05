@@ -60,7 +60,7 @@ const RequestWorkFromHome = () => {
       if (response?.data?.responseCode === "200") {
         reset();
         navigate("/WFH");
-        toast.success(response?.data?.message);
+        // toast.success(response?.data?.message);
       } else {
         const errorMessage =
           response?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -197,7 +197,7 @@ const RequestWorkFromHome = () => {
           <div className="flex justify-center sm:justify-start pt-2">
             <ButtonComponent
               type="submit"
-              className="bg-black text-white w-full sm:w-auto"
+              className="bg-black text-white  w-full sm:w-auto"
               content={isLoading ? "Submitting..." : "Submit"}
               //   disabled={isLoading}
               size="sm"

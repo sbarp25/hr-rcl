@@ -122,7 +122,7 @@ const Content = ({ activeTab, employeeData }) => {
   const ActiveComponent = activeTab.component;
   return (
     <section
-      className={`panel ${activeTab.panelClass} bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 md:p-6`}>
+      className={`panel ${activeTab.panelClass} bg-white dark:bg-black rounded-lg shadow-sm border border-gray-200 dark:border-none p-4 md:p-6`}>
       <ActiveComponent employeeData={employeeData} />
     </section>
   );
@@ -158,24 +158,10 @@ const Page = () => {
           <BreadcrumbsComponent items={breadcrumbItems} />
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="page-title text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">
+          <h1 className="page-title text-2xl md:text-3xl font-bold text-black dark:text-gray-200">
             EKYE
           </h1>
           <GoBack />
-          {/* Optional: Add employee info or actions here */}
-          {employeeData?.fullName && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-medium">Employee: </span>
-              <span>{employeeData.fullName}</span>
-              {employeeData.rclId && (
-                <>
-                  <span className="mx-2">•</span>
-                  <span className="font-medium">ID: </span>
-                  <span>{employeeData.rclId}</span>
-                </>
-              )}
-            </div>
-          )}
         </div>
       </div>
 

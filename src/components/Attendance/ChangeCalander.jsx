@@ -275,12 +275,6 @@ const ChangeCalander = () => {
                       </div>
                     )}
                   </ModalBody>
-
-                  {/* <ModalFooter>
-                <Button color="primary" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter> */}
                 </>
               )}
             </ModalContent>

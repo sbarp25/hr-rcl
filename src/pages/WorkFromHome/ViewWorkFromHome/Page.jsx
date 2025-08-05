@@ -28,7 +28,7 @@ const ViewWorkFromHome = () => {
       });
       if (response.data.responseCode === "200") {
         setWorkFromHomeByIdData(response.data.datalist[0]);
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }

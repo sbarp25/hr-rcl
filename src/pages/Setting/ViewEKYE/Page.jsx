@@ -12,7 +12,8 @@ import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import Loader from "../../../components/Loader/Loader";
 import { FaBell, FaCheck, FaCross } from "react-icons/fa6";
 import { ImCross } from "react-icons/im";
-import { Tooltip } from "@heroui/react";
+import { Alert, Tooltip } from "@heroui/react";
+import ButtonComponent from "../../../components/ui/ButtonComp";
 
 const tabData = [
   {
@@ -54,7 +55,7 @@ const Tabs = ({ activeTab, changeTab }) => (
           }}
           className={`cursor-pointer py-2 px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8 text-center min-w-0 flex-1 font-semibold rounded-t-2xl border transition-all duration-300 ${
             activeTab.name === tab.name
-              ? "bg-gray-50 dark:bg-slate-500 border border-gray-300"
+              ? "bg-gray-50 dark:bg-stone-950 border border-gray-300"
               : "hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
           }`}>
           <span className="text-xs sm:text-sm md:text-sm lg:text-base xl:text-base truncate block">
@@ -180,32 +181,62 @@ const ViewEKYE = () => {
     }
   }, []);
 
+  const navigatetoEKYE = () => {
+    navigate("/EKYE");
+  };
+
+  const Status = (approvalStatus) => {
+    if (approvalStatus === "APPROVED") {
+      return (
+        <Alert
+          color="success"
+          title="Your EKYE has been approved"
+          variant="flat"
+        />
+      );
+    } else if (approvalStatus === "REJECTED") {
+      return (
+        <Alert
+          color={"danger"}
+          title="Your EKYE has been rejected"
+          variant="flat"
+          classNames={{
+            base: "bg-red-400/10 dark:bg-red-400/10", // Adjust these classes as needed for better contrast
+          }}
+        />
+      );
+    } else if (approvalStatus === "PENDING") {
+      return (
+        <Alert
+          color={"warning"}
+          title="Your EKYE is waiting for approval"
+          variant="flat"
+        />
+      );
+    } else {
+      return;
+    }
+  };
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 max-w-full sm:max-w-full md:max-w-6xl lg:max-w-7xl xl:max-w-screen-2xl">
       <h1 className="page-title my-2 sm:my-3 md:my-4 lg:my-5 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-800">
-        <div className="flex items-center gap-3">
-          <span className="">EKYE</span>
-          <div className="flex items-center justify-center">
-            {employeeData?.approvalStatus === "APPROVED" ? (
-              <Tooltip content="Your EKYE has been approved" placement="right">
-                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-green-100 rounded-full border-2 border-green-200 shadow-sm">
-                  <FaCheck className="text-green-600 text-sm sm:text-base md:text-lg" />
-                </div>
-              </Tooltip>
-            ) : employeeData?.approvalStatus === "REJECTED" ? (
-              <Tooltip content="Your EKYE has been Rejected" placement="right">
-                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-red-100 rounded-full border-2 border-red-200 shadow-sm">
-                  <ImCross className="text-red-600 text-xs sm:text-sm md:text-base" />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                content="Your EKYE is waiting for approval"
-                placement="right">
-                <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-amber-100 rounded-full border-2 border-amber-200 shadow-sm animate-pulse">
-                  <FaBell className="text-amber-600 text-sm sm:text-base md:text-lg" />
-                </div>
-              </Tooltip>
+        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="flex items-center  gap-3">
+            <span className="">EKYE</span>
+            <div className="flex items-center justify-center space-x-4 w-full">
+              <div className="flex items-center space-x-3 ">
+                {Status(employeeData?.approvalStatus)}
+              </div>
+            </div>
+          </div>
+          <div>
+            {employeeData?.approvalStatus === "REJECTED" && (
+              <div>
+                <ButtonComponent
+                  content="Resubmit EKYE"
+                  onPress={navigatetoEKYE}
+                />
+              </div>
             )}
           </div>
         </div>

@@ -264,7 +264,7 @@ const EditEmployees = () => {
             </div>
           </div>
           <ButtonComponent
-            className="flex gap-2 items-center w-fit bg-bgprimary dark:bg-white dark:text-black text-white py-2 px-4 rounded-2xl"
+            className="flex gap-2 items-center w-fit bg-bgprimary  py-2 px-4 rounded-2xl"
             type="Submit"
             content={"Update Employee"}
           />

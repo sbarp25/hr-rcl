@@ -216,7 +216,7 @@ const EditDepartment = () => {
               </div>
               <ButtonComponent
                 type="submit"
-                className="bg-black text-white dark:bg-white dark:text-black"
+                className="bg-black text-white "
                 content={
                   editDepartmentMutation.isPending ? "Updating..." : "Update"
                 }

@@ -260,7 +260,7 @@ const Roles = () => {
                                 className={`${
                                   hasRoleEditAccess
                                     ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                    : "text-xl mr-2 text-gray-600"
+                                    : "text-xl mr-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Edit"
                                 onClick={() => handleAction("edit", role)}
@@ -269,7 +269,7 @@ const Roles = () => {
                                 className={`${
                                   hasRoleDeleteAccess
                                     ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2 text-gray-600"
+                                    : "text-xl ml-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Delete"
                                 onClick={() => handleAction("delete", role)}
@@ -319,7 +319,7 @@ const Roles = () => {
                                 className={`${
                                   hasRoleEditAccess
                                     ? "text-green-500 cursor-pointer hover:text-green-700 text-xl mr-2"
-                                    : "text-xl mr-2 text-gray-600"
+                                    : "text-xl mr-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Edit"
                                 onClick={() => handleAction("edit", role)}
@@ -328,7 +328,7 @@ const Roles = () => {
                                 className={`${
                                   hasRoleDeleteAccess
                                     ? "text-red-500 cursor-pointer hover:text-red-700 text-xl ml-2"
-                                    : "text-xl ml-2 text-gray-600"
+                                    : "text-xl ml-2 text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                                 }`}
                                 title="Delete"
                                 onClick={() => handleAction("delete", role)}

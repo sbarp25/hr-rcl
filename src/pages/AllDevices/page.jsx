@@ -117,7 +117,7 @@ const AllTrustedDevices = () => {
               <GoBack />
             </div>
             <ButtonComponent
-              className="bg-white dark:text-red-600 text-red-600 dark:hover:text-red-700 hover:text-red-700"
+              className=""
               content="Remove All Device"
               onPress={() => deleteAllDevice()}
             />
@@ -183,7 +183,7 @@ const AllTrustedDevices = () => {
                 {/* Actions */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <ButtonComponent
-                    className="bg-white dark:text-red-600 text-red-600 dark:hover:text-red-700 hover:text-red-700"
+                    className="dark:bg-gray-500 dark:text-white"
                     content="Remove Device"
                     onPress={() => handleDelete(device.id)}
                   />
@@ -223,7 +223,7 @@ const AllTrustedDevices = () => {
                 </p>
                 <div className="flex gap-2 justify-end mt-4">
                   <Button
-                    className="bg-black text-white"
+                    className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={deleteDevice}>
                     Delete
                   </Button>

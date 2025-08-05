@@ -61,7 +61,6 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
       checkInMutation.mutate(requestData, {
         onSuccess: (data) => {
           if (data.responseCode === "200") {
-            toast.success(data?.message || "Checked in successfully!");
             onStatusChange(true);
           } else if (data.responseCode === "406") {
             onOpen(); // Open late check-in modal
@@ -87,7 +86,6 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
       checkOutMutation.mutate(requestData, {
         onSuccess: (data) => {
           if (data.responseCode === "200") {
-            toast.success(data?.message || "Checked in successfully!");
             onStatusChange(false);
             reset();
           } else {
@@ -120,7 +118,6 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     lateCheckInMutation.mutate(lateCheckin, {
       onSuccess: (data) => {
         if (data?.responseCode === "200") {
-          toast.success("Late check-in processed successfully!");
           onOpenChangeSecondModal(false);
           onStatusChange(true);
           reset();
@@ -156,15 +153,13 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         <Button
           isDisabled={isloading}
           onPress={handleAttendance}
-          className="button bg-bgprimary dark:bg-slate-700  dark:hover:bg-hoverbackground hover:bg-hoverbackground text-white py-2 tracking-normal">
+          className="button text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active py-2 tracking-normal">
           {checkedInStatus ? (
-            <span className="text-white font-Poppins text-base md:text-xl">
+            <span className=" font-Poppins text-base md:text-xl">
               Check Out
             </span>
           ) : (
-            <span className="text-white font-Poppins text-base md:text-xl">
-              Check In
-            </span>
+            <span className=" font-Poppins text-base md:text-xl">Check In</span>
           )}
         </Button>
         {/* First Modal - Late Check-in Confirmation */}
@@ -185,7 +180,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                   <div className="flex justify-center gap-4 py-2">
                     <Button
                       onPress={handleLateCheckInConfirm}
-                      className="text-white bg-black">
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active">
                       Yes
                     </Button>
                     <Button onPress={onClose}>No</Button>
@@ -228,7 +223,9 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                       }}
                     />
                     <div className="flex justify-center gap-4 mt-4">
-                      <Button className="text-white bg-black" type="submit">
+                      <Button
+                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                        type="submit">
                         Submit
                       </Button>
                       <Button onPress={closeRejectModal} className="px-8">

@@ -229,7 +229,7 @@ const Employees = () => {
               </div>
               <Button
                 isDisabled={!hasemployeecreateaccess}
-                className="flex gap-2 items-center rounded-2xl bg-black dark:bg-white dark:text-black hover:bg-gray-200 text-white hover:text-black hover:border border-gray-500 py-2 px-4 w-full sm:w-auto"
+                className="flex gap-2 items-center rounded-2xl text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active py-2 px-4 w-full sm:w-auto"
                 onPress={handleRedirect}>
                 <AiOutlineUserAdd className="text-xl" />
                 Add Employees
@@ -273,7 +273,7 @@ const Employees = () => {
                         className={`${
                           hasaccess
                             ? "text-green-500 hover:text-green-700 cursor-pointer "
-                            : "text-gray-600"
+                            : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="View"
                         onClick={() => handleAction("view", employee.rclId)}
@@ -282,7 +282,7 @@ const Employees = () => {
                         className={`${
                           hasEmployeeEditAccess
                             ? "text-orange-500 hover:text-orange-700 cursor-pointer "
-                            : "text-gray-600"
+                            : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Edit"
                         onClick={() => handleAction("edit", employee.rclId)}
@@ -291,7 +291,7 @@ const Employees = () => {
                         className={`${
                           hasEmployeeDeleteAccess
                             ? "text-red-500 cursor-pointer hover:text-red-700"
-                            : "text-gray-600"
+                            : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Delete"
                         onClick={() => handleAction("delete", employee.rclId)}
@@ -324,11 +324,13 @@ const Employees = () => {
               isLoading={isLoading}
               loadingContent={<SkeletonLoader />}>
               {filteredEmployees.map((employee, index) => (
-                <TableRow key={employee.rclId} className="hover:bg-gray-50">
+                <TableRow
+                  key={employee.rclId}
+                  className="hover:bg-gray-50 dark:hover:bg-slate-500">
                   <TableCell>
                     <div>
                       <div className="font-medium">{employee.fullName}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-black dark:text-white">
                         {employee.rclId}
                       </div>
                     </div>
@@ -337,7 +339,7 @@ const Employees = () => {
                   <TableCell>
                     <div>
                       <div>{employee.departmentName}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-black dark:text-white">
                         {employee.postionName}
                       </div>
                     </div>
@@ -350,6 +352,12 @@ const Employees = () => {
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu aria-label="Employee Actions">
+                        <DropdownItem
+                          key="view"
+                          className={!hasaccess ? "opacity-50" : ""}
+                          onPress={() => handleAction("view", employee.rclId)}>
+                          view Employee
+                        </DropdownItem>
                         <DropdownItem
                           key="edit"
                           className={!hasEmployeeEditAccess ? "opacity-50" : ""}
@@ -446,19 +454,19 @@ const Employees = () => {
                         size="sm"
                         variant="flat"
                         className="flex-1 bg-black text-white"
-                        isDisabled={!hasEmployeeEditAccess}
-                        onPress={() => handleAction("edit", employee.rclId)}>
+                        isDisabled={!hasaccess}
+                        onPress={() => handleAction("view", employee.rclId)}>
                         <HiPencilSquare className="w-4 h-4" />
-                        Edit
+                        View
                       </Button>
                       <Button
                         size="sm"
                         variant="flat"
                         className="flex-1 bg-black text-white"
                         isDisabled={!hasEmployeeEditAccess}
-                        onPress={() => handleAction("view", employee.rclId)}>
+                        onPress={() => handleAction("edit", employee.rclId)}>
                         <HiPencilSquare className="w-4 h-4" />
-                        View
+                        Edit
                       </Button>
                       <Button
                         size="sm"
@@ -536,7 +544,7 @@ const Employees = () => {
                 <p>Are you sure you want to delete this employee?</p>
                 <div className="flex gap-2 justify-end mt-4">
                   <Button
-                    className="bg-black text-white"
+                    className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={() => onDelete()}>
                     Delete
                   </Button>

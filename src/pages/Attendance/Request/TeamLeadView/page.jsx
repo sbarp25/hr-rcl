@@ -16,6 +16,7 @@ import {
   ModalContent,
   ModalBody,
   Tooltip,
+  Spinner,
 } from "@heroui/react";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -207,7 +208,7 @@ const TeamLeadLateCheckin = () => {
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
 
-  const showLoader = isLoading || isApproving || isRejecting;
+  const showLoader = isLoading;
 
   const isAssociateTeamLead =
     LocalStorageUtil.getItem("position") === "Associate Team Lead";
@@ -376,7 +377,7 @@ const TeamLeadLateCheckin = () => {
                                           <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                                         ) : (
                                           <Button
-                                            className="bg-black text-white"
+                                            className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                             onPress={() => {
                                               setSelectedData(late);
                                               onOpen();
@@ -388,7 +389,7 @@ const TeamLeadLateCheckin = () => {
                                     ) : late?.status === "PENDING" ? (
                                       <>
                                         <Button
-                                          className="bg-black text-white"
+                                          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                           onPress={() => {
                                             setSelectedData(late);
                                             onOpen();
@@ -477,7 +478,7 @@ const TeamLeadLateCheckin = () => {
                                       <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                                     ) : (
                                       <Button
-                                        className="bg-black text-white"
+                                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                         onPress={() => {
                                           setSelectedData(late);
                                           onOpen();
@@ -489,7 +490,7 @@ const TeamLeadLateCheckin = () => {
                                 ) : late?.status === "PENDING" ? (
                                   <>
                                     <Button
-                                      className="bg-black text-white"
+                                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                       onPress={() => {
                                         setSelectedData(late);
                                         onOpen();
@@ -590,7 +591,7 @@ const TeamLeadLateCheckin = () => {
                                   <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
                                 ) : (
                                   <Button
-                                    className="bg-black text-white"
+                                    className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                     onPress={() => {
                                       setSelectedData(late);
                                       onOpen();
@@ -602,7 +603,7 @@ const TeamLeadLateCheckin = () => {
                             ) : late?.status === "PENDING" ? (
                               <>
                                 <Button
-                                  className="bg-black text-white"
+                                  className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                   onPress={() => {
                                     setSelectedData(late);
                                     onOpen();
@@ -772,12 +773,30 @@ const TeamLeadLateCheckin = () => {
                         </div>
                       </div>
                       <Button
-                        className="bg-black dark:bg-white dark:text-black text-white"
+                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         onPress={() => onApprove()}>
-                        Approve
+                        {isApproving ? (
+                          <span className="flex items-center">
+                            Approving
+                            <Spinner color="primary" />
+                          </span>
+                        ) : (
+                          "Approve"
+                        )}
+                        {/* Approve */}
                       </Button>
-                      <Button color="danger" type="submit" onPress={onReject}>
-                        Reject
+                      <Button
+                        className="bg-gray-500"
+                        type="submit"
+                        onPress={onReject}>
+                        {isRejecting ? (
+                          <span className="flex items-center">
+                            Rejecting
+                            <Spinner color="primary" />
+                          </span>
+                        ) : (
+                          "Reject"
+                        )}
                       </Button>
                       <Button onPress={onClose}>Cancel</Button>
                     </div>
@@ -868,7 +887,7 @@ const TeamLeadLateCheckin = () => {
                       )}
                       <div className="flex gap-2 justify-end mt-4">
                         <Button
-                          className="bg-black dark:bg-white dark:text-black text-white"
+                          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                           type="submit">
                           Reject
                         </Button>

@@ -3,6 +3,7 @@ import { Divider, Form } from "@heroui/react";
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
 import { FaRegEye } from "react-icons/fa6";
+import Legend from "../../ui/Legend.jsx";
 
 const EkyeDocumentDetail = ({ employeeData }) => {
   const [citizenshipFront, setCitizenshipFront] = useState(false);
@@ -35,11 +36,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
               </span>
             </h1>
 
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
+            <Legend />
           </div>
           <Form className="py-6 gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
@@ -125,11 +122,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
                 <UnderlineComponent />
               </span>
             </h1>
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
+            <Legend />
           </div>
           <Form className="py-6 w-full gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">

@@ -47,7 +47,6 @@ const EkyeEducationDetails = ({ employeeData }) => {
           }
         );
         if (response?.data?.responseCode === "201") {
-          toast.success(response?.data?.message);
           navigate("/AdminEkye");
         } else {
           toast.error(response?.data?.error?.errorList?.[0]?.errorMessage);
@@ -62,27 +61,21 @@ const EkyeEducationDetails = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
-        <div className="bg-white dark:bg-black text-lg w-[calc(100%-.5rem)]  rounded-lg px-6 mt-2 mx-1">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold flex mb-6">
-              <span className="relative">
-                Education Details
-                <UnderlineComponent />
-              </span>
-              {/* h-[calc(100vh-210px)] */}
-            </h1>
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
-          </div>
+      {/* {isLoading && <Loader />} */}
+      <div className="relative flex flex-col bg-white dark:bg-black  border border-black dark:border-white rounded-b-md shadow-xl p-8">
+        {/* Single Form Section */}
+        <div className="bg-white dark:bg-black text-lg  rounded-lg px-6 mt-2 mx-1">
+          <h1 className="text-xl font-semibold flex mb-6">
+            <span className="relative">
+              Education Details
+              <UnderlineComponent />
+            </span>
+          </h1>
 
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
               <div key={index} className="mb-6 p-4 rounded-md ">
-                <Form className="py-6 gap-6">
+                <div className="w-full py-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <EkyeDetailsComponent
                       label="Level"
@@ -115,7 +108,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   <Divider />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <div>
-                      <label className="text-black dark:text-white font-semibold text-sm">
+                      <label className="text-black font-semibold text-sm">
                         Education Certificate
                       </label>
                       {educationDocuments[index] ? (
@@ -126,7 +119,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                           className="block text-sm text-green-600 underline mb-2">
                           <span className="flex items-center gap-x-2">
                             <FaRegEye />
-                            View Certificate
+                            View Uploaded Certificate
                           </span>
                         </a>
                       ) : (
@@ -136,7 +129,8 @@ const EkyeEducationDetails = ({ employeeData }) => {
                       )}
                     </div>
                   </div>
-                </Form>
+                </div>
+                <Divider />
               </div>
             ))
           ) : (
@@ -145,16 +139,27 @@ const EkyeEducationDetails = ({ employeeData }) => {
             </div>
           )}
         </div>
-        {employeeData?.approvalStatus !== "APPROVED" &&
-          employeeData?.educationalDetails?.length > 0 && (
-            <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
-              <RejectComp employeeData={employeeData} />
-              <Button className="bg-teal-500 text-white" onPress={onApprove}>
-                <FaCheck />
-                Approve
-              </Button>
-            </div>
-          )}
+        {/* Buttons Section  */}
+        {employeeData?.approvalStatus === "PENDING" ? (
+          <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
+            <RejectComp employeeData={employeeData} />
+            <Button className="bg-teal-500 text-white" onPress={onApprove}>
+              <FaCheck />
+              {employeeData?.approvalStatus === "REJECTED"
+                ? "Re-approve"
+                : "Approve"}
+            </Button>
+          </div>
+        ) : employeeData?.approvalStatus === "APPROVED" ? (
+          <div className="flex items-center justify-end gap-2 text-green-700 border border-green-700 bg-green-100 w-fit p-1 rounded-2xl">
+            <span className="text-sm">Approved</span>
+          </div>
+        ) : employeeData?.approvalStatus === "REJECTED" ? (
+          <div className="flex items-center justify-end gap-2 text-red-700 border border-red-700 bg-red-100 w-fit p-1 rounded-2xl">
+            {/* <FaTimes className="text-red-500" /> */}
+            <span className="text-sm">Rejected</span>
+          </div>
+        ) : null}
       </div>
     </>
   );
