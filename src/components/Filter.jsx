@@ -115,7 +115,9 @@ const Filter = ({
     }));
   return (
     <div className="bg-white dark:bg-black rounded-xl">
-      <Button onPress={onOpen} className="text-sm font-medium">
+      <Button
+        onPress={onOpen}
+        className="bg-black text-white dark:bg-white dark:text-black  hover:bg-hoverbackground dark:hover:bg-hoverbackground dark:hover:text-white text-sm font-medium">
         <BsFilter className="mr-2 text-2xl" />
         <p>Filters</p>
       </Button>
@@ -174,13 +176,13 @@ const Filter = ({
               <div className="flex justify-between">
                 <Button
                   type="submit"
-                  className="bg-black dark:bg-slate-500 text-white dark:hover:bg-hoverbackground hover:bg-hoverbackground"
+                  className="bg-black text-white dark:bg-white dark:text-black dark:hover:bg-active dark:hover:text-white   hover:bg-hoverbackground"
                   isLoading={applyFiltersMutation.isLoading}>
                   <BsFilter className="mr-2" />
                   Apply Filters
                 </Button>
                 <Button
-                  className="bg-gray-300 dark:bg-slate-300 dark:hover:bg-gray-500 hover:bg-gray-400 text-black"
+                  className="bg-slate-300 dark:bg-slate-500 dark:hover:bg-gray-500 hover:bg-gray-400 text-black"
                   onPress={resetFilters}>
                   Reset
                 </Button>

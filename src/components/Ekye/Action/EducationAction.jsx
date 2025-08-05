@@ -15,6 +15,7 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import { FaTimes } from "react-icons/fa";
 
 const EducationAction = ({ employeeData }) => {
   const navigate = useNavigate();
@@ -50,7 +51,6 @@ const EducationAction = ({ employeeData }) => {
           }
         );
         if (response?.data?.responseCode === "201") {
-          toast.success(response?.data?.message);
           navigate("/AdminEkye");
         } else {
           toast.error(response?.data?.error?.errorList?.[0]?.errorMessage);
@@ -77,7 +77,7 @@ const EducationAction = ({ employeeData }) => {
         </div>
 
         {/* Single Form Section */}
-        <div className="bg-white dark:bg-black text-lg w-[45vw] rounded-lg px-6 mt-2 mx-1">
+        <div className="bg-white dark:bg-black text-lg  rounded-lg px-6 mt-2 mx-1">
           <h1 className="text-xl font-semibold flex mb-6">
             <span className="relative">
               Education Details
@@ -88,7 +88,7 @@ const EducationAction = ({ employeeData }) => {
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (
               <div key={index} className="mb-6 p-4 rounded-md ">
-                <Form className="w-full py-6 gap-6">
+                <div className="w-full py-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <EkyeDetailsComponent
                       label="Level"
@@ -142,7 +142,7 @@ const EducationAction = ({ employeeData }) => {
                       )}
                     </div>
                   </div>
-                </Form>
+                </div>
                 <Divider />
               </div>
             ))
@@ -154,16 +154,26 @@ const EducationAction = ({ employeeData }) => {
         </div>
 
         {/* Buttons Section  */}
-        {(employeeData?.approvalStatus === "REJECTED" ||
-          employeeData?.approvalStatus === "PENDING") && (
+        {employeeData?.approvalStatus === "PENDING" ? (
           <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
             <RejectComp employeeData={employeeData} />
             <Button className="bg-teal-500 text-white" onPress={onApprove}>
               <FaCheck />
-              Approve
+              {employeeData?.approvalStatus === "REJECTED"
+                ? "Re-approve"
+                : "Approve"}
             </Button>
           </div>
-        )}
+        ) : employeeData?.approvalStatus === "APPROVED" ? (
+          <div className="flex items-center justify-end gap-2 text-green-700 border border-green-700 bg-green-100 w-fit p-1 rounded-2xl">
+            <span className="text-sm">Approved</span>
+          </div>
+        ) : employeeData?.approvalStatus === "REJECTED" ? (
+          <div className="flex items-center justify-end gap-2 text-red-700 border border-red-700 bg-red-100 w-fit p-1 rounded-2xl">
+            {/* <FaTimes className="text-red-500" /> */}
+            <span className="text-sm">Rejected</span>
+          </div>
+        ) : null}
       </div>
     </>
   );

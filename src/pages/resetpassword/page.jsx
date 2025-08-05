@@ -101,7 +101,7 @@ const Rstpwd = () => {
       );
 
       if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
         const userName = response.data.data.fullName;
@@ -203,7 +203,7 @@ const Rstpwd = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className={` bg-bgprimary text-white py-3 rounded-lg transition-colors ease-in-out duration-200 ${
+              className={` text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active py-3 rounded-lg transition-colors ease-in-out duration-200 ${
                 errors.password || errors.confirmPassword
                   ? " cursor-not-allowed"
                   : ""

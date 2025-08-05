@@ -198,7 +198,6 @@ export const useForgetPassword = () => {
   return useMutation({
     mutationFn: resetPassword,
     onSuccess: (data) => {
-      toast.success(data.message);
       localStorage.setItem("accessToken", data.data.accessToken);
       localStorage.setItem("refreshToken", data.data.refreshToken);
       localStorage.setItem("fullName", data.data.fullName);
@@ -301,9 +300,9 @@ export const useLateCheckInApprove = () => {
     mutationFn: lateCheckInApprove,
     onSuccess: (data) => {
       if (data?.data?.responseCode === "200") {
-        toast.success(
-          data?.data?.message || "Late check-in approved successfully"
-        );
+        // toast.success(
+        //   data?.data?.message || "Late check-in approved successfully"
+        // );
       } else {
         const errorMessage =
           data?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -332,9 +331,9 @@ export const useLateCheckinReject = () => {
     mutationFn: lateCheckInReject,
     onSuccess: (data) => {
       if (data?.data?.responseCode === "200") {
-        toast.success(
-          data?.data?.message || "Late check-in Rejected successfully"
-        );
+        // toast.success(
+        //   data?.data?.message || "Late check-in Rejected successfully"
+        // );
       } else {
         const errorMessage =
           data?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -429,9 +428,9 @@ export const useEmployeeCreate = () => {
     mutationFn: createEmployees,
     onSuccess: (response) => {
       if (response.data.responseCode === "200") {
-        toast.success(
-          response?.data?.message || "User registration was successful."
-        );
+        // toast.success(
+        //   response?.data?.message || "User registration was successful."
+        // );
         queryClient.invalidateQueries({ queryKey: ["employees"] });
         navigate("/Employees");
       } else {
@@ -525,7 +524,7 @@ export const useCreateDepartment = () => {
     mutationFn: createDepartment,
     onSuccess: (response) => {
       if (response?.responseCode == "201") {
-        toast.success(response?.message || "Department Created Successfully");
+        // toast.success(response?.message || "Department Created Successfully");
         queryClient.invalidateQueries({ queryKey: ["fetchDepartment"] });
         navigate("/master-data/Department");
       } else {
@@ -616,9 +615,9 @@ export const useCreatePosition = () => {
     mutationFn: createPosition,
     onSuccess: (response) => {
       if (response?.responseCode === "201") {
-        toast.success(
-          response?.data?.message || "Position Created Successfully"
-        );
+        // toast.success(
+        //   response?.data?.message || "Position Created Successfully"
+        // );
         queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
         navigate("/master-data/Position");
       } else {
@@ -685,7 +684,7 @@ export const useDeletePosition = () => {
     mutationFn: deletePosition,
     onSuccess: (data) => {
       if (data?.responseCode === "204") {
-        toast.success(data.message || "Department deleted successfully");
+        toast.success(data.message || "Position deleted successfully");
         queryClient.invalidateQueries({ queryKey: ["FetchPaginatedPosition"] });
       } else {
         const errorMessage =
@@ -754,7 +753,6 @@ export const useCreateRoles = () => {
     mutationFn: createRole,
     onSuccess: (response) => {
       if (response?.responseCode === "201") {
-        toast.success(response?.message || "Roles Created Successfully");
         queryClient.invalidateQueries({ queryKey: ["FetchRoles"] });
         navigate("/master-data/Roles");
       }
@@ -789,7 +787,7 @@ export const useDeleteRoles = () => {
     mutationFn: deleteRole,
     onSuccess: (data) => {
       if (data?.responseCode === "204") {
-        toast.success(data.message || "Employee deleted successfully");
+        toast.success(data.message || "Role deleted successfully");
       } else {
         const errorMessage =
           data?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -871,7 +869,6 @@ export const useDeleteOneDevice = () => {
   return useMutation({
     mutationFn: deleteOneDecice,
     onSuccess: (data) => {
-      toast.success(data?.message || "Device deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["FetchTrustedDevices"] });
     },
   });
@@ -1038,9 +1035,6 @@ export const useLeaveRequest = () => {
     mutationFn: leaveRequest,
     onSuccess: (response) => {
       if (response?.data?.responseCode === "200") {
-        toast.success(
-          response?.data?.message || "Leave Requested Successfully"
-        );
         navigate("/Leave/Request");
         // queryClient.invalidateQueries({ queryKey: ["employees"] });
       } else {
@@ -1187,7 +1181,7 @@ export const useSaveAddressDetails = () => {
   return useMutation({
     mutationFn: saveAddressDetails,
     onSuccess: (data) => {
-      toast.success(data.message || "Address details saved successfully");
+      // toast.success(data.message || "Address details saved successfully");
       // Invalidate and refetch address details
       queryClient.invalidateQueries({ queryKey: ["addressDetails"] });
     },
@@ -1269,7 +1263,7 @@ export const useApplyFilters = (onSuccess) => {
   return useMutation({
     mutationFn: applyFilters,
     onSuccess: (data) => {
-      toast.success("Filters applied successfully");
+      // toast.success("Filters applied successfully");
       if (onSuccess) {
         onSuccess(data);
       }
@@ -1288,8 +1282,6 @@ export const useRejectUser = (onSuccess) => {
     mutationFn: rejectUser,
     onSuccess: (data) => {
       if (data?.responseCode === "201") {
-        toast.success(data?.message);
-        console.log(data?.message);
         queryClient.invalidateQueries({ queryKey: ["employees"] });
         queryClient.invalidateQueries({ queryKey: ["adminEkye"] });
 
@@ -1346,7 +1338,7 @@ export const useSaveMFAsetting = () => {
   return useMutation({
     mutationFn: updateMFASetting,
     onSuccess: (data) => {
-      toast.success(data.message || "MFA settings updated successfully");
+      // toast.success(data.message || "MFA settings updated successfully");
     },
     onError: (error) => {
       const errorMessage =
@@ -1363,7 +1355,7 @@ export const useChangeProfilePhoto = () => {
   return useMutation({
     mutationFn: changeProfilePhoto,
     onSuccess: (data) => {
-      toast.success(data.data.message || "MFA settings updated successfully");
+      // toast.success(data.data.message || "MFA settings updated successfully");
       navigate(0);
     },
     onError: (error) => {

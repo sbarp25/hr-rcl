@@ -157,7 +157,7 @@ const MFA = () => {
             <div className="flex justify-center pt-4">
               <Button
                 type="submit"
-                className="w-fit  px-16 py-4 bg-black hover:bg-gray-800 dark:bg-active dark:hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-fit  px-16 py-4 text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 isDisabled={isTwoFactorSubmitting}
                 isLoading={isTwoFactorSubmitting}>
                 {isTwoFactorSubmitting

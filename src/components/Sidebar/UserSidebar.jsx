@@ -118,7 +118,6 @@ const UserSidebar = () => {
         }
       );
       if (response.data.responseCode === "200") {
-        toast.success(response.data.message);
         localStorage.clear();
         navigate("/login");
       }
@@ -290,7 +289,7 @@ const UserSidebar = () => {
                 <p>Are you sure you want to Log out ?</p>
                 <div className="flex gap-2 justify-end mt-4 ">
                   <Button
-                    className="bg-black text-white"
+                    className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={() => handleLogOut()}>
                     Log Out
                   </Button>

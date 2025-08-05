@@ -71,7 +71,7 @@ const Bank = () => {
         if (response?.data?.responseCode === "200") {
           reset();
           navigate("/Bank");
-          toast.success(response?.data?.message);
+          // toast.success(response?.data?.message);
         } else {
           const errorMessage =
             response?.data?.error?.errorList?.[0]?.errorMessage ||
@@ -179,7 +179,7 @@ const Bank = () => {
             />
             <ButtonComponent
               content="Submit"
-              className="bg-black text-white"
+              className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
               type="submit"
             />
           </form>

@@ -73,13 +73,16 @@ const RejectComp = ({ employeeData }) => {
   return (
     <div>
       {rejectMutation.isPending && <Loader />}
-      <Button
-        className="bg-white text-red-500 border border-red-500"
+      <ButtonComponent
         onPress={onOpen}
-        isDisabled={rejectMutation.isPending}>
-        <RxCross1 />
-        Reject
-      </Button>
+        isDisabled={rejectMutation.isPending}
+        content={
+          <span className="flex items-center space-x-1">
+            <RxCross1 />
+            Reject
+          </span>
+        }
+      />
 
       <form onSubmit={handleSubmit(onReject)}>
         <Modal
@@ -127,7 +130,7 @@ const RejectComp = ({ employeeData }) => {
                       </div>
                     }
                     color="warning"
-                    className="text-white dark:text-black"
+                    className="text-white dark:text-black bg-gray-400 dark:bg-gray-300 "
                     isDisabled={rejectMutation.isPending}
                   />
                   <Button

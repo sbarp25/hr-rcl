@@ -25,8 +25,8 @@ const ForgetPassword = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden h-[80vh]">
+      <div className="min-h-screen bg-gray-100 dark:bg-black transition-colors duration-300 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 shadow-2xl rounded-3xl overflow-hidden h-[80vh] border border-gray-300">
           {/* Left Side - Logo and Tagline */}
           <div className="hidden md:flex bg-black transition-colors duration-300 flex-col items-center justify-center gap-y-8 p-8">
             <img src={Logo} alt="logo" className="w-80 max-w-full" />

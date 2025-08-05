@@ -163,7 +163,7 @@ const WorkFromHomeStatus = () => {
         }
       );
       if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
+        // toast.success(response?.data?.message);
         fetchWorkFromHome();
         onClose();
       } else {
@@ -209,7 +209,7 @@ const WorkFromHomeStatus = () => {
         }
       );
       if (response?.data?.responseCode === "200") {
-        toast.success(response?.data?.message);
+        // toast.success(response?.data?.message);
         fetchWorkFromHome();
         onRejectClose();
         reset();
@@ -847,7 +847,7 @@ const WorkFromHomeStatus = () => {
                           </div>
                         </div>
                         <Button
-                          className="bg-black text-white"
+                          className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                           onPress={() => onApprove()}>
                           Approve
                         </Button>
@@ -974,7 +974,9 @@ const WorkFromHomeStatus = () => {
                               )}
                             </div>
                           </div>
-                          <Button className="text-white bg-black" type="submit">
+                          <Button
+                            className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                            type="submit">
                             Reject
                           </Button>
                           <Button onPress={onClose}>Cancel</Button>

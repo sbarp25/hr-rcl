@@ -110,7 +110,7 @@ const Settings = () => {
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         if (response.data?.responseCode === "201") {
-          toast.success(response?.data?.message);
+          // toast.success(response?.data?.message);
           setValue(null);
           navigate(0);
         } else {

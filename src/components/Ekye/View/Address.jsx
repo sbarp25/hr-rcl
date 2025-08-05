@@ -1,6 +1,7 @@
 import { Divider, Form } from "@heroui/react";
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
+import Legend from "../../ui/Legend.jsx";
 
 const EkyeAdreess = ({ employeeData }) => {
   const addresses = employeeData?.addresses || [];
@@ -21,11 +22,7 @@ const EkyeAdreess = ({ employeeData }) => {
               </span>
             </h1>
 
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
+            <Legend />
           </div>
           {/**Permanent Address */}
           <Form className="space-y-4 w-full p-6">
@@ -70,13 +67,7 @@ const EkyeAdreess = ({ employeeData }) => {
               </span>
             </h1>
 
-            <div className="flex justify-center items-center gap-4">
-              <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-              </div>
-            </div>
+            <Legend />
           </div>
           <Form className="space-y-4 w-full p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-20">

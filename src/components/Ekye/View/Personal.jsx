@@ -1,6 +1,7 @@
 import EkyeDetailsComponent from "../../ui/EkyeDetailsComponent.jsx";
 import { Divider } from "@heroui/react";
 import UnderlineComponent from "../../ui/UnderlineComponent.jsx";
+import Legend from "../../ui/Legend.jsx";
 
 const Personal = ({ employeeData }) => {
   return (
@@ -15,13 +16,7 @@ const Personal = ({ employeeData }) => {
                 <UnderlineComponent />
               </span>
             </h1>
-            <div className="flex items-center justify-end gap-2 sm:gap-4">
-              <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-              </div>
-            </div>
+            <Legend />
           </div>
 
           <form className="container pb-4 space-y-4">
@@ -104,11 +99,7 @@ const Personal = ({ employeeData }) => {
                   <UnderlineComponent />
                 </span>
               </h1>
-              <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-              </div>
+              <Legend />
             </div>
             <form className="container space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-8 lg:px-20">
@@ -146,11 +137,7 @@ const Personal = ({ employeeData }) => {
                   <UnderlineComponent />
                 </span>
               </h1>
-              <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-              </div>
+              <Legend />
             </div>
             <form className="container space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-8 lg:px-20">

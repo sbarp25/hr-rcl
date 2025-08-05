@@ -14,6 +14,7 @@ import {
 import { FaChevronDown } from "react-icons/fa";
 
 import { useState } from "react";
+import ButtonComponent from "../ui/ButtonComp";
 
 const AttendanceReport = ({ attendanceData }) => {
   // const AttendanceReport = () => {
@@ -116,7 +117,9 @@ const AttendanceReport = ({ attendanceData }) => {
           </TableHeader>
           <TableBody emptyContent="No attendance data available">
             {attendanceData?.map((data) => (
-              <TableRow key={data.SN} className="hover:bg-gray-50">
+              <TableRow
+                key={data.SN}
+                className="hover:bg-gray-50 dark:hover:bg-slate-500">
                 <TableCell>{data.weekDays || "N/A"}</TableCell>
                 <TableCell>{data.Day || "N/A"}</TableCell>
                 <TableCell>
@@ -136,9 +139,9 @@ const AttendanceReport = ({ attendanceData }) => {
                 <TableCell>
                   <Dropdown>
                     <DropdownTrigger>
-                      <Button variant="light" size="sm">
-                        Details
-                      </Button>
+                      <>
+                        <ButtonComponent content="Details" />
+                      </>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Attendance Details">
                       <DropdownItem>

@@ -252,7 +252,7 @@ const LeaveRequest = () => {
           <div className="flex justify-center sm:justify-start pt-2">
             <ButtonComponent
               type="submit"
-              className="bg-black text-white w-full sm:w-auto"
+              className="bg-black text-white dark:bg-active  w-full sm:w-auto"
               content={isLoading ? "Submitting..." : "Submit"}
               disabled={isLoading}
               size="sm"

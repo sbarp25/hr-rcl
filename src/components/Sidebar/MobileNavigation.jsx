@@ -420,7 +420,7 @@ const MobileNavigation = () => {
                   <div className="h-16"></div>
                   <div className="flex items-center space-x-6">
                     <Button
-                      className="bg-black text-white"
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                       onPress={handleLogOut}>
                       Log Out
                     </Button>
