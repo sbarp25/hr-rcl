@@ -253,7 +253,7 @@ const Login = () => {
 
                   <ButtonComponent
                     type="submit"
-                    className="flex-1 bg-black hover:bg-gray-800 text-white dark:text-white py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-black hover:bg-gray-800  py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={verifyOTPMutation.isPending}
                     content={
                       <>

@@ -7,6 +7,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  Spinner,
   useDisclosure,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
@@ -135,13 +136,11 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     onOpenChangeSecondModal(false);
     reset();
   };
-  const isloading =
-    checkInMutation.isPending ||
-    checkOutMutation.isPending ||
-    lateCheckInMutation.isPending;
+  const isloading = checkInMutation.isPending || checkOutMutation.isPending;
+
   return (
     <>
-      {isloading && <Loader />}
+      {/* {isloading && <Loader />} */}
       <div className="flex justify-end items-center space-x-4">
         <div className="">
           {checkedInStatus ? (
@@ -154,6 +153,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           isDisabled={isloading}
           onPress={handleAttendance}
           className="button text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active py-2 tracking-normal">
+          {isloading && <Spinner color="danger" size="sm" />}
           {checkedInStatus ? (
             <span className=" font-Poppins text-base md:text-xl">
               Check Out
@@ -226,7 +226,14 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                       <Button
                         className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         type="submit">
-                        Submit
+                        {lateCheckInMutation.isPending ? (
+                          <span className="flex items-center justify-center">
+                            <Spinner size="sm" color="danger" />
+                            Submitting
+                          </span>
+                        ) : (
+                          <span>Submit</span>
+                        )}
                       </Button>
                       <Button onPress={closeRejectModal} className="px-8">
                         Cancel

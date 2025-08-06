@@ -69,8 +69,8 @@ const AttendanceReport = ({ attendanceData }) => {
                       data.attendanceStatus === "present" ||
                       data.attendanceStatus === "pending"
                         ? data.isDelay
-                          ? "border border-red-500 text-red-700 bg-red-100"
-                          : "border border-green-500 text-green-700 bg-green-100"
+                          ? "border border-red-300 dark:border-red-400 text-red-600 bg-red-400/10 "
+                          : "bg-green-400/10 dark:bg-green-400/30 text-green-700 border border-green-300 dark:border-green-400"
                         : ""
                     }`}>
                     {data.earlyDelayTime || "N/A"}
@@ -81,10 +81,10 @@ const AttendanceReport = ({ attendanceData }) => {
                   <div
                     className={`px-3 py-1.5 text-xs font-medium rounded-full text-center inline-flex items-center justify-center shadow-sm ${
                       data.attendanceStatus?.toLowerCase() === "present"
-                        ? "bg-green-400/20 text-green-700 border border-green-200"
+                        ? "bg-green-400/10  text-green-600 border border-green-300 dark:border-green-400"
                         : data.attendanceStatus?.toLowerCase() === "absent"
-                        ? "bg-red-400/20 text-red-700 border border-red-200"
-                        : "bg-yellow-400/20 text-yellow-700 border border-yellow-200"
+                        ? "border border-red-300 dark:border-red-400 text-red-600 bg-red-400/10 "
+                        : "bg-yellow-400/10  text-yellow-600 border border-yellow-300 dark:border-yellow-400"
                     }`}>
                     {data.attendanceStatus
                       ? data.attendanceStatus.charAt(0).toUpperCase() +

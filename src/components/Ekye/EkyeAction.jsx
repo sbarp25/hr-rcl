@@ -7,6 +7,7 @@ import {
   ModalFooter,
   useDisclosure,
   ScrollShadow,
+  Spinner,
 } from "@heroui/react";
 
 import PersonalAction from "./Action/PersonalAction";
@@ -14,6 +15,7 @@ import AddressAction from "./Action/AddressAction";
 import DocumentAction from "./Action/DocumentAction";
 import EducationAction from "./Action/EducationAction";
 import { useEmployeeEKYEDetails } from "../../hooks/useAuth";
+import Loader from "../Loader/Loader";
 
 const EkyeAction = () => {
   const { rclId } = useParams();
@@ -24,7 +26,7 @@ const EkyeAction = () => {
     onOpen();
   }, [onOpen]);
 
-  const { data } = useEmployeeEKYEDetails(rclId);
+  const { data, isPending } = useEmployeeEKYEDetails(rclId);
 
   const employeeData = data?.data || [];
 
@@ -33,23 +35,30 @@ const EkyeAction = () => {
       <Modal
         isOpen={isOpen}
         size="5xl"
-        scrollBehavior="inside"
+        scrollBehavior="outside"
         onOpenChange={(isModalOpen) => {
           onOpenChange(isModalOpen);
           if (!isModalOpen) {
-            navigate("/AdminEkye"); // Navigate back when modal is closed
+            navigate("/AdminEkye");
           }
         }}>
         <ModalContent>
           {() => (
             <>
               <ModalBody>
-                <ScrollShadow className="w-full h-[900px] px-4" size={25}>
-                  <PersonalAction employeeData={employeeData} />
-                  <AddressAction employeeData={employeeData} />
-                  <DocumentAction employeeData={employeeData} />
-                  <EducationAction employeeData={employeeData} />
-                </ScrollShadow>
+                {isPending ? (
+                  <Loader />
+                ) : (
+                  // <Spinner size="lg" color="danger" />
+                  <>
+                    {/* <ScrollShadow className="w-full h-[900px] px-4" size={25}> */}
+                    <PersonalAction employeeData={employeeData} />
+                    <AddressAction employeeData={employeeData} />
+                    <DocumentAction employeeData={employeeData} />
+                    <EducationAction employeeData={employeeData} />
+                    {/* </ScrollShadow> */}
+                  </>
+                )}
               </ModalBody>
               <ModalFooter></ModalFooter>
             </>

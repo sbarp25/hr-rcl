@@ -62,10 +62,10 @@ const SelfWorkFromHome = () => {
 
   const getStatusClass = (status) => {
     if (status === "APPROVED")
-      return "bg-green-100 border border-green-600 text-green-600";
+      return "bg-green-400/10 border border-green-600 text-green-600";
     if (status === "REJECTED")
-      return "bg-red-100 border border-red-600 text-red-600";
-    return "bg-yellow-100 border border-yellow-500 text-yellow-500";
+      return "bg-red-400/10 border border-red-600 text-red-600";
+    return "bg-yellow-400/10 border border-yellow-500 text-yellow-500";
   };
 
   const toggleExpandedRow = (id) => {

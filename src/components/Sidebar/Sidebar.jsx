@@ -322,6 +322,7 @@ const Sidebar = () => {
             </>
           )}
         </div>
+        {/* <ThemeSwitcher /> */}
 
         {/* Navigation items */}
         <div className="flex-grow overflow-y-auto">

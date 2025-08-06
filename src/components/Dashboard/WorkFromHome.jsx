@@ -82,7 +82,9 @@ const WorkFromHome = () => {
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-300 border border-green-600 text-green-600">
-                          {(data?.userName || data?.fullName || "?").charAt(0)}
+                          {(data?.userName || data?.fullName || "?")
+                            .toUpperCase()
+                            .charAt(0)}
                         </div>
                       </div>
                       <div className="flex-1">
