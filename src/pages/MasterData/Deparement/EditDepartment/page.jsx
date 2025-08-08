@@ -199,7 +199,7 @@ const EditDepartment = () => {
                     control={control}
                     label="Team Lead"
                     items={teamLeadid}
-                    rules={{ required: "Team Lead is required" }}
+                    // rules={{ required: "Team Lead is required" }}
                   />
                 </div>
 
@@ -210,7 +210,7 @@ const EditDepartment = () => {
                     control={control}
                     label="Associate Team Lead"
                     items={teamLeadid}
-                    rules={{ required: "AssociateTeam Lead is required" }}
+                    // rules={{ required: "AssociateTeam Lead is required" }}
                   />
                 </div>
               </div>

@@ -4,7 +4,7 @@ import axiosInstance from "../lib/axios-Instance";
 import { Button, Select, SelectItem, Checkbox } from "@heroui/react";
 import ValidationComponent from "./ValidationComponent";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFormContext } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
 import Loader from "./Loader/Loader.jsx";
 
@@ -26,7 +26,7 @@ const AddressDetails = ({ formData, handleNext, handleBack, setFormData }) => {
     formState: { errors },
     watch,
     clearErrors,
-  } = useForm({
+  } = useFormContext({
     defaultValues: {
       permanent: {
         provinceId: "",

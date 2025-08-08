@@ -201,7 +201,7 @@ const Login = () => {
                   content={
                     <>
                       <span className="text-xl font-bold ">Login</span>
-                      {loginMutation?.isPending && <Spinner color="default" />}
+                      {loginMutation?.isPending && <Spinner color="danger" />}
                     </>
                   }
                 />

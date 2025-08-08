@@ -199,7 +199,7 @@ const AddDepartment = () => {
                     control={control}
                     label="Team Lead"
                     items={teamLeadOptions}
-                    rules={{ required: "Team Lead is required" }}
+                    // rules={{ required: "Team Lead is required" }}
                     disabled={isLoadingTeamLead}
                   />
                 </div>
@@ -211,7 +211,7 @@ const AddDepartment = () => {
                     control={control}
                     label="Associate Team Lead"
                     items={teamLeadOptions}
-                    rules={{ required: "Associate Team Lead is required" }}
+                    // rules={{ required: "Associate Team Lead is required" }}
                     disabled={isLoadingTeamLead}
                   />
                 </div>

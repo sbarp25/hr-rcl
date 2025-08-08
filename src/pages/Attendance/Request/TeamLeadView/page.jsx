@@ -778,7 +778,7 @@ const TeamLeadLateCheckin = () => {
                       {isApproving ? (
                         <span className="flex items-center">
                           Approving
-                          <Spinner color="primary" />
+                          <Spinner color="danger" size="sm" />
                         </span>
                       ) : (
                         "Approve"
@@ -792,7 +792,7 @@ const TeamLeadLateCheckin = () => {
                       {isRejecting ? (
                         <span className="flex items-center">
                           Rejecting
-                          <Spinner color="primary" />
+                          <Spinner color="danger" size="sm" />
                         </span>
                       ) : (
                         "Reject"

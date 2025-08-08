@@ -1,6 +1,6 @@
 import { Button } from "@heroui/react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
 import { FaUser, FaPhone } from "react-icons/fa";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
@@ -40,7 +40,7 @@ const PersonalDetails = ({ handleNext, handleBack, setDateOfBirth }) => {
   ];
 
   // Form setup
-  const { control, handleSubmit, reset, setValue } = useForm({
+  const { control, handleSubmit, reset, setValue } = useFormContext({
     defaultValues: {
       email: "",
       dob: "",

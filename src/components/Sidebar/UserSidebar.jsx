@@ -293,7 +293,7 @@ const UserSidebar = () => {
                     className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={() => handleLogOut()}>
                     {isLoading ? (
-                      <span className="flex items-center justify-center">
+                      <span className="flex items-center justify-center space-x-4">
                         <Spinner size="sm" color="danger" />
                         <span>Logging out</span>
                       </span>
