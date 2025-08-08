@@ -7,6 +7,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
+  Spinner,
 } from "@heroui/react";
 import { BsFilter } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -156,7 +157,7 @@ const Filter = ({
                   label={loadingDepartments ? "Loading..." : "Department"}
                   items={departmentItems}
                   isDisabled={
-                    applyFiltersMutation.isLoading || loadingDepartments
+                    applyFiltersMutation.isPending || loadingDepartments
                   }
                 />
               </div>
@@ -168,7 +169,7 @@ const Filter = ({
                   label={loadingPositions ? "Loading..." : "Position"}
                   items={positionItems}
                   isDisabled={
-                    applyFiltersMutation.isLoading || loadingPositions
+                    applyFiltersMutation.isPending || loadingPositions
                   }
                 />
               </div>
@@ -176,13 +177,32 @@ const Filter = ({
               <div className="flex justify-between">
                 <Button
                   type="submit"
-                  className="bg-black text-white dark:bg-white dark:text-black dark:hover:bg-active dark:hover:text-white   hover:bg-hoverbackground"
+                  className="bg-black text-white dark:bg-white dark:text-black hover:bg-hoverbackground dark:hover:bg-active dark:hover:text-white   "
                   isLoading={applyFiltersMutation.isLoading}>
-                  <BsFilter className="mr-2" />
-                  Apply Filters
+                  {applyFiltersMutation.isPending ? (
+                    <span className="flex items-center">
+                      <Spinner
+                        color="danger"
+                        size="sm"
+                        classNames={
+                          {
+                            // circle1: "bg-active",
+                            // circle2: "bg-white",
+                          }
+                        }
+                      />
+                      <BsFilter className="mr-2" />
+                      <span>Applying filters</span>
+                    </span>
+                  ) : (
+                    <>
+                      <BsFilter className="mr-2" />
+                      <span>Apply Filters</span>
+                    </>
+                  )}
                 </Button>
                 <Button
-                  className="bg-slate-300 dark:bg-slate-500 dark:hover:bg-gray-500 hover:bg-gray-400 text-black"
+                  className="bg-slate-300 dark:bg-slate-500 hover:bg-hoverbackground dark:hover:bg-active text-black dark:hover:text-white"
                   onPress={resetFilters}>
                   Reset
                 </Button>

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import GoBack from "../../components/GoBack";
 import { useFetchBank } from "../../hooks/useAuth.js";
 import Loader from "../../components/Loader/Loader.jsx";
+import { Spinner } from "@heroui/react";
 const Bank = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, reset } = useForm({
@@ -98,7 +99,8 @@ const Bank = () => {
       navigate("/dashboard");
     }
   }, [navigate, seeAddBank]);
-  if (isBankLoading || isLoading) {
+
+  if (isBankLoading) {
     return <Loader />;
   }
   return (
@@ -178,8 +180,17 @@ const Bank = () => {
               isReadOnly={true}
             />
             <ButtonComponent
-              content="Submit"
-              className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+              content={
+                isLoading ? (
+                  <span className="flex justify-center items-center">
+                    <Spinner color="danger" size="sm" />
+                    Submitting...
+                  </span>
+                ) : (
+                  <div>Submit</div>
+                )
+              }
+              className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:bg-active"
               type="submit"
             />
           </form>

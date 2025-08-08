@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import ValidationComponent from "./ValidationComponent";
 import { FaRegEye } from "react-icons/fa";
 import InputComponent from "./ui/InputComponent.jsx";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFormContext } from "react-hook-form";
 import DatepickerComponent from "./ui/DatepickerComponent.jsx";
 import { CiImageOn } from "react-icons/ci";
 import Loader from "./Loader/Loader.jsx";
@@ -40,7 +40,7 @@ const DocumentDetails = ({
 
   const MAX_FILE_SIZE = 1024 * 1024;
 
-  const { control, handleSubmit, setValue, formState } = useForm({
+  const { control, handleSubmit, setValue, formState } = useFormContext({
     defaultValues: {
       panNumber: formData?.documents?.panNumber || "",
       panIssuePlace: formData?.documents?.panIssuePlace || "",

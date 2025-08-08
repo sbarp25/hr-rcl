@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { TimeInput } from "@heroui/react";
 import { getLocalTimeZone, Time } from "@internationalized/date";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import InputComponent from "./ui/InputComponent.jsx";
 import { Controller } from "react-hook-form";
 import DatepickerComponent, { formatDate } from "./ui/DatepickerComponent.jsx";
@@ -54,7 +54,7 @@ const EducationalDetails = ({
     getValues,
     watch,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useFormContext({ mode: "onChange" });
 
   // Custom hooks
   const {

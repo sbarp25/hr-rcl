@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
-import { Button, Switch } from "@heroui/react";
+import { Button, Spinner, Switch } from "@heroui/react";
 
 import Loader from "../../../components/Loader/Loader.jsx";
 import GoBack from "../../../components/GoBack.jsx";
@@ -21,7 +21,7 @@ const MFA = () => {
 
   const [mfaEnabled, setMfaEnabled] = useState(false);
 
-  const { mutate: updateMfaSettings, isPending: isTwoFactorPenging } =
+  const { mutate: updateMfaSettings, isPending: isTwoFactorPending } =
     useSaveMFAsetting();
 
   const handleSubmit = (formData) => {
@@ -45,10 +45,7 @@ const MFA = () => {
     }
   }, [data]);
 
-  const loading = isTwoFactorPenging || isTwoFactorSubmitting;
-  if (loading) {
-    return <Loader />; // Added return statement
-  }
+  const loading = isTwoFactorPending || isTwoFactorSubmitting;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -160,7 +157,8 @@ const MFA = () => {
                 className="w-fit  px-16 py-4 text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 isDisabled={isTwoFactorSubmitting}
                 isLoading={isTwoFactorSubmitting}>
-                {isTwoFactorSubmitting
+                {isTwoFactorPending && <Spinner size="sm" color="danger" />}
+                {isTwoFactorPending
                   ? "Updating Settings..."
                   : "Update MFA Settings"}
               </Button>

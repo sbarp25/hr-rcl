@@ -61,7 +61,7 @@ const WorkFromHome = () => {
   return (
     <>
       <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm ">
-        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
+        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-gray-500 gap-3">
           <p className="hidden md:block text-xl font-bold">Work From Home</p>
           <p className="flex md:hidden text-xl font-bold">WFH</p>
           <div>
@@ -82,7 +82,9 @@ const WorkFromHome = () => {
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-300 border border-green-600 text-green-600">
-                          {(data?.userName || data?.fullName || "?").charAt(0)}
+                          {(data?.userName || data?.fullName || "?")
+                            .toUpperCase()
+                            .charAt(0)}
                         </div>
                       </div>
                       <div className="flex-1">

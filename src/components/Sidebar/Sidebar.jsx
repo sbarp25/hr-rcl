@@ -26,6 +26,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  Spinner,
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
@@ -322,6 +323,7 @@ const Sidebar = () => {
             </>
           )}
         </div>
+        {/* <ThemeSwitcher /> */}
 
         {/* Navigation items */}
         <div className="flex-grow overflow-y-auto">
@@ -451,7 +453,15 @@ const Sidebar = () => {
                   <Button
                     className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={handleLogout}>
-                    Log Out
+                    {logoutMutation?.isPending ? (
+                      <span className="flex items-center justify-center space-x-4">
+                        <Spinner size="sm" color="danger" />
+                        <span>Logging out</span>
+                      </span>
+                    ) : (
+                      <span className="">Logout</span>
+                    )}
+                    {/* Log Out */}
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
                 </div>

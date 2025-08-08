@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEmployeeEKYEDetails } from "../../../../hooks/useAuth.js";
 import { FaChevronDown, FaBars } from "react-icons/fa";
 import GoBack from "../../../../components/GoBack.jsx";
+import Loader from "../../../../components/Loader/Loader.jsx";
 
 const tabData = [
   {
@@ -132,7 +133,7 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState(tabData[0]);
   const { rclId } = useParams();
 
-  const { data } = useEmployeeEKYEDetails(rclId);
+  const { data, isLoading } = useEmployeeEKYEDetails(rclId);
 
   const employeeData = data?.data || [];
 
@@ -167,11 +168,14 @@ const Page = () => {
 
       {/* Tab Navigation */}
       <Tabs activeTab={activeTab} changeTab={setActiveTab} />
-
-      {/* Content Section */}
-      <div className="min-h-[60vh]">
-        <Content activeTab={activeTab} employeeData={employeeData} />
-      </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        /* Content Section */
+        <div className="min-h-[60vh]">
+          <Content activeTab={activeTab} employeeData={employeeData} />
+        </div>
+      )}
     </div>
   );
 };

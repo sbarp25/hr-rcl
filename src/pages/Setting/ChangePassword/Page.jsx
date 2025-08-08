@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
-import { Button } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { GoDotFill } from "react-icons/go";
@@ -74,124 +74,121 @@ const ChangePassword = () => {
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="mx-auto bg-white dark:bg-black rounded-xl shadow-lg">
-          <div className="max-w-6xl mx-auto">
-            {/* Header Section */}
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
-                Security
-              </h1>
-            </div>
+      <div className="mx-auto bg-white dark:bg-black rounded-xl shadow-lg">
+        <div className="max-w-6xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
+              Security
+            </h1>
+          </div>
 
-            <GoBack />
+          <GoBack />
 
-            <div className="grid grid-cols-1 gap-6 p-6  rounded-xl">
-              {/* Change Password Form */}
-              <div className="bg-white border border-gray-200 dark:bg-black shadow-sm p-6 rounded-2xl">
-                <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
-                  Change Password
-                </h2>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Password Guidelines */}
-                  <div className="bg-gray-100 dark:bg-slate-500 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300">
-                    <h3 className="font-semibold text-base mb-2">
-                      Your password must:
-                    </h3>
-                    <ul className="space-y-2 pl-2">
-                      <li className="flex items-start gap-2">
-                        <GoDotFill className="mt-1 text-gray-600 dark:text-gray-400" />
-                        Be between 8 and 20 characters long
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <GoDotFill className="mt-1 text-gray-600 dark:text-gray-400" />
-                        Only contain letters, numbers, and special characters:
-                        <span className="font-mono bg-white dark:bg-slate-800 dark:text-white dark:p-2 px-1 rounded text-xs ml-1">
-                          !@#$%^&*()_+={}[]:.;"'&lt;&gt;,.?\|
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
+          <div className="grid grid-cols-1 gap-6 p-6  rounded-xl">
+            {/* Change Password Form */}
+            <div className="bg-white border border-gray-200 dark:bg-black shadow-sm p-6 rounded-2xl">
+              <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
+                Change Password
+              </h2>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Password Guidelines */}
+                <div className="bg-gray-100 dark:bg-slate-500 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300">
+                  <h3 className="font-semibold text-base mb-2">
+                    Your password must:
+                  </h3>
+                  <ul className="space-y-2 pl-2">
+                    <li className="flex items-start gap-2">
+                      <GoDotFill className="mt-1 text-gray-600 dark:text-gray-400" />
+                      Be between 8 and 20 characters long
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <GoDotFill className="mt-1 text-gray-600 dark:text-gray-400" />
+                      Only contain letters, numbers, and special characters:
+                      <span className="font-mono bg-white dark:bg-slate-800 dark:text-white dark:p-2 px-1 rounded text-xs ml-1">
+                        !@#$%^&*()_+={}[]:.;"'&lt;&gt;,.?\|
+                      </span>
+                    </li>
+                  </ul>
+                </div>
 
-                  {/* Input Fields */}
-                  <div className="space-y-6">
-                    <InputComponent
-                      type="password"
-                      name="oldpassword"
-                      control={control}
-                      variant="bordered"
-                      className="w-full"
-                      label="Old Password"
-                      rules={{
-                        required: "Password is required",
-                      }}
-                    />
+                {/* Input Fields */}
+                <div className="space-y-6">
+                  <InputComponent
+                    type="password"
+                    name="oldpassword"
+                    control={control}
+                    variant="bordered"
+                    className="w-full"
+                    label="Old Password"
+                    rules={{
+                      required: "Password is required",
+                    }}
+                  />
 
-                    <InputComponent
-                      type="password"
-                      name="password"
-                      control={control}
-                      variant="bordered"
-                      className="w-full"
-                      label="New Password"
-                      rules={{
-                        required: "Password is required",
-                        pattern: {
-                          value:
-                            /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-                          message:
-                            "Password must be 8 characters long. And can include letters, numbers, and special characters.",
-                        },
-                      }}
-                    />
+                  <InputComponent
+                    type="password"
+                    name="password"
+                    control={control}
+                    variant="bordered"
+                    className="w-full"
+                    label="New Password"
+                    rules={{
+                      required: "Password is required",
+                      pattern: {
+                        value:
+                          /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                        message:
+                          "Password must be 8 characters long. And can include letters, numbers, and special characters.",
+                      },
+                    }}
+                  />
 
-                    <InputComponent
-                      type="password"
-                      name="confirmPassword"
-                      control={control}
-                      variant="bordered"
-                      className="w-full"
-                      label="Confirm Password"
-                      rules={{
-                        required: "Password is required",
-                        validate: (value) =>
-                          value === password || "Passwords do not match",
-                        pattern: {
-                          value:
-                            /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
-                          message:
-                            "Password must be 8 characters long. And can include letters, numbers, and special characters.",
-                        },
-                      }}
-                    />
-                  </div>
+                  <InputComponent
+                    type="password"
+                    name="confirmPassword"
+                    control={control}
+                    variant="bordered"
+                    className="w-full"
+                    label="Confirm Password"
+                    rules={{
+                      required: "Password is required",
+                      validate: (value) =>
+                        value === password || "Passwords do not match",
+                      pattern: {
+                        value:
+                          /^(?!\s$)(?!.*\s{2,})[A-Za-z0-9!@#$%^&*()_+={}[\]:;"'<>,.?\\|-]{8,20}$/,
+                        message:
+                          "Password must be 8 characters long. And can include letters, numbers, and special characters.",
+                      },
+                    }}
+                  />
+                </div>
 
-                  <Button
-                    type="submit"
-                    disabled={
-                      isLoading ||
-                      errors.password ||
-                      errors.confirmPassword ||
-                      !changePasswordAccess
-                    }
-                    className={`w-full py-3 rounded-lg  font-semibold transition duration-200 ${
-                      isLoading ||
-                      errors.password ||
-                      errors.confirmPassword ||
-                      !changePasswordAccess
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
-                    }`}>
-                    {isLoading ? "Loading..." : "Submit"}
-                  </Button>
-                </form>
-              </div>
+                <Button
+                  type="submit"
+                  disabled={
+                    isLoading ||
+                    errors.password ||
+                    errors.confirmPassword ||
+                    !changePasswordAccess
+                  }
+                  className={`w-full py-3 rounded-lg  font-semibold transition duration-200 ${
+                    isLoading ||
+                    errors.password ||
+                    errors.confirmPassword ||
+                    !changePasswordAccess
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                  }`}>
+                  {isLoading && <Spinner color="danger" size="sm" />}
+                  {isLoading ? "Submitting..." : "Submit"}
+                </Button>
+              </form>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };

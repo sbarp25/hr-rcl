@@ -60,7 +60,7 @@ const Leave = () => {
   return (
     <>
       <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm  ">
-        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b gap-3">
+        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-gray-500 gap-3">
           <p className="text-xl font-bold">Leave</p>
           <div>
             <CustomToggleButton
@@ -70,7 +70,7 @@ const Leave = () => {
           </div>
         </div>
         <div className="w-full p-2 ">
-          <div className="max-h-[30vh] overflow-auto ">
+          <div className="max-h-[30vh] overflow-y-auto ">
             {leaveList && leaveList.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {leaveList.map((data, index) => (
@@ -80,7 +80,7 @@ const Leave = () => {
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-400 border border-green-600 text-green-600">
-                          {data?.fullName?.charAt(0) || "?"}
+                          {data?.fullName?.toUpperCase().charAt(0) || "?"}
                         </div>
                       </div>
                       <div className="flex-1">

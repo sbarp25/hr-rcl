@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { GoGear } from "react-icons/go";
 import { CiLogout, CiMenuBurger } from "react-icons/ci";
 import { CiBank } from "react-icons/ci";
-import { IoShieldCheckmark } from "react-icons/io5";
+import { IoLogOutOutline, IoShieldCheckmark } from "react-icons/io5";
 import { IoPersonSharp } from "react-icons/io5";
 import getInitials from "../../utils/getInitials";
 import axios from "axios";
@@ -19,10 +19,15 @@ import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import truncateText from "../../utils/truncateText";
 import CheckIn from "../Dashboard/CheckIn.jsx";
 import {
+  Button,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Spinner,
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
@@ -33,6 +38,12 @@ const UserMobileSidebar = () => {
   const [imageURL, setImageURL] = useState("");
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenLogout,
+    onOpen: onOpenLogout,
+    onOpenChange: onOpenChangeLogout,
+    onClose: onCloseLogout,
+  } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDropdown, setExpandedDropdown] = useState(null);
   const logoutMutation = useLogout();
@@ -240,8 +251,8 @@ const UserMobileSidebar = () => {
                   })}
                 </div>
                 <button className="">
-                  <CiLogout
-                    onClick={handleLogOut}
+                  <IoLogOutOutline
+                    onClick={onOpenLogout}
                     className="text-2xl text-red-500  hover:scale-125"
                   />
                 </button>
@@ -250,6 +261,42 @@ const UserMobileSidebar = () => {
           )}
         </DrawerContent>
       </Drawer>
+      <Modal
+        isOpen={isOpenLogout}
+        onOpenChange={onOpenChangeLogout}
+        isDismissable={true}
+        placement="center"
+        size="sm"
+        isKeyboardDismissDisabled={false}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody className="text-center">
+                <p>Are you sure you want to Log out ?</p>
+                <div className="flex gap-y-2 justify-center mt-4 ">
+                  <div className="h-16"></div>
+                  <div className="flex items-center space-x-6">
+                    <Button
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                      onPress={handleLogOut}>
+                      {logoutMutation?.isPending ? (
+                        <span className="flex items-center justify-center space-x-4">
+                          <Spinner size="sm" color="danger" />
+                          <span>Logging out</span>
+                        </span>
+                      ) : (
+                        <span className="">Logout</span>
+                      )}
+                      {/* Log Out */}
+                    </Button>
+                    <Button onPress={onClose}>Cancel</Button>
+                  </div>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

@@ -16,34 +16,64 @@
   }
 
 
+
+
 .clip-ribbon {
- clip-path: polygon(
-  0% 0%,      /* start at top-left */
-  90% 0%,     /* top-right before notch */
-  100% 50%,   /* notch tip */
-  90% 100%,   /* bottom-right before notch */
-  0% 100%,    /* bottom-left */
-  10% 50%     /* arrowhead */
-);
-  
-  /* Pure black with strong border and shadow for visibility */
-  background-color: #000000;
-  box-shadow: 
-    0 0 0 2px rgba(255, 255, 255, 0.25),  /* Strong white border */
-    0 4px 12px rgba(255, 255, 255, 0.1),  /* Outer glow */
-    inset 0 1px 0 rgba(255, 255, 255, 0.1); /* Inner highlight */
-  
-  transition: all 0.2s ease;
+  position: relative;
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    100% 60%,
+    90% 100%,
+    0% 100%,
+    10% 50%
+  );
 }
 
-.clip-ribbon:hover {
-  background-color: #000000;
-  box-shadow: 
-    0 0 0 2px rgba(255, 255, 255, 0.35),  /* Brighter border on hover */
-    0 6px 16px rgba(255, 255, 255, 0.15), /* Stronger glow */
-    inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Brighter inner highlight */
-  transform: translateY(-1px);
+.clip-ribbon {
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    100% 50%,
+    90% 100%,
+    0% calc(100% - .5px),
+    8% 50%
+  );
 }
+/* .clip-ribbon {
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    100% 50%,
+    90% 100%,
+    0% 100%,
+    10% 50%
+  );
+} */
+
+.clip-ribbon-border {
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    calc(100% - 1px) 50%,
+    90% 100%,
+   0% calc(100% - .5px),
+    8% 50%
+  );
+}
+/* .clip-ribbon-border {
+  clip-path: polygon(
+    0% 0%,
+    90% 0%,
+    101% 50%,
+    90% 100%,
+    0% 100%,
+    10% 50%
+  );
+} */
+
+
+
   .container {
     @apply w-full mx-auto px-4 sm:px-6 md:px-4 lg:px-5 xl:px-6 font-Poppins;
   }

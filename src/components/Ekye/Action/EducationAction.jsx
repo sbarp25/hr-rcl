@@ -157,7 +157,9 @@ const EducationAction = ({ employeeData }) => {
         {employeeData?.approvalStatus === "PENDING" ? (
           <div className="flex items-center justify-end gap-4 w-full px-8 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black">
             <RejectComp employeeData={employeeData} />
-            <Button className="bg-teal-500 text-white" onPress={onApprove}>
+            <Button
+              className="bg-teal-500 hover:bg-active text-white inline-flex items-center gap-2  cursor-pointer"
+              onPress={onApprove}>
               <FaCheck />
               {employeeData?.approvalStatus === "REJECTED"
                 ? "Re-approve"
@@ -165,11 +167,11 @@ const EducationAction = ({ employeeData }) => {
             </Button>
           </div>
         ) : employeeData?.approvalStatus === "APPROVED" ? (
-          <div className="flex items-center justify-end gap-2 text-green-700 border border-green-700 bg-green-100 w-fit p-1 rounded-2xl">
+          <div className="flex items-center justify-end gap-2 text-green-700 border border-green-700 bg-green-400/10 w-fit p-1 rounded-2xl">
             <span className="text-sm">Approved</span>
           </div>
         ) : employeeData?.approvalStatus === "REJECTED" ? (
-          <div className="flex items-center justify-end gap-2 text-red-700 border border-red-700 bg-red-100 w-fit p-1 rounded-2xl">
+          <div className="flex items-center justify-end gap-2 text-red-700 border border-red-700 bg-red-400/10 w-fit p-1 rounded-2xl">
             {/* <FaTimes className="text-red-500" /> */}
             <span className="text-sm">Rejected</span>
           </div>

@@ -14,9 +14,11 @@ import { useNavigate } from "react-router-dom";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 import Loader from "../../components/Loader/Loader.jsx";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
+import { FormProvider, useForm } from "react-hook-form";
 
 const Ekye = () => {
   const [step, setStep] = useState(0);
+  const methods = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -161,48 +163,50 @@ const Ekye = () => {
 
         {/* Form Container */}
         <ValidationComponent>
-          <div className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
-            {step === 0 && !isLoading && (
-              <PersonalDetails
-                handleNext={handleNext}
-                formData={formData}
-                handleBack={handleBack}
-                handleNestedChange={handleNestedChange}
-                setFormData={setFormData}
-                setDateOfBirth={setDateOfBirth}
-              />
-            )}
-            {step === 1 && (
-              <AddressDetails
-                handleNext={handleNext}
-                handleBack={handleBack}
-                setFormData={setFormData}
-                formData={formData}
-                handleChange={handleChange}
-                handleNestedChange={handleNestedChange}
-              />
-            )}
-            {step === 2 && (
-              <DocumentDetails
-                handleNext={handleNext}
-                handleBack={handleBack}
-                setFormData={setFormData}
-                formData={formData}
-                handleNestedChange={handleNestedChange}
-                dateOfBirth={dateOfBirth}
-              />
-            )}
-            {step === 3 && (
-              <EducationDetails
-                handleNext={handleNext}
-                handleBack={handleBack}
-                setFormData={setFormData}
-                formData={formData}
-                handleNestedChange={handleNestedChange}
-                dateOfBirth={dateOfBirth}
-              />
-            )}
-          </div>
+          <FormProvider {...methods}>
+            <div className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl w-full max-w-[95vw] sm:max-w-[85vw] mx-auto border border-gray-300  max-h-[80vh] overflow-y-auto">
+              {step === 0 && !isLoading && (
+                <PersonalDetails
+                  handleNext={handleNext}
+                  formData={formData}
+                  handleBack={handleBack}
+                  handleNestedChange={handleNestedChange}
+                  setFormData={setFormData}
+                  setDateOfBirth={setDateOfBirth}
+                />
+              )}
+              {step === 1 && (
+                <AddressDetails
+                  handleNext={handleNext}
+                  handleBack={handleBack}
+                  setFormData={setFormData}
+                  formData={formData}
+                  handleChange={handleChange}
+                  handleNestedChange={handleNestedChange}
+                />
+              )}
+              {step === 2 && (
+                <DocumentDetails
+                  handleNext={handleNext}
+                  handleBack={handleBack}
+                  setFormData={setFormData}
+                  formData={formData}
+                  handleNestedChange={handleNestedChange}
+                  dateOfBirth={dateOfBirth}
+                />
+              )}
+              {step === 3 && (
+                <EducationDetails
+                  handleNext={handleNext}
+                  handleBack={handleBack}
+                  setFormData={setFormData}
+                  formData={formData}
+                  handleNestedChange={handleNestedChange}
+                  dateOfBirth={dateOfBirth}
+                />
+              )}
+            </div>
+          </FormProvider>
         </ValidationComponent>
 
         {/* Navigation Buttons */}

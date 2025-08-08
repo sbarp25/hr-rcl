@@ -7,6 +7,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  Spinner,
   useDisclosure,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
@@ -20,6 +21,11 @@ import {
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   const { control, handleSubmit, reset } = useForm();
+  const {
+    isOpen: isCheckOutOpen,
+    onOpen: onCheckOutOpen,
+    onOpenChange: onCheckoutOpenChange,
+  } = useDisclosure();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isSecondModalOpen,
@@ -74,29 +80,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         },
       });
     } else {
-      const requestData = {
-        data: {
-          requestLat: latitude,
-          requestLong: longitude,
-          // requestLat: 27.7213826,
-          // requestLong: 85.3228181,
-          requestIp: ipAddress,
-        },
-      };
-      checkOutMutation.mutate(requestData, {
-        onSuccess: (data) => {
-          if (data.responseCode === "200") {
-            onStatusChange(false);
-            reset();
-          } else {
-            const errorMessage =
-              data?.error?.errorList?.[0]?.errorMessage ||
-              "Something went wrong";
-            reset();
-            toast.error(errorMessage);
-          }
-        },
-      });
+      onCheckOutOpen();
     }
   };
 
@@ -131,17 +115,42 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     });
   };
 
+  const handleCheckout = async () => {
+    const ipAddress = await getIpAddress();
+    const requestData = {
+      data: {
+        requestLat: latitude,
+        requestLong: longitude,
+        // requestLat: 27.7213826,
+        // requestLong: 85.3228181,
+        requestIp: ipAddress,
+      },
+    };
+    checkOutMutation.mutate(requestData, {
+      onSuccess: (data) => {
+        if (data.responseCode === "200") {
+          onCheckoutOpenChange(false);
+          onStatusChange(false);
+          reset();
+        } else {
+          onCheckoutOpenChange(false);
+          const errorMessage =
+            data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+          reset();
+          toast.error(errorMessage);
+        }
+      },
+    });
+  };
   const closeRejectModal = () => {
     onOpenChangeSecondModal(false);
     reset();
   };
-  const isloading =
-    checkInMutation.isPending ||
-    checkOutMutation.isPending ||
-    lateCheckInMutation.isPending;
+  const isloading = checkInMutation.isPending || checkOutMutation.isPending;
+
   return (
     <>
-      {isloading && <Loader />}
+      {/* {isloading && <Loader />} */}
       <div className="flex justify-end items-center space-x-4">
         <div className="">
           {checkedInStatus ? (
@@ -154,6 +163,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
           isDisabled={isloading}
           onPress={handleAttendance}
           className="button text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active py-2 tracking-normal">
+          {isloading && <Spinner color="danger" size="sm" />}
           {checkedInStatus ? (
             <span className=" font-Poppins text-base md:text-xl">
               Check Out
@@ -226,13 +236,48 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                       <Button
                         className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         type="submit">
-                        Submit
+                        {lateCheckInMutation.isPending ? (
+                          <span className="flex items-center justify-center">
+                            <Spinner size="sm" color="danger" />
+                            Submitting
+                          </span>
+                        ) : (
+                          <span>Submit</span>
+                        )}
                       </Button>
                       <Button onPress={closeRejectModal} className="px-8">
                         Cancel
                       </Button>
                     </div>
                   </form>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
+        <Modal
+          isOpen={isCheckOutOpen}
+          onOpenChange={onCheckoutOpenChange}
+          isDismissable={true}
+          placement="center"
+          isKeyboardDismissDisabled={false}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalBody>
+                  <div className="flex flex-col justify-center items-center py-4">
+                    {/* <span>You are currently checking in late.</span> <br /> */}
+                    <span> Are you sure you want to check out?</span>
+                  </div>
+                  <div className="flex justify-center gap-4 py-2">
+                    <Button
+                      onPress={handleCheckout}
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active">
+                      Yes
+                    </Button>
+                    <Button onPress={onClose}>No</Button>
+                  </div>
                 </ModalBody>
               </>
             )}
