@@ -23,6 +23,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  Spinner,
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
@@ -291,7 +292,15 @@ const UserSidebar = () => {
                   <Button
                     className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={() => handleLogOut()}>
-                    Log Out
+                    {isLoading ? (
+                      <span className="flex items-center justify-center">
+                        <Spinner size="sm" color="danger" />
+                        <span>Logging out</span>
+                      </span>
+                    ) : (
+                      <span className="">Logout</span>
+                    )}
+                    {/* Log Out */}
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
                 </div>

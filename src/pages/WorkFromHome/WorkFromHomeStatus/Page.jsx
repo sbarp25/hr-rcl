@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalContent,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -842,7 +843,14 @@ const WorkFromHomeStatus = () => {
                       <Button
                         className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         onPress={() => onApprove()}>
-                        Approve
+                        {isLoading ? (
+                          <span className="flex items-center justify-center gap-4">
+                            <Spinner color="danger" size="sm" />
+                            <span>Approving</span>
+                          </span>
+                        ) : (
+                          <span>Approve</span>
+                        )}
                       </Button>
                       <Button onPress={onClose}>Cancel</Button>
                     </div>
@@ -966,7 +974,14 @@ const WorkFromHomeStatus = () => {
                         <Button
                           className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                           type="submit">
-                          Reject
+                          {isLoading ? (
+                            <span className="flex items-center justify-center gap-4">
+                              <Spinner color="danger" size="sm" />
+                              <span>Rejecting</span>
+                            </span>
+                          ) : (
+                            <span>Reject</span>
+                          )}
                         </Button>
                         <Button onPress={onClose}>Cancel</Button>
                       </div>

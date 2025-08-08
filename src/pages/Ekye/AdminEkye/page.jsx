@@ -267,7 +267,7 @@ const Page = () => {
                             <FaEye
                               className={` ${
                                 hasViewAccess
-                                  ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white"
+                                  ? "text-gray-900 cursor-pointer hover:text-green-500 dark:hover:text-green-500 dark:text-white"
                                   : "text-gray-400 dark:text-gray-500 opacity-50  cursor-not-allowed"
                               }`}
                               title={
@@ -281,7 +281,7 @@ const Page = () => {
                             <HiPencilSquare
                               className={` ${
                                 hasActionAccess
-                                  ? "text-gray-900 cursor-pointer hover:text-gray-700 dark:text-white "
+                                  ? "text-gray-900 cursor-pointer hover:text-green-500 dark:hover:text-green-500 dark:text-white "
                                   : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                               }`}
                               title={
@@ -324,14 +324,14 @@ const Page = () => {
                   {(data) => (
                     <TableRow
                       key={data.rclId || Math.random()}
-                      className="hover:bg-gray-50">
+                      className="hover:bg-gray-50 dark:hover:bg-slate-500">
                       <TableCell>{data.rclId || "N/A"}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-medium">
                             {data?.fullName || "N/A"}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-black dark:text-white">
                             {data?.positionName &&
                             !data.positionName.includes("@")
                               ? data.positionName
@@ -360,7 +360,7 @@ const Page = () => {
                           <FaEye
                             className={` ${
                               hasViewAccess
-                                ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
+                                ? "text-gray-900 cursor-pointer hover:text-green-500 dark:hover:text-green-500 dark:text-white"
                                 : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                             }`}
                             onClick={() =>
@@ -370,7 +370,7 @@ const Page = () => {
                           <HiPencilSquare
                             className={` ${
                               hasActionAccess
-                                ? "text-gray-900 hover:text-gray-700 cursor-pointer dark:text-white"
+                                ? "text-gray-900 cursor-pointer hover:text-green-500 dark:hover:text-green-500 dark:text-white"
                                 : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                             }`}
                             onClick={() =>
@@ -389,81 +389,94 @@ const Page = () => {
 
           {/* Small screens - Card-like view */}
           <div className="block md:hidden overflow-y-auto">
-            <div className="space-y-4">
-              {displayData.map((data) => (
-                <div
-                  key={data.rclId || Math.random()}
-                  className="border rounded-lg overflow-hidden shadow-sm">
-                  <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                    onClick={() => toggleExpandedRow(data.rclId)}>
-                    <div className="font-medium">{data.fullName || "N/A"}</div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        {data.rclId || "N/A"}
-                      </span>
-                      <FaChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          expandedRow === data.rclId ? "rotate-180" : ""
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`${
-                      expandedRow === data.rclId ? "block" : "hidden"
-                    } p-3 space-y-2 text-sm`}>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">RCL-ID:</div>
-                      <div>{data?.rclId || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Email:</div>
-                      <div className="break-all">{data?.email || "N/A"}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Department:</div>
-                      <div>
-                        {data?.departmentName &&
-                        !data.departmentName.includes("color=") &&
-                        !data.departmentName.match(/^\d{4}-\d{2}-\d{2}$/)
-                          ? data.departmentName
-                          : "N/A"}
+            {isEKYELoading ? (
+              <SkeletonLoader />
+            ) : (
+              <>
+                <div className="space-y-4">
+                  {displayData.map((data) => (
+                    <div
+                      key={data.rclId || Math.random()}
+                      className="border rounded-lg overflow-hidden shadow-sm">
+                      <div
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                        onClick={() => toggleExpandedRow(data.rclId)}>
+                        <div className="font-medium">
+                          {data.fullName || "N/A"}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
+                            {data.rclId || "N/A"}
+                          </span>
+                          <FaChevronDown
+                            size={16}
+                            className={`transition-transform ${
+                              expandedRow === data.rclId ? "rotate-180" : ""
+                            }`}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        className={`${
+                          expandedRow === data.rclId ? "block" : "hidden"
+                        } p-3 space-y-2 text-sm`}>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">RCL-ID:</div>
+                          <div>{data?.rclId || "N/A"}</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Email:</div>
+                          <div className="break-all">
+                            {data?.email || "N/A"}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Department:</div>
+                          <div>
+                            {data?.departmentName &&
+                            !data.departmentName.includes("color=") &&
+                            !data.departmentName.match(/^\d{4}-\d{2}-\d{2}$/)
+                              ? data.departmentName
+                              : "N/A"}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Position:</div>
+                          <div>
+                            {data?.positionName &&
+                            !data.positionName.includes("@")
+                              ? data.positionName
+                              : "N/A"}
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2 mt-4">
+                          {hasViewAccess && (
+                            <Button
+                              size="sm"
+                              color="success"
+                              variant="flat"
+                              onPress={() => handleChange("view", data.rclId)}>
+                              View
+                            </Button>
+                          )}
+                          {hasActionAccess && (
+                            <Button
+                              size="sm"
+                              color="warning"
+                              variant="flat"
+                              onPress={() =>
+                                handleChange("action", data.rclId)
+                              }>
+                              Edit
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Position:</div>
-                      <div>
-                        {data?.positionName && !data.positionName.includes("@")
-                          ? data.positionName
-                          : "N/A"}
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                      {hasViewAccess && (
-                        <Button
-                          size="sm"
-                          color="success"
-                          variant="flat"
-                          onPress={() => handleChange("view", data.rclId)}>
-                          View
-                        </Button>
-                      )}
-                      {hasActionAccess && (
-                        <Button
-                          size="sm"
-                          color="warning"
-                          variant="flat"
-                          onPress={() => handleChange("action", data.rclId)}>
-                          Edit
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
 
           {!isEKYELoading && (!paginatedEkye || paginatedEkye.length === 0) && (

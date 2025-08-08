@@ -183,6 +183,7 @@ const Filter = ({
                     <span className="flex items-center">
                       <Spinner
                         color="danger"
+                        size="sm"
                         classNames={
                           {
                             // circle1: "bg-active",

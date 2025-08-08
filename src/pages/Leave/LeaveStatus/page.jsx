@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalContent,
   Pagination,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -92,8 +93,9 @@ const LeaveStatus = () => {
     onSuccess: (data) => {
       // toast.success(data.message);
       queryClient.invalidateQueries(["leaveList"]);
-      onRejectClose();
       reset();
+      onRejectClose();
+      // reset();
     },
     onError: (error) => {
       toast.error(error.message || "Something went wrong");
@@ -484,62 +486,91 @@ const LeaveStatus = () => {
 
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
-            <div className="space-y-4 overflow-y-auto">
-              <Accordion variant="bordered">
-                {leaveData?.map((leave) => (
-                  <AccordionItem
-                    key={leave?.leaveId}
-                    aria-label={`${leave?.leaveType} - ${leave?.leaveStatus}`}
-                    title={
-                      <div className="flex justify-between items-center w-full">
-                        <span className="font-medium">
-                          {leave?.leaveType || "N/A"}
-                        </span>
-                        <div
-                          className={`${getStatusClass(
-                            leave?.leaveStatus
-                          )} text-center py-1 px-2 text-xs rounded-md`}>
-                          {leave?.leaveStatus || "N/A"}
-                        </div>
-                      </div>
-                    }>
-                    <div className={` p-3 space-y-2 text-sm`}>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Request Date:</div>
-                        <div>{leave?.requestDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Start Date:</div>
-                        <div>{leave?.leaveStartDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">End Date:</div>
-                        <div>{leave?.leaveEndDate || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Days:</div>
-                        <div>{leave?.Days || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Team Leader:</div>
-                        <div>{leave?.teamLeaderName || "N/A"}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Approver:</div>
-                        <div>{leave?.approvedBy || "N/A"}</div>
-                      </div>
-                      <div className="flex justify-end gap-2 mt-4">
-                        <>
-                          {isAssociateTeamLead &&
-                          leave?.leaveStatus === "PENDING" &&
-                          hasLeaveUpdateAccess ? (
+            {showLoading ? (
+              <SkeletonLoader />
+            ) : (
+              <>
+                <div className="space-y-4 overflow-y-auto">
+                  <Accordion variant="bordered">
+                    {leaveData?.map((leave) => (
+                      <AccordionItem
+                        key={leave?.leaveId}
+                        aria-label={`${leave?.leaveType} - ${leave?.leaveStatus}`}
+                        title={
+                          <div className="flex justify-between items-center w-full">
+                            <span className="font-medium">
+                              {leave?.leaveType || "N/A"}
+                            </span>
+                            <div
+                              className={`${getStatusClass(
+                                leave?.leaveStatus
+                              )} text-center py-1 px-2 text-xs rounded-md`}>
+                              {leave?.leaveStatus || "N/A"}
+                            </div>
+                          </div>
+                        }>
+                        <div className={` p-3 space-y-2 text-sm`}>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Request Date:</div>
+                            <div>{leave?.requestDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Start Date:</div>
+                            <div>{leave?.leaveStartDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">End Date:</div>
+                            <div>{leave?.leaveEndDate || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Days:</div>
+                            <div>{leave?.Days || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Team Leader:</div>
+                            <div>{leave?.teamLeaderName || "N/A"}</div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Approver:</div>
+                            <div>{leave?.approvedBy || "N/A"}</div>
+                          </div>
+                          <div className="flex justify-end gap-2 mt-4">
                             <>
-                              {leave?.approvedByAssociateTeamLead === true ? (
-                                <FaCircleCheck className="text-green-500 w-5 h-5" />
-                              ) : leave?.rejectedByAssociateTeamLead ===
-                                true ? (
-                                <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                              ) : (
+                              {isAssociateTeamLead &&
+                              leave?.leaveStatus === "PENDING" &&
+                              hasLeaveUpdateAccess ? (
+                                <>
+                                  {leave?.approvedByAssociateTeamLead ===
+                                  true ? (
+                                    <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                  ) : leave?.rejectedByAssociateTeamLead ===
+                                    true ? (
+                                    <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                  ) : (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        color="success"
+                                        variant="flat"
+                                        onPress={() =>
+                                          handleAction("approve", leave)
+                                        }>
+                                        Approve
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="flat"
+                                        color="danger"
+                                        onPress={() =>
+                                          handleAction("reject", leave)
+                                        }>
+                                        Reject
+                                      </Button>
+                                    </>
+                                  )}
+                                </>
+                              ) : leave?.leaveStatus === "PENDING" &&
+                                hasLeaveUpdateAccess ? (
                                 <>
                                   <Button
                                     size="sm"
@@ -560,36 +591,18 @@ const LeaveStatus = () => {
                                     Reject
                                   </Button>
                                 </>
+                              ) : (
+                                ""
                               )}
                             </>
-                          ) : leave?.leaveStatus === "PENDING" &&
-                            hasLeaveUpdateAccess ? (
-                            <>
-                              <Button
-                                size="sm"
-                                color="success"
-                                variant="flat"
-                                onPress={() => handleAction("approve", leave)}>
-                                Approve
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="flat"
-                                color="danger"
-                                onPress={() => handleAction("reject", leave)}>
-                                Reject
-                              </Button>
-                            </>
-                          ) : (
-                            ""
-                          )}
-                        </>
-                      </div>
-                    </div>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
+                          </div>
+                        </div>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </>
+            )}
           </div>
 
           {!showLoading && (!leaveData || leaveData?.length === 0) && (
@@ -725,7 +738,17 @@ const LeaveStatus = () => {
                   <Button
                     className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                     onPress={() => onApprove()}>
-                    Approve
+                    {approveMutation.isPending ? (
+                      <span className="flex items-center justify-center gap-4">
+                        <Spinner color="danger" size="sm" />
+                        Approving...
+                      </span>
+                    ) : (
+                      <span>
+                        Approve
+                        {/* Reject */}
+                      </span>
+                    )}
                   </Button>
                   <Button onPress={onClose}>Cancel</Button>
                 </div>
@@ -835,7 +858,15 @@ const LeaveStatus = () => {
                     <Button
                       className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                       type="submit">
-                      Reject
+                      {rejectMutation.isPending ? (
+                        <span className="flex items-center justify-center gap-4">
+                          <Spinner color="danger" size="sm" />
+                          Rejecting...
+                        </span>
+                      ) : (
+                        <span>Reject</span>
+                      )}
+                      {/* Reject */}
                     </Button>
                     <Button onPress={onClose}>Cancel</Button>
                   </div>
