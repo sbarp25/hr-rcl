@@ -21,6 +21,11 @@ import {
 
 const CheckIn = ({ checkedInStatus, onStatusChange }) => {
   const { control, handleSubmit, reset } = useForm();
+  const {
+    isOpen: isCheckOutOpen,
+    onOpen: onCheckOutOpen,
+    onOpenChange: onCheckoutOpenChange,
+  } = useDisclosure();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isSecondModalOpen,
@@ -75,29 +80,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
         },
       });
     } else {
-      const requestData = {
-        data: {
-          requestLat: latitude,
-          requestLong: longitude,
-          // requestLat: 27.7213826,
-          // requestLong: 85.3228181,
-          requestIp: ipAddress,
-        },
-      };
-      checkOutMutation.mutate(requestData, {
-        onSuccess: (data) => {
-          if (data.responseCode === "200") {
-            onStatusChange(false);
-            reset();
-          } else {
-            const errorMessage =
-              data?.error?.errorList?.[0]?.errorMessage ||
-              "Something went wrong";
-            reset();
-            toast.error(errorMessage);
-          }
-        },
-      });
+      onCheckOutOpen();
     }
   };
 
@@ -132,6 +115,33 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
     });
   };
 
+  const handleCheckout = async () => {
+    const ipAddress = await getIpAddress();
+    const requestData = {
+      data: {
+        requestLat: latitude,
+        requestLong: longitude,
+        // requestLat: 27.7213826,
+        // requestLong: 85.3228181,
+        requestIp: ipAddress,
+      },
+    };
+    checkOutMutation.mutate(requestData, {
+      onSuccess: (data) => {
+        if (data.responseCode === "200") {
+          onCheckoutOpenChange(false);
+          onStatusChange(false);
+          reset();
+        } else {
+          onCheckoutOpenChange(false);
+          const errorMessage =
+            data?.error?.errorList?.[0]?.errorMessage || "Something went wrong";
+          reset();
+          toast.error(errorMessage);
+        }
+      },
+    });
+  };
   const closeRejectModal = () => {
     onOpenChangeSecondModal(false);
     reset();
@@ -240,6 +250,34 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                       </Button>
                     </div>
                   </form>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+
+        <Modal
+          isOpen={isCheckOutOpen}
+          onOpenChange={onCheckoutOpenChange}
+          isDismissable={true}
+          placement="center"
+          isKeyboardDismissDisabled={false}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalBody>
+                  <div className="flex flex-col justify-center items-center py-4">
+                    {/* <span>You are currently checking in late.</span> <br /> */}
+                    <span> Are you sure you want to check out?</span>
+                  </div>
+                  <div className="flex justify-center gap-4 py-2">
+                    <Button
+                      onPress={handleCheckout}
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active">
+                      Yes
+                    </Button>
+                    <Button onPress={onClose}>No</Button>
+                  </div>
                 </ModalBody>
               </>
             )}
