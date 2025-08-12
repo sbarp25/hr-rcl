@@ -50,8 +50,8 @@ const DesktopTabs = ({ activeTab, changeTab }) => (
           }}
           className={`cursor-pointer py-3 px-4 lg:px-8 text-center font-semibold rounded-t-lg border-t border-l border-r transition-all duration-300 ${
             activeTab.name === tab.name
-              ? "bg-white dark:bg-slate-800 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 -mb-px"
-              : "bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600"
+              ? "bg-white dark:bg-black border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 -mb-px"
+              : "bg-gray-50 dark:bg-neutral-900 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-600"
           }`}>
           <span className="text-sm lg:text-base whitespace-nowrap">
             {/* Show short names on medium screens, full names on large screens */}
@@ -73,7 +73,7 @@ const MobileTabs = ({ activeTab, changeTab }) => {
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
+          className="w-full flex items-center justify-between p-4 bg-white dark:bg-neutral-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <FaBars className="text-gray-500" />
             <span className="font-semibold text-gray-800 dark:text-gray-200">
@@ -88,7 +88,7 @@ const MobileTabs = ({ activeTab, changeTab }) => {
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+          <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white dark:bg-neutral-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
             {tabData.map((tab) => (
               <button
                 key={tab.name}
@@ -98,7 +98,7 @@ const MobileTabs = ({ activeTab, changeTab }) => {
                 }}
                 className={`w-full text-left p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0 transition-colors duration-200 ${
                   activeTab.name === tab.name
-                    ? "bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-200 font-semibold"
+                    ? "bg-gray-100 dark:bg-neutral-700 text-gray-800 dark:text-gray-200 font-semibold"
                     : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700"
                 }`}>
                 {tab.name}

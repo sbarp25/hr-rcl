@@ -399,7 +399,7 @@ const Page = () => {
                       key={data.rclId || Math.random()}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-900"
                         onClick={() => toggleExpandedRow(data.rclId)}>
                         <div className="font-medium">
                           {data.fullName || "N/A"}

@@ -361,7 +361,7 @@ const TotalPage = () => {
                         key={position.id}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-800"
                           onClick={() => toggleExpandedRow(position.id)}>
                           <div className="font-medium">
                             {position.positionName}
@@ -381,7 +381,7 @@ const TotalPage = () => {
                           } p-3 space-y-2 text-sm`}>
                           <div className="grid grid-cols-1 gap-2">
                             <div className="font-medium">Description:</div>
-                            <div className="bg-gray-50 dark:bg-slate-600 p-2 rounded">
+                            <div className="bg-gray-50 dark:bg-neutral-600 p-2 rounded">
                               {position.description}
                             </div>
                           </div>

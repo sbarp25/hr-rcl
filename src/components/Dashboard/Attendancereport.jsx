@@ -5,7 +5,6 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Button,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -37,7 +36,7 @@ const AttendanceReport = ({ attendanceData }) => {
             wrapper: "min-h-[200px]",
             table: "min-w-full",
           }}>
-          <TableHeader className="bg-gray-50 dark:bg-black">
+          <TableHeader className="">
             <TableColumn>S.N</TableColumn>
             <TableColumn>Day</TableColumn>
             <TableColumn>Is Delayed</TableColumn>

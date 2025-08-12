@@ -342,7 +342,7 @@ const AddRoles = () => {
                       <div
                         key={`menu-${menu.menuId}-${menuIndex}`}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 dark:bg-slate-500 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-900 p-4 rounded-t-lg border-b border-gray-200">
                           <div>
                             <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                               {menu.menuDescription}
@@ -357,7 +357,7 @@ const AddRoles = () => {
                               control={control}
                               render={({ field }) => (
                                 <Checkbox
-                                  color="primary"
+                                  color="danger"
                                   isSelected={field.value || false}
                                   onValueChange={(isChecked) => {
                                     field.onChange(isChecked);
@@ -375,10 +375,10 @@ const AddRoles = () => {
                             {menu.actions.map((action, actionIndex) => (
                               <div
                                 key={`action-${action.actionId}-${menuIndex}-${actionIndex}`}
-                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-slate-400 rounded-md">
+                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-neutral-600 rounded-md">
                                 <Checkbox
                                   size="sm"
-                                  color="primary"
+                                  color="danger"
                                   isSelected={action.selected || false}
                                   onValueChange={(isChecked) =>
                                     handleActionSelect(

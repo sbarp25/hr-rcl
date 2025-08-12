@@ -125,16 +125,17 @@ const Page = () => {
       </div>
 
       {/* Weekly Attendance Report */}
-      <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm">
+      <div className="flex flex-col  rounded-lg w-full p-1 shadow-sm">
         <div className="flex flex-col justify-center items-center">
           <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
             Weekly Attendance Report
           </h1>
-          <div className="w-full">
+          <div className="w-full ">
+            {/* <div className="w-full bg-green-500"> */}
             {isLoading ? (
               <div className="text-center py-4">Loading attendance data...</div>
             ) : (
-              <div className="w-full overflow-x-auto">
+              <div className="w-full overflow-x-auto ">
                 <Attendancereport attendanceData={attendanceData} />
               </div>
             )}

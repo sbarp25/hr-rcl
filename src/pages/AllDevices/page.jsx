@@ -168,7 +168,7 @@ const AllTrustedDevices = () => {
                     </span>
                   </div>
 
-                  <div className="text-xs text-gray-500 dark:text-white mt-3 p-3 bg-gray-50 dark:bg-slate-500 rounded-lg">
+                  <div className="text-xs text-gray-500 dark:text-white mt-3 p-3 bg-gray-50 dark:bg-neutral-900 rounded-lg">
                     <div className="mb-1">
                       <span className="font-medium">Added:</span>{" "}
                       {formatDate(device.createdAt)}

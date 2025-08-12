@@ -216,7 +216,7 @@ const LeaveStatus = () => {
 
   return (
     <>
-      <div className="container px-2 md:px-8 max-h-[85vh] space-y-4">
+      <div className="container px-2 md:px-8  space-y-4">
         {/**Page Section */}
         <div className="flex flex-col space-y-4">
           <div className="text-sm">
@@ -256,10 +256,7 @@ const LeaveStatus = () => {
           {/* Large screens - Full table */}
           <div className="hidden lg:block">
             <div className="shadow-md rounded-lg  text-left">
-              <Table
-                bordered
-                aria-label="Table of Leave"
-                className="max-h-[75vh]">
+              <Table bordered aria-label="Table of Leave" className="">
                 <TableHeader>
                   <TableColumn>S.N</TableColumn>
                   <TableColumn>Full Name</TableColumn>
@@ -340,13 +337,13 @@ const LeaveStatus = () => {
                               ) : (
                                 <>
                                   <FaCheckCircle
-                                    className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                    className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                     onClick={() =>
                                       handleAction("approve", item)
                                     }
                                   />
                                   <FaXmark
-                                    className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                    className="text-xl text-black hover:text-red-600 dark:text-white dark:hover:text-red-600 cursor-pointer"
                                     onClick={() => handleAction("reject", item)}
                                   />
                                 </>
@@ -356,11 +353,11 @@ const LeaveStatus = () => {
                             hasLeaveUpdateAccess ? (
                             <>
                               <FaCheckCircle
-                                className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                 onClick={() => handleAction("approve", item)}
                               />
                               <FaXmark
-                                className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                className="text-xl text-black dark:text-white dark:hover:text-red-600 hover:text-red-800 cursor-pointer"
                                 onClick={() => handleAction("reject", item)}
                               />
                             </>
@@ -448,13 +445,13 @@ const LeaveStatus = () => {
                               ) : (
                                 <>
                                   <FaCheckCircle
-                                    className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                    className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                     onClick={() =>
                                       handleAction("approve", item)
                                     }
                                   />
                                   <FaXmark
-                                    className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                    className="text-xl text-white dark:text-white dark:hovertext-red-600 hover:text-red-600 cursor-pointer"
                                     onClick={() => handleAction("reject", item)}
                                   />
                                 </>
@@ -464,11 +461,11 @@ const LeaveStatus = () => {
                             hasLeaveUpdateAccess ? (
                             <>
                               <FaCheckCircle
-                                className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                 onClick={() => handleAction("approve", item)}
                               />
                               <FaXmark
-                                className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                className="text-xl text-black dark:text-white dark:hover:text-red-600 hover:text-red-600 cursor-pointer"
                                 onClick={() => handleAction("reject", item)}
                               />
                             </>
@@ -665,7 +662,7 @@ const LeaveStatus = () => {
                   <h3 className="text-lg font-medium">Leave Approval</h3>
                   <p>Are you sure you want to approve this leave?</p>
                   {selectedLeave && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-neutral-800 p-3 rounded-md space-y-2">
                       <div className="flex ">
                         <span className="font-medium">Full Name: &nbsp;</span>
                         <span>{selectedLeave?.fullName}</span>
@@ -773,7 +770,7 @@ const LeaveStatus = () => {
                   <h3 className="text-lg font-medium">Leave Rejection</h3>
                   <p>Are you sure you want to reject this leave?</p>
                   {selectedLeave && (
-                    <div className="bg-gray-50 dark:bg-slate-500 p-3 rounded-md space-y-2">
+                    <div className="bg-gray-50 dark:bg-neutral-800 p-3 rounded-md space-y-2">
                       <div className="flex ">
                         <span className="font-medium">Full Name: &nbsp;</span>
                         <span>{selectedLeave?.fullName}</span>

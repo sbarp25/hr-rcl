@@ -55,7 +55,7 @@ const MFA = () => {
         {/* Header Section */}
         <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gray-100 dark:bg-neutral-900 rounded-xl flex items-center justify-center">
               <IoShieldCheckmark className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </div>
             <div>
@@ -70,7 +70,7 @@ const MFA = () => {
         </div>
 
         {/* Info Banner */}
-        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-gray-600">
           <div className="flex items-start space-x-3">
             <IoInformationCircle className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -92,7 +92,7 @@ const MFA = () => {
             onSubmit={handletwoFactorSubmit(handleSubmit)}
             className="space-y-6">
             {/* MFA Toggle */}
-            <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-gray-600">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -151,18 +151,18 @@ const MFA = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center pt-4">
-              <Button
-                type="submit"
-                className="w-fit  px-16 py-4 text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                isDisabled={isTwoFactorSubmitting}
-                isLoading={isTwoFactorSubmitting}>
-                {isTwoFactorPending && <Spinner size="sm" color="danger" />}
-                {isTwoFactorPending
-                  ? "Updating Settings..."
-                  : "Update MFA Settings"}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              className="w-fit  px-16 py-4 text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active font-semibold rounded-xl transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              isDisabled={isTwoFactorSubmitting}
+              isLoading={isTwoFactorSubmitting}>
+              {isTwoFactorPending && <Spinner size="sm" color="danger" />}
+              {isTwoFactorPending
+                ? "Updating Settings..."
+                : "Update MFA Settings"}
+            </Button>
+            {/* <div className="flex justify-center pt-4">
+            </div> */}
           </form>
         </div>
       </div>

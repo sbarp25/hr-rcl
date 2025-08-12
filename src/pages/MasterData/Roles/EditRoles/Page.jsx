@@ -310,14 +310,14 @@ const EditRole = () => {
                       <div
                         key={menu.menuId}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 dark:bg-slate-500 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-800 p-4 rounded-t-lg border-b border-gray-200">
                           <div>
-                            <h4 className="text-md font-semibold text-gray-800">
+                            <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                               {menu.menuName}
                             </h4>
-                            <p className="text-sm text-gray-600 mt-1">
+                            {/* <p className="text-sm text-gray-600 mt-1">
                               {menu.menuDescription}
-                            </p>
+                            </p> */}
                           </div>
                           <div>
                             <Controller
@@ -325,7 +325,7 @@ const EditRole = () => {
                               control={control}
                               render={({ field }) => (
                                 <Checkbox
-                                  color="primary"
+                                  color="danger"
                                   isSelected={field.value}
                                   onValueChange={(isChecked) => {
                                     field.onChange(isChecked);
@@ -346,7 +346,7 @@ const EditRole = () => {
                                 className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-slate-500 rounded-md">
                                 <Checkbox
                                   size="sm"
-                                  color="primary"
+                                  color="danger"
                                   isSelected={action.selected}
                                   onChange={(e) =>
                                     handleActionSelect(

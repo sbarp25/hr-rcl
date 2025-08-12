@@ -349,7 +349,7 @@ const Sidebar = () => {
                   {/* Dropdown items */}
                   {service.children && expandedDropdown === index && (
                     <div
-                      className={`pl-8 mt-2 space-y-2 bg-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
+                      className={`pl-8 mt-2 space-y-2 bg-neutral-900 overflow-hidden transition-all duration-300 ease-in-out ${
                         expandedDropdown === index
                           ? "max-h-96 opacity-100 mt-2"
                           : "max-h-0 opacity-0"

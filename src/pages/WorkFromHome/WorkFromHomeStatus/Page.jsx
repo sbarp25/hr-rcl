@@ -440,13 +440,13 @@ const WorkFromHomeStatus = () => {
                                   hasWorkFromHomeReviewAccess ? (
                                   <>
                                     <FaCheckCircle
-                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      className="text-lg text-black hover:text-green-700 dark:text-white dark:hover:text-green-700 cursor-pointer"
                                       onClick={() =>
                                         handleAction("approve", item)
                                       }
                                     />
                                     <FaXmark
-                                      className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                      className="text-xl text-black hover:text-red-600  dark:text-white dark:hover:text-red-600 cursor-pointer"
                                       onClick={() =>
                                         handleAction("reject", item)
                                       }
@@ -519,13 +519,13 @@ const WorkFromHomeStatus = () => {
                                     ) : (
                                       <>
                                         <FaCheckCircle
-                                          className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                          className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                           onClick={() =>
                                             handleAction("approve", item)
                                           }
                                         />
                                         <FaXmark
-                                          className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                          className="text-xl text-black hover:text-red-600 dark:text-white dark:hover:text-red-600 cursor-pointer"
                                           onClick={() =>
                                             handleAction("reject", item)
                                           }
@@ -570,7 +570,7 @@ const WorkFromHomeStatus = () => {
                       key={WFH.id || Math.random()}
                       className="border rounded-lg overflow-hidden shadow-sm">
                       <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-800"
                         onClick={() => toggleExpandedRow(WFH.id)}>
                         <div className="font-medium">
                           {WFH.userFullName || "N/A"}
@@ -765,7 +765,7 @@ const WorkFromHomeStatus = () => {
                       </h3>
                       <p>Are you sure you want to approve this WFH?</p>
                       {selectedWorkFromHome && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-neutral-600 p-3 rounded-md gap-3">
                           <div>
                             <span className="font-medium mr-1">
                               Request ID:
@@ -880,7 +880,7 @@ const WorkFromHomeStatus = () => {
                         rejection:
                       </p>
                       {selectedWorkFromHome && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-neutral-600 p-3 rounded-md gap-3">
                           <div>
                             <span className="font-medium mr-1">
                               Request ID:

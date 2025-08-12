@@ -75,13 +75,13 @@ const ChangePassword = () => {
   return (
     <>
       <div className="mx-auto bg-white dark:bg-black rounded-xl shadow-lg">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Header Section */}
-          <div className="text-center mb-6">
+          {/* <div className="text-center mb-6">
             <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
               Security
             </h1>
-          </div>
+          </div> */}
 
           <GoBack />
 
@@ -93,7 +93,7 @@ const ChangePassword = () => {
               </h2>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Password Guidelines */}
-                <div className="bg-gray-100 dark:bg-slate-500 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300">
+                <div className="bg-gray-100 dark:bg-neutral-900 rounded-xl p-4 text-sm text-gray-700 dark:text-gray-300">
                   <h3 className="font-semibold text-base mb-2">
                     Your password must:
                   </h3>
@@ -173,7 +173,7 @@ const ChangePassword = () => {
                     errors.confirmPassword ||
                     !changePasswordAccess
                   }
-                  className={`w-full py-3 rounded-lg  font-semibold transition duration-200 ${
+                  className={`w-fit py-3 rounded-lg  font-semibold transition duration-200 ${
                     isLoading ||
                     errors.password ||
                     errors.confirmPassword ||

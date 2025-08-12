@@ -315,7 +315,7 @@ const SelfWorkFromHome = () => {
                         key={WFH.id || WFH.workFromHomeId}
                         className="border rounded-lg overflow-hidden shadow-sm">
                         <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-600"
                           onClick={() => toggleExpandedRow(WFH.id)}>
                           <div className="font-medium">
                             {WFH.userFullName || "N/A"}

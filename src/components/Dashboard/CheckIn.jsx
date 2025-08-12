@@ -12,7 +12,6 @@ import {
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../ui/TextAreaComp.jsx";
-import Loader from "../Loader/Loader.jsx";
 import {
   useCheckin,
   useCheckOut,

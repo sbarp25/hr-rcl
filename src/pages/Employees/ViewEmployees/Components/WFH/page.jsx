@@ -83,7 +83,7 @@ const WFHdetails = ({ employeeData }) => {
         itemClasses={{
           base: "px-0",
           trigger:
-            "px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-500 transition-colors",
+            "px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors",
           content: "px-0 pb-0",
         }}>
         {workFromHome.map((wfh) => {
@@ -126,7 +126,7 @@ const WFHdetails = ({ employeeData }) => {
                   </Chip>
                 </div>
               }>
-              <Card className="shadow-none border-0 bg-gray-50 dark:bg-slate-500">
+              <Card className="shadow-none border-0 bg-gray-50 dark:bg-neutral-900">
                 <CardBody className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Personal Information */}
@@ -173,7 +173,7 @@ const WFHdetails = ({ employeeData }) => {
                   <Divider className="my-4" />
 
                   {/* WFH Summary */}
-                  <div className="bg-white dark:bg-slate-500 rounded-lg p-4 border">
+                  <div className="bg-white dark:bg-neutral-900 rounded-lg p-4 border">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                       <div>
                         <p className="text-xs text-gray-500 dark:text-white uppercase tracking-wide">

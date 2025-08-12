@@ -3,6 +3,7 @@ import { Divider, Form } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
 import UnderlineComponent from "../../../../../../components/ui/UnderlineComponent";
 import EkyeDetailsComponent from "../../../../../../components/ui/EkyeDetailsComponent";
+import Legend from "../../../../../../components/ui/Legend";
 
 const UserEducation = ({ employeeData }) => {
   const [educationDocuments, setEducationDocuments] = useState({});
@@ -29,11 +30,7 @@ const UserEducation = ({ employeeData }) => {
               </span>
               {/* h-[calc(100vh-210px)] */}
             </h1>
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
+            <Legend />
           </div>
 
           {employeeData?.educationalDetails?.length > 0 ? (

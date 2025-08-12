@@ -5,10 +5,10 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
     <div className="w-60 flex items-center justify-center">
       <div
         onClick={onChange}
-        className="relative flex items-center p-1  w-full h-12 bg-gray-200 dark:bg-slate-700 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
+        className="relative flex items-center p-1  w-full h-12 bg-gray-200 dark:bg-neutral-700 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
         {/* Sliding toggle */}
         <div
-          className={`absolute h-10 w-1/2 bg-white dark:bg-slate-500 rounded-full shadow-md transform transition-transform duration-300 ${
+          className={`absolute h-10 w-1/2 bg-white dark:bg-neutral-900 rounded-full shadow-md transform transition-transform duration-300 ${
             isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-3"
           }`}
         />
@@ -16,14 +16,14 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
         <div className="flex w-full z-10 text-sm font-medium">
           <div className="w-1/2 text-center py-2">
             <span
-              className={`transition-colors duration-300 text-black dark:text-gray-300`}>
+              className={`transition-colors duration-300 text-black dark:text-white`}>
               Today <br />
               WFH
             </span>
           </div>
           <div className="w-1/2 text-center py-2">
             <span
-              className={`transition-colors duration-300 text-black dark:text-gray-300`}>
+              className={`transition-colors duration-300 text-black dark:text-white`}>
               Upcoming <br />
               WFH
             </span>

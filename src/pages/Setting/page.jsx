@@ -18,6 +18,7 @@ import EkyeDetailsComponent from "../../components/ui/EkyeDetailsComponent.jsx";
 import getInitials from "../../utils/getInitials";
 import UnderlineComponent from "../../components/ui/UnderlineComponent.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
+import Legend from "../../components/ui/Legend.jsx";
 
 const Settings = () => {
   const [employeeData, setEmployeeData] = useState();
@@ -264,9 +265,7 @@ const Settings = () => {
                   </span>
                 </h3>
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-red-400" />
-                  <div className="w-2 h-2 rounded-full bg-black" />
-                  <div className="w-2 h-2 rounded-full bg-slate-600" />
+                  <Legend />
                 </div>
               </div>
 

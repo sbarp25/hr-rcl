@@ -2,6 +2,7 @@ import React from "react";
 import UnderlineComponent from "../../../../../../components/ui/UnderlineComponent";
 import EkyeDetailsComponent from "../../../../../../components/ui/EkyeDetailsComponent";
 import { Divider } from "@heroui/react";
+import Legend from "../../../../../../components/ui/Legend";
 
 const Personal = ({ employeeData }) => {
   const userCompleteDetails =
@@ -10,7 +11,7 @@ const Personal = ({ employeeData }) => {
   console.log(personalDetails);
 
   return (
-    <div className="bg-gray-50 dark:bg-black h-[75vh] pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
+    <div className="bg-gray-50 dark:bg-black  pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
       <div className="rounded-xl space-y-4 sm:space-y-6 pt-4 sm:pt-6">
         {/**Basic Information */}
         <div className="bg-white dark:bg-black rounded-xl mb-4 mx-2 sm:mx-4 p-3 sm:p-5">
@@ -23,9 +24,7 @@ const Personal = ({ employeeData }) => {
             </h1>
             <div className="flex items-center justify-end gap-2 sm:gap-4">
               <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                <Legend />
               </div>
             </div>
           </div>
@@ -105,9 +104,7 @@ const Personal = ({ employeeData }) => {
                 </span>
               </h1>
               <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                <Legend />
               </div>
             </div>
             <form className="container space-y-4">
@@ -141,9 +138,7 @@ const Personal = ({ employeeData }) => {
                 </span>
               </h1>
               <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                <Legend />
               </div>
             </div>
             <form className="container space-y-4">

@@ -92,7 +92,7 @@ const Tabs = ({ activeTab, changeTab }) => {
           className={`cursor-pointer py-2 px-4 lg:px-8 text-center min-w-fit lg:w-40 font-semibold rounded-t-2xl border transition-all duration-300 whitespace-nowrap ${
             activeTab.name === tab.name
               ? "bg-gray-50 dark:bg-black border border-gray-300"
-              : "hover:border-gray-300 hover:bg-gray-100 dark:bg-slate-500"
+              : "hover:border-gray-300 hover:bg-gray-100 dark:bg-neutral-900"
           }`}>
           <span className="text-sm lg:text-base">{tab.name}</span>
         </li>

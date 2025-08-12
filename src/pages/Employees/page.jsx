@@ -401,7 +401,7 @@ const Employees = () => {
                   key={employee.rclId}
                   className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
                   <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
+                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-900"
                     onClick={() => toggleExpandedRow(employee.rclId)}>
                     <div>
                       <div className="font-medium">{employee.fullName}</div>
