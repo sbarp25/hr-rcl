@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaChevronDown } from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
 import {
   Table,
@@ -17,17 +16,15 @@ import {
   ModalBody,
   Tooltip,
   Spinner,
+  Accordion,
+  AccordionItem,
 } from "@heroui/react";
-import { FaCheck } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 
 import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
 import { useForm } from "react-hook-form";
 
 import {
   hasApproveAccess,
-  hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../../utils/permissionUtils.js";
 import {
@@ -36,7 +33,6 @@ import {
   useLateCheckinReject,
 } from "../../../../hooks/useAuth.js";
 import { toast } from "sonner";
-import Loader from "../../../../components/Loader/Loader.jsx";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../../components/Search.jsx";
 import Filter from "../../../../components/Filter.jsx";
@@ -47,7 +43,6 @@ import SkeletonLoader from "../../../../components/Loader/SkeletonLoader.jsx";
 const TeamLeadLateCheckin = () => {
   const [filteredData, setFilteredData] = useState(null);
   const [filteredPagination, setFilteredPagination] = useState(null);
-  const [expandedRow, setExpandedRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedData, setSelectedData] = useState(null);
   const [lateCheckInDataPerPage, setLateCheckInDataPerPage] = useState(10);
@@ -57,20 +52,14 @@ const TeamLeadLateCheckin = () => {
   const { reset, handleSubmit } = useForm();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isRejectOpen,
-    onOpen: onRejectOpen,
-    onOpenChange: onRejectOpenChange,
-    onClose: onRejectClose,
-  } = useDisclosure();
+  const { isOpen: isRejectOpen, onOpenChange: onRejectOpenChange } =
+    useDisclosure();
 
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },
   ];
 
-  /**Permission Check */
-  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   const hasaccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   // const hasaccess = true;
   useEffect(() => {
@@ -137,24 +126,6 @@ const TeamLeadLateCheckin = () => {
     }
   };
 
-  const handleAction = async (action, dataId) => {
-    const item = lateCheckinData.find((item) => item.lateCheckInId === dataId);
-    setSelectedData(item);
-    switch (action) {
-      case "Approve":
-        if (hasAttendanceEditAccess) {
-          onOpen();
-        }
-        break;
-      case "Reject":
-        if (hasAttendanceEditAccess) {
-          onRejectOpen();
-        }
-        break;
-      default:
-        console.log("Unknown action");
-    }
-  };
   const onApprove = async () => {
     if (!selectedData) return;
 
@@ -202,14 +173,9 @@ const TeamLeadLateCheckin = () => {
       onClose();
     }
   };
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
 
   const truncateText = (text, maxLength) =>
     text?.length > maxLength ? `${text?.slice(0, maxLength)}` : text;
-
-  const showLoader = isLoading;
 
   const isAssociateTeamLead =
     LocalStorageUtil.getItem("position") === "Associate Team Lead";
@@ -288,7 +254,7 @@ const TeamLeadLateCheckin = () => {
                     ?.map((late, index) => (
                       <TableRow
                         key={late?.lateCheckInId}
-                        className="h-14 border-b-2 border-gray-300">
+                        className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                         <TableCell>
                           {(currentPage - 1) * lateCheckInDataPerPage +
                             index +
@@ -432,9 +398,7 @@ const TeamLeadLateCheckin = () => {
                       (lateCHeckin) => lateCHeckin?.status !== "APPROVED"
                     )
                     .map((late) => (
-                      <TableRow
-                        key={late?.lateCheckInId}
-                        className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                      <TableRow key={late?.lateCheckInId} className=" ">
                         <TableCell>
                           <div className="flex flex-col">
                             <span>{late?.fullName}</span>
@@ -516,78 +480,81 @@ const TeamLeadLateCheckin = () => {
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
             <div className="space-y-4 overflow-y-auto">
-              {lateCheckinData
-                .filter((lateCHeckin) => lateCHeckin?.status !== "APPROVED")
-                .map((late) => (
-                  <div
-                    key={late?.lateCheckInId}
-                    className="border rounded-lg overflow-hidden shadow-sm">
-                    <div
-                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50  dark:bg-black"
-                      onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
-                      <div className="font-medium">{late?.fullName}</div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500 dark:text-white">
-                          {late?.attendanceDate}
-                        </span>
-                        <FaChevronDown
-                          size={16}
-                          className={`transition-transform ${
-                            expandedRow === late?.lateCheckInId
-                              ? "rotate-180"
-                              : ""
-                          }`}
-                        />
-                      </div>
-                    </div>
-                    <div
-                      className={`${
-                        expandedRow === late?.lateCheckInId ? "block" : "hidden"
-                      } p-3 space-y-2 text-sm`}>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">RCL-ID:</div>
-                        <div>{late?.rclId}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Email:</div>
-                        <div className="truncate">{late?.email}</div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Department:</div>
-                        <div className="truncate">
-                          {late?.departmentName.length < 7 ? (
-                            late?.departmentName
-                          ) : (
-                            <Tooltip content={late?.departmentName}>
-                              {truncateText(late?.departmentName, 7)}
-                            </Tooltip>
-                          )}
+              <Accordion>
+                {lateCheckinData
+                  .filter((lateCHeckin) => lateCHeckin?.status !== "APPROVED")
+                  .map((late) => (
+                    <AccordionItem
+                      key={late?.lateCheckInId}
+                      title={
+                        <div className="flex justify-between">
+                          <div className="font-medium">{late?.fullName}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500 dark:text-white">
+                              {late?.attendanceDate}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Expected Time:</div>
-                        <div>{late?.expectedCheckInTime}</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="font-medium">Actual Time:</div>
-                        <div>{late?.checkInTime}</div>
-                      </div>
-                      <div className="col-span-2 mt-2">
-                        <div className="font-medium">Justification:</div>
-                        <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
-                          {late?.lateReason}
-                        </div>
-                      </div>
+                      }>
                       <>
-                        <div className="flex gap-2">
-                          {isAssociateTeamLead && late?.status === "PENDING" ? (
-                            <>
-                              {late?.approvedByAssociateTeamLead === true ? (
-                                <FaCircleCheck className="text-green-500 w-5 h-5" />
-                              ) : late?.rejectedByAssociateTeamLead === true ? (
-                                <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                              ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">RCL-ID:</div>
+                          <div>{late?.rclId}</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Email:</div>
+                          <div className="truncate">{late?.email}</div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Department:</div>
+                          <div className="truncate">
+                            {late?.departmentName.length < 7 ? (
+                              late?.departmentName
+                            ) : (
+                              <Tooltip content={late?.departmentName}>
+                                {truncateText(late?.departmentName, 7)}
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Expected Time:</div>
+                          <div>{late?.expectedCheckInTime}</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="font-medium">Actual Time:</div>
+                          <div>{late?.checkInTime}</div>
+                        </div>
+                        <div className="col-span-2 mt-2">
+                          <div className="font-medium">Justification:</div>
+                          <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
+                            {late?.lateReason}
+                          </div>
+                        </div>
+                        <>
+                          <div className="flex gap-2">
+                            {isAssociateTeamLead &&
+                            late?.status === "PENDING" ? (
+                              <>
+                                {late?.approvedByAssociateTeamLead === true ? (
+                                  <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                ) : late?.rejectedByAssociateTeamLead ===
+                                  true ? (
+                                  <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                ) : (
+                                  <Button
+                                    className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
+                                    onPress={() => {
+                                      setSelectedData(late);
+                                      onOpen();
+                                    }}>
+                                    Action
+                                  </Button>
+                                )}
+                              </>
+                            ) : late?.status === "PENDING" ? (
+                              <>
                                 <Button
                                   className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                                   onPress={() => {
@@ -596,27 +563,16 @@ const TeamLeadLateCheckin = () => {
                                   }}>
                                   Action
                                 </Button>
-                              )}
-                            </>
-                          ) : late?.status === "PENDING" ? (
-                            <>
-                              <Button
-                                className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
-                                onPress={() => {
-                                  setSelectedData(late);
-                                  onOpen();
-                                }}>
-                                Action
-                              </Button>
-                            </>
-                          ) : (
-                            ""
-                          )}
-                        </div>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </>
                       </>
-                    </div>
-                  </div>
-                ))}
+                    </AccordionItem>
+                  ))}
+              </Accordion>
 
               {(!lateCheckinData || lateCheckinData.length === 0) && (
                 <div className="p-8 text-center text-gray-500">
@@ -677,9 +633,9 @@ const TeamLeadLateCheckin = () => {
                       <p>Late Check-In Status</p>
                     </h3>
                     {selectedData && (
-                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 space-y-3">
                         {/**Personal details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100 dark:border-slate-600">
                           <div className="flex  items-center">
                             <span className="font-semibold text-gray-700 dark:text-white">
                               Employee:
@@ -698,7 +654,7 @@ const TeamLeadLateCheckin = () => {
                           </div>
                         </div>
                         {/**Date and Time */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100 dark:border-slate-500">
                           <div className="flex items-center">
                             <span className="font-semibold text-gray-700 dark:text-white">
                               Date:
@@ -730,7 +686,7 @@ const TeamLeadLateCheckin = () => {
                           <span className="font-semibold text-gray-700 dark:text-white mb-2">
                             Justification:
                           </span>
-                          <p className="text-sm p-3 h-full bg-gray-50 dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
+                          <p className="text-sm p-3 h-full bg-gray-50 dark:bg-black rounded-md border border-gray-100 dark:border-slate-500 min-h-[60px]">
                             {selectedData?.lateReason ||
                               "No justification provided"}
                           </p>
@@ -786,7 +742,7 @@ const TeamLeadLateCheckin = () => {
                       {/* Approve */}
                     </Button>
                     <Button
-                      className="bg-gray-500"
+                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                       type="submit"
                       onPress={onReject}>
                       {isRejecting ? (
@@ -823,9 +779,9 @@ const TeamLeadLateCheckin = () => {
                       <p>Are you sure you want to reject this late checkin?</p>
                     </h3>
                     {selectedData && (
-                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
+                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 space-y-3">
                         {/**Personal details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100 dark:border-neutral-600">
                           <div className="flex  items-center">
                             <span className="font-semibold text-gray-700">
                               Employee:
@@ -844,7 +800,7 @@ const TeamLeadLateCheckin = () => {
                           </div>
                         </div>
                         {/**Date and Time */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100 dark:border-slate-600">
                           <div className="flex items-center">
                             <span className="font-semibold text-gray-700">
                               Date:
@@ -876,7 +832,7 @@ const TeamLeadLateCheckin = () => {
                           <span className="font-semibold text-gray-700 mb-2">
                             Justification:
                           </span>
-                          <p className="text-sm p-3 h-full bg-gray-50  dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
+                          <p className="text-sm p-3 h-full bg-gray-50  dark:bg-black rounded-md border border-gray-100 dark:border-slate-500 min-h-[60px]">
                             {selectedData?.lateReason ||
                               "No justification provided"}
                           </p>

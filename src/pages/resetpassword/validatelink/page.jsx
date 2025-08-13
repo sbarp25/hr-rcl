@@ -38,7 +38,7 @@ const ValidateLink = () => {
     }
   }, []);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     let encryptedData = localStorage.getItem("resetpasswordData");
 
@@ -102,46 +102,46 @@ const ValidateLink = () => {
   {
     /**TO Check if the data is valid or not if it is not valid it will redirect to the login page else it will show the reset password form*/
   }
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       const encryptedData = localStorage.getItem("resetpasswordData");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const encryptedData = localStorage.getItem("resetpasswordData");
 
-  //       if (!encryptedData) {
-  //         setError("No reset password data found");
-  //         toast.error("No reset password data found");
-  //         navigate("/login");
-  //         return;
-  //       }
-  //       const requestBody = {
-  //         data: {
-  //           encData: encryptedData,
-  //         },
-  //       };
-  //       const response = await axios.post(
-  //         `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/validPassword`,
-  //         requestBody
-  //       );
+        if (!encryptedData) {
+          setError("No reset password data found");
+          toast.error("No reset password data found");
+          navigate("/login");
+          return;
+        }
+        const requestBody = {
+          data: {
+            encData: encryptedData,
+          },
+        };
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/validPassword`,
+          requestBody
+        );
 
-  //       if (response?.data?.responseCode === "200") {
-  //         setShowPassword(true);
-  //       } else {
-  //         const errorMessage = response?.error?.errorList?.errorMessage;
-  //         setError("API request failed. Please try again.");
-  //         toast.error(errorMessage);
-  //         navigate("/login");
-  //       }
-  //     } catch (error) {
-  //       setError("An error occurred. Please try again later.");
-  //       toast.error(error.response?.data?.messages);
-  //       navigate("/login");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [navigate]);
+        if (response?.data?.responseCode === "200") {
+          setShowPassword(true);
+        } else {
+          const errorMessage = response?.error?.errorList?.errorMessage;
+          setError("API request failed. Please try again.");
+          toast.error(errorMessage);
+          navigate("/login");
+        }
+      } catch (error) {
+        setError("An error occurred. Please try again later.");
+        toast.error(error.response?.data?.messages);
+        navigate("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   return (
     <>
@@ -150,7 +150,7 @@ const ValidateLink = () => {
       )}
       {showPassword ? (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-black p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full border border-gray-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl shadow-lg overflow-hidden bg-white max-w-5xl w-full border border-gray-300 dark:border-slate-500">
             {/* Left Section */}
             <div className="hidden md:flex bg-bgprimary dark:bg-black  flex-col items-center justify-center text-white px-12 py-20">
               <img src={Logo} alt="logo" className="w-72 mb-8" />

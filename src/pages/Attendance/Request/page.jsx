@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaChevronDown } from "react-icons/fa";
-import { FaCircleCheck } from "react-icons/fa6";
+
 import {
+  Accordion,
+  AccordionItem,
   Table,
   TableBody,
   TableCell,
@@ -10,46 +11,28 @@ import {
   TableHeader,
   TableRow,
   Pagination,
-  Button,
-  useDisclosure,
-  Modal,
-  ModalContent,
-  ModalBody,
   Tooltip,
 } from "@heroui/react";
-import { FaCheck } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
-import { IoIosPeople, IoIosRemoveCircle } from "react-icons/io";
-import { useForm } from "react-hook-form";
-import Loader from "../../../components/Loader/Loader.jsx";
-import {
-  hasApproveAccess,
-  hasReadAccess,
-  MENU_NAMES,
-} from "../../../utils/permissionUtils.js";
-import {
-  useFetchLateCheckin,
-  useLateCheckInApprove,
-  useLateCheckinReject,
-} from "../../../hooks/useAuth.js";
-import { toast } from "sonner";
+import { IoIosPeople } from "react-icons/io";
+import { hasReadAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
+import { useFetchLateCheckin } from "../../../hooks/useAuth.js";
+
 import { useQueryClient } from "@tanstack/react-query";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 
 const AttendanceRequest = () => {
   const [filteredData, setFilteredData] = useState(null);
   const [filteredPagination, setFilteredPagination] = useState(null);
-  const [expandedRow, setExpandedRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedData, setSelectedData] = useState(null);
   const [lateCheckInDataPerPage, setLateCheckInDataPerPage] = useState(10);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const navigate = useNavigate();
-  const { reset, handleSubmit } = useForm();
+
   const queryClient = useQueryClient();
 
   // Move query invalidation to useEffect
@@ -58,21 +41,11 @@ const AttendanceRequest = () => {
     queryClient.invalidateQueries({ queryKey: ["FetchTeamLeadLateChekin"] });
   }, [queryClient]);
 
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const {
-    isOpen: isRejectOpen,
-    onOpen: onRejectOpen,
-    onOpenChange: onRejectOpenChange,
-    onClose: onRejectClose,
-  } = useDisclosure();
-
   const breadcrumbItems = [
     { label: "Attendance", href: "" },
     { label: "Late Checkin", href: "/Attendance/Request" },
   ];
 
-  /**Permission Check */
-  const hasAttendanceEditAccess = hasApproveAccess(MENU_NAMES.LATECHECKIN);
   const hasaccess = hasReadAccess(MENU_NAMES.LATECHECKIN);
 
   useEffect(() => {
@@ -89,9 +62,6 @@ const AttendanceRequest = () => {
   const totalPages = filteredPagination?.totalPages || data?.totalPages || 1;
   const totalRecords =
     filteredPagination?.totalRecords || data?.totalRecords || 0;
-
-  const approveMutation = useLateCheckInApprove();
-  const rejectMutation = useLateCheckinReject();
 
   // Reset filtered data when page size changes
   useEffect(() => {
@@ -133,74 +103,6 @@ const AttendanceRequest = () => {
       setFilteredPagination(null);
       refetch();
     }
-  };
-
-  const handleAction = async (action, dataId) => {
-    const item = lateCheckinData.find((item) => item.lateCheckInId === dataId);
-    setSelectedData(item);
-    switch (action) {
-      case "Approve":
-        if (hasAttendanceEditAccess) {
-          onOpen();
-        }
-        break;
-      case "Reject":
-        if (hasAttendanceEditAccess) {
-          onRejectOpen();
-        }
-        break;
-      default:
-        console.log("Unknown action");
-    }
-  };
-
-  const onApprove = async () => {
-    if (!selectedData) return;
-
-    const updateLeave = {
-      data: {
-        lateAttendanceId: selectedData.lateCheckInId,
-        isApproved: true,
-      },
-    };
-
-    try {
-      await approveMutation.mutateAsync(updateLeave);
-      onClose();
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        error.message ||
-        "Something went wrong. Try again.";
-      toast.error(errorMessage);
-    }
-  };
-
-  const onReject = async () => {
-    if (!selectedData) return;
-
-    const RejectLeave = {
-      data: {
-        lateAttendanceId: selectedData.lateCheckInId,
-        isApproved: false,
-      },
-    };
-
-    try {
-      await rejectMutation.mutateAsync(RejectLeave);
-      onRejectClose();
-      reset();
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error?.errorList?.[0]?.errorMessage ||
-        error.message ||
-        "Something went wrong. Try again.";
-      toast.error(errorMessage);
-    }
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   const truncateText = (text, maxLength) =>
@@ -279,7 +181,7 @@ const AttendanceRequest = () => {
                     .map((late, index) => (
                       <TableRow
                         key={late?.lateCheckInId}
-                        className="h-14 border-b-2 border-gray-300">
+                        className="h-14 border-b-2 border-gray-300 dark:border-neutral-500">
                         <TableCell>
                           {(currentPage - 1) * lateCheckInDataPerPage +
                             index +
@@ -371,9 +273,7 @@ const AttendanceRequest = () => {
                 </TableHeader>
                 <TableBody>
                   {lateCheckinData?.map((late) => (
-                    <TableRow
-                      key={late?.lateCheckInId}
-                      className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                    <TableRow key={late?.lateCheckInId} className="">
                       <TableCell>
                         <div className="flex flex-col">
                           <span>{late?.fullName}</span>
@@ -415,70 +315,60 @@ const AttendanceRequest = () => {
           {/* Small screens - Card-like view */}
           <div className="block md:hidden">
             <div className="space-y-4 overflow-y-auto">
-              {lateCheckinData.map((late) => (
-                <div
-                  key={late?.lateCheckInId}
-                  className="border rounded-lg overflow-hidden shadow-sm">
-                  <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-black"
-                    onClick={() => toggleExpandedRow(late?.lateCheckInId)}>
-                    <div className="font-medium">{late?.fullName}</div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">
-                        {late?.attendanceDate}
-                      </span>
-                      <FaChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          expandedRow === late?.lateCheckInId
-                            ? "rotate-180"
-                            : ""
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`${
-                      expandedRow === late?.lateCheckInId ? "block" : "hidden"
-                    } p-3 space-y-2 text-sm`}>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">RCL-ID:</div>
-                      <div>{late?.rclId}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Email:</div>
-                      <div className="truncate">{late?.email}</div>
-                    </div>
+              <Accordion>
+                {lateCheckinData?.map((late) => (
+                  <AccordionItem
+                    key={late?.lateCheckInId}
+                    title={
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium">{late?.fullName}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-black dark:text-white">
+                            {late?.attendanceDate}
+                          </span>
+                        </div>
+                      </div>
+                    }>
+                    <>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">RCL-ID:</div>
+                        <div>{late?.rclId}</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Email:</div>
+                        <div className="truncate">{late?.email}</div>
+                      </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Department:</div>
-                      <div className="truncate">
-                        {late?.departmentName.length < 7 ? (
-                          late?.departmentName
-                        ) : (
-                          <Tooltip content={late?.departmentName}>
-                            {truncateText(late?.departmentName, 7)}
-                          </Tooltip>
-                        )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Department:</div>
+                        <div className="truncate">
+                          {late?.departmentName.length < 7 ? (
+                            late?.departmentName
+                          ) : (
+                            <Tooltip content={late?.departmentName}>
+                              {truncateText(late?.departmentName, 7)}
+                            </Tooltip>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Expected Time:</div>
-                      <div>{late?.expectedCheckInTime}</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="font-medium">Actual Time:</div>
-                      <div>{late?.checkInTime}</div>
-                    </div>
-                    <div className="col-span-2 mt-2">
-                      <div className="font-medium">Justification:</div>
-                      <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
-                        {late?.lateReason}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Expected Time:</div>
+                        <div>{late?.expectedCheckInTime}</div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="font-medium">Actual Time:</div>
+                        <div>{late?.checkInTime}</div>
+                      </div>
+                      <div className="col-span-2 mt-2">
+                        <div className="font-medium">Justification:</div>
+                        <div className="mt-1 p-2 bg-gray-50 dark:bg-black rounded">
+                          {late?.lateReason}
+                        </div>
+                      </div>
+                    </>
+                  </AccordionItem>
+                ))}
+              </Accordion>
 
               {(!lateCheckinData || lateCheckinData.length === 0) && (
                 <div className="p-8 text-center text-gray-500">
@@ -523,224 +413,6 @@ const AttendanceRequest = () => {
             </div>
           )}
         </div>
-
-        {/* Approve Modal */}
-        <Modal
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          placement="center"
-          size="4xl"
-          isKeyboardDismissDisabled={false}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalBody>
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">
-                      <p>Late Check-In Status</p>
-                    </h3>
-                    {selectedData && (
-                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
-                        {/**Personal details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
-                          <div className="flex  items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Employee:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.fullName}
-                            </span>
-                          </div>
-                          <div className="flex  items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              RCL-ID:
-                            </span>
-                            <span className="font-mono text-gray-800 dark:text-white">
-                              {selectedData?.rclId}
-                            </span>
-                          </div>
-                        </div>
-                        {/**Date and Time */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Date:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.attendanceDate}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Expected Time:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.expectedCheckInTime || "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Actual Time:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.checkInTime}
-                            </span>
-                          </div>
-                        </div>
-                        {/**Justification  */}
-                        <div className="flex flex-col h-60">
-                          <span className="font-semibold text-gray-700 dark:text-white mb-2">
-                            Justification:
-                          </span>
-                          <p className="text-sm p-3 h-full bg-gray-50 dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
-                            {selectedData?.lateReason ||
-                              "No justification provided"}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2 justify-end mt-4">
-                    <div className="flex items-center gap-4 p-3 rounded-lg bg-gray-50  dark:bg-black shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-gray-700 dark:text-white">
-                          Team Lead:
-                        </span>
-                        {selectedData?.approvedByTeamLead === true ? (
-                          <FaCircleCheck className="text-green-500 w-5 h-5" />
-                        ) : selectedData?.rejectedByTeamLead === false ? (
-                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                        ) : (
-                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-gray-700 dark:text-white">
-                          Associate Team Lead:
-                        </span>
-                        {selectedData?.approvedByAssociateTeamLead === true ? (
-                          <FaCircleCheck className="text-green-500 w-5 h-5" />
-                        ) : selectedData?.rejectedByAssociateTeamLead ===
-                          true ? (
-                          <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                        ) : (
-                          <span className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded-2xl border-2 border-yellow-300">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <Button
-                      className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
-                      onPress={() => onApprove()}>
-                      Approve
-                    </Button>
-                    <Button color="danger" type="submit" onPress={onReject}>
-                      Reject
-                    </Button>
-                    <Button onPress={onClose}>Cancel</Button>
-                  </div>
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-
-        {/* Reject Modal */}
-        <Modal
-          isOpen={isRejectOpen}
-          size="4xl"
-          onOpenChange={onRejectOpenChange}
-          placement="center"
-          isKeyboardDismissDisabled={false}>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalBody>
-                  <form onSubmit={handleSubmit(onReject)}>
-                    <h3 className="text-lg font-medium">
-                      <p>Are you sure you want to reject this late checkin?</p>
-                    </h3>
-                    {selectedData && (
-                      <div className="bg-white dark:bg-black p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
-                        {/**Personal details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-1 pb-2 border-b border-gray-100">
-                          <div className="flex  items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Employee:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.fullName}
-                            </span>
-                          </div>
-                          <div className="flex  items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              RCL-ID:
-                            </span>
-                            <span className="font-mono text-gray-800 dark:text-white">
-                              {selectedData?.rclId}
-                            </span>
-                          </div>
-                        </div>
-                        {/**Date and Time */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-1 pb-2 border-b border-gray-100">
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Date:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.attendanceDate}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Expected Time:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.expectedCheckInTime || "N/A"}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-semibold text-gray-700 dark:text-white">
-                              Actual Time:
-                            </span>
-                            <span className="text-gray-800 dark:text-white">
-                              {selectedData?.checkInTime}
-                            </span>
-                          </div>
-                        </div>
-                        {/**Justification  */}
-                        <div className="flex flex-col h-60">
-                          <span className="font-semibold text-gray-700 mb-2">
-                            Justification:
-                          </span>
-                          <p className="text-sm p-3 h-full bg-gray-50  dark:bg-black rounded-md border border-gray-100 min-h-[60px]">
-                            {selectedData?.lateReason ||
-                              "No justification provided"}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex gap-2 justify-end mt-4">
-                      <Button
-                        className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
-                        type="submit">
-                        Reject
-                      </Button>
-                      <Button onPress={onClose}>Cancel</Button>
-                    </div>
-                  </form>
-                </ModalBody>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
       </div>
     </div>
   );

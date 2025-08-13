@@ -62,7 +62,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
   return (
     <>
       {/* {isLoading && <Loader />} */}
-      <div className="relative flex flex-col bg-white dark:bg-black  border border-black dark:border-white rounded-b-md shadow-xl p-8">
+      <div className="relative flex flex-col bg-white dark:bg-black  border border-gray-300 dark:border-slate-700 rounded-b-md shadow-xl p-8">
         {/* Single Form Section */}
         <div className="bg-white dark:bg-black text-lg  rounded-lg px-6 mt-2 mx-1">
           <h1 className="text-xl font-semibold flex mb-6">
@@ -108,7 +108,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
                   <Divider />
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
                     <div>
-                      <label className="text-black font-semibold text-sm">
+                      <label className="text-black dark:text-white font-semibold text-sm">
                         Education Certificate
                       </label>
                       {educationDocuments[index] ? (

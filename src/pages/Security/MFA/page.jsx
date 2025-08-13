@@ -3,7 +3,6 @@ import InputComponent from "../../../components/ui/InputComponent.jsx";
 import { useForm } from "react-hook-form";
 import { Button, Spinner, Switch } from "@heroui/react";
 
-import Loader from "../../../components/Loader/Loader.jsx";
 import GoBack from "../../../components/GoBack.jsx";
 import { IoShieldCheckmark, IoInformationCircle } from "react-icons/io5";
 import {
@@ -15,7 +14,7 @@ const MFA = () => {
   const {
     control: twoFactorControl,
     handleSubmit: handletwoFactorSubmit,
-    formState: { errors: twoFactorErrors, isSubmitting: isTwoFactorSubmitting },
+    formState: { isSubmitting: isTwoFactorSubmitting },
     reset: resetTwoFactor,
   } = useForm();
 
@@ -45,15 +44,13 @@ const MFA = () => {
     }
   }, [data]);
 
-  const loading = isTwoFactorPending || isTwoFactorSubmitting;
-
   return (
     <div className="max-w-4xl mx-auto p-6">
       <GoBack />
 
-      <div className="mt-6 bg-white dark:bg-black rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="mt-6 bg-white dark:bg-black rounded-2xl shadow-sm border border-gray-200 dark:border-slate-600">
         {/* Header Section */}
-        <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-8 py-6 border-b border-gray-200 dark:border-slate-600">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gray-100 dark:bg-neutral-900 rounded-xl flex items-center justify-center">
               <IoShieldCheckmark className="w-6 h-6 text-gray-600 dark:text-gray-300" />
@@ -70,7 +67,7 @@ const MFA = () => {
         </div>
 
         {/* Info Banner */}
-        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-gray-600">
+        <div className="mx-8 mt-6 p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-slate-600">
           <div className="flex items-start space-x-3">
             <IoInformationCircle className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -92,7 +89,7 @@ const MFA = () => {
             onSubmit={handletwoFactorSubmit(handleSubmit)}
             className="space-y-6">
             {/* MFA Toggle */}
-            <div className="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-slate-600">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

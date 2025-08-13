@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input } from "@heroui/react";
 import Loader from "../../../../components/Loader/Loader.jsx";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
 import TextAreaComp from "../../../../components/ui/TextAreaComp.jsx";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import GoBack from "../../../../components/GoBack";
 import { Checkbox } from "@heroui/react";
@@ -21,7 +19,7 @@ const EditRole = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [menusAndActions, setMenusAndActions] = useState([]);
-  const { control, handleSubmit, reset, watch } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       roleName: "",
       roleDescription: "",
@@ -30,9 +28,6 @@ const EditRole = () => {
   });
 
   const NumroleId = parseInt(roleId);
-
-  // Watch form values to keep them in sync
-  const watchedValues = watch();
 
   const hasaccess = hasUpdateAccess(MENU_NAMES.ROLES);
 
@@ -227,7 +222,9 @@ const EditRole = () => {
         <div className="flex flex-col h-full">
           <div className="flex justify-between items-center mb-6">
             <GoBack />
-            <h1 className="text-2xl font-bold text-gray-800">Edit Roles</h1>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+              Edit Roles
+            </h1>
             <div></div>
           </div>
 
@@ -282,7 +279,7 @@ const EditRole = () => {
 
               {/* Menus and Actions Section */}
               <div className="mt-6">
-                <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
+                <div className="flex justify-between border-b border-gray-200 dark:border-neutral-600 pb-2 mb-4">
                   <h3 className="text-lg font-medium text-gray-800 dark:text-white">
                     Permissions
                   </h3>
@@ -310,7 +307,7 @@ const EditRole = () => {
                       <div
                         key={menu.menuId}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-800 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-800 p-4 rounded-t-lg border-b border-gray-200 dark:border-neutral-600">
                           <div>
                             <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                               {menu.menuName}
@@ -343,7 +340,7 @@ const EditRole = () => {
                             {menu.actions.map((action, actionIndex) => (
                               <div
                                 key={action.actionId}
-                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-slate-500 rounded-md">
+                                className="flex items-center space-x-2 p-2 hover:bg-gray-50 dark:hover:bg-neutral-500 rounded-md">
                                 <Checkbox
                                   size="sm"
                                   color="danger"
@@ -376,7 +373,7 @@ const EditRole = () => {
               <div className="flex justify-start mt-8 space-x-4">
                 <ButtonComponent
                   type="submit"
-                  className="bg-black text-white hover:bg-gray-800"
+                  className="bg-black text-white "
                   content={isLoading ? "Updating..." : "Update Role"}
                   disabled={isLoading}
                 />

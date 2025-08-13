@@ -189,7 +189,7 @@ const UserSidebar = () => {
                     className={`flex items-center gap-4 p-3  rounded-lg cursor-pointer transition-all duration-300 ${
                       location.pathname === service.to
                         ? "bg-active text-white border-l-4 border-l-red-800"
-                        : "hover:bg-gray-700"
+                        : "hover:bg-neutral-700"
                     }`}
                     onClick={() => service.children && toggleDropdown(index)}>
                     <service.icon className="text-2xl" />
@@ -214,7 +214,7 @@ const UserSidebar = () => {
                             className={`flex p-2 rounded-lg transition-all duration-300 gap-4  ${
                               location.pathname === child.to
                                 ? "bg-active text-white border-l-4 border-l-red-800"
-                                : "hover:bg-gray-600"
+                                : "hover:bg-neutral-600"
                             }`}>
                             {location.pathname === child.to && (
                               <BsArrowReturnRight className="mt-1 " />

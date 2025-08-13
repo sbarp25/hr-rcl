@@ -224,7 +224,7 @@ const Settings = () => {
           </div>
 
           {/* Profile Settings Card */}
-          <div className="bg-white dark:bg-black  shadow-xl rounded-3xl p-8 border border-gray-200">
+          <div className="bg-white dark:bg-black  shadow-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-500">
             {" "}
             <h2 className="text-2xl font-bold text-center mb-8">
               Profile Settings
@@ -232,7 +232,7 @@ const Settings = () => {
             <div className="flex flex-col  items-center justify-center gap-8 mb-10">
               {/* Profile Image Upload */}
               <div
-                className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300  hover:shadow-md transition cursor-pointer"
+                className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-slate-500  hover:shadow-md transition cursor-pointer"
                 onClick={onOpen}>
                 <Avatar
                   className="h-full w-full object-cover"
@@ -256,7 +256,7 @@ const Settings = () => {
               </div>
             </div>
             {/* Personal Information Card */}
-            <div className=" dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-gray-700 p-6">
+            <div className=" dark:bg-neutral-800 rounded-xl border border-gray-300 dark:border-slate-700 p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold">
                   <span className="relative">
@@ -315,7 +315,7 @@ const Settings = () => {
         isDismissable={true}
         isKeyboardDismissDisabled={false}>
         <ModalContent>
-          {(onClose) => (
+          {() => (
             <>
               <ModalBody>
                 {" "}
@@ -324,7 +324,7 @@ const Settings = () => {
                   className="flex flex-col items-center justify-center gap-8 mb-10">
                   {/* Profile Image Upload */}
                   <div
-                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-600 hover:shadow-md transition cursor-pointer mt-10"
+                    className="relative h-48 w-48 lg:h-64 lg:w-64 rounded-full overflow-hidden border-2 border-gray-300 dark:border-slate-600 hover:shadow-md transition cursor-pointer mt-10"
                     onClick={handleIconClick}>
                     {imageURL ? (
                       <Avatar

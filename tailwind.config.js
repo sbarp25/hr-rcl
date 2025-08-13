@@ -16,7 +16,7 @@ export default {
         active: "#ef4660",
         breadcrumbs: "#e4e4e7",
         breadcrumbshover: "#71717a",
-        breadcrumbsborder: "#3f3f46",
+        breadcrumbsborder: "#27272a",
         breadcrumbshoverborder: "#71717a",
         activehover: "#d63851",
         text: "#184c5f",

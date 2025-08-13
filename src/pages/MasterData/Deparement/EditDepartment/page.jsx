@@ -129,7 +129,7 @@ const EditDepartment = () => {
             <div className="page-title -pl-2">Edit Department</div>
             <div></div>
           </div>
-          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 dark:border-neutral-600 ">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
               {/* Department Title */}
               <div>

@@ -48,8 +48,8 @@ const GetBankDetails = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-        <div className="bg-white dark:bg-black  shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 border-b pb-2 border-gray-300">
+        <div className="bg-white dark:bg-black  shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 dark:border-slate-500 p-6">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 border-b pb-2 border-gray-300 dark:border-neutral-600">
             Bank Details
           </h2>
           <ul className="space-y-4 text-sm text-gray-700 dark:text-white">

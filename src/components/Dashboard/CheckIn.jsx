@@ -236,7 +236,7 @@ const CheckIn = ({ checkedInStatus, onStatusChange }) => {
                         className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                         type="submit">
                         {lateCheckInMutation.isPending ? (
-                          <span className="flex items-center justify-center">
+                          <span className="flex items-center justify-center gap-4">
                             <Spinner size="sm" color="danger" />
                             Submitting
                           </span>

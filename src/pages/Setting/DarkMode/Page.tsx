@@ -31,7 +31,7 @@ const DarkMode = () => {
       <div className="px-6 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Theme Switcher Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">

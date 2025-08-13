@@ -8,10 +8,9 @@ const Personal = ({ employeeData }) => {
   const userCompleteDetails =
     employeeData?.userCompleteDetailsResponseDto || {};
   const personalDetails = userCompleteDetails?.personalDetails || {};
-  console.log(personalDetails);
 
   return (
-    <div className="bg-gray-50 dark:bg-black  pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300">
+    <div className="bg-gray-50 dark:bg-black  pt-2 sm:pt-4 overflow-auto rounded-b-xl border border-gray-300 dark:border-slate-700">
       <div className="rounded-xl space-y-4 sm:space-y-6 pt-4 sm:pt-6">
         {/**Basic Information */}
         <div className="bg-white dark:bg-black rounded-xl mb-4 mx-2 sm:mx-4 p-3 sm:p-5">

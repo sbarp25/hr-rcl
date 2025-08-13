@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { getIpAddress } from "../../../utils/getIpAddress";
 import GoBack from "../../../components/GoBack";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 import { now } from "@internationalized/date";
 
@@ -94,7 +93,7 @@ const RequestWorkFromHome = () => {
         <div className="w-8"></div>
       </div>
 
-      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
+      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-slate-500 shadow-sm">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-8 p-2 sm:p-4 ">

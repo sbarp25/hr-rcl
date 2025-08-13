@@ -90,7 +90,7 @@ const AddPosition = () => {
             <div className="page-title -pl-2">Add Position</div>
             <div></div>
           </div>
-          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 dark:border-slate-600 ">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
               {/* position Title */}
               <div>

@@ -87,7 +87,7 @@ const ChangePassword = () => {
 
           <div className="grid grid-cols-1 gap-6 p-6  rounded-xl">
             {/* Change Password Form */}
-            <div className="bg-white border border-gray-200 dark:bg-black shadow-sm p-6 rounded-2xl">
+            <div className="bg-white border border-gray-200 dark:border-slate-600 dark:bg-black shadow-sm p-6 rounded-2xl">
               <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">
                 Change Password
               </h2>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { hasReadAccess, MENU_NAMES } from "../../../../utils/permissionUtils";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,6 @@ import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp";
 import Search from "../../../../components/Search";
 import { IoIosPeople } from "react-icons/io";
 import Filter from "../../../../components/Filter";
-import { Button } from "@heroui/button";
 import {
   Table,
   TableBody,
@@ -16,7 +15,6 @@ import {
   TableRow,
 } from "@heroui/table";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
-import { HiPencilSquare } from "react-icons/hi2";
 import { FaChevronDown } from "react-icons/fa6";
 import axiosInstance from "../../../../lib/axios-Instance";
 
@@ -180,7 +178,7 @@ const SelfAutoCheckout = () => {
             {autoCheckOutData.map((employee, index) => (
               <TableRow
                 key={employee.rclId}
-                className="h-14 border-b-2 border-gray-300">
+                className="h-14 border-b-2 border-gray-300 dark:border-neutral-500">
                 <TableCell>
                   {(currentPage - 1) * autoCheckOutDataPerPage + index + 1}
                 </TableCell>
@@ -210,8 +208,8 @@ const SelfAutoCheckout = () => {
             items={isLoading ? [] : autoCheckOutData}
             isLoading={isLoading}
             loadingContent={<SkeletonLoader />}>
-            {autoCheckOutData.map((employee, index) => (
-              <TableRow key={employee.rclId} className="hover:bg-gray-50">
+            {autoCheckOutData.map((employee) => (
+              <TableRow key={employee.rclId} className="">
                 <TableCell>
                   <div>
                     <div className="font-medium">{employee.fullName}</div>
@@ -242,7 +240,7 @@ const SelfAutoCheckout = () => {
           <SkeletonLoader />
         ) : (
           <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-            {autoCheckOutData.map((employee, index) => (
+            {autoCheckOutData.map((employee) => (
               <div
                 key={employee.rclId}
                 className="border rounded-lg overflow-hidden shadow-sm bg-white">

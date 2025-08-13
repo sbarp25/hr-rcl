@@ -127,7 +127,7 @@ const AllTrustedDevices = () => {
             {trustedDevices?.map((device) => (
               <div
                 key={device.id}
-                className="bg-white dark:bg-black rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                className="bg-white dark:bg-black rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-500 hover:shadow-md transition-shadow">
                 {/* Device Header */}
                 <div className="flex items-start justify-between mb-4 h-fit">
                   <div className="flex items-center gap-3">
@@ -181,7 +181,7 @@ const AllTrustedDevices = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-500">
                   <ButtonComponent
                     className="dark:bg-gray-500 dark:text-white"
                     content="Remove Device"

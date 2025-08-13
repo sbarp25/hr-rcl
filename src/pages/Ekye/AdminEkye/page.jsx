@@ -21,9 +21,7 @@ import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import {
   hasApproveAccess,
   hasReadAccess,
-  hasUpdateAccess,
   hasViewone,
-  hasViewSingleAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { useFetchEKYE } from "../../../hooks/useAuth.js";
@@ -135,7 +133,6 @@ const Page = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
-  const startRecord = (currentPage - 1) * ekyeDashboardDataPerPage + 1;
   const endRecord = Math.min(
     currentPage * ekyeDashboardDataPerPage,
     totalRecords
@@ -212,7 +209,7 @@ const Page = () => {
                     return (
                       <TableRow
                         key={data.rclId || Math.random()}
-                        className="h-14 border-b-2 border-gray-300">
+                        className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                         <TableCell>{serialNumber}</TableCell>
                         <TableCell>{data.rclId || "N/A"}</TableCell>
                         <TableCell>
@@ -322,9 +319,7 @@ const Page = () => {
                   isLoading={isEKYELoading}
                   loadingContent={<SkeletonLoader />}>
                   {(data) => (
-                    <TableRow
-                      key={data.rclId || Math.random()}
-                      className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                    <TableRow key={data.rclId || Math.random()} className=" ">
                       <TableCell>{data.rclId || "N/A"}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">

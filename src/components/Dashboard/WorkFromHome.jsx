@@ -61,7 +61,7 @@ const WorkFromHome = () => {
   return (
     <>
       <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm ">
-        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-gray-500 gap-3">
+        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-slate-500 gap-3">
           <p className="hidden md:block text-xl font-bold">Work From Home</p>
           <p className="flex md:hidden text-xl font-bold">WFH</p>
           <div>
@@ -78,7 +78,7 @@ const WorkFromHome = () => {
                 {wfhList.map((data, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-black rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+                    className="bg-white dark:bg-black rounded-lg shadow-md p-4 border border-gray-200 dark:border-slate-500 hover:shadow-lg transition-shadow">
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-300 border border-green-600 text-green-600">
@@ -97,7 +97,7 @@ const WorkFromHome = () => {
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 dark: pt-3">
+                    <div className="border-t border-gray-200 dark:border-slate-500 dark: pt-3">
                       <div className="flex justify-between items-center">
                         <div className="text-sm">
                           <span className="font-medium text-gray-500 dark:text-white">

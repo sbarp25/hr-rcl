@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
-import { FaCheckCircle, FaRegEye } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 import { FaCircleCheck, FaXmark } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
@@ -38,7 +38,7 @@ import { useLeaveByRole } from "../../../hooks/useAuth.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateLeaveStatus } from "../../../api/auth.js";
 import { IoIosRemoveCircle } from "react-icons/io";
-import Loader from "../../../components/Loader/Loader.jsx";
+
 import LocalStorageUtil from "../../../utils/LocalStorageUtil.js";
 
 const LeaveStatus = () => {
@@ -65,7 +65,6 @@ const LeaveStatus = () => {
   const {
     data: leaveResponse,
     isLoading,
-    refetch: fetchLeave,
     isFetching,
   } = useLeaveByRole(currentPage, leaveDataPerPage);
 
@@ -78,7 +77,7 @@ const LeaveStatus = () => {
   // Mutation for approving leave
   const approveMutation = useMutation({
     mutationFn: updateLeaveStatus,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // toast.success(data.message);
       queryClient.invalidateQueries(["leaveList"]);
       onClose();
@@ -90,7 +89,7 @@ const LeaveStatus = () => {
 
   const rejectMutation = useMutation({
     mutationFn: updateLeaveStatus,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // toast.success(data.message);
       queryClient.invalidateQueries(["leaveList"]);
       reset();
@@ -275,7 +274,7 @@ const LeaveStatus = () => {
                   {(item) => (
                     <TableRow
                       key={item.rclId}
-                      className="h-14 border-b-2 border-gray-300">
+                      className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                       <TableCell>
                         {item.fullName.length < 7 ? (
@@ -390,7 +389,7 @@ const LeaveStatus = () => {
                   isLoading={showLoading}
                   loadingContent={<SkeletonLoader />}>
                   {(item) => (
-                    <TableRow key={item.rclId} className="hover:bg-gray-50">
+                    <TableRow key={item.rclId} className="">
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-medium">

@@ -5,10 +5,9 @@ import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
-import { Button, Checkbox } from "@heroui/react";
+import { Checkbox } from "@heroui/react";
 import GoBack from "../../../../components/GoBack";
 import Loader from "../../../../components/Loader/Loader.jsx";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
 import {
   hasCreateAccess,
@@ -21,7 +20,7 @@ const AddRoles = () => {
   const [menusAndActions, setMenusAndActions] = useState([]);
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, setValue } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     mode: "onChange",
   });
 
@@ -314,7 +313,7 @@ const AddRoles = () => {
 
               {/* Menus and Actions Section */}
               <div className="mt-6">
-                <div className="flex justify-between border-b border-gray-200 pb-2 mb-4">
+                <div className="flex justify-between border-b border-gray-200 dark:border-neutral-600 pb-2 mb-4">
                   <h3 className="text-lg font-medium text-gray-800 dark:text-white">
                     Permissions
                   </h3>
@@ -342,7 +341,7 @@ const AddRoles = () => {
                       <div
                         key={`menu-${menu.menuId}-${menuIndex}`}
                         className="border border-gray-200 rounded-lg shadow-sm">
-                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-900 p-4 rounded-t-lg border-b border-gray-200">
+                        <div className="flex justify-between bg-gray-50 dark:bg-neutral-900 p-4 rounded-t-lg border-b border-gray-200 dark:border-neutral-600">
                           <div>
                             <h4 className="text-md font-semibold text-gray-800 dark:text-white">
                               {menu.menuDescription}

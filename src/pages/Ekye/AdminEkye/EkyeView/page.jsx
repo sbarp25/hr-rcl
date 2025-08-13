@@ -40,7 +40,7 @@ const tabData = [
 // Desktop/Tablet Tabs Component
 const DesktopTabs = ({ activeTab, changeTab }) => (
   <div className="hidden md:block">
-    <ul className="nav nav-tabs flex border-b border-gray-200 dark:border-gray-700">
+    <ul className="nav nav-tabs flex border-b border-gray-200 dark:border-neutral-600">
       {tabData?.map((tab) => (
         <li
           key={tab.name}
@@ -99,7 +99,7 @@ const MobileTabs = ({ activeTab, changeTab }) => {
                 className={`w-full text-left p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0 transition-colors duration-200 ${
                   activeTab.name === tab.name
                     ? "bg-gray-100 dark:bg-neutral-700 text-gray-800 dark:text-gray-200 font-semibold"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-10 dark:hover:bg-neutral-600"
                 }`}>
                 {tab.name}
               </button>

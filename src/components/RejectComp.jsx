@@ -76,7 +76,7 @@ const RejectComp = ({ employeeData }) => {
       <ButtonComponent
         onPress={onOpen}
         isDisabled={rejectMutation.isPending}
-        className={"text-red-700 dark:text-black hover:text-white"}
+        className={""}
         content={
           <span className="inline-flex items-center gap-2  cursor-pointer">
             <RxCross1 className="w-4 h-4" />

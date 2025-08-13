@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
-import { FaChevronDown } from "react-icons/fa";
 import { BiData } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -27,7 +27,6 @@ import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
-import Loader from "../../../components/Loader/Loader.jsx";
 import {
   hasCreateAccess,
   hasDeleteAccess,
@@ -35,23 +34,17 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
-import {
-  useDeleteRoles,
-  useEmployeeDelete,
-  useFetchRoles,
-} from "../../../hooks/useAuth.js";
+import { useDeleteRoles, useFetchRoles } from "../../../hooks/useAuth.js";
 
 const Roles = () => {
   const [roleId, setRoleId] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
   const [filteredPagination, setFilteredPagination] = useState(null);
 
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [rolesPerPage, setRolesPerPage] = useState(10);
 
-  const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const navigate = useNavigate();
@@ -110,10 +103,6 @@ const Roles = () => {
       setFilteredPagination(null);
       refetch();
     }
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   const handleAction = async (action, role) => {
@@ -235,7 +224,7 @@ const Roles = () => {
                     {roleData?.map((role, index) => (
                       <TableRow
                         key={role.roleId}
-                        className="h-14 justify-center items-center border-b-2 border-gray-300">
+                        className="h-14 justify-center items-center border-b-2 border-gray-300 dark:border-neutral-600">
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           {role?.roleName?.length < 7 ? (
@@ -300,7 +289,7 @@ const Roles = () => {
                     {roleData?.map((role) => (
                       <TableRow
                         key={role.roleId}
-                        className="h-14 hover:bg-gray-50 dark:hover:bg-slate-500 border-b-2 border-gray-300">
+                        className="h-14  border-b-2 border-gray-300 dark:border-neutral-600">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium">{role.roleName}</span>
@@ -348,70 +337,21 @@ const Roles = () => {
             <div className="block md:hidden">
               <div className="space-y-4">
                 {loading && <SkeletonLoader />}
-                {roleData?.map((role) => (
-                  <div
-                    key={role.roleId}
-                    className="border rounded-lg overflow-hidden shadow-sm">
-                    <div
-                      className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-800"
-                      onClick={() => toggleExpandedRow(role.roleId)}>
-                      <div className="font-medium">{role.roleName}</div>
-                      <div className="flex items-center gap-2">
-                        <FaChevronDown
-                          size={16}
-                          className={`transition-transform ${
-                            expandedRow === role.roleId ? "rotate-180" : ""
-                          }`}
-                        />
-                      </div>
-                    </div>
-                    <div
-                      className={`${
-                        expandedRow === role.roleId ? "block" : "hidden"
-                      } p-3 space-y-2 text-sm`}>
+                <Accordion variant="bordered">
+                  {roleData?.map((role) => (
+                    <AccordionItem
+                      key={role.roleId}
+                      aria-label={role.roleName}
+                      title={role.roleName}>
                       <div className="grid grid-cols-1 gap-2">
                         <div className="font-medium">Description:</div>
                         <div className="bg-gray-50 dark:bg-neutral-500 p-2 rounded">
                           {role.roleDescription}
                         </div>
                       </div>
-                      <div className="flex justify-end gap-4 mt-2">
-                        <Button
-                          size="sm"
-                          color="success"
-                          variant="flat"
-                          className={`${
-                            !hasRoleEditAccess
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          onPress={() =>
-                            hasRoleEditAccess && handleAction("edit", role)
-                          }
-                          disabled={!hasRoleEditAccess}>
-                          <HiPencilSquare className="w-4 h-4" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="danger"
-                          variant="flat"
-                          className={`${
-                            !hasRoleDeleteAccess
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          onPress={() =>
-                            hasRoleDeleteAccess && handleAction("delete", role)
-                          }
-                          disabled={!hasRoleDeleteAccess}>
-                          <MdDelete className="w-4 h-4" />
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                    </AccordionItem>
+                  ))}
+                </Accordion>
 
                 {(!roleData || roleData.length === 0) && !isLoading && (
                   <div className="p-8 text-center text-gray-500">

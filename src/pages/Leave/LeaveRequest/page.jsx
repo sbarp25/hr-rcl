@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import InputComponent from "../../../components/ui/InputComponent.jsx";
 import ButtonComponent from "../../../components/ui/ButtonComp.jsx";
-import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { now } from "@internationalized/date";
@@ -11,19 +9,16 @@ import DatepickerComponent, {
   formatDate,
 } from "../../../components/ui/DatepickerComponent.jsx";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
-import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import GoBack from "../../../components/GoBack";
 import ReusableAutocomplete from "../../../components/ui/SearableDropdown";
 import {
   hasCreateAccess,
-  hasDeleteAccess,
   hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { useLeaveRequest } from "../../../hooks/useAuth.js";
 const LeaveRequest = () => {
-  const { control, reset, setValue, handleSubmit, watch } = useForm({
+  const { control, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -40,11 +35,6 @@ const LeaveRequest = () => {
   const [isToDateDisabled, setIsToDateDisabled] = useState(false);
   const navigate = useNavigate();
   const { mutate: leaveRequestData } = useLeaveRequest();
-
-  const breadcrumbItems = [
-    { label: "Leave", href: "" },
-    { label: "Leave Request", href: "/Leave/Request" },
-  ];
 
   const LeaveType = [
     { key: "CASUAL", label: "Casual Leave" },
@@ -109,8 +99,6 @@ const LeaveRequest = () => {
   const hasaccess = hasReadAccess(MENU_NAMES.LEAVEREQUEST);
 
   const hasLeaveRequestaccess = hasCreateAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeaveEditaccess = hasUpdateAccess(MENU_NAMES.LEAVEREQUEST);
-  const hasLeavedeleteaccess = hasDeleteAccess(MENU_NAMES.LEAVEREQUEST);
   useEffect(() => {
     if (!hasaccess) {
       navigate("/dashboard");
@@ -127,7 +115,7 @@ const LeaveRequest = () => {
         <div className="w-8"></div>
       </div>
 
-      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 shadow-sm">
+      <div className="bg-white dark:bg-black p-2 sm:p-4 rounded-xl max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-slate-500 shadow-sm">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-8 p-2 sm:p-4">

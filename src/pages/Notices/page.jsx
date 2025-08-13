@@ -2,15 +2,8 @@ import { MdArticle } from "react-icons/md";
 import { Pagination } from "@heroui/react";
 import { useEffect, useState } from "react";
 import BreadcrumbsComponent from "../../components/ui/BreadCrumbsComp.jsx";
-import LocalStorageUtil from "../../utils/LocalStorageUtil";
 import { useNavigate } from "react-router-dom";
-import {
-  hasCreateAccess,
-  hasDeleteAccess,
-  hasReadAccess,
-  hasUpdateAccess,
-  MENU_NAMES,
-} from "../../utils/permissionUtils.js";
+import { hasReadAccess, MENU_NAMES } from "../../utils/permissionUtils.js";
 
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -192,9 +185,6 @@ const Page = () => {
 
   /**To check Employee see status */
   const hasaccess = hasReadAccess(MENU_NAMES.NOTICE);
-  const hasHandBookCreateAccess = hasCreateAccess(MENU_NAMES.NOTICE);
-  const hasHandBookEditAccess = hasUpdateAccess(MENU_NAMES.NOTICE);
-  const hasHandBookDeleteAccess = hasDeleteAccess(MENU_NAMES.NOTICE);
 
   useEffect(() => {
     if (!hasaccess) {
@@ -221,7 +211,7 @@ const Page = () => {
           {paginatedNotices.map((notice) => (
             <div
               key={notice.id}
-              className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
+              className="border border-gray-300 dark:border-slate-600 rounded-lg p-4 mb-4 shadow-md flex flex-col md:flex-row gap-4">
               <div className="flex-shrink-0 md:w-32 md:h-64 border-b-2 md:border-b-0 md:border-r-2 border-red-600 flex items-center justify-center">
                 <p className="text-xl font-bold text-gray-900 leading-6 text-center">
                   {notice.date}
