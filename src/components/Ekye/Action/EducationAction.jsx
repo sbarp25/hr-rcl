@@ -40,6 +40,7 @@ const EducationAction = ({ employeeData }) => {
       status: "APPROVED",
     };
     try {
+      setIsLoading(true);
       if (hasEKYEApproveAccess) {
         const response = await axiosInstance.post(
           "/api/v1/approved/users",
@@ -62,6 +63,8 @@ const EducationAction = ({ employeeData }) => {
       const errorMessage =
         error.response?.data?.error || "Something went wrong";
       toast.error(errorMessage);
+    } finally {
+      setIsLoading(true);
     }
   };
 

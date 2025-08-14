@@ -14,10 +14,13 @@ import {
   hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
+import Legend from "../../ui/Legend.jsx";
+import Loader from "../../Loader/Loader.jsx";
 
 const EkyeEducationDetails = ({ employeeData }) => {
   const navigate = useNavigate();
   const [educationDocuments, setEducationDocuments] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const { rclId } = useParams();
 
@@ -38,6 +41,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
       status: "APPROVED",
     };
     try {
+      setIsLoading(true);
       if (hasEKYEApproveAccess) {
         const response = await axiosInstance.post(
           "/api/v1/approved/users",
@@ -56,12 +60,14 @@ const EkyeEducationDetails = ({ employeeData }) => {
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
-      {/* {isLoading && <Loader />} */}
+      {isLoading && <Loader />}
       <div className="relative flex flex-col bg-white dark:bg-black  border border-gray-300 dark:border-slate-700 rounded-b-md shadow-xl p-8">
         {/* Single Form Section */}
         <div className="bg-white dark:bg-black text-lg  rounded-lg px-6 mt-2 mx-1">
@@ -71,6 +77,7 @@ const EkyeEducationDetails = ({ employeeData }) => {
               <UnderlineComponent />
             </span>
           </h1>
+          <Legend />
 
           {employeeData?.educationalDetails?.length > 0 ? (
             employeeData.educationalDetails.map((education, index) => (

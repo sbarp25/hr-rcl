@@ -68,7 +68,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Citizenship Front Photo */}
               <div className="space-y-2">
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   Citizenship Front Photo
                 </label>
                 {citizenshipFront ? (
@@ -92,7 +92,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
 
               {/* Citizenship Back Photo */}
               <div className="space-y-2">
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   Citizenship Back Photo
                 </label>
                 {citizenshipBack ? (
@@ -152,7 +152,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* PAN Document */}
               <div className="space-y-2">
-                <label className="text-black font-semibold text-sm">
+                <label className="text-black dark:text-white font-semibold text-sm">
                   PAN Photo
                 </label>
                 {photoPAN ? (

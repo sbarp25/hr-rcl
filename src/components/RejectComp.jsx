@@ -5,6 +5,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   Textarea,
   useDisclosure,
 } from "@heroui/react";
@@ -141,7 +142,14 @@ const RejectComp = ({ employeeData }) => {
                     <div className="flex items-center justify-center gap-2">
                       <RxCross1 />
                       <span>
-                        {rejectMutation.isPending ? "Rejecting..." : "Reject"}
+                        {rejectMutation.isPending ? (
+                          <span className="flex items-center gap-4">
+                            <Spinner color="danger" size="sm" />
+                            Rejecting...
+                          </span>
+                        ) : (
+                          "Reject"
+                        )}
                       </span>
                     </div>
                   </Button>
