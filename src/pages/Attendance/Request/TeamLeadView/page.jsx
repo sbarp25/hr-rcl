@@ -732,9 +732,9 @@ const TeamLeadLateCheckin = () => {
                       className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active"
                       onPress={() => onApprove()}>
                       {isApproving ? (
-                        <span className="flex items-center">
-                          Approving
+                        <span className="flex items-center gap-4">
                           <Spinner color="danger" size="sm" />
+                          Approving
                         </span>
                       ) : (
                         "Approve"
@@ -746,9 +746,9 @@ const TeamLeadLateCheckin = () => {
                       type="submit"
                       onPress={onReject}>
                       {isRejecting ? (
-                        <span className="flex items-center">
-                          Rejecting
+                        <span className="flex items-center gap-4">
                           <Spinner color="danger" size="sm" />
+                          Rejecting
                         </span>
                       ) : (
                         "Reject"

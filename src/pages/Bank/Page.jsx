@@ -182,7 +182,7 @@ const Bank = () => {
             <ButtonComponent
               content={
                 isLoading ? (
-                  <span className="flex justify-center items-center">
+                  <span className="flex justify-center items-center gap-4">
                     <Spinner color="danger" size="sm" />
                     Submitting...
                   </span>

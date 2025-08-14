@@ -17,6 +17,7 @@ import {
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { useLeaveRequest } from "../../../hooks/useAuth.js";
+import { Spinner } from "@heroui/react";
 const LeaveRequest = () => {
   const { control, setValue, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -241,7 +242,16 @@ const LeaveRequest = () => {
             <ButtonComponent
               type="submit"
               className="text-white bg-black dark:bg-white dark:text-black dark:hover:text-white hover:bg-active dark:hover:dark:bg-active w-full sm:w-auto"
-              content={isLoading ? "Submitting..." : "Submit"}
+              content={
+                isLoading ? (
+                  <span className="flex items-center gap-4">
+                    <Spinner color="danger" size="sm" />
+                    Submitting
+                  </span>
+                ) : (
+                  "Submit"
+                )
+              }
               disabled={isLoading}
               size="sm"
             />
