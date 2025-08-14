@@ -13,6 +13,7 @@ import { getIpAddress } from "../../../utils/getIpAddress";
 import GoBack from "../../../components/GoBack";
 import { hasCreateAccess, MENU_NAMES } from "../../../utils/permissionUtils.js";
 import { now } from "@internationalized/date";
+import { Spinner } from "@heroui/react";
 
 const RequestWorkFromHome = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -197,7 +198,16 @@ const RequestWorkFromHome = () => {
             <ButtonComponent
               type="submit"
               className="bg-black text-white  w-full sm:w-auto"
-              content={isLoading ? "Submitting..." : "Submit"}
+              content={
+                isLoading ? (
+                  <span className="flex items-center gap-4">
+                    <Spinner color="danger" size="sm" />
+                    Submitting...
+                  </span>
+                ) : (
+                  "Submit"
+                )
+              }
               //   disabled={isLoading}
               size="sm"
             />

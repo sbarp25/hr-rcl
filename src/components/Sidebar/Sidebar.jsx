@@ -152,6 +152,9 @@ const Sidebar = () => {
     ? hasApproveAccess(MENU_NAMES.WFHSTATUS)
     : false;
 
+  const seeAutoCheckout = permissionsLoaded
+    ? hasReadAccess(MENU_NAMES.SELFCHECKOUT)
+    : false;
   const navbarElements = [
     {
       icon: MdDashboard,
@@ -180,7 +183,7 @@ const Sidebar = () => {
           icon: IoIosPeople,
           label: "Auto-Checkout",
           to: "/autoCheckOut",
-          view: true,
+          view: seeAutoCheckout,
         },
       ],
     },

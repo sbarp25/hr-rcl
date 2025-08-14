@@ -9,6 +9,7 @@ import {
   useFetchingMFASetting,
   useSaveMFAsetting,
 } from "../../../hooks/useAuth.js";
+import { toast } from "sonner";
 
 const MFA = () => {
   const {
@@ -30,7 +31,8 @@ const MFA = () => {
     };
 
     updateMfaSettings(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        toast.success(data?.message);
         resetTwoFactor();
       },
     });
