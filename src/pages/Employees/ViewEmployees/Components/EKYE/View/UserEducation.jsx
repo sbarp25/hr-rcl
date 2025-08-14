@@ -3,6 +3,7 @@ import { Divider, Form } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
 import UnderlineComponent from "../../../../../../components/ui/UnderlineComponent";
 import EkyeDetailsComponent from "../../../../../../components/ui/EkyeDetailsComponent";
+import Legend from "../../../../../../components/ui/Legend";
 
 const UserEducation = ({ employeeData }) => {
   const [educationDocuments, setEducationDocuments] = useState({});
@@ -19,7 +20,7 @@ const UserEducation = ({ employeeData }) => {
 
   return (
     <>
-      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300">
+      <div className="relative max-h-[75vh] overflow-auto flex flex-col items-center  bg-gray-50 dark:bg-black h-[75vh] py-6 w-full mx-auto rounded-lg border border-gray-300 dark:border-slate-700">
         <div className="bg-white dark:bg-black text-lg w-[calc(100%-.5rem)]  rounded-lg px-6 mt-2 mx-1">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-semibold flex mb-6">
@@ -29,11 +30,7 @@ const UserEducation = ({ employeeData }) => {
               </span>
               {/* h-[calc(100vh-210px)] */}
             </h1>
-            <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
-            </div>
+            <Legend />
           </div>
 
           {employeeData?.educationalDetails?.length > 0 ? (

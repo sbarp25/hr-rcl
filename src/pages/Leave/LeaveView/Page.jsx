@@ -39,7 +39,7 @@ const LeaveView = () => {
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Header with leave ID */}
-        <div className="bg-blue-50 p-4 border-b border-gray-200">
+        <div className="bg-blue-50 p-4 border-b border-gray-200 dark:border-neutral-600">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">
               Leave Request
@@ -56,7 +56,7 @@ const LeaveView = () => {
         {/* Card content */}
         <div className="p-6 space-y-4">
           {/* Leave Type and Category */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-3 border-b border-gray-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-3 border-b border-gray-300 dark:border-neutral-600">
             <div>
               <span className="text-gray-600 text-sm">Leave Type</span>
               <p className="text-gray-800 font-semibold">
@@ -80,7 +80,7 @@ const LeaveView = () => {
           </div>
 
           {/* Subject */}
-          <div className="pb-3 border-b border-gray-300">
+          <div className="pb-3 border-b border-gray-300 dark:border-neutral-600">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-gray-600 text-sm">Reason</span>
             </div>
@@ -90,7 +90,7 @@ const LeaveView = () => {
           </div>
 
           {/* Date Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3 border-b border-gray-300">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-3 border-b border-gray-300 dark:border-neutral-600">
             <div className="flex items-start gap-2">
               <div>
                 <span className="text-gray-600 text-sm">Leave Period</span>
@@ -157,7 +157,7 @@ const LeaveView = () => {
 
           {/* Approval Information */}
           {leaveByIdData?.approvedBy && (
-            <div className="pt-3 border-t border-gray-300">
+            <div className="pt-3 border-t border-gray-300 dark:border-neutral-600">
               <div className="flex items-start gap-2">
                 <div>
                   <span className="text-gray-600 text-sm">Approved By</span>
@@ -171,7 +171,7 @@ const LeaveView = () => {
 
           {/* Rejection Information */}
           {leaveByIdData?.rejectedBy && (
-            <div className="pt-3 border-t border-gray-300">
+            <div className="pt-3 border-t border-gray-300 dark:border-neutral-600">
               <div>
                 <span className="text-gray-600 text-sm">Rejected By</span>
                 <p className="text-gray-800">

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
-import { FaChevronDown } from "react-icons/fa";
-import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -30,7 +30,6 @@ import Search from "../../../components/Search";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
-import Loader from "../../../components/Loader/Loader.jsx";
 import {
   hasCreateAccess,
   hasDeleteAccess,
@@ -48,7 +47,6 @@ const Department = () => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [departmentPerPage, setDepartmentPerPage] = useState(10);
-  const [expandedRow, setExpandedRow] = useState(null);
 
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -168,9 +166,6 @@ const Department = () => {
     }
   };
 
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
   const handleApplySearch = (result) => {
     if (result.data) {
       setFilteredData(result.data);
@@ -263,7 +258,7 @@ const Department = () => {
                       .map((department, index) => (
                         <TableRow
                           key={department.rclId}
-                          className="h-14 justify-center items-center border-b-2 border-gray-300">
+                          className="h-14 justify-center items-center border-b-2 border-gray-300 dark:border-neutral-600">
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>{department.name}</TableCell>
                           <TableCell>
@@ -328,9 +323,7 @@ const Department = () => {
                     {departmentsData
                       .filter((department) => !department.isDeleted)
                       .map((department) => (
-                        <TableRow
-                          key={department.rclId}
-                          className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                        <TableRow key={department.rclId} className="">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">
@@ -395,87 +388,21 @@ const Department = () => {
                   <SkeletonLoader />
                 ) : (
                   <>
-                    {departmentsData
-                      .filter((department) => !department.isDeleted)
-                      .map((department) => (
-                        <div
+                    <Accordion variant="bordered">
+                      {departmentsData?.map((department) => (
+                        <AccordionItem
                           key={department.id}
-                          className="border rounded-lg overflow-hidden shadow-sm">
-                          <div
-                            className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                            onClick={() => toggleExpandedRow(department.id)}>
-                            <div className="font-medium">{department.name}</div>
-                            <div className="flex items-center gap-2">
-                              <FaChevronDown
-                                size={16}
-                                className={`transition-transform ${
-                                  expandedRow === department.id
-                                    ? "rotate-180"
-                                    : ""
-                                }`}
-                              />
+                          aria-label={department.name}
+                          title={department.name}>
+                          <div className="grid grid-cols-1 gap-2">
+                            <div className="font-medium">Description:</div>
+                            <div className="bg-gray-50 dark:bg-neutral-500 p-2 rounded">
+                              {department.description}
                             </div>
                           </div>
-                          <div
-                            className={`${
-                              expandedRow === department.id ? "block" : "hidden"
-                            } p-3 space-y-2 text-sm`}>
-                            <div className="grid grid-cols-1 gap-2">
-                              <div className="font-medium">Description:</div>
-                              <div className="bg-gray-50 dark:bg-slate-600 p-2 rounded">
-                                {department.description}
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="font-medium">Team Lead:</div>
-                              <div>{department.teamLeadName || "N/A"}</div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="font-medium">Associate Lead:</div>
-                              <div>
-                                {department.associateTeamLeadName || "N/A"}
-                              </div>
-                            </div>
-                            <div className="flex justify-end gap-4 mt-2">
-                              <Button
-                                size="sm"
-                                variant="flat"
-                                color="success"
-                                className={`${
-                                  !hasDepartmentEditAccess
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
-                                onPress={() =>
-                                  hasDepartmentEditAccess &&
-                                  handleAction("edit", department)
-                                }
-                                disabled={!hasDepartmentEditAccess}>
-                                {" "}
-                                <HiPencilSquare className="w-4 h-4" />
-                                Edit
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="flat"
-                                color="danger"
-                                className={`${
-                                  !hasDepartmentDeleteAccess
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
-                                onPress={() =>
-                                  hasDepartmentDeleteAccess &&
-                                  handleAction("delete", department)
-                                }
-                                disabled={!hasDepartmentDeleteAccess}>
-                                <MdDelete className="w-4 h-4" />
-                                Delete
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
+                        </AccordionItem>
                       ))}
+                    </Accordion>
                   </>
                 )}
 

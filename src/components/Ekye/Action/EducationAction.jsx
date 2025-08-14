@@ -68,9 +68,9 @@ const EducationAction = ({ employeeData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      <div className="relative flex flex-col bg-white dark:bg-black mt-16 border border-black dark:border-white rounded-b-md shadow-lg p-8">
+      <div className="relative flex flex-col bg-white dark:bg-black mt-16 border border-black dark:border-slate-600 rounded-b-md shadow-lg p-8">
         {/* Header Section */}
-        <div className="absolute bg-black dark:bg-slate-700 w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
+        <div className="absolute bg-black  w-auto rounded-t-2xl -top-12   -left-0.5 px-6 py-2">
           <h1 className="text-2xl font-semibold text-white">
             Education Details
           </h1>

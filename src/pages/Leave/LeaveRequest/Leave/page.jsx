@@ -34,11 +34,10 @@ const SelfLeaveStatus = () => {
   const navigate = useNavigate();
 
   // React Query for fetching leave data
-  const {
-    data: leaveResponse,
-    isLoading,
-    refetch: fetchLeave,
-  } = useLeaveByList(currentPage, leaveDataPerPage);
+  const { data: leaveResponse, isLoading } = useLeaveByList(
+    currentPage,
+    leaveDataPerPage
+  );
 
   // Extract data from response
   const originalLeaveData = leaveResponse?.datalist || [];
@@ -166,7 +165,7 @@ const SelfLeaveStatus = () => {
                   {(item) => (
                     <TableRow
                       key={item.rclId}
-                      className="h-14 border-b-2 border-gray-300">
+                      className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                       <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                       <TableCell>
                         {item?.fullName?.length < 7 ? (
@@ -228,7 +227,7 @@ const SelfLeaveStatus = () => {
                   isLoading={isLoading}
                   loadingContent={<SkeletonLoader />}>
                   {(item) => (
-                    <TableRow key={item.rclId} className="hover:bg-gray-50">
+                    <TableRow key={item.rclId} className="">
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-medium">

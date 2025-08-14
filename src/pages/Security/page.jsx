@@ -39,7 +39,7 @@ const Security = () => {
 
       {redirect.map((link) => (
         <Link to={link.to} key={link.label} className="block group">
-          <div className="bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-6 transition-all duration-200 hover:shadow-lg ">
+          <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-slate-600 rounded-xl p-6 transition-all duration-200 hover:shadow-lg ">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center  transition-colors duration-200">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../../../../lib/axios-Instance";
 import { toast } from "sonner";
 import GoBack from "../../../../components/GoBack";
 import InputComponent from "../../../../components/ui/InputComponent.jsx";
@@ -18,7 +17,6 @@ const EditPosition = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const {
-    register,
     control,
     handleSubmit,
     reset,
@@ -110,7 +108,7 @@ const EditPosition = () => {
             <div className="page-title -pl-2">Edit Position</div>
             <div></div>
           </div>
-          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 ">
+          <div className="bg-white dark:bg-black p-4 rounded-xl max-h-[85vh] overflow-y-auto border-2 border-gray-300 dark:border-slate-600">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-4">
               {/* Position Title */}
               <div>

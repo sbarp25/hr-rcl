@@ -10,7 +10,7 @@ import axiosInstance from "../../lib/axios-Instance";
 import Loader from "../Loader/Loader";
 import { toast } from "sonner";
 //comnet
-const Calander = ({ employeeData, calendarData: propsCalendarData }) => {
+const Calander = ({ calendarData: propsCalendarData }) => {
   const [calendarData, setCalanderData] = useState([]);
   const [isloading, setIsLoading] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);

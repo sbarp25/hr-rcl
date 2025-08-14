@@ -1,5 +1,5 @@
 // tailwind.config.js
-import { heroui } from "@heroui/react";
+import { breadcrumbs, heroui } from "@heroui/react";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -14,6 +14,10 @@ export default {
         bgprimaryhover: "#277c9c",
         titletext: "#3F3D56",
         active: "#ef4660",
+        breadcrumbs: "#e4e4e7",
+        breadcrumbshover: "#71717a",
+        breadcrumbsborder: "#27272a",
+        breadcrumbshoverborder: "#71717a",
         activehover: "#d63851",
         text: "#184c5f",
         hoverbackground: "#F05366",

@@ -353,7 +353,7 @@ const MobileNavigation = () => {
                           className={`flex items-center gap-4 p-3 transition-colors rounded-lg cursor-pointer ${
                             location.pathname === service.to
                               ? "bg-active text-white border-l-4 border-l-red-800"
-                              : "hover:bg-gray-700"
+                              : "hover:bg-neutral-700"
                           }`}
                           onClick={() => {
                             if (service.children) {
@@ -379,7 +379,7 @@ const MobileNavigation = () => {
                                 className={`flex p-2 rounded-lg transition-colors gap-4 ${
                                   location.pathname === child.to
                                     ? "bg-active text-white border-l-4 border-l-red-800"
-                                    : "hover:bg-gray-600"
+                                    : "hover:bg-neutral-700"
                                 }`}>
                                 {location.pathname === child.to && (
                                   <BsArrowReturnRight className="mt-1 " />

@@ -92,7 +92,7 @@ const Tabs = ({ activeTab, changeTab }) => {
           className={`cursor-pointer py-2 px-4 lg:px-8 text-center min-w-fit lg:w-40 font-semibold rounded-t-2xl border transition-all duration-300 whitespace-nowrap ${
             activeTab.name === tab.name
               ? "bg-gray-50 dark:bg-black border border-gray-300"
-              : "hover:border-gray-300 hover:bg-gray-100 dark:bg-slate-500"
+              : "hover:border-gray-300 hover:bg-gray-100 dark:bg-neutral-900"
           }`}>
           <span className="text-sm lg:text-base">{tab.name}</span>
         </li>
@@ -105,7 +105,7 @@ const Tabs = ({ activeTab, changeTab }) => {
     <div className="md:hidden relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-black border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 ">
+        className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-black border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-neutral-600">
         <span className="font-medium text-gray-900">{activeTab.name}</span>
         <svg
           className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
@@ -133,10 +133,10 @@ const Tabs = ({ activeTab, changeTab }) => {
                 changeTab(tab);
                 setShowDropdown(false);
               }}
-              className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors duration-150 ${
+              className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-600 transition-colors duration-150 ${
                 activeTab.name === tab.name
-                  ? "bg-blue-50 text-blue-700 font-medium"
-                  : "text-gray-900"
+                  ? "bg-blue-50 dark:bg-black dark:text-white text-black font-medium"
+                  : "text-gray-900 dark:text-white"
               } ${
                 tab !== tabData[tabData.length - 1]
                   ? "border-b border-gray-100"
@@ -150,41 +150,10 @@ const Tabs = ({ activeTab, changeTab }) => {
     </div>
   );
 
-  // Mobile horizontal scroll tabs (alternative approach)
-  const MobileScrollTabs = () => (
-    <div className="md:hidden">
-      <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
-        <div className="flex space-x-1 px-4">
-          {tabData?.map((tab) => (
-            <button
-              key={tab.name}
-              onClick={(e) => {
-                e.preventDefault();
-                changeTab(tab);
-              }}
-              className={`flex-shrink-0 px-3 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200 ${
-                activeTab.name === tab.name
-                  ? "bg-blue-50 text-blue-700 border-b-2 border-blue-700"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}>
-              <span className="whitespace-nowrap">
-                {/* Show short names on very small screens */}
-                <span className="sm:hidden">{tab.shortName}</span>
-                <span className="hidden sm:inline">{tab.name}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="mb-4">
       <DesktopTabs />
-      {/* Choose one of the mobile approaches below */}
       <MobileDropdown />
-      {/* Alternative: <MobileScrollTabs /> */}
     </div>
   );
 };

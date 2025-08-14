@@ -5,10 +5,10 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
     <div className="w-60 flex items-center justify-center">
       <div
         onClick={onChange}
-        className="relative flex items-center p-1  w-full h-12 bg-gray-200 dark:bg-slate-700 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
+        className="relative flex items-center p-1  w-full h-12 bg-gray-200 dark:bg-neutral-700 rounded-full cursor-pointer transition-all duration-300 shadow-inner">
         {/* Sliding toggle */}
         <div
-          className={`absolute h-10 w-1/2 bg-white dark:bg-slate-500 rounded-full shadow-md transform transition-transform duration-300 ${
+          className={`absolute h-10 w-1/2 bg-white dark:bg-neutral-900 rounded-full shadow-md transform transition-transform duration-300 ${
             isSelected ? "translate-x-0 ml-1" : "translate-x-full -ml-3"
           }`}
         />
@@ -16,14 +16,14 @@ const CustomToggleButton = ({ isSelected, onChange }) => {
         <div className="flex w-full z-10 text-sm font-medium">
           <div className="w-1/2 text-center py-2">
             <span
-              className={`transition-colors duration-300 text-black dark:text-gray-300`}>
+              className={`transition-colors duration-300 text-black dark:text-white`}>
               Today <br />
               WFH
             </span>
           </div>
           <div className="w-1/2 text-center py-2">
             <span
-              className={`transition-colors duration-300 text-black dark:text-gray-300`}>
+              className={`transition-colors duration-300 text-black dark:text-white`}>
               Upcoming <br />
               WFH
             </span>
@@ -61,7 +61,7 @@ const WorkFromHome = () => {
   return (
     <>
       <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm ">
-        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-gray-500 gap-3">
+        <div className="flex flex-row sm:flex-row sm:items-center justify-between w-full px-4 py-3 border-b dark:border-b-slate-500 gap-3">
           <p className="hidden md:block text-xl font-bold">Work From Home</p>
           <p className="flex md:hidden text-xl font-bold">WFH</p>
           <div>
@@ -78,7 +78,7 @@ const WorkFromHome = () => {
                 {wfhList.map((data, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-black rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+                    className="bg-white dark:bg-black rounded-lg shadow-md p-4 border border-gray-200 dark:border-slate-500 hover:shadow-lg transition-shadow">
                     <div className="flex items-center mb-4">
                       <div className="flex-shrink-0 mr-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full font-bold shadow-md text-lg bg-green-100 dark:bg-green-300 border border-green-600 text-green-600">
@@ -97,7 +97,7 @@ const WorkFromHome = () => {
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 dark: pt-3">
+                    <div className="border-t border-gray-200 dark:border-slate-500 dark: pt-3">
                       <div className="flex justify-between items-center">
                         <div className="text-sm">
                           <span className="font-medium text-gray-500 dark:text-white">

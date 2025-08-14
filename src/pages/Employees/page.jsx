@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
-import axiosInstance from "../../lib/axios-Instance";
 // import { toast } from "sonner";
 import { toast } from "sonner";
 import {
@@ -21,8 +20,10 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Accordion,
+  AccordionItem,
 } from "@heroui/react";
-import { FaChevronDown, FaEllipsisV, FaEye } from "react-icons/fa";
+import { FaEllipsisV, FaEye } from "react-icons/fa";
 import {
   hasCreateAccess,
   hasUpdateAccess,
@@ -39,16 +40,12 @@ import { IoIosPeople } from "react-icons/io";
 import DropDownComp from "../../components/ui/Dropdown.jsx";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../components/Loader/SkeletonLoader.jsx";
-import Loader from "../../components/Loader/Loader.jsx";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { deleteEmployees, fetchEmployees } from "../../api/auth.js";
 import { useEmployeeDelete, useEmployeefetch } from "../../hooks/useAuth.js";
 
 const Employees = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [filteredPagination, setFilteredPagination] = useState(null);
 
-  const [expandedRow, setExpandedRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [employeeDataPerPage, setEmployeeDataPerPage] = useState(10);
   const [deletingId, setDeletingId] = useState(null);
@@ -69,12 +66,7 @@ const Employees = () => {
   const hasEmployeeDeleteAccess = hasDeleteAccess(MENU_NAMES.EMPLOYEES);
   const hasSingle = hasViewone(MENU_NAMES.EMPLOYEES);
 
-  // Toggle expanded row for mobile view
-  const toggleExpandedRow = (rclId) => {
-    setExpandedRow(expandedRow === rclId ? null : rclId);
-  };
-
-  const { data, isLoading, error, refetch } = useEmployeefetch(
+  const { data, isLoading, refetch } = useEmployeefetch(
     currentPage,
     employeeDataPerPage
   );
@@ -117,7 +109,7 @@ const Employees = () => {
         refetch();
         onClose();
       }
-    } catch (error) {}
+    } catch {}
   };
   const handleAction = async (action, employeeId) => {
     switch (action) {
@@ -188,7 +180,7 @@ const Employees = () => {
   };
 
   return (
-    <div className="max-h-[90vh] overflow-y-auto">
+    <div className="">
       {/* {isDeleteLoading && <Loader />} */}
       <div className="px-4 md:px-8 space-y-4 ">
         {/* Breadcrumbs and Header */}
@@ -258,7 +250,7 @@ const Employees = () => {
               {filteredEmployees.map((employee, index) => (
                 <TableRow
                   key={employee.rclId}
-                  className="h-14 border-b-2 border-gray-300">
+                  className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                   <TableCell>
                     {(currentPage - 1) * employeeDataPerPage + index + 1}
                   </TableCell>
@@ -272,7 +264,7 @@ const Employees = () => {
                       <FaEye
                         className={`${
                           hasaccess
-                            ? "text-black dark:text-white hover:text-green-500 cursor-pointer "
+                            ? "text-black dark:text-white hover:text-green-500 dark:hover:text-green-500 cursor-pointer "
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="View"
@@ -281,7 +273,7 @@ const Employees = () => {
                       <HiPencilSquare
                         className={`${
                           hasEmployeeEditAccess
-                            ? "text-black dark:text-white hover:text-orange-500 cursor-pointer "
+                            ? "text-black dark:text-white hover:text-orange-500 dark:hover:text-orange-500 cursor-pointer "
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Edit"
@@ -290,7 +282,7 @@ const Employees = () => {
                       <MdDelete
                         className={`${
                           hasEmployeeDeleteAccess
-                            ? "text-black dark:text-white cursor-pointer hover:text-red-500"
+                            ? "text-black dark:text-white cursor-pointer hover:text-red-500 dark:hover:text-red-500"
                             : "text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"
                         }`}
                         title="Delete"
@@ -323,10 +315,8 @@ const Employees = () => {
               items={isLoading ? [] : filteredEmployees}
               isLoading={isLoading}
               loadingContent={<SkeletonLoader />}>
-              {filteredEmployees.map((employee, index) => (
-                <TableRow
-                  key={employee.rclId}
-                  className="hover:bg-gray-50 dark:hover:bg-slate-500">
+              {filteredEmployees.map((employee) => (
+                <TableRow key={employee.rclId} className="">
                   <TableCell>
                     <div>
                       <div className="font-medium">{employee.fullName}</div>
@@ -396,92 +386,85 @@ const Employees = () => {
             <SkeletonLoader />
           ) : (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {filteredEmployees.map((employee) => (
-                <div
-                  key={employee.rclId}
-                  className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
-                  <div
-                    className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                    onClick={() => toggleExpandedRow(employee.rclId)}>
-                    <div>
-                      <div className="font-medium">{employee.fullName}</div>
-                      <div className="text-sm text-gray-500">
-                        {employee.rclId}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        {employee.departmentName}
-                      </div>
-                      <FaChevronDown
-                        size={16}
-                        className={`transition-transform ${
-                          expandedRow === employee.rclId ? "rotate-180" : ""
-                        }`}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`${
-                      expandedRow === employee.rclId ? "block" : "hidden"
-                    } p-3 space-y-3 text-sm`}>
-                    <div className="grid grid-cols-1 gap-2">
-                      <div className="flex justify-between">
-                        <span className="font-medium text-gray-600">
-                          Email:
-                        </span>
-                        <span className="text-right">{employee.email}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium text-gray-600">
-                          Department:
-                        </span>
-                        <span className="text-right">
+              <Accordion variant="bordered">
+                {filteredEmployees.map((employee) => (
+                  <AccordionItem
+                    key={employee.rclId}
+                    title={
+                      <div className="flex justify-between items-center p-3 cursor-pointer">
+                        <div>
+                          <div className="font-medium">{employee.fullName}</div>
+                          <div className="text-sm text-black dark:text-white">
+                            {employee.rclId}
+                          </div>
+                        </div>
+                        <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                           {employee.departmentName}
-                        </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium text-gray-600">
-                          Position:
-                        </span>
-                        <span className="text-right">
-                          {employee.postionName}
-                        </span>
+                    }>
+                    <>
+                      {" "}
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="flex justify-between">
+                          <span className="font-medium text-gray-600">
+                            Email:
+                          </span>
+                          <span className="text-right">{employee.email}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium text-gray-600">
+                            Department:
+                          </span>
+                          <span className="text-right">
+                            {employee.departmentName}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium text-gray-600">
+                            Position:
+                          </span>
+                          <span className="text-right">
+                            {employee.postionName}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex gap-2 pt-2 border-t">
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        className="flex-1 bg-black text-white"
-                        isDisabled={!hasaccess}
-                        onPress={() => handleAction("view", employee.rclId)}>
-                        <HiPencilSquare className="w-4 h-4" />
-                        View
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        className="flex-1 bg-black text-white"
-                        isDisabled={!hasEmployeeEditAccess}
-                        onPress={() => handleAction("edit", employee.rclId)}>
-                        <HiPencilSquare className="w-4 h-4" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        color="danger"
-                        className="flex-1"
-                        isDisabled={!hasEmployeeDeleteAccess}
-                        onPress={() => handleAction("delete", employee.rclId)}>
-                        <MdDelete className="w-4 h-4" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      <div className="flex gap-2 pt-2 border-t">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          className="flex-1 bg-black text-white"
+                          isDisabled={!hasaccess}
+                          onPress={() => handleAction("view", employee.rclId)}>
+                          <HiPencilSquare className="w-4 h-4" />
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          className="flex-1 bg-black text-white"
+                          isDisabled={!hasEmployeeEditAccess}
+                          onPress={() => handleAction("edit", employee.rclId)}>
+                          <HiPencilSquare className="w-4 h-4" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="danger"
+                          className="flex-1"
+                          isDisabled={!hasEmployeeDeleteAccess}
+                          onPress={() =>
+                            handleAction("delete", employee.rclId)
+                          }>
+                          <MdDelete className="w-4 h-4" />
+                          Delete
+                        </Button>
+                      </div>
+                    </>
+                  </AccordionItem>
+                ))}
+              </Accordion>
 
               {(!filteredEmployees || filteredEmployees.length === 0) && (
                 <div className="p-8 text-center text-gray-500 bg-white rounded-lg">

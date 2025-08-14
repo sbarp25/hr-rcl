@@ -202,7 +202,7 @@ const Filter = ({
                   )}
                 </Button>
                 <Button
-                  className="bg-slate-300 dark:bg-slate-500 hover:bg-hoverbackground dark:hover:bg-active text-black dark:hover:text-white"
+                  className="bg-black text-white dark:bg-white dark:text-black hover:bg-hoverbackground dark:hover:bg-active dark:hover:text-white   "
                   onPress={resetFilters}>
                   Reset
                 </Button>

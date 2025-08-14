@@ -1,6 +1,7 @@
 import UnderlineComponent from "../../../../../../components/ui/UnderlineComponent";
 import { Divider, Form } from "@heroui/react";
 import EkyeDetailsComponent from "../../../../../../components/ui/EkyeDetailsComponent";
+import Legend from "../../../../../../components/ui/Legend";
 
 const EkyeAddress = ({ employeeData }) => {
   const userCompleteDetails =
@@ -12,7 +13,7 @@ const EkyeAddress = ({ employeeData }) => {
   const temporaryAddress =
     addresses.find((item) => item?.addressType === "TEMPORARY") || {};
   return (
-    <div className="bg-gray-50 dark:bg-black  h-[75vh] overflow-auto  rounded-lg  px-4 py-10 border border-gray-300">
+    <div className="bg-gray-50 dark:bg-black overflow-auto  rounded-lg  px-4 py-10 border border-gray-300 dark:border-slate-700">
       <div className="flex flex-col items-center justify-center rounded-md space-y-8 ">
         <div className="bg-white dark:bg-black text-lg w-full p-6 rounded-xl mx-5 ">
           <div className="flex justify-between items-center">
@@ -24,9 +25,7 @@ const EkyeAddress = ({ employeeData }) => {
             </h1>
 
             <div className="flex gap-1 items-end justify-end text-right">
-              <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="flex w-2 h-2 rounded-full bg-black"></div>
-              <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+              <Legend />
             </div>
           </div>
           {/**Permanent Address */}
@@ -74,9 +73,7 @@ const EkyeAddress = ({ employeeData }) => {
 
             <div className="flex justify-center items-center gap-4">
               <div className="flex gap-1 items-end justify-end text-right">
-                <div className="flex w-2 h-2 rounded-full bg-red-400"></div>
-                <div className="flex w-2 h-2 rounded-full bg-black"></div>
-                <div className="flex w-2 h-2 rounded-full bg-slate-600"></div>
+                <Legend />
               </div>
             </div>
           </div>

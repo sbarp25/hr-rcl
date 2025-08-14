@@ -23,7 +23,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, [employeeData]);
 
   return (
-    <div className="flex flex-col  overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md border border-gray-300">
+    <div className="flex flex-col  overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md border border-gray-300 dark:border-slate-700">
       <div className="flex flex-col mt-2 px-8 gap-6 ">
         {/**Citizenship details */}
         <div className="bg-white dark:bg-black text-lg p-6 rounded-lg">

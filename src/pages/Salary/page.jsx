@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { CiCirclePlus } from "react-icons/ci";
 import axiosInstance from "../../lib/axios-Instance";
 import { toast } from "sonner";
 import { FaRegEye } from "react-icons/fa";
@@ -77,7 +76,6 @@ const SalaryDetails = () => {
   ];
 
   const breadcrumbItems = [{ label: "Salary Details", href: "/salary" }];
-  const handleClick = () => {};
 
   const hasaccess = true;
   const navigate = useNavigate();
@@ -96,7 +94,7 @@ const SalaryDetails = () => {
           Salary Details
         </h1>
         {/**Top Section With Salary Details  */}
-        <div className="rounded-lg border-2 bg-white  border-gray-300 gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 p-4">
+        <div className="rounded-lg border-2 bg-white  border-gray-300 dark:border-slate-500 gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 p-4">
           {SalaryD.map((item, index) => (
             <div
               key={index}
@@ -107,9 +105,9 @@ const SalaryDetails = () => {
           ))}
         </div>
         {/**Salary BreakDown  */}
-        <div className="rounded-lg border-2 mt-2 pb-2 bg-white border-gray-300 ">
+        <div className="rounded-lg border-2 mt-2 pb-2 bg-white border-gray-300 dark:border-slate-600">
           {/**Heading Section */}
-          <div className="rounded-lg w-full  border-b-2">
+          <div className="rounded-lg w-full  border-b-2 dark:border-neutral-600">
             <div className="p-2 flex  justify-center items-centerfont-bold">
               <p className="text-2xl font-semibold">Salary BreakDown</p>
               {/* <p>
@@ -156,8 +154,8 @@ const SalaryDetails = () => {
           </div>
         </div>
         {/**Payable salary of month */}
-        <div className="border-2 rounded-lg mt-2 bg-white border-gray-300">
-          <div className="rounded-lg w-full  border-b border-gray-300">
+        <div className="border-2 rounded-lg mt-2 bg-white border-gray-300 dark:border-slate-600">
+          <div className="rounded-lg w-full  border-b border-gray-300 dark:border-neutral-600">
             <div className="p-2 flex  justify-center items-centerfont-bold">
               <p className="text-2xl font-semibold">
                 Payable Salary of {month}

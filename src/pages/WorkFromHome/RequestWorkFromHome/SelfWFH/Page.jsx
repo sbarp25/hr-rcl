@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import {
+  Accordion,
+  AccordionItem,
   Pagination,
   Table,
   TableBody,
@@ -9,14 +11,12 @@ import {
   TableRow,
   Tooltip,
 } from "@heroui/react";
-import { FaChevronDown } from "react-icons/fa";
 import { toast } from "sonner";
 import axiosInstance from "../../../../lib/axios-Instance";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../../components/Search";
 import Filter from "../../../../components/Filter";
 import DropDownComp from "../../../../components/ui/Dropdown.jsx";
-import LocalStorageUtil from "../../../../utils/LocalStorageUtil";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../../utils/truncateText";
 import ButtonComponent from "../../../../components/ui/ButtonComp.jsx";
@@ -33,7 +33,6 @@ const SelfWorkFromHome = () => {
 
   const [WFHDataPerPage, setWFHDataPerPage] = useState(10);
   const [originalWorkFromHomeData, setOriginalLeaveData] = useState([]);
-  const [expandedRow, setExpandedRow] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
 
@@ -66,10 +65,6 @@ const SelfWorkFromHome = () => {
     if (status === "REJECTED")
       return "bg-red-400/10 border border-red-600 text-red-600";
     return "bg-yellow-400/10 border border-yellow-500 text-yellow-500";
-  };
-
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
   };
 
   const handlePageChange = (page) => {
@@ -199,7 +194,7 @@ const SelfWorkFromHome = () => {
                       {(item) => (
                         <TableRow
                           key={item.id || item.workFromHomeId}
-                          className="h-14 border-b-2 border-gray-300">
+                          className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                           <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                           <TableCell>
                             {item?.userFullName?.length < 7 ? (
@@ -270,7 +265,7 @@ const SelfWorkFromHome = () => {
                       {(item) => (
                         <TableRow
                           key={item.id || item.workFromHomeId}
-                          className="hover:bg-gray-50">
+                          className="">
                           <TableCell>{item?.userFullName}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
@@ -310,35 +305,24 @@ const SelfWorkFromHome = () => {
                   <Loader />
                 ) : (
                   <div className="space-y-4">
-                    {workFromHome.map((WFH) => (
-                      <div
-                        key={WFH.id || WFH.workFromHomeId}
-                        className="border rounded-lg overflow-hidden shadow-sm">
-                        <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                          onClick={() => toggleExpandedRow(WFH.id)}>
-                          <div className="font-medium">
-                            {WFH.userFullName || "N/A"}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`${getStatusClass(
-                                WFH?.approvalStatus
-                              )} text-center py-1 px-2 text-xs rounded-md w-fit`}>
-                              {WFH?.approvalStatus || "N/A"}
+                    <Accordion variant="bordered">
+                      {workFromHome?.map((WFH) => (
+                        <AccordionItem
+                          key={WFH.id}
+                          aria-label={`${WFH.userFullName} - ${WFH.approvalStatus}`}
+                          title={
+                            <div className="flex justify-between items-center w-full">
+                              <div className="font-medium">
+                                {WFH.userFullName || "N/A"}
+                              </div>
+                              <div
+                                className={`${getStatusClass(
+                                  WFH?.approvalStatus
+                                )} text-center py-1 px-2 text-xs rounded-md`}>
+                                {WFH?.approvalStatus || "N/A"}
+                              </div>
                             </div>
-                            <FaChevronDown
-                              size={16}
-                              className={`transition-transform ${
-                                expandedRow === WFH.id ? "rotate-180" : ""
-                              }`}
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={`${
-                            expandedRow === WFH.id ? "block" : "hidden"
-                          } p-3 space-y-2 text-sm`}>
+                          }>
                           <div className="grid grid-cols-2 gap-2">
                             <div className="font-medium">Request Date:</div>
                             <div>{WFH?.requestDate || "N/A"}</div>
@@ -351,9 +335,13 @@ const SelfWorkFromHome = () => {
                             <div className="font-medium">End Date:</div>
                             <div>{WFH?.workFromHomeEndDate || "N/A"}</div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="font-medium">Department:</div>
+                            <div>{WFH?.departmentName || "N/A"}</div>
+                          </div>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </div>
                 )}
               </div>

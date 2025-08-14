@@ -27,10 +27,10 @@ const SalaryEdit = () => {
   return (
     <div className="flex flex-col space-y-8">
       <BreadcrumbsComponent items={breadcrumbItems} />
-      <div className="max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-300 p-2 rounded-lg">
+      <div className="max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-300 dark:border-slate-500 p-2 rounded-lg">
         <div className="bg-white rounded-lg border-2  pb-2">
           {/**Heading Section */}
-          <div className="rounded-lg w-full bg-blue-100 border-b-2 border-gray-300">
+          <div className="rounded-lg w-full bg-blue-100 border-b-2 border-gray-300 dark:border-neutral-600">
             <div className="p-2 flex text-center justify-center   items-center font-bold">
               <p className="text-2xl  font-semibold">Salary BreakDown</p>
             </div>

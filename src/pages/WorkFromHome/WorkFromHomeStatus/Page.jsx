@@ -3,6 +3,8 @@ import BreadcrumbsComponent from "../../../components/ui/BreadCrumbsComp.jsx";
 import Search from "../../../components/Search";
 import Filter from "../../../components/Filter";
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -21,23 +23,19 @@ import {
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FaCheckCircle, FaChevronDown, FaRegEye } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 import { FaCircleCheck, FaXmark } from "react-icons/fa6";
 import LocalStorageUtil from "../../../utils/LocalStorageUtil";
 import DropDownComp from "../../../components/ui/Dropdown.jsx";
 import { toast } from "sonner";
 import axiosInstance from "../../../lib/axios-Instance";
 import TextAreaComp from "../../../components/ui/TextAreaComp.jsx";
-import axios from "axios";
 import truncateText from "../../../utils/truncateText";
 import {
   hasApproveAccess,
-  hasReadAccess,
-  hasUpdateAccess,
   MENU_NAMES,
 } from "../../../utils/permissionUtils.js";
 import { IoIosRemoveCircle } from "react-icons/io";
-import Loader from "../../../components/Loader/Loader.jsx";
 
 const WorkFromHomeStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +44,6 @@ const WorkFromHomeStatus = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [WFHDataPerPage, setWFHDataPerPage] = useState(10);
   const [originalWorkFromHomeData, setOriginalWorkFromHomeData] = useState([]);
-  const [expandedRow, setExpandedRow] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [isFiltered, setIsFiltered] = useState(false);
@@ -237,10 +234,6 @@ const WorkFromHomeStatus = () => {
     return "bg-yellow-400/10 border border-yellow-500 text-yellow-500";
   };
 
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
     // Don't clear the array immediately, let the useEffect handle it
@@ -283,7 +276,7 @@ const WorkFromHomeStatus = () => {
     if (!isFiltered && !isSearched) {
       fetchWorkFromHome();
     }
-  }, [currentPage, WFHDataPerPage]);
+  }, [currentPage, WFHDataPerPage, isFiltered, isSearched]);
 
   const hasWorkFromHomeReviewAccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
   const hasaccess = hasApproveAccess(MENU_NAMES.WFHSTATUS);
@@ -365,7 +358,7 @@ const WorkFromHomeStatus = () => {
                       {(item) => (
                         <TableRow
                           key={item.rclId || Math.random()}
-                          className="h-14 border-b-2 border-gray-300">
+                          className="h-14 border-b-2 border-gray-300 dark:border-neutral-600">
                           <TableCell>{displayData.indexOf(item) + 1}</TableCell>
                           <TableCell>
                             {item?.userFullName?.length < 7 ? (
@@ -422,13 +415,13 @@ const WorkFromHomeStatus = () => {
                                     ) : (
                                       <>
                                         <FaCheckCircle
-                                          className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                          className="text-lg text-black hover:text-green-700 dark:text-white dark:hover:text-green-700 cursor-pointer"
                                           onClick={() =>
                                             handleAction("approve", item)
                                           }
                                         />
                                         <FaXmark
-                                          className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                          className="text-xl text-black hover:text-red-600  dark:text-white dark:hover:text-red-600 cursor-pointer"
                                           onClick={() =>
                                             handleAction("reject", item)
                                           }
@@ -440,13 +433,13 @@ const WorkFromHomeStatus = () => {
                                   hasWorkFromHomeReviewAccess ? (
                                   <>
                                     <FaCheckCircle
-                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      className="text-lg text-black hover:text-green-700 dark:text-white dark:hover:text-green-700 cursor-pointer"
                                       onClick={() =>
                                         handleAction("approve", item)
                                       }
                                     />
                                     <FaXmark
-                                      className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                      className="text-xl text-black hover:text-red-600  dark:text-white dark:hover:text-red-600 cursor-pointer"
                                       onClick={() =>
                                         handleAction("reject", item)
                                       }
@@ -483,7 +476,7 @@ const WorkFromHomeStatus = () => {
                       {(item) => (
                         <TableRow
                           key={item.rclId || Math.random()}
-                          className="hover:bg-gray-50">
+                          className="">
                           <TableCell>{item?.userFullName}</TableCell>
                           <TableCell>
                             <div className="flex flex-col">
@@ -519,13 +512,13 @@ const WorkFromHomeStatus = () => {
                                     ) : (
                                       <>
                                         <FaCheckCircle
-                                          className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                          className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                           onClick={() =>
                                             handleAction("approve", item)
                                           }
                                         />
                                         <FaXmark
-                                          className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                          className="text-xl text-black hover:text-red-600 dark:text-white dark:hover:text-red-600 cursor-pointer"
                                           onClick={() =>
                                             handleAction("reject", item)
                                           }
@@ -537,13 +530,13 @@ const WorkFromHomeStatus = () => {
                                   hasWorkFromHomeReviewAccess ? (
                                   <>
                                     <FaCheckCircle
-                                      className="text-lg text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 cursor-pointer"
+                                      className="text-lg text-black hover:text-green-600 dark:text-white dark:hover:text-green-600 cursor-pointer"
                                       onClick={() =>
                                         handleAction("approve", item)
                                       }
                                     />
                                     <FaXmark
-                                      className="text-xl text-red-600 hover:text-red-800 cursor-pointer"
+                                      className="text-xl text-black hover:text-red-600 dark:text-white dark:hover:text-red-600 cursor-pointer"
                                       onClick={() =>
                                         handleAction("reject", item)
                                       }
@@ -565,35 +558,24 @@ const WorkFromHomeStatus = () => {
               {/* Small screens - Card-like view */}
               <div className="block md:hidden overflow-y-auto">
                 <div className="space-y-4">
-                  {displayData.map((WFH) => (
-                    <div
-                      key={WFH.id || Math.random()}
-                      className="border rounded-lg overflow-hidden shadow-sm">
-                      <div
-                        className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                        onClick={() => toggleExpandedRow(WFH.id)}>
-                        <div className="font-medium">
-                          {WFH.userFullName || "N/A"}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`${getStatusClass(
-                              WFH?.approvalStatus
-                            )} text-center py-1 px-2 text-xs rounded-md w-fit`}>
-                            {WFH?.approvalStatus || "N/A"}
+                  <Accordion variant="bordered">
+                    {displayData?.map((WFH) => (
+                      <AccordionItem
+                        key={WFH.id}
+                        aria-label={`${WFH.userFullName} - ${WFH.approvalStatus}`}
+                        title={
+                          <div className="flex justify-between items-center w-full">
+                            <div className="font-medium">
+                              {WFH.userFullName || "N/A"}
+                            </div>
+                            <div
+                              className={`${getStatusClass(
+                                WFH?.approvalStatus
+                              )} text-center py-1 px-2 text-xs rounded-md`}>
+                              {WFH?.approvalStatus || "N/A"}
+                            </div>
                           </div>
-                          <FaChevronDown
-                            size={16}
-                            className={`transition-transform ${
-                              expandedRow === WFH.id ? "rotate-180" : ""
-                            }`}
-                          />
-                        </div>
-                      </div>
-                      <div
-                        className={`${
-                          expandedRow === WFH.id ? "block" : "hidden"
-                        } p-3 space-y-2 text-sm`}>
+                        }>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="font-medium">Request Date:</div>
                           <div>{WFH?.requestDate || "N/A"}</div>
@@ -611,44 +593,17 @@ const WorkFromHomeStatus = () => {
                           <div>{WFH?.departmentName || "N/A"}</div>
                         </div>
                         <div className="flex justify-end gap-2 mt-4">
-                          <>
-                            <>
-                              <div className="flex gap-2">
-                                {isAssociateTeamLead &&
-                                WFH?.approvalStatus === "PENDING" &&
-                                hasWorkFromHomeReviewAccess ? (
-                                  <>
-                                    {WFH?.approvedByAssociateTeamLead ===
-                                    true ? (
-                                      <FaCircleCheck className="text-green-500 w-5 h-5" />
-                                    ) : WFH?.rejectedByAssociateTeamLead ===
-                                      true ? (
-                                      <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
-                                    ) : (
-                                      <>
-                                        <Button
-                                          size="sm"
-                                          color="success"
-                                          variant="flat"
-                                          onPress={() =>
-                                            handleAction("approve", WFH)
-                                          }>
-                                          Approve
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          color="danger"
-                                          variant="flat"
-                                          onPress={() =>
-                                            handleAction("reject", WFH)
-                                          }>
-                                          Reject
-                                        </Button>
-                                      </>
-                                    )}
-                                  </>
-                                ) : WFH?.approvalStatus === "PENDING" &&
-                                  hasWorkFromHomeReviewAccess ? (
+                          <div className="flex gap-2">
+                            {isAssociateTeamLead &&
+                            WFH?.approvalStatus === "PENDING" &&
+                            hasWorkFromHomeReviewAccess ? (
+                              <>
+                                {WFH?.approvedByAssociateTeamLead === true ? (
+                                  <FaCircleCheck className="text-green-500 w-5 h-5" />
+                                ) : WFH?.rejectedByAssociateTeamLead ===
+                                  true ? (
+                                  <IoIosRemoveCircle className="text-red-500 w-5 h-5" />
+                                ) : (
                                   <>
                                     <Button
                                       size="sm"
@@ -669,37 +624,34 @@ const WorkFromHomeStatus = () => {
                                       Reject
                                     </Button>
                                   </>
-                                ) : (
-                                  ""
-                                )}{" "}
-                              </div>
-                            </>
-                          </>
-                          {/* {WFH?.approvalStatus === "PENDING" &&
-                              hasWorkFromHomeReviewAccess && (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    color="success"
-                                    variant="flat"
-                                    onPress={() =>
-                                      handleAction("approve", WFH)
-                                    }>
-                                    Approve
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    color="danger"
-                                    variant="flat"
-                                    onPress={() => handleAction("reject", WFH)}>
-                                    Reject
-                                  </Button>
-                                </>
-                              )} */}
+                                )}
+                              </>
+                            ) : WFH?.approvalStatus === "PENDING" &&
+                              hasWorkFromHomeReviewAccess ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  color="success"
+                                  variant="flat"
+                                  onPress={() => handleAction("approve", WFH)}>
+                                  Approve
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  color="danger"
+                                  variant="flat"
+                                  onPress={() => handleAction("reject", WFH)}>
+                                  Reject
+                                </Button>
+                              </>
+                            ) : (
+                              ""
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
                 </div>
               </div>
 
@@ -765,7 +717,7 @@ const WorkFromHomeStatus = () => {
                       </h3>
                       <p>Are you sure you want to approve this WFH?</p>
                       {selectedWorkFromHome && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-neutral-600 p-3 rounded-md gap-3">
                           <div>
                             <span className="font-medium mr-1">
                               Request ID:
@@ -880,7 +832,7 @@ const WorkFromHomeStatus = () => {
                         rejection:
                       </p>
                       {selectedWorkFromHome && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-slate-500 p-3 rounded-md gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-gray-50 dark:bg-neutral-600 p-3 rounded-md gap-3">
                           <div>
                             <span className="font-medium mr-1">
                               Request ID:

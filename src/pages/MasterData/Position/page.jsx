@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { HiPencilSquare } from "react-icons/hi2";
 import { MdDelete } from "react-icons/md";
-import { FaChevronDown } from "react-icons/fa";
-import axiosInstance from "../../../lib/axios-Instance";
 import { toast } from "sonner";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import {
+  Accordion,
+  AccordionItem,
   Button,
   Modal,
   ModalBody,
@@ -28,7 +28,6 @@ import { BiData } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import SkeletonLoader from "../../../components/Loader/SkeletonLoader.jsx";
 import truncateText from "../../../utils/truncateText";
-import Loader from "../../../components/Loader/Loader.jsx";
 import {
   hasCreateAccess,
   hasDeleteAccess,
@@ -45,7 +44,6 @@ const TotalPage = () => {
   const dropdownItems = [5, 10, 20, 30, 50, 100];
   const [currentPage, setCurrentPage] = useState(1);
   const [positionPerPage, setPositionPerPage] = useState(10);
-  const [expandedRow, setExpandedRow] = useState(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutate: deletePosition } = useDeletePosition();
   const navigate = useNavigate();
@@ -167,10 +165,6 @@ const TotalPage = () => {
     }
   };
 
-  const toggleExpandedRow = (id) => {
-    setExpandedRow(expandedRow === id ? null : id);
-  };
-
   const loading = isDeleteLoading || isLoading;
   return (
     <div className="max-h-[90vh] overflow-y-auto">
@@ -238,7 +232,7 @@ const TotalPage = () => {
                       .map((position, index) => (
                         <TableRow
                           key={position.id}
-                          className="h-14 justify-center items-center border-b-2 border-gray-300">
+                          className="h-14 justify-center items-center border-b-2 border-gray-300 dark:border-neutral-600">
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
                             {position?.positionName?.length < 15 ? (
@@ -300,10 +294,8 @@ const TotalPage = () => {
                     items={loading ? [] : positionData}
                     isLoading={loading}
                     loadingContent={<SkeletonLoader />}>
-                    {positionData.map((position, index) => (
-                      <TableRow
-                        key={position.id}
-                        className=" h-14 hover:bg-gray-50 dark:hover:bg-slate-500 border-b ">
+                    {positionData.map((position) => (
+                      <TableRow key={position.id} className=" h-14   border-b ">
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium">
@@ -356,74 +348,21 @@ const TotalPage = () => {
                   <SkeletonLoader />
                 ) : (
                   <>
-                    {positionData.map((position, index) => (
-                      <div
-                        key={position.id}
-                        className="border rounded-lg overflow-hidden shadow-sm">
-                        <div
-                          className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-600"
-                          onClick={() => toggleExpandedRow(position.id)}>
-                          <div className="font-medium">
-                            {position.positionName}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <FaChevronDown
-                              size={16}
-                              className={`transition-transform ${
-                                expandedRow === position.id ? "rotate-180" : ""
-                              }`}
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={`${
-                            expandedRow === position.id ? "block" : "hidden"
-                          } p-3 space-y-2 text-sm`}>
+                    <Accordion variant="bordered">
+                      {positionData?.map((position) => (
+                        <AccordionItem
+                          key={position.id}
+                          aria-label={position.positionName}
+                          title={position.positionName}>
                           <div className="grid grid-cols-1 gap-2">
                             <div className="font-medium">Description:</div>
-                            <div className="bg-gray-50 dark:bg-slate-600 p-2 rounded">
+                            <div className="bg-gray-50 dark:bg-neutral-500 p-2 rounded">
                               {position.description}
                             </div>
                           </div>
-                          <div className="flex justify-end gap-4 mt-2">
-                            <Button
-                              size="sm"
-                              color="success"
-                              variant="flat"
-                              className={`${
-                                !hasPositionEditAccess
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                              onPress={() =>
-                                hasPositionEditAccess &&
-                                handleAction("edit", position)
-                              }
-                              disabled={!hasPositionEditAccess}>
-                              <HiPencilSquare className="w-4 h-4" />
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="danger"
-                              variant="flat"
-                              className={`${
-                                !hasPositionDeleteAccess
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                              onPress={() =>
-                                hasPositionDeleteAccess &&
-                                handleAction("delete", position)
-                              }
-                              disabled={!hasPositionDeleteAccess}>
-                              <MdDelete className="w-4 h-4" />
-                              Delete
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </>
                 )}
 

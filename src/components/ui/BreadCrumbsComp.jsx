@@ -24,8 +24,9 @@ const BreadcrumbsComponent = ({ items }) => {
             isCurrent={currentPage === `{item.label}`}>
             <Link to={item.href}>
               <>
-                <div className="relative w-24 md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 clip-ribbon-border bg-gray-600 hover:bg-gray-500 flex items-center justify-center py-[.5px] pl-[1px] ">
-                  <div className="w-full h-[95%] clip-ribbon bg-stone-950 hover:bg-active text-white text-xs sm:text-sm scale-[0.95] flex items-center justify-center">
+                <div className="relative w-24 md:w-32 lg:w-40 xl:w-48 h-6 sm:h-8 clip-ribbon-border  flex items-center justify-center py-[.5px] pl-[1px] ">
+                  {/* <div className="w-full h-[95%] clip-ribbon bg-stone-950 hover:bg-active dark:bg-breadcrumbsborder text-white text-xs sm:text-sm scale-[0.95] flex items-center justify-center"> */}
+                  <div className="w-full h-[95%] clip-ribbon bg-stone-950 hover:bg-active dark:bg-breadcrumbsborder dark:hover:bg-active text-white text-xs sm:text-sm scale-[0.95] flex items-center justify-center">
                     {item.label}
                   </div>
                 </div>

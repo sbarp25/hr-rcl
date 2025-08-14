@@ -3,11 +3,9 @@ import WorkFromHome from "../../components/Dashboard/WorkFromHome.jsx";
 import Leave from "../../components/Dashboard/Leave.jsx";
 import CheckIn from "../../components/Dashboard/CheckIn.jsx";
 import { useEffect, useState } from "react";
-import TemporaryAdmin from "../../components/TemporaryAdmin.jsx";
 import { useWeeklyAttendanceReport } from "../../hooks/useAuth.js";
 import { ThemeSwitcher } from "../../components/ThemeSwitcher.jsx";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import TemporaryAdmin from "../../components/TemporaryAdmin.jsx";
 import axiosInstance from "../../lib/axios-Instance.js";
 import LocalStorageUtil from "../../utils/LocalStorageUtil.js";
 
@@ -16,7 +14,6 @@ const Page = () => {
   const [isDetailsLoading, setIsDetailsLoading] = useState();
   const [rclId, setRclId] = useState();
   const [employeeData, setEmployeeData] = useState();
-  const navigate = useNavigate();
 
   const username = localStorage.getItem("fullName");
 
@@ -97,8 +94,8 @@ const Page = () => {
   }, [rclId]);
 
   return (
-    <div className="w-[calc(100%-1rem)] flex flex-col gap-4">
-      {/* Theme Switcher and CheckIn next to each other */}
+    // <div className="w-[calc(100%-1rem)] flex flex-col gap-4 bg-gray-500">
+    <div className="w-[calc(100%-1rem)] flex flex-col gap-4 ">
       <div className="flex items-center justify-end gap-4">
         <div className="">
           <ThemeSwitcher />
@@ -125,16 +122,17 @@ const Page = () => {
       </div>
 
       {/* Weekly Attendance Report */}
-      <div className="flex flex-col bg-white dark:bg-black rounded-lg w-full p-1 shadow-sm">
+      <div className="flex flex-col  rounded-lg w-full p-1 shadow-sm dark:shadow-sm dark:shadow-gray-800">
         <div className="flex flex-col justify-center items-center">
           <h1 className="page-title mt-2 text-xl font-bold dark:text-gray-300">
             Weekly Attendance Report
           </h1>
-          <div className="w-full">
+          <div className="w-full ">
+            {/* <div className="w-full bg-green-500"> */}
             {isLoading ? (
               <div className="text-center py-4">Loading attendance data...</div>
             ) : (
-              <div className="w-full overflow-x-auto">
+              <div className="w-full overflow-x-auto ">
                 <Attendancereport attendanceData={attendanceData} />
               </div>
             )}
@@ -154,14 +152,14 @@ const Page = () => {
       {/* WFH and Leave Sections */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         {/* Work From Home Panel */}
-        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100 dark:border-gray-500">
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100 dark:border-slate-500">
           <div className="">
             <WorkFromHome />
           </div>
         </div>
 
         {/* Leave Panel */}
-        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100 dark:border-gray-500">
+        <div className="flex flex-col bg-white dark:bg-black rounded-lg shadow-sm border border-gray-100 dark:border-slate-500">
           <div className="">
             <Leave />
           </div>

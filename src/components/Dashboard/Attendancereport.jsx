@@ -5,7 +5,6 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Button,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -37,7 +36,7 @@ const AttendanceReport = ({ attendanceData }) => {
             wrapper: "min-h-[200px]",
             table: "min-w-full",
           }}>
-          <TableHeader className="bg-gray-50 dark:bg-black">
+          <TableHeader className="">
             <TableColumn>S.N</TableColumn>
             <TableColumn>Day</TableColumn>
             <TableColumn>Is Delayed</TableColumn>
@@ -54,7 +53,7 @@ const AttendanceReport = ({ attendanceData }) => {
             {attendanceData?.map((data) => (
               <TableRow
                 key={data.SN}
-                className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                className="hover:bg-gray-50 dark:hover:bg-neutral-600">
                 <TableCell>{data.SN || "N/A"}</TableCell>
                 <TableCell>{data.Day || "N/A"}</TableCell>
                 <TableCell>{data.isDelay ? "Yes" : "No"}</TableCell>
@@ -107,7 +106,7 @@ const AttendanceReport = ({ attendanceData }) => {
           classNames={{
             wrapper: "min-h-[400px]",
           }}>
-          <TableHeader className="bg-gray-50">
+          <TableHeader className="">
             <TableColumn>Date</TableColumn>
             <TableColumn>Day</TableColumn>
             <TableColumn>Status</TableColumn>
@@ -119,7 +118,7 @@ const AttendanceReport = ({ attendanceData }) => {
             {attendanceData?.map((data) => (
               <TableRow
                 key={data.SN}
-                className="hover:bg-gray-50 dark:hover:bg-slate-500">
+                className="hover:bg-gray-50 dark:hover:bg-neutral-600">
                 <TableCell>{data.weekDays || "N/A"}</TableCell>
                 <TableCell>{data.Day || "N/A"}</TableCell>
                 <TableCell>
@@ -170,7 +169,7 @@ const AttendanceReport = ({ attendanceData }) => {
               key={data.SN}
               className="border rounded-lg overflow-hidden shadow-sm">
               <div
-                className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-slate-500"
+                className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-neutral-600"
                 onClick={() => toggleExpandedRow(data.SN)}>
                 <div className="font-medium">
                   {data.Day} ({data.weekDays || "N/A"})

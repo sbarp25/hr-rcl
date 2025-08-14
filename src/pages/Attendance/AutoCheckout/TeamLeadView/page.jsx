@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { hasReadAccess, MENU_NAMES } from "../../../../utils/permissionUtils";
 import { useNavigate } from "react-router-dom";
 import BreadcrumbsComponent from "../../../../components/ui/BreadCrumbsComp";
@@ -16,16 +14,15 @@ import {
   TableRow,
 } from "@heroui/table";
 import SkeletonLoader from "../../../../components/Loader/SkeletonLoader";
-import { FaChevronDown } from "react-icons/fa6";
 import { Pagination } from "@heroui/pagination";
 import DropDownComp from "../../../../components/ui/Dropdown";
-import { autoCheckout } from "../../../../api/auth";
 import { useAutoCheckout } from "../../../../hooks/useAuth";
+import { Accordion, AccordionItem } from "@heroui/react";
 
 const AutoCheckout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [autoCheckOutDataPerPage, setAutoCheckOutDataPerPage] = useState(10);
-  const [expandedRow, setExpandedRow] = useState(null);
+
   const [searchFilters, setSearchFilters] = useState(null);
   const [activeFilters, setActiveFilters] = useState(null);
 
@@ -38,12 +35,7 @@ const AutoCheckout = () => {
   ];
 
   // Main query for auto checkout data
-  const {
-    data: autoCheckoutResponse,
-    isLoading,
-    error,
-    refetch,
-  } = useAutoCheckout(
+  const { data: autoCheckoutResponse, isLoading } = useAutoCheckout(
     currentPage,
     autoCheckOutDataPerPage,
     searchFilters,
@@ -66,10 +58,6 @@ const AutoCheckout = () => {
       setCurrentPage(1);
     }
   }, [searchFilters, activeFilters]);
-
-  const toggleExpandedRow = (rclId) => {
-    setExpandedRow(expandedRow === rclId ? null : rclId);
-  };
 
   const handleApplySearch = (result) => {
     if (result.data) {
@@ -163,7 +151,7 @@ const AutoCheckout = () => {
             {displayData?.map((employee, index) => (
               <TableRow
                 key={employee.rclId}
-                className="h-14 border-b-2 border-gray-300">
+                className="h-14 border-b-2 border-gray-300 dark:border-neutral-500">
                 <TableCell>
                   {(currentPage - 1) * autoCheckOutDataPerPage + index + 1}
                 </TableCell>
@@ -192,10 +180,8 @@ const AutoCheckout = () => {
             items={isLoading ? [] : displayData}
             isLoading={isLoading}
             loadingContent={<SkeletonLoader />}>
-            {displayData?.map((employee, index) => (
-              <TableRow
-                key={employee.rclId}
-                className="hover:bg-gray-50 dark:hover:bg-slate-400">
+            {displayData?.map((employee) => (
+              <TableRow key={employee.rclId} className=" ">
                 <TableCell>
                   <div>
                     <div className="font-medium">{employee.fullName}</div>
@@ -225,35 +211,23 @@ const AutoCheckout = () => {
           <SkeletonLoader />
         ) : (
           <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-            {displayData?.map((employee, index) => (
-              <div
-                key={employee.rclId}
-                className="border rounded-lg overflow-hidden shadow-sm bg-white dark:bg-black">
-                <div
-                  className="flex justify-between items-center p-3 cursor-pointer bg-gray-50 dark:bg-black"
-                  onClick={() => toggleExpandedRow(employee.rclId)}>
-                  <div>
-                    <div className="font-medium">{employee.fullName}</div>
-                    <div className="text-sm text-gray-500">
-                      {employee.rclId}
+            <Accordion variant="bordered">
+              {displayData?.map((employee) => (
+                <AccordionItem
+                  key={employee.rclId}
+                  title={
+                    <div className="flex justify-between items-center p-3 cursor-pointer">
+                      <div>
+                        <div className="font-medium">{employee.fullName}</div>
+                        <div className="text-sm text-gray-500">
+                          {employee.rclId}
+                        </div>
+                      </div>
+                      <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        {employee.attendanceDate}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                      {employee.attendanceDate}
-                    </div>
-                    <FaChevronDown
-                      size={16}
-                      className={`transition-transform ${
-                        expandedRow === employee.rclId ? "rotate-180" : ""
-                      }`}
-                    />
-                  </div>
-                </div>
-                <div
-                  className={`${
-                    expandedRow === employee.rclId ? "block" : "hidden"
-                  } p-3 space-y-3 text-sm`}>
+                  }>
                   <div className="grid grid-cols-1 gap-2">
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-600">
@@ -264,9 +238,9 @@ const AutoCheckout = () => {
                       </span>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </AccordionItem>
+              ))}
+            </Accordion>
 
             {displayData.length === 0 && (
               <div className="p-8 text-center text-gray-500 bg-white  dark:bg-black rounded-lg">

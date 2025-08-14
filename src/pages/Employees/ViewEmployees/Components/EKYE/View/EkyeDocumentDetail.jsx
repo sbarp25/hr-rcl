@@ -4,6 +4,7 @@ import { Form } from "react-router-dom";
 import EkyeDetailsComponent from "../../../../../../components/ui/EkyeDetailsComponent";
 import { Divider } from "@heroui/react";
 import { FaRegEye } from "react-icons/fa6";
+import Legend from "../../../../../../components/ui/Legend";
 
 const EkyeDocumentDetail = ({ employeeData }) => {
   const userCompleteDetails =
@@ -27,7 +28,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
   }, [userDocument]);
 
   return (
-    <div className="flex flex-col max-h-[75vh] overflow-auto bg-gray-50 dark:bg-black py-6 border border-gray-300 mx-auto rounded-md h-[75vh]">
+    <div className="flex flex-col  overflow-auto bg-gray-50 dark:bg-black  py-6 border-solid mx-auto rounded-md border border-gray-300 dark:border-slate-700">
       <div className="flex flex-col px-8 space-y-8">
         {/* Citizenship Details */}
         <div className="bg-white dark:bg-black rounded-lg p-6">
@@ -41,9 +42,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
             </h1>
 
             <div className="flex gap-1 items-center">
-              <div className="w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="w-2 h-2 rounded-full bg-black"></div>
-              <div className="w-2 h-2 rounded-full bg-slate-600"></div>
+              <Legend />
             </div>
           </div>
 
@@ -128,9 +127,7 @@ const EkyeDocumentDetail = ({ employeeData }) => {
               </span>
             </h1>
             <div className="flex gap-1 items-center">
-              <div className="w-2 h-2 rounded-full bg-red-400"></div>
-              <div className="w-2 h-2 rounded-full bg-black"></div>
-              <div className="w-2 h-2 rounded-full bg-slate-600"></div>
+              <Legend />
             </div>
           </div>
 
