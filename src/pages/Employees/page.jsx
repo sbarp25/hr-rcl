@@ -180,7 +180,7 @@ const Employees = () => {
   };
 
   return (
-    <div className="max-h-[90vh] overflow-y-auto">
+    <div className="">
       {/* {isDeleteLoading && <Loader />} */}
       <div className="px-4 md:px-8 space-y-4 ">
         {/* Breadcrumbs and Header */}
